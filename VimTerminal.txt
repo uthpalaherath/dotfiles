@@ -1,0 +1,10 @@
+on run {input, parameters}
+	tell application "iTerm"
+		create window with default profile
+		tell front window
+			tell current session
+				write text ("vim " & quote & POSIX path of input & quote & "; exit")
+			end tell
+		end tell
+	end tell
+end run

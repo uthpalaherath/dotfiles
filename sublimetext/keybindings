@@ -1,0 +1,27 @@
+[
+    {
+    "keys": ["j", "k"],
+    "command": "exit_insert_mode",
+    "context":
+    [
+        { "key": "setting.command_mode", "operand": false },
+        { "key": "setting.is_widget", "operand": false }
+    ]
+    },
+    {"keys": ["ctrl+`"],"command": "terminus_open",
+     "args": {
+        "config_name": "Default",
+        "cwd": "${file_path:${folder}}"
+     }
+    },
+    {
+     "keys":["super+w"], "command": "terminus_keypress",
+     "args":{
+        "key":""
+     },
+     "context":[{"key":"terminus_view"}]
+    },
+    { "keys": ["super+k", "ctrl+b"], "command": "toggle_side_bar" },
+    { "keys": ["super+0"], "command": "focus_side_bar" },
+    { "keys": ["super+k", "w"], "command": "destroy_pane", "args": {"direction": "self"} }
+]   

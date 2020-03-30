@@ -1,0 +1,27 @@
+{
+	"auto_complete_commit_on_tab": true,
+	"block_caret": false,
+	"bold_folder_labels": true,
+	"caret_style": "phase",
+	"color_scheme": "Packages/Color Scheme - Default/Monokai.sublime-color-scheme",
+	"create_window_at_startup": false,
+	"font_size": 15,
+	"gutter": true,
+	"highlight_line": true,
+	"hot_exit": true,
+	"ignored_packages":
+	[
+	],
+	"margin": 0,
+	"material_theme_compact_sidebar": true,
+	"material_theme_small_statusbar": true,
+	"material_theme_tabs_autowidth": true,
+	"open_files_in_new_window": false,
+	"remember_open_files": true,
+	"show_legacy_color_scheme": true,
+	"tab_size": 4,
+	"theme": "Adaptive.sublime-theme",
+	"translate_tabs_to_spaces": true,
+	"vintage_start_in_command_mode": true,
+	"wide_caret": false
+}
