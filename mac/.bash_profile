@@ -58,21 +58,25 @@ export PATH="/Users/uthpala/nbopen/nbopen/:$PATH"
 export PATH="/Users/uthpala/p4vasp/bin/:$PATH"
 
 #pythonpath
-export PYTHONPATH=~/.local/lib
-export PYTH=~/.local/bin:$PATH
+#export PYTHONPATH=~/.local/lib
+#export PYTH=~/.local/bin:$PATH
 
 #CC
-export CC="icc"
-export CXX="icpc"
-export FC="ifort"
+export CC="clang"
+export CXX="clang++"
+#export FC="gfortran-9"
 #export CPP="/usr/local/bin/cpp"
 
 #XCrySDen
 export XCRYSDEN_TOPDIR=/opt/local/share/xcrysden-1.5.60
 export XCRYSDEN_SCRATCH=/tmp
+export PATH="/opt/local/share/xcrysden-1.5.60/:$PATH"
 
-#scripts 
-export PATH="~/Dropbox/scripts/:$PATH"
+# dotfiles
+export PATH="~/dotfiles/:$PATH"
+
+# matsciscripts
+export PATH="~/Dropbox/git/MatSciScripts:$PATH"
 
 #sod
 export PATH="/Users/uthpala/sod/bin/:$PATH"
@@ -92,7 +96,6 @@ export PATH="/Users/uthpala/qmcpack-3.8.0/build/bin/:$PATH"
 export PATH="/anaconda2/bin:$PATH"
 export PATH="/anaconda3/bin:$PATH"
 
-
 #DMFTwDFT
 export DMFT_ROOT="/Users/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/"
 export PYTHONPATH="/Users/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/:$PYTHONPATH"
@@ -109,6 +112,8 @@ export PATH=$WIENROOT:$WIEN_DMFT_ROOT:$PATH
 #texlive
 export PATH="/usr/local/texlive/2019/bin/x86_64-darwin/:$PATH"
 
+# pandoc-templates
+export PATH="/Users/uthpala/Dropbox/pandoc-templates/:$PATH"
 
 ############################################################################################################################
 
@@ -138,4 +143,8 @@ killtmux(){
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
 
 
-
+#llvm
+export PATH="/usr/local/opt/llvm/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/llvm/lib/:$LDFLAGS"
+export CPPFLAGS="-I/usr/local/opt/llvm/include/:$CPPFLAGS"
+export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib/:$LDFLAGS"
