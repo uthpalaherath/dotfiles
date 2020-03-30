@@ -6,12 +6,12 @@
 
 export TMUX_DEVICE_NAME=desktop2
 ############ tmux ###############
-if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
- # (cd $PWD; tmux attach-session -t desktop -c $PWD  ) || (cd $PWD; tmux new -s desktop -c $PWD  )
- exec tmux
-fi
+# if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
+#  # (cd $PWD; tmux attach-session -t desktop -c $PWD  ) || (cd $PWD; tmux new -s desktop -c $PWD  )
+#  exec tmux
+# fi
 
-##################################
+#################################
 
 #aliases
 alias spruce='ssh -X ukh0001@spruce.hpc.wvu.edu'
@@ -45,7 +45,7 @@ export PATH="/home/uthpala/anaconda3/bin/:$PATH"
 export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
 
 #scripts
-export PATH="~/Dropbox/scripts/:$PATH"
+export PATH="~/dotfiles/:$PATH"
 
 
 #DMFT
@@ -94,7 +94,10 @@ export PATH=$WIENROOT:$WIEN_DMFT_ROOT:$PATH
 export PATH="/home/uthpala/elk/elk-6.3.2/src/:$PATH"
 export PATH="/home/uthpala/elk/elk-6.3.2/src/spacegroup/:$PATH"
 
-
+# go
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 ##### SYSTEM ##############
 
