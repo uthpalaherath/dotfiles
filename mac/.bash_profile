@@ -132,6 +132,8 @@ alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
 alias bridges='ssh -XYC uthpala@bridges.psc.xsede.org'
 alias stampede='ssh -XYC uthpala@stampede2.tacc.xsede.org'
 alias cleantmux='tmux kill-session -a'
+alias dotrebase='cd ~/dotfiles && git pull --rebase'
+alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from mac" && git push'
 
 killtmux(){
     for arg
