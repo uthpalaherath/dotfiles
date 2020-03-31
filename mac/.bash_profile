@@ -6,8 +6,8 @@ fi
 
 ###### tmux ############
 export TMUX_DEVICE_NAME=macbook-pro
-#if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then 
-#   #tmux attach -t default || tmux new -s default 
+#if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
+#   #tmux attach -t default || tmux new -s default
 #   #(cd $(PWD); tmux attach-session -t macbook-pro -c $(PWD)  ) || (cd $(PWD);tmux new -s macbook-pro -c $(PWD)  )
 #   exec tmux
 #fi
@@ -102,18 +102,18 @@ export PYTHONPATH="/Users/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/:$PYTHO
 export PATH="/Users/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/:$PATH"
 
 #EDMFT
-export WIEN_DMFT_ROOT=$HOME/EDMFT/bin/  
-export PYTHONPATH=$PYTHONPATH:$WIEN_DMFT_ROOT  
+export WIEN_DMFT_ROOT=$HOME/EDMFT/bin/
+export PYTHONPATH=$PYTHONPATH:$WIEN_DMFT_ROOT
 #export WIENROOT=$HOME/wien2k
-export SCRATCH="." 
+export SCRATCH="."
 export EDITOR="vim"
-export PATH=$WIENROOT:$WIEN_DMFT_ROOT:$PATH 
+export PATH=$WIENROOT:$WIEN_DMFT_ROOT:$PATH
 
 #texlive
 export PATH="/usr/local/texlive/2019/bin/x86_64-darwin/:$PATH"
 
 # pandoc-templates
-export PATH="/Users/uthpala/Dropbox/pandoc-templates/:$PATH"
+export PATH="/Users/uthpala/Dropbox/git/pandoc-templates/:$PATH"
 
 ############################################################################################################################
 
@@ -132,8 +132,9 @@ alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
 alias bridges='ssh -XYC uthpala@bridges.psc.xsede.org'
 alias stampede='ssh -XYC uthpala@stampede2.tacc.xsede.org'
 alias cleantmux='tmux kill-session -a'
-alias dotrebase='cd ~/dotfiles && git pull --rebase'
-alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from mac" && git push'
+alias dotrebase='cd ~/dotfiles && git pull --rebase && cd -'
+alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from mac" && git push && cd -'
+alias dotpull='cd ~/dotfiles && git pull && cd -'
 
 killtmux(){
     for arg
