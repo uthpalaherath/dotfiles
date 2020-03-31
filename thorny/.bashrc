@@ -55,10 +55,6 @@ export PATH="/users/ukh0001/dotfiles/:$PATH"
 #gsl library
 export PATH="/usr/include/gsl:$PATH"
 
-#wannier90
-export PATH="/users/ukh0001/local/wannier90/wannier90-1.2:$PATH"
-export WANNIER_DIR="/users/ukh0001/local/wannier90/wannier90-1.2/"
-
 #DMFT 
 #export PATH="/users/ukh0001/projects/DMFT/DFTDMFT/post_processing/ancont_PM/:$PATH"
 #export PATH="/users/ukh0001/projects/DMFT/DFTDMFT/post_processing/bands/:$PATH"
@@ -80,6 +76,11 @@ export PATH="/users/ukh0001/local/siesta/siesta-lowdin/Obj:$PATH"
 
 # vim
 #export PATH="/users/ukh0001/local/vim/bin/:$PATH"
+
+#wannier90
+export PATH="/users/ukh0001/local/wannier90/wannier90-1.2:$PATH"
+export WANNIER_DIR="/users/ukh0001/local/wannier90/wannier90-1.2/"
+export PATH="/users/ukh0001/local/wannier90/wannier90-3.1.0/$PATH"
 
 ###############aliases########################
 
