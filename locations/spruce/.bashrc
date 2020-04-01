@@ -100,6 +100,9 @@ export PATH="/users/ukh0001/local/wannier90/wannier90-1.2:$PATH"
 export WANNIER_DIR="/users/ukh0001/local/wannier90/wannier90-1.2/"
 export PATH="/users/ukh0001/local/wannier90/wannier90-3.1.0/:$PATH"
 
+# MatSciScripts
+export PATH="/users/ukh0001/MatSciScripts/:$PATH"
+
 
 #------------------------------------------- ALIASES -------------------------------------------
 
