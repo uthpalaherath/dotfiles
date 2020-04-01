@@ -1,4 +1,4 @@
-# .bashrc for whitehall
+# .bashrc for whitehall (157.182.3.76)
 # -Uthpala Herath
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
