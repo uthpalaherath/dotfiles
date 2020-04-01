@@ -67,10 +67,7 @@ export CXX="clang++"
 #export FC="gfortran-9"
 #export CPP="/usr/local/bin/cpp"
 
-#XCrySDen
-export XCRYSDEN_TOPDIR=/opt/local/share/xcrysden-1.5.60
-export XCRYSDEN_SCRATCH=/tmp
-export PATH="/opt/local/share/xcrysden-1.5.60/:$PATH"
+# XCrySDen export PATH="/Users/uthpala/xcrysden/:$PATH"
 
 # dotfiles
 export PATH="~/dotfiles/:$PATH"
@@ -88,9 +85,6 @@ export PATH="/usr/local/opt/openssl/bin:$PATH"
 
 #For pkg-config to find openssl you may need to set:
 export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
-
-#qmcpack
-export PATH="/Users/uthpala/qmcpack-3.8.0/build/bin/:$PATH"
 
 ###Anaconda environment ###########
 export PATH="/anaconda2/bin:$PATH"
