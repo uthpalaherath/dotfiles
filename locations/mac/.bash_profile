@@ -1,4 +1,4 @@
-# .bash_profile for mac
+# .bash_profile for Uthpalas-Macbook-Pro 
 # -Uthpala Herath
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
@@ -137,9 +137,9 @@ export PATH="/usr/local/opt/llvm/bin:$PATH"
 export LDFLAGS="-L/usr/local/opt/llvm/lib/:$LDFLAGS"
 export CPPFLAGS="-I/usr/local/opt/llvm/include/:$CPPFLAGS"
 export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib/:$LDFLAGS"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
-#aliases
 alias spruce='ssh -XYC ukh0001@spruce.hpc.wvu.edu'
 alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
 alias bridges='ssh -XYC uthpala@bridges.psc.xsede.org'
