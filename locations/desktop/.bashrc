@@ -1,4 +1,4 @@
-# .bashrc for desktop
+# .bashrc for desktop (157.182.27.178)
 # -Uthpala Herath
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
