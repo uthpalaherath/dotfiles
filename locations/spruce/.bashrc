@@ -1,4 +1,4 @@
-# .bashrc for spruce (spruce.hpc.wvu.edu)
+# .bashrc for spruce knob (spruce.hpc.wvu.edu)
 # -Uthpala Herath
 
 
