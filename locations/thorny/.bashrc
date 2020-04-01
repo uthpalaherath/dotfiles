@@ -99,7 +99,7 @@ alias qstatuswatch='watch -d "qstat -u ukh0001"'
 alias scratch='cd /scratch/ukh0001'
 alias cleantmux='tmux kill-session -a'
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
-alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from thorny" && git push && cd -'
+alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from thorny" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
