@@ -54,8 +54,11 @@ export PATH="/users/ukh0001/local/p4vasp/bin/:$PATH"
 export PATH="/users/ukh0001/local/VASP/vasp.5.4.4_dmft/bin/:$PATH"
 export PATH="/users/ukh0001/local/VASP/vasp_dmft/:$PATH"
 
-# scripts
+# dotfiles 
 export PATH="/users/ukh0001/dotfiles/:$PATH"
+
+# MatSciScripts
+export PATH="/users/ukh0001/MatSciScripts/:$PATH"
 
 # gsl library
 export PATH="/usr/include/gsl:$PATH"
