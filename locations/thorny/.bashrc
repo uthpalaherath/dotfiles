@@ -1,4 +1,5 @@
 # .bashrc for thorny flat (thorny.hpc.wvu.edu)
+# -Uthpala Herath
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
 
