@@ -116,5 +116,5 @@ alias qstatuswatch='watch -d "qstat -u ukh0001"'
 alias scratch='cd /scratch/ukh0001'
 alias thorny="ssh -X ukh0001@thorny.hpc.wvu.edu"
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
-alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from spruce" && git push && cd -'
+alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from spruce" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
