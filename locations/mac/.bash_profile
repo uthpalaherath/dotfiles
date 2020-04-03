@@ -130,13 +130,17 @@ export PATH=$WIENROOT:$WIEN_DMFT_ROOT:$PATH
 export PATH="/usr/local/texlive/2019/bin/x86_64-darwin/:$PATH"
 
 # pandoc-templates
-export PATH="/Users/uthpala/Dropbox/git/pandoc-templates/:$PATH"
+export PATH="/Users/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
 
 # LLVM
 export PATH="/usr/local/opt/llvm/bin:$PATH"
 export LDFLAGS="-L/usr/local/opt/llvm/lib/:$LDFLAGS"
 export CPPFLAGS="-I/usr/local/opt/llvm/include/:$CPPFLAGS"
 export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib/:$LDFLAGS"
+
+# Perl warning fix
+export LC_CTYPE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 #------------------------------------------- ALIASES -------------------------------------------
 
