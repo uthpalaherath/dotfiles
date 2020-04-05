@@ -38,7 +38,7 @@ alias whitehall='ssh -XYC ukh0001@157.182.3.76'
 alias thorny="ssh -XYC ukh0001@thorny.hpc.wvu.edu"
 alias spruce2="ssh -XYC ukh0001@ssh.wvu.edu"
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
-alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from desktop" && git push && cd -'
+alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from desktop" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 
 #------------------------------------------- PATHS -------------------------------------------
