@@ -1,8 +1,8 @@
 #!/bin/bash
-#PBS -N job
-#PBS -q alromero ##comm_256g_mem
+#PBS -N Jobname
+#PBS -q comm_small_week ##comm_small_day
 #PBS -l walltime=168:00:00
-#PBS -l nodes=1:ppn=16,pvmem=8gb ####:broadwell:large,pvmem=20gb
+#PBS -l nodes=4:ppn=40 ##,pvmem=8gb
 #PBS -m ae
 #PBS -M ukh0001@mix.wvu.edu
 #PBS -j oe
