@@ -26,6 +26,11 @@ ulimit -s unlimited
 # Source for colorful terminal
 source ~/.bash_prompt
 
+# Color folders
+export LS_OPTIONS='--color=auto'
+eval "$(dircolors -b)"
+alias ls='ls $LS_OPTIONS'
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias spruce='ssh -X ukh0001@spruce.hpc.wvu.edu'
@@ -116,3 +121,5 @@ export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 # Install Ruby Gems to ~/gems
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
+
+
