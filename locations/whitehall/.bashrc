@@ -35,7 +35,7 @@ source ~/.bash_prompt
 
 # vasp
 export PATH="/home/ukh0001/local/VASP/vasp.5.4.4/bin/:$PATH"
-export PATH="/home/ukh0001/local/VASP/vasp_dmft/:$PATH"
+#export PATH="/home/ukh0001/local/VASP/vasp_dmft/:$PATH"
 
 # wannier90
 export PATH="/home/ukh0001/local/wannier90/wannier90-1.2/:$PATH"
@@ -60,7 +60,7 @@ export PATH="/home/ukh0001/local/siesta/lowdin/Obj:$PATH"
 export PATH="/home/ukh0001/projects/DMFTwDFT/bin/:$PATH"
 export PYTHONPATH="/home/ukh0001/projects/DMFTwDFT/bin/:$PYTHONPATH"
 export DMFT_ROOT="/home/ukh0001/projects/DMFTwDFT/bin/"
-export PATH="/home/ukh0001/local/VASP/vasp.5.4.4_dmft/bin/:$PATH"
+#export PATH="/home/ukh0001/local/VASP/vasp.5.4.4_dmft/bin/:$PATH"
 
 # dotfiles
 export PATH="/home/ukh0001/dotfiles/:$PATH"
