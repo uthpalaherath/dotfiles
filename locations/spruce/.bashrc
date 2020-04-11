@@ -23,10 +23,10 @@ fi
 module load lang/gcc/8.2.0
 module load utils/tmux/3.0a
 export TMUX_DEVICE_NAME=spruce
-#if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-    # tmux attach -t spruce || tmux new -s spruce 
+if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
+    tmux attach -t spruce || tmux new -s spruce 
     # tmux
-#fi
+fi
 
 #------------------------------------------- MODULES -------------------------------------------
 
@@ -103,6 +103,11 @@ export PATH="/users/ukh0001/local/wannier90/wannier90-3.1.0/:$PATH"
 # MatSciScripts
 export PATH="/users/ukh0001/MatSciScripts/:$PATH"
 
+# MechElastic
+export PATH="/users/ukh0001/local/MechElastic/:$PATH"
+
+# VTST
+export PATH="/users/ukh0001/local/VTST/vtstscripts-957/:$PATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
