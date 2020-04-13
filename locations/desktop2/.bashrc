@@ -11,10 +11,10 @@
 
 # tmux
 export TMUX_DEVICE_NAME=desktop2
-# if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-#  # (cd $PWD; tmux attach-session -t desktop -c $PWD  ) || (cd $PWD; tmux new -s desktop -c $PWD  )
-#  exec tmux
-# fi
+if command -v tmux &> /dev/null && [ -t 0  ] && [[ -z $TMUX  ]] && [[ $- = *i*  ]]; then
+    tmux attach -t desktop2 || tmux new -s desktop2 
+    #exec tmux
+fi
 
 #sourcing intel compilers
 source /opt/intel/bin/compilervars.sh intel64
@@ -78,9 +78,9 @@ export PATH="~/dotfiles/:$PATH"
 #export PATH="/home/uthpala/Dropbox/Research/Projects/DMFT/codes/vaspDMFT/post_processing/ancont_PM/:$PATH"
 
 # DMFTwDFT
-export PATH="/home/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/:$PATH"
-export PYTHONPATH="/home/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/:$PYTHONPATH"
-export DMFT_ROOT="/home/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/"
+export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
+export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
+export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
 export PATH="/home/uthpala/VASP/vasp.5.4.4_dmft/bin/:$PATH"
 
 # wannier90
