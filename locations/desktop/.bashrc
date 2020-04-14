@@ -67,9 +67,9 @@ export WANNIER_DIR="/home/uthpala/lib/wannier90/wannier90-1.2/"
 #export PATH="/home/uthpala/Dropbox/Research/Projects/DMFT/codes/vaspDMFT/post_processing/bands/:$PATH"
 
 # DMFTwDFT bin
-export PATH="/home/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/:$PATH"
-export PYTHONPATH="/home/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/:$PYTHONPATH"
-export DMFT_ROOT="/home/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/"
+export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
+export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
+export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
 
 # LD_LIBRARY_PATH
 export LD_LIBRARY_PATH="/opt/intel/mkl/lib/intel64/:/home/uthpala/lib/gsl/lib/:$LD_LIBRARY_PATH"
@@ -117,3 +117,6 @@ export HDF5_TOOLS_DIR="/home/uthpala/lib/hdf5-1.10.4/tools/"
 export HDF5_ROOT="/home/uthpala/lib/hdf5-1.10.4/hdf5/bin/"
 export HDF5_LIBRARIES="/home/uthpala/lib/hdf5-1.10.4/hdf5/lib/"
 export HD5F_INCLUDE_DIRS="/home/uthpala/lib/hdf5-1.10.4/hdf5/include/"
+
+# MatSciScripts
+export PATH="/home/uthpala/MatSciScripts/:$PATH"
