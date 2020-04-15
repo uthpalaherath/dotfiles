@@ -35,11 +35,14 @@ fi
 #source /shared/software/miniconda3/etc/profile.d/conda.sh
 
 # python
-module load lang/python/intelpython_2.7.16       
-module load lang/python/intelpython_3.6.3
+#module load lang/python/intelpython_2.7.16       
+#module load lang/python/intelpython_3.6.9
+module load lang/python/2.7.15_gcc82
+module load lang/python/3.7.2_gcc82
 
 # compilers
 module load lang/intel/2018_u4
+module load lang/gcc/8.2.0
 
 # programs
 module load atomistic/abinit/8.10.2_intel18
@@ -73,6 +76,7 @@ export MODULEPATH=$MODULEPATH:/group/romero/local/privatemodules
 export PATH="/users/ukh0001/projects/DMFTwDFT/bin/:$PATH"
 export PYTHONPATH="/users/ukh0001/projects/DMFTwDFT/bin/:$PYTHONPATH"
 export DMFT_ROOT="/users/ukh0001/projects/DMFTwDFT/bin/"
+export PATH="/users/ukh0001/projects/DMFTwDFT/scripts/:$PATH"
 
 # siesta
 export PATH="/users/ukh0001/local/siesta/siesta-4.1-b3/Obj/:$PATH"
@@ -85,12 +89,14 @@ export PATH="/users/ukh0001/local/siesta/siestawp/Obj/:$PATH"
 export PATH="/users/ukh0001/local/openbabel-2.4.1/bin/:$PATH"
 
 # local bin
-export PATH=$HOME/.local/bin:$PATH
+# export PATH=$HOME/.local/bin:$PATH
 
 # Library path
 #export LD_LIBRARY_PATH="/usr/lib64/:$LD_LIBRARY_PATH"
 #export LD_LIBRARY_PATH="/usr/lib/:$LD_LIBRARY_PATH"
 #export PATH="/usr/lib/:$PATH"
+#export LD_LIBRARY_PATH="/users/ukh0001/lib/:$LD_LIBRARY_PATH"
+
 
 # vim 
 #export PATH="/users/ukh0001/local/vim/bin/:$PATH"
@@ -98,7 +104,7 @@ export PATH=$HOME/.local/bin:$PATH
 #wannier90
 export PATH="/users/ukh0001/local/wannier90/wannier90-1.2:$PATH"
 export WANNIER_DIR="/users/ukh0001/local/wannier90/wannier90-1.2/"
-export PATH="/users/ukh0001/local/wannier90/wannier90-3.1.0/:$PATH"
+#export PATH="/users/ukh0001/local/wannier90/wannier90-3.1.0/:$PATH"
 
 # MatSciScripts
 export PATH="/users/ukh0001/MatSciScripts/:$PATH"
