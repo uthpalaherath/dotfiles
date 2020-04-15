@@ -1,4 +1,4 @@
-# .bash_profile for Uthpalas-Macbook-Pro 
+# .bash_profile for Uthpalas-Macbook-Pro
 # -Uthpala Herath
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
@@ -87,10 +87,10 @@ export PATH="/Users/uthpala/p4vasp/bin/:$PATH"
 #export PYTH=~/.local/bin:$PATH
 
 # CC
-export CC="clang"
-export CXX="clang++"
-#export FC="gfortran-9"
-#export CPP="/usr/local/bin/cpp"
+export CC="gcc"
+export CXX="g++"
+export FC="gfortran-9"
+export CPP="/usr/local/bin/cpp"
 
 # dotfiles
 export PATH="~/dotfiles/:$PATH"
@@ -142,13 +142,31 @@ export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib/:$L
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
+# Julia
+export PATH="/Applications/Julia-1.4.app/Contents/Resources/julia/bin/:$PATH"
+
+# MechElastic
+export PATH="/Users/uthpala/Dropbox/git/MechElastic/:$PATH"
+
+# Lobster
+export PATH="/Users/uthpala/lobster/bin/:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias spruce='ssh -XYC ukh0001@spruce.hpc.wvu.edu'
-alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
-alias bridges='ssh -XYC uthpala@bridges.psc.xsede.org'
-alias stampede2='ssh -XYC uthpala@stampede2.tacc.xsede.org'
+#alias wvu="ssh -tX ukh0001@ssh.wvu.edu 'tmux -CC new -A -s main'"
+alias wvu="ssh -X ukh0001@ssh.wvu.edu"
+alias spruce="ssh -tX ukh0001@ssh.wvu.edu 'ssh -X ukh0001@spruce.hpc.wvu.edu'"
+alias thorny="ssh -tX ukh0001@ssh.wvu.edu 'ssh -X ukh0001@tf.hpc.wvu.edu'"
+alias whitehall="ssh -tX ukh0001@ssh.wvu.edu 'ssh -X ukh0001@157.182.3.76'"
+alias whitehall2="ssh -tX ukh0001@ssh.wvu.edu 'ssh -X ukh0001@157.182.3.75'"
+alias desktop="ssh -tX ukh0001@ssh.wvu.edu 'ssh -X uthpala@157.182.27.178'"
+alias desktop2="ssh -tX ukh0001@ssh.wvu.edu 'ssh -X uthpala@157.182.28.27'"
+
+alias bridges="ssh -tX ukh0001@ssh.wvu.edu 'ssh -X uthpala@bridges.psc.xsede.org'"
+alias stampede2="ssh -tX ukh0001@ssh.wvu.edu 'ssh -X uthpala@stampede2.tacc.xsede.org'"
+
 alias cleantmux='tmux kill-session -a'
+alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from mac" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
