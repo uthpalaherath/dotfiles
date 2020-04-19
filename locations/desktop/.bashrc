@@ -25,6 +25,7 @@ ulimit -s unlimited
 
 # Source ~/.bash_prompt for colors
 source ~/.bash_prompt
+source ~/.aliases
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -55,8 +56,8 @@ export PATH="/home/uthpala/VASP/vasp.5.4.4_dmft/bin/:$PATH"
 export PATH="/home/uthpala/VASP/vasp_dmft/:$PATH"
 
 # wannier90
-export PATH="/home/uthpala/lib/wannier90/wannier90-1.2:$PATH"
-export WANNIER_DIR="/home/uthpala/lib/wannier90/wannier90-1.2/"
+export PATH="/home/uthpala/wannier90/wannier90-1.2:$PATH"
+export WANNIER_DIR="/home/uthpala/wannier90/wannier90-1.2/"
 
 # DMFT project
 #export WIEN_DMFT_ROOT="/home/uthpala/Dropbox/Research/Projects/DMFT/codes/vaspDMFT/bin/"
@@ -119,4 +120,7 @@ export HDF5_LIBRARIES="/home/uthpala/lib/hdf5-1.10.4/hdf5/lib/"
 export HD5F_INCLUDE_DIRS="/home/uthpala/lib/hdf5-1.10.4/hdf5/include/"
 
 # MatSciScripts
-export PATH="/home/uthpala/MatSciScripts/:$PATH"
+export PATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PATH"
+
+# VTST
+export PATH="/home/uthpala/VTST/vtstscripts-957/:$PATH"
