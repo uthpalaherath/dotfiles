@@ -19,33 +19,33 @@ then
     stty -ixon
 fi
 
-# tmux 
+# tmux
 module load lang/gcc/8.2.0
 module load utils/tmux/3.0a
 export TMUX_DEVICE_NAME=spruce
 if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-    tmux attach -t spruce || tmux new -s spruce 
+    tmux attach -t spruce || tmux new -s spruce
     # tmux
 fi
 
 #------------------------------------------- MODULES -------------------------------------------
 
-# conda
-#module load conda
-#source /shared/software/miniconda3/etc/profile.d/conda.sh
-
 # python
-#module load lang/python/intelpython_2.7.16       
+module load lang/python/intelpython_2.7.16       
 #module load lang/python/intelpython_3.6.9
-module load lang/python/2.7.15_gcc82
-module load lang/python/3.7.2_gcc82
+# module load lang/python/2.7.15_gcc82
+# module load lang/python/3.7.2_gcc82
+
 
 # compilers
 module load lang/intel/2018_u4
-module load lang/gcc/8.2.0
 
 # programs
-module load atomistic/abinit/8.10.2_intel18
+#module load atomistic/abinit/8.10.2_intel18
+
+# libraries
+module load libs/fftw/3.3.8_intel18
+module load libs/hdf5/1.10.5_intel18
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -118,8 +118,8 @@ export PATH="/users/ukh0001/local/VTST/vtstscripts-957/:$PATH"
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias whitehall="ssh -XC ukh0001@157.182.3.76"
-alias interact="qsub -I -l nodes=1:ppn=16,walltime=168:00:00,pvmem=8gb -q alromero" ###,pvmem=8gb -q standby" ###-q alromero"
-alias standby="qsub -I -l nodes=1:ppn=16,walltime=4:00:00 -q standby" ###,pvmem=8gb -q standby" ###-q alromero"
+alias interact="qsub -I -l nodes=1:ppn=16,walltime=1000:00:00 -q alromero" ##,pvmem=8gb
+alias standby="qsub -I -l nodes=1:ppn=16,walltime=4:00:00 -q standby" 
 alias interact_lm="qsub -I -l nodes=1:ppn=24:broadwell:large,pvmem=20gb,walltime=20:00:00 -q alromero"
 alias q="qstat -u ukh0001"
 alias qq="qstat -q"
