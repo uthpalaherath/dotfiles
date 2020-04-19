@@ -32,7 +32,7 @@ fi
 
 # python
 module load lang/python/intelpython_2.7.16    
-module load lang/python/intelpython_3.6.3
+module load lang/python/intelpython_3.6.9
 
 # compilers
 module load lang/gcc/8.2.0
@@ -75,6 +75,7 @@ export PATH="/usr/include/gsl:$PATH"
 export PATH="/users/ukh0001/projects/DMFTwDFT/bin/:$PATH"
 export PYTHONPATH="/users/ukh0001/projects/DMFTwDFT/bin/:$PYTHONPATH"
 export DMFT_ROOT="/users/ukh0001/projects/DMFTwDFT/bin/"
+export PATH="/users/ukh0001/projects/DMFTwDFT/scripts/:$PATH"
 
 # siesta
 export PATH="/users/ukh0001/local/siesta/siesta-lowdin/Obj:$PATH"
@@ -88,7 +89,13 @@ export PATH="/users/ukh0001/local/siesta/siesta-lowdin/Obj:$PATH"
 # wannier90
 export PATH="/users/ukh0001/local/wannier90/wannier90-1.2:$PATH"
 export WANNIER_DIR="/users/ukh0001/local/wannier90/wannier90-1.2/"
-export PATH="/users/ukh0001/local/wannier90/wannier90-3.1.0/$PATH"
+export PATH="/users/ukh0001/local/wannier90/wannier90-3.1.0/:$PATH"
+
+# VTST scripts
+export PATH="/users/ukh0001/local/VTST/vtstscripts-957/:$PATH"
+
+# MechElastic
+export PATH="/users/ukh0001/local/MechElastic/:$PATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
