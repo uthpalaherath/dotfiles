@@ -86,6 +86,9 @@ export PATH="/home/ukh0001/local/globusconnectpersonal/:$PATH"
 # vim
 # export PATH="/home/ukh0001/local/vim/bin/:$PATH"
 
+# MatSciScripts
+export PATH="/home/ukh0001/MatSciScripts/:$PATH"
+
 # anaconda
 export PATH="/home/ukh0001/anaconda2/bin/:$PATH"
 export PATH="/home/ukh0001/anaconda3/bin/:$PATH"
@@ -102,6 +105,9 @@ alias cleantmux='tmux kill-session -a'
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from whitehall" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
+
+alias makeINCAR="cp ~/MatSciScripts/INCAR ."
+alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
