@@ -39,6 +39,10 @@ alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from bridges" && git push && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 
+alias makeINCAR="cp ~/MatSciScripts/INCAR ."
+alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
+alias makejob="cp ~/dotfiles/locations/bridges/jobscript.sh ."
+
 #------------------------------------------- MODULES -------------------------------------------
 
 module load anaconda2/5.2.0
@@ -48,6 +52,9 @@ module load intel/18.4    #18.0.3.222
 module load gcc/6.3.0
 
 #------------------------------------------- PATHS -------------------------------------------
+
+# MatSciScripts
+export PATH="/home/uthpala/MatSciScripts/:$PATH"
 
 # dotfiles 
 export PATH="~/dotfiles/:$PATH"
