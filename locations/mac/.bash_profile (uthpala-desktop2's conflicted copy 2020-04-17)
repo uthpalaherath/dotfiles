@@ -1,4 +1,4 @@
-# .bash_profile for Uthpalas-Macbook-Pro
+# .bash_profile for Uthpalas-Macbook-Pro 
 # -Uthpala Herath
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
@@ -58,11 +58,8 @@ killtmux(){
 #------------------------------------------- PATHS -------------------------------------------
 
 # Add Homebrew `/usr/local/bin` and User `~/bin` to the `$PATH`
-#PATH=/usr/local/bin/:$PATH
-#PATH=$HOME/bin:$PATH
-
-# Remove .pyc files
-export PYTHONDONTWRITEBYTECODE=1
+PATH=/usr/local/bin/:$PATH
+PATH=$HOME/bin:$PATH
 
 # Intel compilers
 export PATH="/opt/intel/bin/:$PATH"
@@ -90,9 +87,9 @@ export PATH="/Users/uthpala/p4vasp/bin/:$PATH"
 #export PYTH=~/.local/bin:$PATH
 
 # CC
-export CC="gcc"
-export CXX="g++"
-#export FC="ifort"
+export CC="clang"
+export CXX="clang++"
+#export FC="gfortran-9"
 #export CPP="/usr/local/bin/cpp"
 
 # dotfiles
@@ -145,41 +142,13 @@ export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib/:$L
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-# Julia
-export PATH="/Applications/Julia-1.4.app/Contents/Resources/julia/bin/:$PATH"
-
-# MechElastic
-export PATH="/Users/uthpala/Dropbox/git/MechElastic/:$PATH"
-
-# Lobster
-export PATH="/Users/uthpala/lobster/bin/:$PATH"
-
-# VMD
-export PLUGINDIR="/Users/uthpala/vmd-1.9.3.src/plugins/"
-
-# Jmol
-export PATH="/Users/uthpala/jmol-14.30.2/:$PATH"
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias wvu="ssh -tXY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
-alias sprucetmux="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'tmux -CC new -A -s spruce '"
-
-alias spruce="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@spruce.hpc.wvu.edu'"
-alias thorny="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@tf.hpc.wvu.edu'"
-alias whitehall="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@157.182.3.76'"
-alias whitehall2="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@157.182.3.75'"
-alias desktop="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.27.178'"
-alias desktop2="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.28.27'"
-
-alias bridges="ssh -XY  uthpala@bridges.psc.xsede.org"
-alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"
-
-alias cleantmux='tmux kill-session -a'
+alias spruce='ssh -XYC ukh0001@spruce.hpc.wvu.edu'
 alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
+alias bridges='ssh -XYC uthpala@bridges.psc.xsede.org'
+alias stampede2='ssh -XYC uthpala@stampede2.tacc.xsede.org'
+alias cleantmux='tmux kill-session -a'
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from mac" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
-alias tmux="tmux -CC new -A -s main"
-
-alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
-alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
