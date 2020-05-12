@@ -106,8 +106,8 @@ export PATH="/home/uthpala/globusconnectpersonal/:$PATH"
 
 # siesta
 #export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
-export PATH="/home/uthpala/siesta/siesta-lowdin/Obj/:$PATH"
-#export PATH="/home/uthpala/siesta/siesta-lowdin-dmft/Obj/:$PATH"
+#export PATH="/home/uthpala/siesta/siesta-lowdin/Obj/:$PATH"
+export PATH="/home/uthpala/siesta/siesta-dmft/Obj/:$PATH"
 
 # NETCDF
 export NETCDF_ROOT="/opt/netcdf/"
@@ -145,3 +145,8 @@ export PATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PATH"
 #sourcing intel compilers
 source /opt/intel/bin/compilervars.sh intel64
 source /opt/intel/mkl/bin/mklvars.sh intel64
+
+# compilers
+# export CC="gcc-5"
+# export CXX="g++-5"
+# export FC="gfortran-5"

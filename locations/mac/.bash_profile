@@ -113,8 +113,8 @@ export PATH="/usr/local/opt/openssl/bin:$PATH"
 export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
 
 # Anaconda environment
-export PATH="/anaconda2/bin:$PATH"
-export PATH="/anaconda3/bin:$PATH"
+#export PATH="/anaconda2/bin:$PATH"
+export PATH="/Users/uthpala/anaconda3/bin:$PATH"  # commented out by conda initialize
 
 # DMFTwDFT
 export DMFT_ROOT="/Users/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/"
@@ -183,3 +183,5 @@ alias tmux="tmux -CC new -A -s main"
 
 alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
+
+
