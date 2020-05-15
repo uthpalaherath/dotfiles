@@ -96,7 +96,7 @@ export PATH="~/dotfiles/:$PATH"
 export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
 export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
 export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
-export PATH="/home/uthpala/VASP/vasp.5.4.4_dmft/bin/:$PATH"
+#export PATH="/home/uthpala/VASP/vasp.5.4.4_dmft/bin/:$PATH"
 
 # Vesta
 export PATH="/home/uthpala/VESTA/:$PATH"
@@ -126,8 +126,8 @@ export PATH="/home/uthpala/elk/elk-6.3.2/src/:$PATH"
 export PATH="/home/uthpala/elk/elk-6.3.2/src/spacegroup/:$PATH"
 
 # wannier90
-export PATH="/home/uthpala/wannier90/wannier90-1.2/:$PATH"
-#export PATH="/home/uthpala/wannier90/wannier90-3.1.0/:$PATH"
+#export PATH="/home/uthpala/wannier90/wannier90-1.2/:$PATH"
+export PATH="/home/uthpala/wannier90/wannier90-3.1.0/:$PATH"
 
 
 # go

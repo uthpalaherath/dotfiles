@@ -113,8 +113,14 @@ export PATH="/usr/local/opt/openssl/bin:$PATH"
 export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
 
 # Anaconda environment
-#export PATH="/anaconda2/bin:$PATH"
-export PATH="/Users/uthpala/anaconda3/bin:$PATH"  # commented out by conda initialize
+py2(){
+export PATH="/anaconda2/bin:$PATH"
+}
+py3(){
+export PATH="/Users/uthpala/anaconda3/bin:$PATH"  
+}
+#default
+py3
 
 # DMFTwDFT
 export DMFT_ROOT="/Users/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/"
