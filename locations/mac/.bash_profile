@@ -117,7 +117,7 @@ py2(){
 export PATH="/anaconda2/bin:$PATH"
 }
 py3(){
-export PATH="/Users/uthpala/anaconda3/bin:$PATH"  
+export PATH="/Users/uthpala/anaconda3/bin:$PATH"
 }
 #default
 py3
@@ -158,13 +158,16 @@ export PATH="/Applications/Julia-1.4.app/Contents/Resources/julia/bin/:$PATH"
 export PATH="/Users/uthpala/Dropbox/git/MechElastic/:$PATH"
 
 # Lobster
-export PATH="/Users/uthpala/lobster/bin/:$PATH"
+export PATH="/Users/uthpala/lobster/OSX/:$PATH"
 
 # VMD
 export PLUGINDIR="/Users/uthpala/vmd-1.9.3.src/plugins/"
 
 # Jmol
 export PATH="/Users/uthpala/jmol-14.30.2/:$PATH"
+
+# fftw
+export LD_LIBRARY_PATH="/Users/uthpala/lib/fftw/lib/:$LD_LIBRARY_PATH"
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias wvu="ssh -tXY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
@@ -185,9 +188,8 @@ alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from mac" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
-alias tmux="tmux -CC new -A -s main"
+#alias tmux="tmux -CC new -A -s main"
+alias tmux="(cd $(PWD); tmux attach-session -t macbook-pro -c $(PWD)  ) || (cd $(PWD);tmux new -s macbook-pro -c $(PWD))"
 
 alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
-
-

@@ -142,6 +142,9 @@ export PATH="$HOME/gems/bin:$PATH"
 # MatSciScripts
 export PATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PATH"
 
+# Quantum Espresso
+export PATH="/home/uthpala/qe-6.5/bin/:$PATH"
+
 #sourcing intel compilers
 source /opt/intel/bin/compilervars.sh intel64
 source /opt/intel/mkl/bin/mklvars.sh intel64
