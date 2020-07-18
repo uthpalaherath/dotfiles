@@ -49,11 +49,11 @@ function cd {
   fi
 }
 
-killtmux(){
-    for arg
-    do tmux kill-session -t "macbook-pro $arg"
-    done
-}
+# killtmux(){
+#     for arg
+#     do tmux kill-session -t "macbook-pro $arg"
+#     done
+# }
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -90,8 +90,8 @@ export PATH="/Users/uthpala/p4vasp/bin/:$PATH"
 #export PYTH=~/.local/bin:$PATH
 
 # CC
-export CC="gcc"
-export CXX="g++"
+#export CC="clang"
+#export CXX="clang++"
 #export FC="ifort"
 #export CPP="/usr/local/bin/cpp"
 
@@ -121,6 +121,8 @@ export PATH="/Users/uthpala/anaconda3/bin:$PATH"
 }
 #default
 py3
+
+#export PYTHONPATH="/Users/uthpala/anaconda3/bin/:$PYTHONPATH"
 
 # DMFTwDFT
 export DMFT_ROOT="/Users/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/"
@@ -173,12 +175,22 @@ export LD_LIBRARY_PATH="/Users/uthpala/lib/fftw/lib/:$LD_LIBRARY_PATH"
 alias wvu="ssh -tXY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
 alias sprucetmux="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'tmux -CC new -A -s spruce '"
 
+# logging through ssh.wvu.edu
 alias spruce="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@spruce.hpc.wvu.edu'"
 alias thorny="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@tf.hpc.wvu.edu'"
 alias whitehall="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@157.182.3.76'"
 alias whitehall2="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@157.182.3.75'"
 alias desktop="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.27.178'"
 alias desktop2="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.28.27'"
+
+# logging through spruce
+# alias spruce="ssh -XY ukh0001@spruce.hpc.wvu.edu"
+# alias thorny="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -XY ukh0001@tf.hpc.wvu.edu'"
+# alias whitehall="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -XY ukh0001@157.182.3.76'"
+# alias whitehall2="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -XY ukh0001@157.182.3.75'"
+# alias desktop="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -tXY ukh0001@157.182.3.76 ssh -XY uthpala@157.182.27.178'"
+# alias desktop2="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -tXY ukh0001@157.182.3.76 ssh -XY uthpala@157.182.28.27'"
+
 
 alias bridges="ssh -XY  uthpala@bridges.psc.xsede.org"
 alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"

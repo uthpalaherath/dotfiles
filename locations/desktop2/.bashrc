@@ -60,8 +60,14 @@ export PYTHONDONTWRITEBYTECODE=1
 # vasp
 export PATH="/home/uthpala/VASP/vasp.5.4.4/bin/:$PATH"
 
+# abinit
+export ABI_PSPDIR="/home/uthpala/abinit/Psps_for_tests"
+
 # Library path
 export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
+
+# /usr/local/bin/
+export PATH="/usr/local/bin/:$PATH"
 
 # anaconda
 py2(){
@@ -96,7 +102,7 @@ export PATH="~/dotfiles/:$PATH"
 export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
 export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
 export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
-#export PATH="/home/uthpala/VASP/vasp.5.4.4_dmft/bin/:$PATH"
+export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
 
 # Vesta
 export PATH="/home/uthpala/VESTA/:$PATH"
@@ -105,9 +111,15 @@ export PATH="/home/uthpala/VESTA/:$PATH"
 export PATH="/home/uthpala/globusconnectpersonal/:$PATH"
 
 # siesta
-#export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
-#export PATH="/home/uthpala/siesta/siesta-lowdin/Obj/:$PATH"
+export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
+# export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/COOP/:$PATH"
+# export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/Bands/:$PATH"
 export PATH="/home/uthpala/siesta/siesta-dmft/Obj/:$PATH"
+# export PATH="/home/uthpala/siesta/siesta-dmft/Util/COOP/:$PATH"
+# export PATH="/home/uthpala/siesta/siesta-dmft/Util/Bands/:$PATH"
+
+# hdf5
+export LD_LIBRARY_PATH="/home/uthpala/hdf5-1.10.5/hdf5/lib/:$LD_LIBRARY_PATH"
 
 # NETCDF
 export NETCDF_ROOT="/opt/netcdf/"
