@@ -1,5 +1,5 @@
 #!/bin/bash
-#SLURM --job-name=jobname
+#SBATCH --job-name=jobname
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=28
 #SBATCH -t 48:00:00
