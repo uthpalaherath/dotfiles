@@ -7,7 +7,10 @@
 #PBS -M ukh0001@mix.wvu.edu
 #PBS -j oe
 
+NUM_CORES=$(($PBS_NUM_NODES*$PBS_NUM_PPN))
+
 source ~/.bashrc
 ulimit -s unlimited
 cd $PBS_O_WORKDIR
+mpirun -np $NUM_CORES
 

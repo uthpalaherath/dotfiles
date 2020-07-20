@@ -70,6 +70,9 @@ export PATH="/users/ukh0001/local/VASP/vasp_dmft/:$PATH"
 # abinit
 export ABI_TESTS="/gpfs20/users/ukh0001/local/abinit/tests/"
 export ABI_PSPDIR="/users/ukh0001/local/abinit/pseudos/"
+export PAW_PBE="/gpfs20/users/ukh0001/local/abinit/pseudo-dojo/paw_pbe_standard"
+export PAW_LDA="/gpfs20/users/ukh0001/local/abinit/pseudo-dojo/paw_pw_standard"
+
 
 # dotfiles 
 export PATH="/users/ukh0001/dotfiles/:$PATH"
