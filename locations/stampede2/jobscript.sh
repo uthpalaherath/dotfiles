@@ -16,4 +16,4 @@
 
 ulimit -s unlimited
 cd $SLURM_SUBMIT_DIR/
-time ibrun
+time mpirun -np $SLURM_NTASKS

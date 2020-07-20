@@ -1,5 +1,6 @@
 #!/bin/bash
-#SBATCH -N 2
+#SLURM --job-name=jobname
+#SBATCH -N 1
 #SBATCH --ntasks-per-node=28
 #SBATCH -t 48:00:00
 ##SBATCH --mem=10GB
@@ -11,5 +12,5 @@ set -x
 # execution
 ulimit -s unlimited
 cd $SLURM_SUBMIT_DIR/
-mpirun -np $SLURM_NTASKS
+time mpirun -np $SLURM_NTASKS
 
