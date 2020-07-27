@@ -46,8 +46,8 @@ module load lang/python/intelpython_3.6.9
 py2
 
 # compilers
-module load lang/gcc/8.2.0
-#module load lang/gcc/9.3.0
+#module load lang/gcc/8.2.0
+module load lang/gcc/9.3.0
 module load lang/intel/2018_u4
 module load dev/cmake/3.15.4
 
@@ -105,8 +105,8 @@ export DMFT_ROOT="/users/ukh0001/projects/DMFTwDFT/bin/"
 export PATH="/users/ukh0001/projects/DMFTwDFT/scripts/:$PATH"
 
 # siesta
-export PATH="/users/ukh0001/local/siesta/siesta-4.1-b4/Obj/:$PATH"
-# export PATH="/users/ukh0001/local/siesta/siesta-dmft/Obj/:$PATH"
+#export PATH="/users/ukh0001/local/siesta/siesta-4.1-b4/Obj/:$PATH"
+export PATH="/users/ukh0001/local/siesta/siesta-dmft/Obj/:$PATH"
 
 # local bin
 #export PATH=$HOME/.local/bin:$PATH
@@ -128,6 +128,7 @@ export PATH="/users/ukh0001/local/gnuplot-4.6.7/bin/bin/:$PATH"
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias interact="qsub -I -l nodes=1:ppn=40,walltime=4:00:00 -q standby" 
+alias debug="qsub -I -l nodes=1:ppn=40,walltime=1:00:00 -q debug" 
 alias q="qstat -u ukh0001"
 alias qq="qstat -q"
 alias qstatuswatch='watch -d "qstat -u ukh0001"'
