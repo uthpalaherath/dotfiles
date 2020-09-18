@@ -40,6 +40,7 @@ alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 
 alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
+alias makeabinit="cp ~/Dropbox/git/MatSciScripts/{abinit.in,abinit.files} ."
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -61,7 +62,9 @@ export PYTHONDONTWRITEBYTECODE=1
 export PATH="/home/uthpala/VASP/vasp.5.4.4/bin/:$PATH"
 
 # abinit
-export ABI_PSPDIR="/home/uthpala/abinit/Psps_for_tests"
+export PAW_PBE="/home/uthpala/abinit/pseudo-dojo/paw_pbe_standard"
+export PAW_LDA="/home/uthpala/abinit/pseudo-dojo/paw_pw_standard"
+export NC_PBEsol="/home/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8"
 
 # Library path
 export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
@@ -112,9 +115,9 @@ export PATH="/home/uthpala/globusconnectpersonal/:$PATH"
 
 # siesta
 export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
-# export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/COOP/:$PATH"
+export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/COOP/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/Bands/:$PATH"
-export PATH="/home/uthpala/siesta/siesta-dmft/Obj/:$PATH"
+#export PATH="/home/uthpala/siesta/siesta-dmft/Obj/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/COOP/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/Bands/:$PATH"
 

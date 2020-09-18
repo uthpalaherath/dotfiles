@@ -90,10 +90,11 @@ export PATH="/Users/uthpala/p4vasp/bin/:$PATH"
 #export PYTH=~/.local/bin:$PATH
 
 # CC
-#export CC="clang"
-#export CXX="clang++"
-#export FC="ifort"
+export CC="gcc-10"
+export CXX="g++-10"
+export FC="/usr/local/bin/gfortran-10"
 #export CPP="/usr/local/bin/cpp"
+#export PATH="/usr/local/bin/:$PATH"
 
 # dotfiles
 export PATH="~/dotfiles/:$PATH"
@@ -193,7 +194,9 @@ alias desktop2="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.28.27'"
 
 
 alias bridges="ssh -XY  uthpala@bridges.psc.xsede.org"
-alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"
+#alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"
+alias stampede2="ssh -XY  uthpala@login1.stampede2.tacc.utexas.edu"
+
 
 alias cleantmux='tmux kill-session -a'
 alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
@@ -205,3 +208,5 @@ alias tmux="(cd $(PWD); tmux attach-session -t macbook-pro -c $(PWD)  ) || (cd $
 
 alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
+
+eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)"
