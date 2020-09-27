@@ -90,9 +90,9 @@ export PATH="/Users/uthpala/p4vasp/bin/:$PATH"
 #export PYTH=~/.local/bin:$PATH
 
 # CC
-export CC="gcc-10"
-export CXX="g++-10"
-export FC="/usr/local/bin/gfortran-10"
+#export CC="gcc-10"
+#export CXX="g++-10"
+#export FC="/usr/local/bin/gfortran-10"
 #export CPP="/usr/local/bin/cpp"
 #export PATH="/usr/local/bin/:$PATH"
 
