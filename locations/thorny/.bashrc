@@ -46,32 +46,35 @@ module load lang/python/intelpython_3.6.9
 py2
 
 # compilers
-#module load lang/gcc/8.2.0
-module load lang/gcc/9.3.0
+module load lang/gcc/8.2.0
 module load lang/intel/2018_u4
 module load dev/cmake/3.15.4
 
 # programs
 module load atomistic/abinit/8.10.3_intel18
+# module load atomistic/abinit/8.10.3_gcc82_mpiio
+
+
 
 # libraries
 module load libs/fftw/3.3.8_intel18
 module load libs/hdf5/1.10.5_intel18 
-# module load libs/netcdf/4.7.1_intel18
+module load libs/netcdf/4.7.1_intel18
 
 #------------------------------------------- PATHS -------------------------------------------
 
 # vasp
 export PATH="/users/ukh0001/local/VASP/vasp.5.4.4/bin:$PATH"
 export PATH="/users/ukh0001/local/p4vasp/bin/:$PATH"
-export PATH="/users/ukh0001/local/VASP/vasp.5.4.4_dmft/bin/:$PATH"
-export PATH="/users/ukh0001/local/VASP/vasp_dmft/:$PATH"
+#export PATH="/users/ukh0001/local/VASP/vasp.5.4.4_dmft/bin/:$PATH"
+#export PATH="/users/ukh0001/local/VASP/vasp_dmft/:$PATH"
 
 # abinit
 export ABI_TESTS="/gpfs20/users/ukh0001/local/abinit/tests/"
 export ABI_PSPDIR="/users/ukh0001/local/abinit/pseudos/"
 export PAW_PBE="/gpfs20/users/ukh0001/local/abinit/pseudo-dojo/paw_pbe_standard"
 export PAW_LDA="/gpfs20/users/ukh0001/local/abinit/pseudo-dojo/paw_pw_standard"
+export NC_PBEsol="/users/ukh0001/local/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8/"
 
 
 # dotfiles 
@@ -127,8 +130,6 @@ export PATH="/users/ukh0001/local/gnuplot-4.6.7/bin/bin/:$PATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias interact="qsub -I -l nodes=1:ppn=40,walltime=4:00:00 -q standby" 
-alias debug="qsub -I -l nodes=1:ppn=40,walltime=1:00:00 -q debug" 
 alias q="qstat -u ukh0001"
 alias qq="qstat -q"
 alias qstatuswatch='watch -d "qstat -u ukh0001"'
@@ -142,6 +143,7 @@ alias makeINCAR="cp ~/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
 alias makejob="cp ~/dotfiles/locations/thorny/jobscript.sh ."
 alias makeabinit="cp ~/MatSciScripts/{abinit.in,abinit.files} ."
+alias detach="tmux detach-client -a"
 
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
@@ -150,5 +152,23 @@ killtmux(){
  for arg
  do tmux kill-session -t "thorny $arg"
  done
+}
+
+standby(){
+    if [ "$*" == "" ]; then
+        arg=1
+    else
+        arg=$1
+    fi
+    qsub -I -l nodes=$arg:ppn=40,walltime=4:00:00 -q standby
+}
+
+debugger(){
+    if [ "$*" == "" ]; then
+        arg=1
+    else
+        arg=$1
+    fi
+    qsub -I -l nodes=$arg:ppn=40,walltime=1:00:00 -q debug
 }
 
