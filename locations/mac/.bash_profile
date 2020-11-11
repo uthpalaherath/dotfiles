@@ -193,7 +193,9 @@ alias desktop2="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.28.27'"
 # alias desktop2="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -tXY ukh0001@157.182.3.76 ssh -XY uthpala@157.182.28.27'"
 
 
-alias bridges="ssh -XY  uthpala@bridges.psc.xsede.org"
+#alias bridges="ssh -XY  uthpala@bridges.psc.xsede.org"
+alias bridges="ssh -tXY  uthpala@bridges.psc.xsede.org 'ssh br005.pvt.bridges.psc.edu'"
+
 #alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"
 alias stampede2="ssh -XY  uthpala@login1.stampede2.tacc.utexas.edu"
 
