@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Author: Pedram Tavazohi
+
 import psutil
 import sys
 import time
