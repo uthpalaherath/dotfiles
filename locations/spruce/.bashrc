@@ -31,11 +31,16 @@ fi
 #------------------------------------------- MODULES -------------------------------------------
 
 # python
-module load lang/python/intelpython_2.7.16       
-#module load lang/python/intelpython_3.6.9
-# module load lang/python/2.7.15_gcc82
-# module load lang/python/3.7.2_gcc82
-
+py2(){
+    module unload lang/python/3.7.2_gcc82
+    module load lang/python/2.7.15_gcc82
+}
+py3(){
+    module unload lang/python/2.7.15_gcc82
+    module load lang/python/3.7.2_gcc82
+}
+#default
+py2
 
 # compilers
 module load lang/intel/2018_u4
@@ -104,7 +109,7 @@ export PATH="/users/ukh0001/local/openbabel-2.4.1/bin/:$PATH"
 #wannier90
 export PATH="/users/ukh0001/local/wannier90/wannier90-1.2:$PATH"
 export WANNIER_DIR="/users/ukh0001/local/wannier90/wannier90-1.2/"
-#export PATH="/users/ukh0001/local/wannier90/wannier90-3.1.0/:$PATH"
+export PATH="/users/ukh0001/local/wannier90/wannier90-3.1.0/:$PATH"
 
 # MatSciScripts
 export PATH="/users/ukh0001/MatSciScripts/:$PATH"
