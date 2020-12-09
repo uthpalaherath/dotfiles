@@ -49,6 +49,13 @@ function cd {
   fi
 }
 
+if expr "$(ps -o comm= $PPID)" : '^sshd:' > /dev/null; then
+  caffeinate -s $SHELL --login
+  exit $?
+fi
+
+eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)"
+
 # killtmux(){
 #     for arg
 #     do tmux kill-session -t "macbook-pro $arg"
@@ -58,8 +65,8 @@ function cd {
 #------------------------------------------- PATHS -------------------------------------------
 
 # Add Homebrew `/usr/local/bin` and User `~/bin` to the `$PATH`
-#PATH=/usr/local/bin/:$PATH
-#PATH=$HOME/bin:$PATH
+PATH=/usr/local/bin/:$PATH
+PATH=$HOME/bin:$PATH
 
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
@@ -89,13 +96,6 @@ export PATH="/Users/uthpala/p4vasp/bin/:$PATH"
 #export PYTHONPATH=~/.local/lib
 #export PYTH=~/.local/bin:$PATH
 
-# CC
-#export CC="gcc-10"
-#export CXX="g++-10"
-#export FC="/usr/local/bin/gfortran-10"
-#export CPP="/usr/local/bin/cpp"
-#export PATH="/usr/local/bin/:$PATH"
-
 # dotfiles
 export PATH="~/dotfiles/:$PATH"
 
@@ -118,7 +118,7 @@ py2(){
 export PATH="/anaconda2/bin:$PATH"
 }
 py3(){
-export PATH="/Users/uthpala/anaconda3/bin:$PATH"
+export PATH="/Users/uthpala/anaconda3/bin:$PATH"  
 }
 #default
 py3
@@ -130,13 +130,6 @@ export DMFT_ROOT="/Users/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/"
 export PYTHONPATH="/Users/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/:$PYTHONPATH"
 export PATH="/Users/uthpala/Dropbox/Research/Projects/DMFTwDFT/bin/:$PATH"
 
-# EDMFT
-export WIEN_DMFT_ROOT=$HOME/EDMFT/bin/
-export PYTHONPATH=$PYTHONPATH:$WIEN_DMFT_ROOT
-#export WIENROOT=$HOME/wien2k
-export SCRATCH="."
-export EDITOR="vim"
-export PATH=$WIENROOT:$WIEN_DMFT_ROOT:$PATH
 
 # texlive
 export PATH="/usr/local/texlive/2019/bin/x86_64-darwin/:$PATH"
@@ -148,7 +141,13 @@ export PATH="/Users/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
 export PATH="/usr/local/opt/llvm/bin:$PATH"
 export LDFLAGS="-L/usr/local/opt/llvm/lib/:$LDFLAGS"
 export CPPFLAGS="-I/usr/local/opt/llvm/include/:$CPPFLAGS"
+export CPPFLAGS="-I/usr/local/opt/llvm/include/c++/v1/:$CPPFLAGS"
 export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib/:$LDFLAGS"
+export CC="clang"
+export CXX="clang++"
+# export CC="gcc-10"
+# export CXX="g++-10"
+
 
 # Perl warning fix
 export LC_CTYPE=en_US.UTF-8
@@ -171,6 +170,7 @@ export PATH="/Users/uthpala/jmol-14.30.2/:$PATH"
 
 # fftw
 export LD_LIBRARY_PATH="/Users/uthpala/lib/fftw/lib/:$LD_LIBRARY_PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias wvu="ssh -tXY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
@@ -194,7 +194,7 @@ alias desktop2="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.28.27'"
 
 
 #alias bridges="ssh -XY  uthpala@bridges.psc.xsede.org"
-alias bridges="ssh -tXY  uthpala@bridges.psc.xsede.org 'ssh br005.pvt.bridges.psc.edu'"
+alias bridges="ssh -tXY  uthpala@bridges.psc.xsede.org 'ssh -XY br005.pvt.bridges.psc.edu'"
 
 #alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"
 alias stampede2="ssh -XY  uthpala@login1.stampede2.tacc.utexas.edu"
@@ -211,4 +211,3 @@ alias tmux="(cd $(PWD); tmux attach-session -t macbook-pro -c $(PWD)  ) || (cd $
 alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
 
-eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)"

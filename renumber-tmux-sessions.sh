@@ -9,16 +9,16 @@
 #
 # - Uthpala Herath
 
-sessions=$(tmux ls | cut -f1 -d':' | cut -f2 -d ' ' | sort -n)
-new=1
-for old in $sessions
-do
-  tmux rename -t $old "${TMUX_DEVICE_NAME} ${new}"
-  tmux rename -t "${TMUX_DEVICE_NAME} ${old}" "${TMUX_DEVICE_NAME} ${new}"
-  ((new++))
+#kill detached sessions
+tmux list-sessions | grep -E -v '\(attached\)$' | while IFS='\n' read line; do
+    tmux kill-session -t "${line%%:*}"
 done
 
-#kill detached sessions
-#tmux list-sessions | grep -v attached | cut -d: -f1 |  xargs -t -n1 tmux kill-session -t
-
-
+ # renumbering sessions
+new=0
+sessions=$(tmux ls | cut -f1 -d':' | cut -f2 -d ' ' | sort -n)
+for old in $sessions
+do
+    tmux rename -t $old "${TMUX_DEVICE_NAME}-${new}"
+    ((new++))
+done

@@ -12,7 +12,8 @@
 # tmux
 export TMUX_DEVICE_NAME=desktop2
 if command -v tmux &> /dev/null && [ -t 0  ] && [[ -z $TMUX  ]] && [[ $- = *i*  ]]; then
-    tmux attach -t desktop2 || tmux new -s desktop2
+    #tmux attach -t desktop2 || tmux new -s desktop2
+    tmux new-session -t desktop2 || tmux new -s desktop2
     #exec tmux
 fi
 
@@ -41,6 +42,7 @@ alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
 alias makeabinit="cp ~/Dropbox/git/MatSciScripts/{abinit.in,abinit.files} ."
+alias detach="tmux detach-client -a"
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 

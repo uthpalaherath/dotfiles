@@ -1,5 +1,5 @@
 colorscheme molokai
-set transparency=7
+set transparency=0
 set guifont=Monaco:h15
 
 " cursor options
