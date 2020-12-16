@@ -1,0 +1,15 @@
+""" {{ name }}.
+
+Parameters
+----------
+
+param : type, optional (default )
+    Description
+
+Attributes
+----------
+
+param : type, optional (default )
+    Description
+
+"""

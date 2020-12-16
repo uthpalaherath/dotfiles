@@ -69,10 +69,11 @@ export PAW_LDA="/home/uthpala/abinit/pseudo-dojo/paw_pw_standard"
 export NC_PBEsol="/home/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8"
 
 # Library path
-export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/usr/lib/:$LD_LIBRARY_PATH"
 
 # /usr/local/bin/
 export PATH="/usr/local/bin/:$PATH"
+
 
 # anaconda
 py2(){
@@ -162,9 +163,10 @@ export PATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PATH"
 # Quantum Espresso
 export PATH="/home/uthpala/qe-6.5/bin/:$PATH"
 
+
 #sourcing intel compilers
-source /opt/intel/bin/compilervars.sh intel64
-source /opt/intel/mkl/bin/mklvars.sh intel64
+# source /opt/intel/bin/compilervars.sh intel64
+# source /opt/intel/mkl/bin/mklvars.sh intel64
 
 # compilers
 # export CC="gcc-5"
