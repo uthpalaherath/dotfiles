@@ -105,10 +105,23 @@ export PATH="~/dotfiles/:$PATH"
 # export PATH="/home/uthpala/VASP/vasp.5.4.4_dmft/bin/:$PATH"
 
 # DMFTwDFT
-export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
-export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
-export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
-export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
+# export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
+# export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
+# export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
+# export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
+
+# DMFTwDFT_eb
+export PATH="/home/uthpala/Dropbox/git/DMFTwDFT_eb/bin/:$PATH"
+export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT_eb/bin/:$PYTHONPATH"
+export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT_eb/bin/"
+export PATH="/home/uthpala/Dropbox/git/DMFTwDFT_eb/scripts/:$PATH"
+
+# DMFTwDFT_tetra
+# export PATH="/home/uthpala/Dropbox/git/DMFTwDFT_tetra/bin/:$PATH"
+# export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT_tetra/bin/:$PYTHONPATH"
+# export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT_tetra/bin/"
+# export PATH="/home/uthpala/Dropbox/git/DMFTwDFT_tetra/scripts/:$PATH"
+
 
 # Vesta
 export PATH="/home/uthpala/VESTA/:$PATH"
@@ -117,8 +130,8 @@ export PATH="/home/uthpala/VESTA/:$PATH"
 export PATH="/home/uthpala/globusconnectpersonal/:$PATH"
 
 # siesta
-export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
-export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/COOP/:$PATH"
+ export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
+# export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/COOP/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/Bands/:$PATH"
 #export PATH="/home/uthpala/siesta/siesta-dmft/Obj/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/COOP/:$PATH"
@@ -165,8 +178,8 @@ export PATH="/home/uthpala/qe-6.5/bin/:$PATH"
 
 
 #sourcing intel compilers
-# source /opt/intel/bin/compilervars.sh intel64
-# source /opt/intel/mkl/bin/mklvars.sh intel64
+source /opt/intel/bin/compilervars.sh intel64
+source /opt/intel/mkl/bin/mklvars.sh intel64
 
 # compilers
 # export CC="gcc-5"
