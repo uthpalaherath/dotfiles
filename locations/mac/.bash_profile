@@ -21,8 +21,11 @@ export TMUX_DEVICE_NAME=macbook-pro
 #fi
 
 # Sourcing intel compilers
-source /opt/intel/bin/compilervars.sh intel64
-source /opt/intel/mkl/bin/mklvars.sh intel64
+# source /opt/intel/bin/compilervars.sh intel64
+# source /opt/intel/mkl/bin/mklvars.sh intel64
+
+# Sourcing intel oneAPI system
+source /opt/intel/oneapi/setvars.sh  > /dev/null
 
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
@@ -116,7 +119,7 @@ export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/us
 export PYTHONDONTWRITEBYTECODE=1
 
 # Intel compilers
-export PATH="/opt/intel/bin/:$PATH"
+# export PATH="/opt/intel/bin/:$PATH"
 
 # adding wannier and vasp directories
 export PATH="/Users/uthpala/lib/wannier90/wannier90-2.1.0/:$PATH"
@@ -179,6 +182,17 @@ export PATH="/Users/uthpala/jmol-14.30.2/:$PATH"
 # eos
 #export PATH="/Users/uthpala/eos/eos_au/:$PATH"
 export PATH="/Users/uthpala/eos/eos/:$PATH"
+
+# libxml
+export PATH="/usr/local/opt/libxml2/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/libxml2/lib"
+export CPPFLAGS="-I/usr/local/opt/libxml2/include"
+export PKG_CONFIG_PATH="/usr/local/opt/libxml2/lib/pkgconfig"
+
+# hdf5
+export PATH="/usr/local/opt/hdf5-parallel/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/hdf5-parallel/lib"
+export CPPFLAGS="-I/usr/local/opt/hdf5-parallel/include"
 
 #------------------------------------------- ALIASES -------------------------------------------
 

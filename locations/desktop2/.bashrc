@@ -27,22 +27,27 @@ source ~/.bash_prompt
 export LS_OPTIONS='--color=auto'
 eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
+alias grep='grep --color=auto'
+
 
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias spruce='ssh -X ukh0001@spruce.hpc.wvu.edu'
-alias bridges='ssh -XYC uthpala@bridges.psc.xsede.org'
-alias stampede='ssh -XYC uthpala@stampede2.tacc.xsede.org'
-alias whitehall="ssh -XC ukh0001@157.182.3.76"
+alias desktop="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.27.178'"
+alias spruce='ssh -XY ukh0001@spruce.hpc.wvu.edu'
+alias whitehall="ssh -XY ukh0001@157.182.3.76"
+alias thorny="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@tf.hpc.wvu.edu'"
+alias bridges="ssh -tXY  uthpala@bridges.psc.xsede.org 'ssh -XY br005.pvt.bridges.psc.edu'"
+alias stampede2="ssh -XY  uthpala@login1.stampede2.tacc.utexas.edu"
+
 alias cleantmux="tmux kill-session -a"
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from desktop2" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
+alias detach="tmux detach-client -a"
 
 alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
 alias makeabinit="cp ~/Dropbox/git/MatSciScripts/{abinit.in,abinit.files} ."
-alias detach="tmux detach-client -a"
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -72,18 +77,34 @@ export NC_PBEsol="/home/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8
 export LD_LIBRARY_PATH="/usr/lib/:$LD_LIBRARY_PATH"
 
 # /usr/local/bin/
-export PATH="/usr/local/bin/:$PATH"
+# export PATH="/usr/local/bin/:$PATH"
 
 
-# anaconda
+# Anaconda
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/uthpala/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/uthpala/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/uthpala/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/uthpala/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+# export PATH="/home/uthpala/anaconda3/bin/:$PATH"
 py2(){
-export PATH="/home/uthpala/anaconda2/bin/:$PATH"
+    conda activate py2
 }
 py3(){
-export PATH="/home/uthpala/anaconda3/bin/:$PATH"
+    conda activate py3
 }
 #default
-py2
+py3
 
 # scripts
 export PATH="~/dotfiles/:$PATH"
@@ -130,10 +151,10 @@ export PATH="/home/uthpala/VESTA/:$PATH"
 export PATH="/home/uthpala/globusconnectpersonal/:$PATH"
 
 # siesta
- export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
+# export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/COOP/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/Bands/:$PATH"
-#export PATH="/home/uthpala/siesta/siesta-dmft/Obj/:$PATH"
+ export PATH="/home/uthpala/siesta/siesta-dmft/Obj/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/COOP/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/Bands/:$PATH"
 
@@ -177,11 +198,14 @@ export PATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PATH"
 export PATH="/home/uthpala/qe-6.5/bin/:$PATH"
 
 
-#sourcing intel compilers
-source /opt/intel/bin/compilervars.sh intel64
-source /opt/intel/mkl/bin/mklvars.sh intel64
+
+# Pandoc
+export PATH="/home/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
 
 # compilers
 # export CC="gcc-5"
 # export CXX="g++-5"
 # export FC="gfortran-5"
+
+#Intel compilers
+source /opt/intel/oneapi/setvars.sh > /dev/null
