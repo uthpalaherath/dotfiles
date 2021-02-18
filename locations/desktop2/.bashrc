@@ -60,7 +60,7 @@ killtmux(){
 #------------------------------------------- PATHS -------------------------------------------
 
 # set MPI
-export I_MPI_SHM_LMT=shm
+# export I_MPI_SHM_LMT=shm
 
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
@@ -77,7 +77,7 @@ export NC_PBEsol="/home/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8
 export LD_LIBRARY_PATH="/usr/lib/:$LD_LIBRARY_PATH"
 
 # /usr/local/bin/
-# export PATH="/usr/local/bin/:$PATH"
+export PATH="/usr/local/bin/:$PATH"
 
 
 # Anaconda

@@ -13,16 +13,10 @@ fi
 ulimit -s hard
 
 # tmux
-export TMUX_DEVICE_NAME=macbook-pro
-#if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-#   #tmux attach -t default || tmux new -s default
-#   #(cd $(PWD); tmux attach-session -t macbook-pro -c $(PWD)  ) || (cd $(PWD);tmux new -s macbook-pro -c $(PWD)  )
-#   exec tmux
-#fi
-
-# Sourcing intel compilers
-# source /opt/intel/bin/compilervars.sh intel64
-# source /opt/intel/mkl/bin/mklvars.sh intel64
+# export TMUX_DEVICE_NAME=macbook-pro
+# if command -v tmux &> /dev/null && [ -t 0  ] && [[ -z $TMUX  ]] && [[ $- = *i*  ]]; then
+#     tmux new-session -t macbook-pro || tmux new -s macbook-pro
+# fi
 
 # Sourcing intel oneAPI system
 source /opt/intel/oneapi/setvars.sh  > /dev/null
@@ -92,6 +86,16 @@ if expr "$(ps -o comm= $PPID)" : '^sshd:' > /dev/null; then
   exit $?
 fi
 
+function umount_all {
+    umount ~/HPC/bridges/home
+    umount ~/HPC/desktop/home
+    umount ~/HPC/desktop2/home
+    umount ~/HPC/spruce/home
+    umount ~/HPC/stampede2/home
+    umount ~/HPC/thorny/home
+    umount ~/HPC/whitehall/home
+}
+
 #eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)"
 
 # killtmux(){
@@ -122,9 +126,8 @@ export PYTHONDONTWRITEBYTECODE=1
 # export PATH="/opt/intel/bin/:$PATH"
 
 # adding wannier and vasp directories
-export PATH="/Users/uthpala/lib/wannier90/wannier90-2.1.0/:$PATH"
+export PATH="/Users/uthpala/wannier90/wannier90-3.1.0/:$PATH"
 export PATH="/Users/uthpala/VASP/vasp.5.4.4/bin/:$PATH"
-export WANNIER_DIR="/Users/uthpala/lib/wannier90/wannier90-1.2/"
 
 # Siesta
 export PATH="/Users/uthpala/siesta/siesta-4.1-b3/Obj/:$PATH"
@@ -194,6 +197,17 @@ export PATH="/usr/local/opt/hdf5-parallel/bin:$PATH"
 export LDFLAGS="-L/usr/local/opt/hdf5-parallel/lib"
 export CPPFLAGS="-I/usr/local/opt/hdf5-parallel/include"
 
+# Abinit pseudopotentials
+export PBESOL="/Users/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8/"
+export PAWPBE="/Users/uthpala/abinit/pseudo-dojo/paw_pbe_standard/"
+export PAWLDA="/Users/uthpala/abinit/pseudo-dojo/paw_pw_standard/"
+
+# NEBgen
+export PATH="/Users/uthpala/Dropbox/git/NEBgen/:$PATH"
+
+# VTST
+export PATH="/Users/uthpala//VTST/vtstscripts-957/:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias wvu="ssh -tXY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
@@ -218,6 +232,7 @@ alias desktop2="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.28.27'"
 
 #alias bridges="ssh -XY  uthpala@bridges.psc.xsede.org"
 alias bridges="ssh -tXY  uthpala@bridges.psc.xsede.org 'ssh -XY br005.pvt.bridges.psc.edu'"
+alias bridges2="ssh -XY  uthpala@bridges2.psc.xsede.org"
 
 #alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"
 alias stampede2="ssh -XY  uthpala@login1.stampede2.tacc.utexas.edu"
@@ -230,8 +245,17 @@ alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from mac" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
-#alias tmux="tmux -CC new -A -s main"
-alias tmux="(cd $(PWD); tmux attach-session -t macbook-pro -c $(PWD)  ) || (cd $(PWD);tmux new -s macbook-pro -c $(PWD))"
 
 alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
+
+alias sed="gsed"
+
+# Mounting HPC drives
+alias mount_bridges="sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges.psc.xsede.org:/home/uthpala ~/HPC/bridges/home"
+alias mount_stampede2="sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
+alias mount_spruce="sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
+alias mount_thorny="sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+alias mount_desktop="sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+alias mount_desktop2="sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+alias mount_whitehall="sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
