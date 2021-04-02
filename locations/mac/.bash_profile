@@ -100,7 +100,6 @@ mount_all(){
 }
 
 umount_all(){
-    umount -f /Users/uthpala/HPC/bridges/home
     umount -f /Users/uthpala/HPC/bridges2/home
     umount -f /Users/uthpala/HPC/desktop/home
     umount -f /Users/uthpala/HPC/desktop2/home
@@ -108,6 +107,7 @@ umount_all(){
     umount -f /Users/uthpala/HPC/stampede2/home
     umount -f /Users/uthpala/HPC/thorny/home
     umount -f /Users/uthpala/HPC/whitehall/home
+    umount -f /Users/uthpala/HPC/romeronas/home
 }
 
 # extract, mkcdr and archive creattion were taken from
@@ -310,7 +310,7 @@ alias whitehall="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@157.182.3.76
 alias whitehall2="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
 alias desktop="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.27.178''"
 alias desktop2="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.28.27''"
-alias romeronas="ssh -tY ukh0001@spruce.hpc.wvu.edu '-tY ukh0001@157.182.3.76 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu''"
+alias romeronas="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu''"
 
 # Mounting HPC drives without ssh options through spruce
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
