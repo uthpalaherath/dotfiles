@@ -49,6 +49,9 @@ alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
 alias makeabinit="cp ~/Dropbox/git/MatSciScripts/{abinit.in,abinit.files} ."
 
+alias display_off="sudo vbetool dpms off"
+alias display_on="sudo vbetool dpms on"
+
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
 killtmux(){
@@ -74,6 +77,7 @@ case $1 in
 *.zip)       unzip $1       ;;
 *.Z)         uncompress $1  ;;
 *.7z)        7z x $1        ;;
+*.tar.xz)    tar xf $1    ;;
 *)           echo "don't know how to extract '$1'..." ;;
 esac
 else
@@ -108,10 +112,10 @@ export PAW_LDA="/home/uthpala/abinit/pseudo-dojo/paw_pw_standard"
 export NC_PBEsol="/home/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8"
 
 # Library path
-export LD_LIBRARY_PATH="/usr/lib/:$LD_LIBRARY_PATH"
+ export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
 
-# /usr/local/bin/
-export PATH="/usr/local/bin/:$PATH"
+# # /usr/local/bin/
+# export PATH="/usr/local/bin/:$PATH"
 
 
 # Anaconda
@@ -160,16 +164,16 @@ export PATH="~/dotfiles/:$PATH"
 # export PATH="/home/uthpala/VASP/vasp.5.4.4_dmft/bin/:$PATH"
 
 # DMFTwDFT
-# export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
-# export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
-# export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
-# export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
+export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
+export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
+export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
+export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
 
 # DMFTwDFT_eb
-export PATH="/home/uthpala/Dropbox/git/DMFTwDFT_eb/bin/:$PATH"
-export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT_eb/bin/:$PYTHONPATH"
-export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT_eb/bin/"
-export PATH="/home/uthpala/Dropbox/git/DMFTwDFT_eb/scripts/:$PATH"
+# export PATH="/home/uthpala/Dropbox/git/DMFTwDFT_eb/bin/:$PATH"
+# export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT_eb/bin/:$PYTHONPATH"
+# export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT_eb/bin/"
+# export PATH="/home/uthpala/Dropbox/git/DMFTwDFT_eb/scripts/:$PATH"
 
 # DMFTwDFT_tetra
 # export PATH="/home/uthpala/Dropbox/git/DMFTwDFT_tetra/bin/:$PATH"
@@ -188,7 +192,7 @@ export PATH="/home/uthpala/globusconnectpersonal/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/COOP/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/Bands/:$PATH"
- export PATH="/home/uthpala/siesta/siesta-dmft/Obj/:$PATH"
+export PATH="/home/uthpala/siesta/siesta-dmft-original/Obj/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/COOP/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/Bands/:$PATH"
 
@@ -208,8 +212,11 @@ export EDITOR="vim"
 export PATH=$WIENROOT:$WIEN_DMFT_ROOT:$PATH
 
 # elk
-export PATH="/home/uthpala/elk/elk-6.3.2/src/:$PATH"
-export PATH="/home/uthpala/elk/elk-6.3.2/src/spacegroup/:$PATH"
+# export PATH="/home/uthpala/elk/elk-6.3.2/src/:$PATH"
+# export PATH="/home/uthpala/elk/elk-6.3.2/src/spacegroup/:$PATH"
+export PATH="/home/uthpala/elk/elk-7.0.12/src/:$PATH"
+export PATH="/home/uthpala/elk/elk-7.0.12/src/spacegroup/:$PATH"
+
 
 # wannier90
 #export PATH="/home/uthpala/wannier90/wannier90-1.2/:$PATH"
@@ -231,15 +238,31 @@ export PATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PATH"
 # Quantum Espresso
 export PATH="/home/uthpala/qe-6.5/bin/:$PATH"
 
-
-
 # Pandoc
 export PATH="/home/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
 
-# compilers
-# export CC="gcc-5"
-# export CXX="g++-5"
-# export FC="gfortran-5"
+# DFTB+
+export PATH="/home/uthpala/DFTB+/dftb+/bin/:$PATH"
 
 #Intel compilers
 source /opt/intel/oneapi/setvars.sh > /dev/null
+#export I_MPI_ADJUST_REDUCE=3
+# export LD_LIBRARY_PATH="/opt/intel/oneapi/compiler/latest/linux/lib/:$LD_LIBRARY_PATH"
+# export LD_LIBRARY_PATH="/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64/:$LD_LIBRARY_PATH"
+# export LD_LIBRARY_PATH="/opt/intel/oneapi/mkl/latest/lib/intel64/:$LD_LIBRARY_PATH"
+
+# # compilers
+# export CC="mpicc"
+# export CXX="mpicxx"
+# export FC="mpif90"
+# export F77="mpif90"
+
+# export I_MPI_CC="icc"
+# export I_MPI_CXX="icpc"
+# export I_MPI_FC="ifort"
+# export I_MPI_F90="ifort"
+# export I_MPI_F77="ifort"
+
+#OpenMPI
+# export LD_LIBRARY_PATH="/opt/openmpi/lib/:$LD_LIBRARY_PATH"
+# export PATH="/opt/openmpi/bin/:$PATH"

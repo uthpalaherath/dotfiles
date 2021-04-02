@@ -15,7 +15,7 @@ ulimit -s hard
 # tmux
 # export TMUX_DEVICE_NAME=macbook-pro
 # if command -v tmux &> /dev/null && [ -t 0  ] && [[ -z $TMUX  ]] && [[ $- = *i*  ]]; then
-#     tmux new-session -t macbook-pro || tmux new -s macbook-pro
+#     tmux new-session -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
 # fi
 
 # Sourcing intel oneAPI system
@@ -37,6 +37,9 @@ export LSCOLORS=ExFxCxDxBxegedabagacad
 
 # Remove warnings
 export BASH_SILENCE_DEPRECATION_WARNING=1
+
+# X11 environment
+export DISPLAY=:0
 
 # PYTHON
 # >>> conda initialize >>>
@@ -64,11 +67,12 @@ py3(){
 #default
 py3
 
-
+# itermocil
+complete -W "$(itermocil --list)" itermocil
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
-function cd {
+cd() {
   if [ ${#1} == 0 ]; then
     builtin cd
   elif [ -d "${1}" ]; then
@@ -86,14 +90,24 @@ if expr "$(ps -o comm= $PPID)" : '^sshd:' > /dev/null; then
   exit $?
 fi
 
-function umount_all {
-    umount ~/HPC/bridges/home
-    umount ~/HPC/desktop/home
-    umount ~/HPC/desktop2/home
-    umount ~/HPC/spruce/home
-    umount ~/HPC/stampede2/home
-    umount ~/HPC/thorny/home
-    umount ~/HPC/whitehall/home
+mount_all(){
+    mount_spruce;
+    mount_thorny;
+    mount_whitehall;
+    mount_desktop;
+    mount_desktop2;
+    mount_romeronas;
+}
+
+umount_all(){
+    umount -f /Users/uthpala/HPC/bridges/home
+    umount -f /Users/uthpala/HPC/bridges2/home
+    umount -f /Users/uthpala/HPC/desktop/home
+    umount -f /Users/uthpala/HPC/desktop2/home
+    umount -f /Users/uthpala/HPC/spruce/home
+    umount -f /Users/uthpala/HPC/stampede2/home
+    umount -f /Users/uthpala/HPC/thorny/home
+    umount -f /Users/uthpala/HPC/whitehall/home
 }
 
 # extract, mkcdr and archive creattion were taken from
@@ -120,7 +134,7 @@ echo "'$1' is not a valid file!"
 fi
 }
 # Creates directory then moves into it
-function mkcdr {
+mkcdr() {
   mkdir -p -v $1
 cd $1
 }
@@ -129,6 +143,13 @@ mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 
+
+xq () {
+    if ! pgrep X11.bin; then
+        /Applications/Utilities/XQuartz.app/Contents/MacOS/X11 > /dev/null 2>&1 &
+    fi
+}
+xq > /dev/null 2>&1
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -139,17 +160,8 @@ PATH=$HOME/bin:$PATH
 # System library
 export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/:$DYLD_LIBRARY_PATH"
 
-# Compilers
-# export CC="clang"
-# export CXX="clang++"
-# # export CC="gcc-10"
-# export CXX="g++-10"
-
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
-
-# Intel compilers
-# export PATH="/opt/intel/bin/:$PATH"
 
 # adding wannier and vasp directories
 export PATH="/Users/uthpala/wannier90/wannier90-3.1.0/:$PATH"
@@ -181,16 +193,11 @@ export PATH="/usr/local/opt/openssl/bin:$PATH"
 # For pkg-config to find openssl you may need to set:
 export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
 
-# DMFTwDFT
-export PYTHONPATH="/Users/uthpala/projects/DMFTwDFT/bin/:$PYTHONPATH"
-export PATH="/Users/uthpala/projects/DMFTwDFT/bin/:$PATH"
-
 # texlive
 export PATH="/usr/local/texlive/2020/bin/x86_64-darwin/:$PATH"
 
 # pandoc-templates
 export PATH="/Users/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
-
 
 # Perl warning fix
 export LC_CTYPE=en_US.UTF-8
@@ -234,54 +241,113 @@ export PATH="/Users/uthpala/Dropbox/git/NEBgen/:$PATH"
 # VTST
 export PATH="/Users/uthpala//VTST/vtstscripts-957/:$PATH"
 
+# X11
+export PATH="/opt/X11/bin/:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias wvu="ssh -tXY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
-alias sprucetmux="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'tmux -CC new -A -s spruce '"
 
+home(){
 # logging through ssh.wvu.edu
-alias spruce="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@spruce.hpc.wvu.edu'"
-alias thorny="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@tf.hpc.wvu.edu'"
-alias whitehall="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@157.182.3.76'"
-alias whitehall2="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@157.182.3.75'"
-alias desktop="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.27.178'"
-alias desktop2="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY uthpala@157.182.28.27'"
+alias spruce="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@spruce.hpc.wvu.edu'"
+alias thorny="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
+alias whitehall="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
+alias whitehall2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
+alias desktop="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y uthpala@157.182.27.178'"
+alias desktop2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y uthpala@157.182.28.27'"
+alias romeronas="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu'"
 
+# Mounting HPC drives without ssh options
+alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
+alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
+alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
+alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+alias mount_desktop="umount ~/HPC/thorny/desktop; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+
+# Mounting HPC drives
+#alias mount_bridges="umount ~/HPC/bridges/home; sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges.psc.xsede.org:/home/uthpala ~/HPC/bridges/home"
+##alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
+#alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
+##alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
+#alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
+#alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
+#alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+#alias mount_desktop="umount ~/HPC/thorny/desktop; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+#alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+#alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+#alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+}
+
+work(){
+# logging through LAN at work
+alias spruce="ssh -Y ukh0001@spruce.hpc.wvu.edu"
+alias thorny="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
+alias whitehall="ssh -Y ukh0001@157.182.3.76"
+alias whitehall2="ssh -Y ukh0001@157.182.3.75"
+alias desktop="ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.27.178'"
+alias desktop2="ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.28.27'"
+alias romeronas="ssh -tY ukh0001@157.182.3.76 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu'"
+
+# Mounting HPC drives without ssh options from LAN at work
+alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
+alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
+alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
+alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh'"
+alias mount_desktop="umount ~/HPC/thorny/desktop; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
+alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
+alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks 157.182.3.76: ~/HPC/whitehall/home"
+alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
+}
+
+work_wifi(){
 # logging through spruce
-# alias spruce="ssh -xy ukh0001@spruce.hpc.wvu.edu"
-# alias thorny="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -XY ukh0001@tf.hpc.wvu.edu'"
-# alias whitehall="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -XY ukh0001@157.182.3.76'"
-# alias whitehall2="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -XY ukh0001@157.182.3.75'"
-# alias desktop="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -tXY ukh0001@157.182.3.76 ssh -XY uthpala@157.182.27.178'"
-# alias desktop2="ssh -tXY ukh0001@spruce.hpc.wvu.edu 'ssh -tXY ukh0001@157.182.3.76 ssh -XY uthpala@157.182.28.27'"
+alias spruce="ssh -Y ukh0001@spruce.hpc.wvu.edu"
+alias thorny="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
+alias whitehall="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
+alias whitehall2="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
+alias desktop="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.27.178''"
+alias desktop2="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.28.27''"
+alias romeronas="ssh -tY ukh0001@spruce.hpc.wvu.edu '-tY ukh0001@157.182.3.76 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu''"
 
+# Mounting HPC drives without ssh options through spruce
+alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
+alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
+alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
+alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh'"
+alias mount_desktop="umount ~/HPC/thorny/desktop; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh -t ukh0001@157.182.3.76 ssh'"
+alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh -t ukh0001@157.182.3.76 ssh'"
+alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh'"
+alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh -t ukh0001@157.182.3.76 ssh'"
+}
+# default
+work
 
+# Other ssh connections
 #alias bridges="ssh -XY  uthpala@bridges.psc.xsede.org"
-alias bridges="ssh -tXY  uthpala@bridges.psc.xsede.org 'ssh -XY br005.pvt.bridges.psc.edu'"
-alias bridges2="ssh -XY  uthpala@bridges2.psc.xsede.org"
-
 #alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"
-alias stampede2="ssh -XY  uthpala@login1.stampede2.tacc.utexas.edu"
+alias wvu="ssh -tY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
+alias sprucetmux="ssh -tY ukh0001@spruce.hpc.wvu.edu 'tmux -CC new -A -s spruce '"
+alias bridges="ssh -tY  uthpala@bridges.psc.xsede.org 'ssh -Y br005.pvt.bridges.psc.edu'"
+alias bridges2="ssh -Y  uthpala@bridges2.psc.xsede.org"
+alias stampede2="ssh -Y  uthpala@login1.stampede2.tacc.utexas.edu"
+alias cori="ssh -Y train61@cori.nersc.gov"
 
-# Cori
-alias cori="ssh -XY train61@cori.nersc.gov"
-
+# git repos
 alias cleantmux='tmux kill-session -a'
 alias brewup='brew update; brew upgrade; brew prune; brew cleanup; brew doctor'
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from mac" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
-
 alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
-
 alias sed="gsed"
 
-# Mounting HPC drives
-alias mount_bridges="sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges.psc.xsede.org:/home/uthpala ~/HPC/bridges/home"
-alias mount_stampede2="sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
-alias mount_spruce="sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
-alias mount_thorny="sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
-alias mount_desktop="sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
-alias mount_desktop2="sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
-alias mount_whitehall="sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+# MPI
+export I_MPI_CC="icc"
+export I_MPI_CXX="icpc"
+export I_MPI_FC="ifort"
+export I_MPI_F90="ifort"
+export I_MPI_F77="ifort"
