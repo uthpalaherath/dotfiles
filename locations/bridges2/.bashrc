@@ -13,7 +13,7 @@
 module load tmux/2.7
 export TMUX_DEVICE_NAME=bridges2
 if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-	tmux attach -t bridges2 || tmux new -s bridges2
+	tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
     #tmux
 fi
 
