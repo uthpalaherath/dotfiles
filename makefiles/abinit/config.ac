@@ -1,0 +1,36 @@
+# Compilers
+FC="mpif90"
+CC="gcc"
+CXX="g++"
+
+# MPI settings
+with_mpi="yes"
+enable_mpi_io="yes"
+FCFLAGS_EXTRA="-ffree-line-length-none -L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem" #-qopenmp
+enable_openmp="yes"
+
+# linear algebra settings
+with_linalg_flavor="mkl"
+LINALG_CPPFLAGS="-I${MKLROOT}/include"
+LINALG_FCFLAGS="-I${MKLROOT}/include"
+LINALG_LIBS="-L${MKLROOT}/lib/intel64 -Wl,--start-group  -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -Wl,--end-group"
+
+# mandatory libraries
+# with_netcdf_incs="-I/home/uthpala/netcdf-c-4.7.4/build/include/"
+# with_netcdf_libs="-L//home/uthpala/netcdf-c-4.7.4/build/lib -lnetcdf -lnetcdff"
+with_hdf5="yes"
+with_netcdf="yes"
+with_netcdf_fortran="yes"
+with_libxc="yes"
+
+with_libxc=/usr/local/Cellar/libxc/4.3.4_1
+with_hdf5=/usr/local/Cellar/hdf5/1.12.0_1
+with_netcdf=/usr/local/Cellar/netcdf/4.7.4_2
+#with_netcdf_fortran=/home/uthpala/abinit/abinit-9.2.2/build/fallbacks/install_fb/intel/19.0/netcdf4_fortran/4.5.2
+
+# FFT flavor
+with_fft_flavor="dfti"
+FFT_FCFLAGS="-I${MKLROOT}/include"
+
+# Enable Netcdf mode in Abinit (use netcdf as default I/O library)
+enable_netcdf_default="yes"
