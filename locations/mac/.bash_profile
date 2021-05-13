@@ -38,8 +38,6 @@ export LSCOLORS=ExFxCxDxBxegedabagacad
 # Remove warnings
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
-# X11 environment
-export DISPLAY=:0
 
 # PYTHON
 # >>> conda initialize >>>
@@ -70,6 +68,7 @@ py3
 # itermocil
 complete -W "$(itermocil --list)" itermocil
 
+
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
 cd() {
@@ -90,14 +89,6 @@ if expr "$(ps -o comm= $PPID)" : '^sshd:' > /dev/null; then
   exit $?
 fi
 
-mount_all(){
-    mount_spruce;
-    mount_thorny;
-    mount_whitehall;
-    mount_desktop;
-    mount_desktop2;
-    mount_romeronas;
-}
 
 umount_all(){
     umount -f /Users/uthpala/HPC/bridges2/home
@@ -144,24 +135,37 @@ mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 
 
-xq () {
-    if ! pgrep X11.bin; then
-        /Applications/Utilities/XQuartz.app/Contents/MacOS/X11 > /dev/null 2>&1 &
-    fi
-}
-xq > /dev/null 2>&1
+# X11 environment
+# xq () {
+#     if ! pgrep X11.bin; then
+#         /Applications/Utilities/XQuartz.app/Contents/MacOS/X11 > /dev/null 2>&1 &
+#     fi
+# }
+# xq > /dev/null 2>&1
+
+#export DISPLAY=:0
+#export PATH="/opt/X11/bin/:$PATH"
 
 #------------------------------------------- PATHS -------------------------------------------
+
+# projects directory
+export PROJECTS="/Volumes/GoogleDrive/My Drive/research/projects/"
 
 # Add Homebrew `/usr/local/bin` and User `~/bin` to the `$PATH`
 PATH=/usr/local/bin/:$PATH
 PATH=$HOME/bin:$PATH
+export PATH="/usr/local/sbin:$PATH"
 
 # System library
 export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/:$DYLD_LIBRARY_PATH"
 
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
+
+# DMFTwDFT
+export PATH="~/Dropbox/git/DMFTwDFT-mac/bin/:$PATH"
+export PATH="~/Dropbox/git/DMFTwDFT-mac/scripts/:$PATH"
+export PYTHONPATH="~/Dropbox/git/DMFTwDFT-mac/bin/:$PYTHONPATH"
 
 # adding wannier and vasp directories
 export PATH="/Users/uthpala/wannier90/wannier90-3.1.0/:$PATH"
@@ -231,7 +235,7 @@ export LDFLAGS="-L/usr/local/opt/hdf5-parallel/lib"
 export CPPFLAGS="-I/usr/local/opt/hdf5-parallel/include"
 
 # Abinit pseudopotentials
-export PBESOL="/Users/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8/"
+export NC_PBEsol="/Users/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8/"
 export PAWPBE="/Users/uthpala/abinit/pseudo-dojo/paw_pbe_standard/"
 export PAWLDA="/Users/uthpala/abinit/pseudo-dojo/paw_pw_standard/"
 
@@ -240,9 +244,6 @@ export PATH="/Users/uthpala/Dropbox/git/NEBgen/:$PATH"
 
 # VTST
 export PATH="/Users/uthpala//VTST/vtstscripts-957/:$PATH"
-
-# X11
-export PATH="/opt/X11/bin/:$PATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -283,7 +284,7 @@ alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-
 
 work(){
 # logging through LAN at work
-alias spruce="ssh -Y ukh0001@spruce.hpc.wvu.edu"
+alias spruce="source ~/.bash_profile; ssh -Y ukh0001@spruce.hpc.wvu.edu"
 alias thorny="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
 alias whitehall="ssh -Y ukh0001@157.182.3.76"
 alias whitehall2="ssh -Y ukh0001@157.182.3.75"
@@ -298,7 +299,7 @@ alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o allow_other,defer_permiss
 alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh'"
 alias mount_desktop="umount ~/HPC/desktop/home; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
 alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
-alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks 157.182.3.76: ~/HPC/whitehall/home"
+alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@157.182.3.76: ~/HPC/whitehall/home"
 alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
 }
 
@@ -322,15 +323,38 @@ alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~
 alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh'"
 alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh -t ukh0001@157.182.3.76 ssh'"
 }
-# default
-work_wifi
+
+# setting up working environment based on the network SSID
+#WORK_ENV=$(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | awk '/ SSID:/ {print $2}')
+WORK_ENV=$(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | awk '/ SSID:/ {print $1="";print $0}' | awk '{ gsub(/ /,""); print }')
+if [ $(hostname | awk -F '-' '{print $1}') == "ip" ]; then
+    work
+else
+    if [ $WORK_ENV == "WVU.Encrypted" ]; then
+        work_wifi
+    else
+        home
+    fi
+fi
+
+# mounting all HPC locations
+mount_all(){
+    mount_spruce;
+    mount_thorny;
+    mount_whitehall;
+    mount_desktop;
+    mount_desktop2;
+    mount_romeronas;
+    mount_bridges2;
+}
 
 # Other ssh connections
 #alias bridges="ssh -XY  uthpala@bridges.psc.xsede.org"
+#alias bridges="ssh -tY  uthpala@bridges.psc.xsede.org 'ssh -Y br005.pvt.bridges.psc.edu'"
 #alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"
 alias wvu="ssh -tY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
 alias sprucetmux="ssh -tY ukh0001@spruce.hpc.wvu.edu 'tmux -CC new -A -s spruce '"
-alias bridges="ssh -tY  uthpala@bridges.psc.xsede.org 'ssh -Y br005.pvt.bridges.psc.edu'"
+#alias bridges2="ssh -tY  uthpala@bridges2.psc.xsede.org 'ssh -Y br011.bridges2.psc.edu'"
 alias bridges2="ssh -Y  uthpala@bridges2.psc.xsede.org"
 alias stampede2="ssh -Y  uthpala@login1.stampede2.tacc.utexas.edu"
 alias cori="ssh -Y train61@cori.nersc.gov"

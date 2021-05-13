@@ -192,7 +192,7 @@ export PATH="/home/uthpala/globusconnectpersonal/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/COOP/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/Bands/:$PATH"
-export PATH="/home/uthpala/siesta/siesta-dmft-original/Obj/:$PATH"
+# export PATH="/home/uthpala/siesta/siesta-dmft-original/Obj/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/COOP/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/Bands/:$PATH"
 
@@ -266,3 +266,12 @@ source /opt/intel/oneapi/setvars.sh > /dev/null
 #OpenMPI
 # export LD_LIBRARY_PATH="/opt/openmpi/lib/:$LD_LIBRARY_PATH"
 # export PATH="/opt/openmpi/bin/:$PATH"
+
+#------------------------------------------------------------------------
+# this is for XCRYSDEN 1.5.60; added by XCRYSDEN installation on
+# Tue Apr 20 17:20:59 EDT 2021
+#------------------------------------------------------------------------
+XCRYSDEN_TOPDIR=/home/uthpala/xcrysden-1.5.60-bin-semishared
+XCRYSDEN_SCRATCH=/home/uthpala/xcrys_tmp
+export XCRYSDEN_TOPDIR XCRYSDEN_SCRATCH
+PATH="$XCRYSDEN_TOPDIR:$PATH:$XCRYSDEN_TOPDIR/scripts:$XCRYSDEN_TOPDIR/util"
