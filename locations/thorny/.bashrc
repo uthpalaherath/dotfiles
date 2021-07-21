@@ -9,7 +9,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # purge
-module purge
+module purge 
 
 # Memory
 ulimit -s unlimited
@@ -65,28 +65,31 @@ py2(){
 #module unload lang/python/intelpython_3.6.9
 #module load lang/python/intelpython_2.7.16    
 # module load lang/python/pypy2.7-v7.3.2-linux64
-module unload lang/python/intelpython3_2020.2
+#module unload lang/python/intelpython3_2020.2
 #module unload lang/python/cpython_3.8.6_gcc93
 module load lang/python/intelpython2_2019.5
+# conda deactivate
+# conda activate py2
 }
 py3(){
+source /shared/software/conda/etc/profile.d/conda.sh
 #module unload lang/python/intelpython_2.7.16
 #module load lang/python/intelpython_3.6.9
 # module unload lang/python/pypy2.7-v7.3.2-linux64
 module unload lang/python/intelpython2_2019.5
 #module load lang/python/cpython_3.8.6_gcc93
-module load lang/python/intelpython3_2020.2
-
+#module load lang/python/intelpython3_2020.2
+conda activate py3
 }
 #default
 py2
 
 # compilers
-module load lang/gcc/8.2.0
+module load lang/gcc/8.2.0 
 module load lang/intel/2018_u4
 #module load lang/intel/2019_u5
 #module load lang/intel/2018
-module load dev/cmake/3.15.4
+#module load dev/cmake/3.15.4
 
 
 # libraries
@@ -108,7 +111,8 @@ module load dev/cmake/3.15.4
 #------------------------------------------- PATHS -------------------------------------------
 
 # vasp
-export PATH="/users/ukh0001/local/VASP/vasp.5.4.4/bin:$PATH"
+export PATH="/users/ukh0001/local/VASP/vasp.5.4.4/bin/:$PATH"
+#export PATH="/users/ukh0001/local/VASP/vasp.6.2.1/bin/:$PATH"
 
 # abinit
 export ABI_TESTS="/gpfs20/users/ukh0001/local/abinit/tests/"
@@ -147,7 +151,8 @@ export PATH="/users/ukh0001/projects/DMFTwDFT/scripts/:$PATH"
 
 
 # siesta
-export PATH="/users/ukh0001/local/siesta/siesta-4.1-b4/Obj/:$PATH"
+#export PATH="/users/ukh0001/local/siesta/siesta-4.1-b4/Obj/:$PATH"
+export PATH="/users/ukh0001/local/siesta/siesta-4.1.5/Obj/:$PATH"
 # export PATH="/users/ukh0001/local/siesta/siesta-dmft/Obj/:$PATH"
 #export PATH="/users/ukh0001/local/siesta/siesta-dmft-bandwin/Obj/:$PATH"
 #export PATH="/users/ukh0001/local/siesta/siesta-dmft-original/Obj/:$PATH"
@@ -192,7 +197,7 @@ alias makejob="cp ~/dotfiles/locations/thorny/jobscript.sh ."
 alias makeabinit="cp ~/MatSciScripts/{abinit.in,abinit.files} ."
 alias detach="tmux detach-client -a"
 alias tkill="tmux kill-session"
-
+alias ..="cd .."
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
