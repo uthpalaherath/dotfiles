@@ -163,13 +163,14 @@ export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/us
 export PYTHONDONTWRITEBYTECODE=1
 
 # DMFTwDFT
-export PATH="~/Dropbox/git/DMFTwDFT-mac/bin/:$PATH"
-export PATH="~/Dropbox/git/DMFTwDFT-mac/scripts/:$PATH"
-export PYTHONPATH="~/Dropbox/git/DMFTwDFT-mac/bin/:$PYTHONPATH"
+export PATH="~/Dropbox/git/DMFTwDFT/bin/:$PATH"
+export PATH="~/Dropbox/git/DMFTwDFT/scripts/:$PATH"
+export PYTHONPATH="~/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
 
 # adding wannier and vasp directories
 export PATH="/Users/uthpala/wannier90/wannier90-3.1.0/:$PATH"
 export PATH="/Users/uthpala/VASP/vasp.5.4.4/bin/:$PATH"
+#export PATH="/Users/uthpala/VASP/vasp.6.2.1/bin/:$PATH"
 
 # Siesta
 export PATH="/Users/uthpala/siesta/siesta-4.1-b3/Obj/:$PATH"
@@ -245,6 +246,13 @@ export PATH="/Users/uthpala/Dropbox/git/NEBgen/:$PATH"
 # VTST
 export PATH="/Users/uthpala//VTST/vtstscripts-957/:$PATH"
 
+# xcrysden
+export PATH="/Users/uthpala/xcrysden-1.6.2/:$PATH"
+
+#nciplot
+export PATH="/Users/uthpala/nciplot/src_nciplot_4.0/:$PATH"
+export NCIPLOT_HOME=/Users/uthpala/nciplot/
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 
@@ -267,6 +275,10 @@ alias mount_desktop="umount ~/HPC/desktop/home; sshfs uthpala@157.182.27.178: ~/
 alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+
+# displayplacer
+alias tilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 origin:(0,0)" "id:C2097269-10CA-BCCD-27DB-89E19E08AB82 origin:(-480,-1080)" "id:07A349AF-E29A-3929-480A-9EC29E4735C0 origin:(1440,-1080) degree:90"'
+alias untilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 origin:(0,0)" "id:C2097269-10CA-BCCD-27DB-89E19E08AB82 origin:(-758,-1080)" "id:07A349AF-E29A-3929-480A-9EC29E4735C0 origin:(1168,-1080) degree:0"'
 
 # Mounting HPC drives
 #alias mount_bridges="umount ~/HPC/bridges/home; sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges.psc.xsede.org:/home/uthpala ~/HPC/bridges/home"
@@ -301,6 +313,11 @@ alias mount_desktop="umount ~/HPC/desktop/home; sshfs uthpala@157.182.27.178: ~/
 alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
 alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@157.182.3.76: ~/HPC/whitehall/home"
 alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
+
+# displayplacer
+alias tilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 res:1440x900 color_depth:4 scaling:on origin:(0,0) degree:0" "id:247A815E-9870-CE8E-7EDC-D015E567AFEE res:1920x1080 hz:60 color_depth:8 scaling:off origin:(-480,-1080) degree:0" "id:0B4ACE63-92C5-E254-1091-1F70FF062540 res:1080x1920 hz:60 color_depth:8 scaling:off origin:(1440,-1202) degree:90"'
+alias untilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 res:1440x900 color_depth:4 scaling:on origin:(0,0) degree:0" "id:247A815E-9870-CE8E-7EDC-D015E567AFEE res:1920x1080 hz:60 color_depth:8 scaling:off origin:(-991,-1080) degree:0" "id:0B4ACE63-92C5-E254-1091-1F70FF062540 res:1920x1080 hz:60 color_depth:8 scaling:off origin:(929,-1080) degree:0"'
+
 }
 
 work_wifi(){
@@ -322,6 +339,11 @@ alias mount_desktop="umount ~/HPC/desktop/home; sshfs uthpala@157.182.27.178: ~/
 alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh -t ukh0001@157.182.3.76 ssh'"
 alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh'"
 alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh -t ukh0001@157.182.3.76 ssh'"
+
+# displayplacer
+alias tilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 res:1440x900 color_depth:4 scaling:on origin:(0,0) degree:0" "id:247A815E-9870-CE8E-7EDC-D015E567AFEE res:1920x1080 hz:60 color_depth:8 scaling:off origin:(-480,-1080) degree:0" "id:0B4ACE63-92C5-E254-1091-1F70FF062540 res:1080x1920 hz:60 color_depth:8 scaling:off origin:(1440,-1202) degree:90"'
+alias untilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 res:1440x900 color_depth:4 scaling:on origin:(0,0) degree:0" "id:247A815E-9870-CE8E-7EDC-D015E567AFEE res:1920x1080 hz:60 color_depth:8 scaling:off origin:(-991,-1080) degree:0" "id:0B4ACE63-92C5-E254-1091-1F70FF062540 res:1920x1080 hz:60 color_depth:8 scaling:off origin:(929,-1080) degree:0"'
+
 }
 
 # setting up working environment based on the network SSID
@@ -354,8 +376,8 @@ mount_all(){
 #alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"
 alias wvu="ssh -tY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
 alias sprucetmux="ssh -tY ukh0001@spruce.hpc.wvu.edu 'tmux -CC new -A -s spruce '"
-#alias bridges2="ssh -tY  uthpala@bridges2.psc.xsede.org 'ssh -Y br011.bridges2.psc.edu'"
-alias bridges2="ssh -Y  uthpala@bridges2.psc.xsede.org"
+#alias bridges2="ssh -tY  uthpala@bridges2.psc.xsede.org 'ssh -Y uthpala@br011.bridges2.psc.edu'"
+alias bridges2="ssh -Y  uthpala@br012.bridges2.psc.edu"
 alias stampede2="ssh -Y  uthpala@login1.stampede2.tacc.utexas.edu"
 alias cori="ssh -Y train61@cori.nersc.gov"
 

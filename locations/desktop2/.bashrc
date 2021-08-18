@@ -105,6 +105,7 @@ export PYTHONDONTWRITEBYTECODE=1
 
 # vasp
 export PATH="/home/uthpala/VASP/vasp.5.4.4/bin/:$PATH"
+#export PATH="/home/uthpala/VASP/vasp.6.2.1/bin/:$PATH"
 
 # abinit
 export PAW_PBE="/home/uthpala/abinit/pseudo-dojo/paw_pbe_standard"
@@ -195,6 +196,10 @@ export PATH="/home/uthpala/globusconnectpersonal/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft-original/Obj/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/COOP/:$PATH"
 # export PATH="/home/uthpala/siesta/siesta-dmft/Util/Bands/:$PATH"
+export PATH="/home/uthpala/siesta/siesta-4.1.5/Obj/:$PATH"
+export PATH="/home/uthpala/siesta/siesta-4.1.5/Util/COOP/:$PATH"
+export PATH="/home/uthpala/siesta/siesta-4.1.5/Util/Bands/:$PATH"
+
 
 # hdf5
 export LD_LIBRARY_PATH="/home/uthpala/hdf5-1.10.5/hdf5/lib/:$LD_LIBRARY_PATH"
