@@ -13,7 +13,11 @@ ZSH_THEME="honukai"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git zsh-autosuggestions copydir dirhistory osx)
+
+## Plugin settings
+bindkey '`' autosuggest-accept
+
 
 source $ZSH/oh-my-zsh.sh
 
