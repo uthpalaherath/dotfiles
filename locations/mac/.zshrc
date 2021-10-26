@@ -18,6 +18,8 @@ plugins=(git zsh-autosuggestions copydir dirhistory osx)
 ## Plugin settings
 bindkey '`' autosuggest-accept
 
+# FZF
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 source $ZSH/oh-my-zsh.sh
 

@@ -12,6 +12,10 @@ fi
 # Memory
 ulimit -s hard
 
+
+# FZF
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
 # tmux
 # export TMUX_DEVICE_NAME=macbook-pro
 # if command -v tmux &> /dev/null && [ -t 0  ] && [[ -z $TMUX  ]] && [[ $- = *i*  ]]; then
