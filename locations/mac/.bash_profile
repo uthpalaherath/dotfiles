@@ -42,14 +42,14 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 # PYTHON
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/uthpala/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/opt/intel/oneapi/intelpython/latest/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/Users/uthpala/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/uthpala/anaconda3/etc/profile.d/conda.sh"
+    if [ -f "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh" ]; then
+        . "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh"
     else
-        export PATH="/Users/uthpala/anaconda3/bin:$PATH"
+        export PATH="/opt/intel/oneapi/intelpython/latest/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -57,9 +57,11 @@ unset __conda_setup
 
 # Anaconda environment
 py2(){
+    conda deactivate
     conda activate py2
 }
 py3(){
+    conda deactivate
     conda activate py3
 }
 #default
@@ -212,7 +214,7 @@ export LC_ALL=en_US.UTF-8
 export PATH="/Applications/Julia-1.5.app/Contents/Resources/julia/bin/:$PATH"
 
 # Lobster
-export PATH="/Users/uthpala/lobster/OSX/:$PATH"
+export PATH="/Users/uthpala/lobster-4.1.0/OSX/:$PATH"
 
 # VMD
 export PLUGINDIR="/Users/uthpala/vmd-1.9.3.src/plugins/"
@@ -244,7 +246,7 @@ export PAWLDA="/Users/uthpala/abinit/pseudo-dojo/paw_pw_standard/"
 export PATH="/Users/uthpala/Dropbox/git/NEBgen/:$PATH"
 
 # VTST
-export PATH="/Users/uthpala//VTST/vtstscripts-957/:$PATH"
+export PATH="/Users/uthpala//VTST/vtstscripts-972/:$PATH"
 
 # xcrysden
 export PATH="/Users/uthpala/xcrysden-1.6.2/:$PATH"
@@ -352,7 +354,7 @@ WORK_ENV=$(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | awk '/ SSID:/ {print $1="
 if [ $(hostname | awk -F '-' '{print $1}') == "ip" ]; then
     work
 else
-    if [ $WORK_ENV == "WVU.Encrypted" ]; then
+    if [ $WORK_ENV == "WVU.Encrypted" ] || [ $WORK_ENV == "eduroam" ];  then
         work_wifi
     else
         home

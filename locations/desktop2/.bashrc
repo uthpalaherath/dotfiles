@@ -200,9 +200,14 @@ export PATH="/home/uthpala/siesta/siesta-4.1.5/Obj/:$PATH"
 export PATH="/home/uthpala/siesta/siesta-4.1.5/Util/COOP/:$PATH"
 export PATH="/home/uthpala/siesta/siesta-4.1.5/Util/Bands/:$PATH"
 
+# glibc
+export LD_LIBRARY_PATH="/home/uthpala/glibc-2.34/build/lib/:$LD_LIBRARY_PATH"
+export PATH="/home/uthpala/glibc-2.34/build/bin/:$PATH"
 
 # hdf5
-export LD_LIBRARY_PATH="/home/uthpala/hdf5-1.10.5/hdf5/lib/:$LD_LIBRARY_PATH"
+#export LD_LIBRARY_PATH="/home/uthpala/hdf5-1.10.5/hdf5/lib/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/home/uthpala/hdf5-1.12.1/hdf5/lib/:$LD_LIBRARY_PATH"
+export PATH="/home/uthpala/hdf5-1.12.1/hdf5/bin/:$PATH"
 
 # NETCDF
 export NETCDF_ROOT="/opt/netcdf/"
@@ -241,7 +246,8 @@ export PATH="$HOME/gems/bin:$PATH"
 export PATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PATH"
 
 # Quantum Espresso
-export PATH="/home/uthpala/qe-6.5/bin/:$PATH"
+#export PATH="/home/uthpala/qe-6.5/bin/:$PATH"
+export PATH="/home/uthpala/qe-6.8/bin/:$PATH"
 
 # Pandoc
 export PATH="/home/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
@@ -271,12 +277,3 @@ source /opt/intel/oneapi/setvars.sh > /dev/null
 #OpenMPI
 # export LD_LIBRARY_PATH="/opt/openmpi/lib/:$LD_LIBRARY_PATH"
 # export PATH="/opt/openmpi/bin/:$PATH"
-
-#------------------------------------------------------------------------
-# this is for XCRYSDEN 1.5.60; added by XCRYSDEN installation on
-# Tue Apr 20 17:20:59 EDT 2021
-#------------------------------------------------------------------------
-XCRYSDEN_TOPDIR=/home/uthpala/xcrysden-1.5.60-bin-semishared
-XCRYSDEN_SCRATCH=/home/uthpala/xcrys_tmp
-export XCRYSDEN_TOPDIR XCRYSDEN_SCRATCH
-PATH="$XCRYSDEN_TOPDIR:$PATH:$XCRYSDEN_TOPDIR/scripts:$XCRYSDEN_TOPDIR/util"
