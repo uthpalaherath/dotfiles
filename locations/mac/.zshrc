@@ -22,6 +22,7 @@ bindkey '`' autosuggest-accept
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 source $ZSH/oh-my-zsh.sh
+add-zsh-hook precmd virtenv_indicator
 
 # Memory
 ulimit -s hard
@@ -79,7 +80,6 @@ function virtenv_indicator {
     fi
 }
 
-add-zsh-hook precmd virtenv_indicator
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -100,18 +100,6 @@ if expr "$(ps -o comm= $PPID)" : '^sshd:' > /dev/null; then
   caffeinate -s $SHELL --login
   exit $?
 fi
-
-
-umount_all(){
-    umount -f /Users/uthpala/HPC/bridges2/home
-    umount -f /Users/uthpala/HPC/desktop/home
-    umount -f /Users/uthpala/HPC/desktop2/home
-    umount -f /Users/uthpala/HPC/spruce/home
-    umount -f /Users/uthpala/HPC/stampede2/home
-    umount -f /Users/uthpala/HPC/thorny/home
-    umount -f /Users/uthpala/HPC/whitehall/home
-    umount -f /Users/uthpala/HPC/romeronas/home
-}
 
 # extract, mkcdr and archive creattion were taken from
 # https://gist.github.com/JakubTesarek/8840983
@@ -145,6 +133,29 @@ cd $1
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
+
+# mounting all HPC locations
+mount_all(){
+    mount_spruce;
+    mount_thorny;
+    mount_whitehall;
+    mount_desktop;
+    mount_desktop2;
+    mount_romeronas;
+    mount_bridges2;
+}
+
+# unmounting all HPC locations
+umount_all(){
+    umount -f /Users/uthpala/HPC/bridges2/home
+    umount -f /Users/uthpala/HPC/desktop/home
+    umount -f /Users/uthpala/HPC/desktop2/home
+    umount -f /Users/uthpala/HPC/spruce/home
+    umount -f /Users/uthpala/HPC/stampede2/home
+    umount -f /Users/uthpala/HPC/thorny/home
+    umount -f /Users/uthpala/HPC/whitehall/home
+    umount -f /Users/uthpala/HPC/romeronas/home
+}
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -255,7 +266,6 @@ export NCIPLOT_HOME=/Users/uthpala/nciplot/
 
 #------------------------------------------- ALIASES -------------------------------------------
 
-
 home(){
 # logging through ssh.wvu.edu
 alias spruce="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@spruce.hpc.wvu.edu'"
@@ -280,18 +290,6 @@ alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-
 alias tilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 origin:(0,0)" "id:C2097269-10CA-BCCD-27DB-89E19E08AB82 origin:(-480,-1080)" "id:07A349AF-E29A-3929-480A-9EC29E4735C0 origin:(1440,-1080) degree:90"'
 alias untilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 origin:(0,0)" "id:C2097269-10CA-BCCD-27DB-89E19E08AB82 origin:(-758,-1080)" "id:07A349AF-E29A-3929-480A-9EC29E4735C0 origin:(1168,-1080) degree:0"'
 
-# Mounting HPC drives
-#alias mount_bridges="umount ~/HPC/bridges/home; sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges.psc.xsede.org:/home/uthpala ~/HPC/bridges/home"
-##alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
-#alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
-##alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
-#alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
-#alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
-#alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
-#alias mount_desktop="umount ~/HPC/thorny/desktop; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
-#alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
-#alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
-#alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 }
 
 work(){
@@ -345,10 +343,9 @@ alias tilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 res:1440x900 
 alias untilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 res:1440x900 color_depth:4 scaling:on origin:(0,0) degree:0" "id:247A815E-9870-CE8E-7EDC-D015E567AFEE res:1920x1080 hz:60 color_depth:8 scaling:off origin:(-991,-1080) degree:0" "id:0B4ACE63-92C5-E254-1091-1F70FF062540 res:1920x1080 hz:60 color_depth:8 scaling:off origin:(929,-1080) degree:0"'
 
 }
-
 # setting up working environment based on the network SSID
 #WORK_ENV=$(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | awk '/ SSID:/ {print $2}')
-WORK_ENV=$(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | awk '/ SSID:/ {print $1="";print $0}' | awk '{ gsub(/ /,""); print }')
+WORK_ENV=$(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | awk '/ SSID:/ {print $1="";print $0}' | awk '{ gsub(/ /,""); print }' | xargs)
 if [[ $(hostname | awk -F '-' '{print $1}') == "ip" ]]; then
     work
 else
@@ -359,24 +356,10 @@ else
     fi
 fi
 
-# mounting all HPC locations
-mount_all(){
-    mount_spruce;
-    mount_thorny;
-    mount_whitehall;
-    mount_desktop;
-    mount_desktop2;
-    mount_romeronas;
-    mount_bridges2;
-}
 
 # Other ssh connections
-#alias bridges="ssh -XY  uthpala@bridges.psc.xsede.org"
-#alias bridges="ssh -tY  uthpala@bridges.psc.xsede.org 'ssh -Y br005.pvt.bridges.psc.edu'"
-#alias stampede2="ssh -XY  uthpala@stampede2.tacc.xsede.org"
 alias wvu="ssh -tY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
 alias sprucetmux="ssh -tY ukh0001@spruce.hpc.wvu.edu 'tmux -CC new -A -s spruce '"
-#alias bridges2="ssh -tY  uthpala@bridges2.psc.xsede.org 'ssh -Y uthpala@br011.bridges2.psc.edu'"
 alias bridges2="ssh -Y  uthpala@br012.bridges2.psc.edu"
 alias stampede2="ssh -Y  uthpala@login1.stampede2.tacc.utexas.edu"
 alias cori="ssh -Y train61@cori.nersc.gov"
