@@ -1,0 +1,63 @@
+\documentclass[12pt]{article}
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{dcolumn}
+\usepackage{bm}
+\usepackage[mathlines]{lineno}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{todonotes}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{verbatimbox}
+\usepackage{soul}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyvrb}
+\usepackage{braket}
+\usepackage{wrapfig}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{authblk}
+\graphicspath{ {./figures/} }
+
+% Comments
+\setlength{\marginparwidth}{2cm}
+\newcommand{\TODO} [1]
+{\todo[inline,backgroundcolor=lime,size=\small ,bordercolor=white]{{\bf TO-DO:\\} #1}}
+\newcommand{\uthpala} [1]
+{\todo[inline,backgroundcolor=yellow,size=\small ,bordercolor=white]{{\bf Uthpala:} #1}}
+
+
+\title{Report}
+\author{Uthpala Herath}
+\affil{
+Department of Physics and Astronomy,\\
+West Virginia University,\\
+Morgantown, WV 26506, USA}
+\renewcommand\Affilfont{\itshape\small}
+
+\date{\today}
+
+\onehalfspacing
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\section{Introduction}
+
+\bibliographystyle{unsrt}
+\bibliography{references.bib}
+
+\end{document}
