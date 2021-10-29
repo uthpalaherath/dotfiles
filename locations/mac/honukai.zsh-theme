@@ -52,7 +52,7 @@ PROMPT="
 ${hg_info}\
 ${git_info} \
 %[%*]
-%{$terminfo[bold]$fg[red]%}→ %{$reset_color%}"
+%{$terminfo[bold]$fg[white]%}> %{$reset_color%}"
 
 if [[ "$USER" == "root" ]]; then
 PROMPT="
@@ -65,5 +65,5 @@ PROMPT="
 ${hg_info}\
 ${git_info} \
 %[%*]
-%{$terminfo[bold]$fg[red]%}→ %{$reset_color%}"
+%{$terminfo[bold]$fg[red]%}> %{$reset_color%}"
 fi

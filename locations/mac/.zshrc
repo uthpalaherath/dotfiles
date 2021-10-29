@@ -16,7 +16,11 @@ ZSH_THEME="honukai"
 plugins=(git zsh-autosuggestions copydir dirhistory osx)
 
 ## Plugin settings
+
+# zsh-autosuggestions
 bindkey '`' autosuggest-accept
+CASE_SENSITIVE="true"
+HYPHEN_INSENSITIVE="true"
 
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -174,9 +178,9 @@ export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/us
 export PYTHONDONTWRITEBYTECODE=1
 
 # DMFTwDFT
-export PATH="~/Dropbox/git/DMFTwDFT/bin/:$PATH"
-export PATH="~/Dropbox/git/DMFTwDFT/scripts/:$PATH"
-export PYTHONPATH="~/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
+export PATH="/Users/utphala/Dropbox/git/DMFTwDFT/bin/:$PATH"
+export PATH="/Users/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
+export PYTHONPATH="/Users/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
 
 # adding wannier and vasp directories
 export PATH="/Users/uthpala/wannier90/wannier90-3.1.0/:$PATH"
@@ -193,10 +197,10 @@ export PATH="/Users/uthpala/nbopen/nbopen/:$PATH"
 export PATH="/Users/uthpala/p4vasp/bin/:$PATH"
 
 # dotfiles
-export PATH="~/dotfiles/:$PATH"
+export PATH="/Users/uthpala/dotfiles/:$PATH"
 
 # MatSciScripts
-export PATH="~/Dropbox/git/MatSciScripts:$PATH"
+export PATH="/Users/uthpala/Dropbox/git/MatSciScripts/:$PATH"
 
 # sod
 export PATH="/Users/uthpala/sod/bin/:$PATH"
@@ -367,11 +371,11 @@ alias cori="ssh -Y train61@cori.nersc.gov"
 # git repos
 alias cleantmux='tmux kill-session -a'
 alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
-alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
-alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from mac" && git push || true && cd -'
-alias dotpull='cd ~/dotfiles && git pull || true && cd -'
-alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
-alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
+alias dotrebase='cd /Users/uthpala/dotfiles && git pull --rebase || true && cd -'
+alias dotpush='cd /Users/uthpala/dotfiles && git add . && git commit -m "Update from mac" && git push || true && cd -'
+alias dotpull='cd /Users/uthpala/dotfiles && git pull || true && cd -'
+alias makeINCAR="cp /Users/uthpala/Dropbox/git/MatSciScripts/INCAR ."
+alias makeKPOINTS="cp /Users/uthpala/Dropbox/git/MatSciScripts/KPOINTS ."
 alias sed="gsed"
 
 # MPI
