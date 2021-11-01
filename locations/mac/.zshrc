@@ -376,6 +376,7 @@ alias dotpush='cd /Users/uthpala/dotfiles && git add . && git commit -m "Update 
 alias dotpull='cd /Users/uthpala/dotfiles && git pull || true && cd -'
 alias makeINCAR="cp /Users/uthpala/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp /Users/uthpala/Dropbox/git/MatSciScripts/KPOINTS ."
+alias makereport="cp /Users/uthpala/Dropbox/git/dotfiles/templates/report.tex ."
 alias sed="gsed"
 
 # MPI

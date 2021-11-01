@@ -25,12 +25,18 @@
 " - vim-startify
 " - vim-maximizer
 " - vim-surround
+" - vimtex
+" - ultisnips
+" - unite.vim
+" - thesaurus_query.vim
+" - citation.vim
 "
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
 
 :set encoding=utf-8
 :set fileencoding=utf-8
+:set display=lastline    " Show as much as possible of a wrapped last line, not just @.
 
 """ change current working directory to file dir
 autocmd BufEnter * silent! lcd %:p:h
@@ -41,20 +47,20 @@ autocmd BufEnter * silent! lcd %:p:h
 :set splitbelow
 
 " start in insert mode only if file is empty
-autocmd BufNewFile * startinsert
-" function InsertIfEmpty()
-"     if @% == ""
-"         " No filename for current buffer
-"         startinsert
-"     elseif filereadable(@%) == 0
-"         " File doesn't exist yet
-"         startinsert
-"     elseif line('$') == 1 && col('$') == 1
-"         " File is empty
-"         startinsert
-"     endif
-" endfunction
-" au VimEnter * call InsertIfEmpty()
+"autocmd BufNewFile * startinsert
+function InsertIfEmpty()
+    if @% == ""
+        " No filename for current buffer
+        startinsert
+    elseif filereadable(@%) == 0
+        " File doesn't exist yet
+        startinsert
+    elseif line('$') == 1 && col('$') == 1
+        " File is empty
+        startinsert
+    endif
+endfunction
+au VimEnter * call InsertIfEmpty()
 
 """ indentLine
 let g:indentLine_char = '¦'
@@ -129,7 +135,10 @@ au VimEnter * wincmd h
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$' ]
 
 """ colors
+syntax enable
 :colorscheme molokai
+" :colorscheme gruvbox
+" let g:gruvbox_contrast_dark = 'hard'
 highlight Normal ctermbg=NONE
 highlight LineNr ctermbg=NONE
 highlight clear SignColumn
@@ -296,3 +305,90 @@ onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
 
 """ delete buffer when navigating back
 map <silent> <C-o> :bdelete<CR>
+
+""" vimtex
+let g:vimtex_view_method = 'skim'
+
+" clean files on exit
+augroup vimtex_config
+    au!
+    au User VimtexEventQuit call vimtex#compiler#clean(0)
+augroup END
+
+" Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
+" - https://github.com/Valloric/YouCompleteMe
+" - https://github.com/nvim-lua/completion-nvim
+let g:UltiSnipsExpandTrigger="<c-l>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+" let g:UltiSnipsEditSplit="vertical"
+
+" disable auto renaming items to bullets
+"let g:vimtex_syntax_conceal_disable = 1
+set conceallevel=2
+let g:tex_conceal="abdgm"
+let g:tex_superscripts= "[0-9a-zA-W.,:;+-<>/()=]"
+let g:tex_subscripts= "[0-9aehijklmnoprstuvx,+-/().]"
+
+" TOC settings
+let g:vimtex_toc_config = {
+      \ 'name' : 'TOC',
+      \ 'layers' : ['content', 'todo', 'include'],
+      \ 'resize' : 0,
+      \ 'split_width' : 40,
+      \ 'todo_sorted' : 0,
+      \ 'show_help' : 0,
+      \ 'show_numbers' : 1,
+      \ 'hide_line_numbers' : 1,
+      \ 'mode' : 2,
+      \ 'indent_levels' : 1,
+      \}
+let g:tex_flavor='latex'
+" let g:vimtex_fold_enabled =1
+
+""" citations
+" zotero
+let g:citation_vim_mode="zotero"
+let g:citation_vim_zotero_path="/Users/uthpala/Zotero"
+let g:citation_vim_zotero_version=5
+let g:citation_vim_zotero_attachment_path="/Users/uthpala/Dropbox/zotero"
+
+" bibtex file
+" let g:citation_vim_mode="bibtex"
+" let g:citation_vim_bibtex_file="/Users/uthpala/Dropbox/zotero/zotero-references.bib"
+
+let g:citation_vim_cache_path='/Users/uthpala/.vim_runtime/cache/'
+let g:citation_vim_outer_prefix=""
+let g:citation_vim_inner_prefix=""
+let g:citation_vim_suffix=""
+
+nmap <leader>u [unite]
+nnoremap [unite] <nop>
+nnoremap <silent>[unite]c :<C-u>Unite -buffer-name=citation-start-insert -default-action=append      citation/key<cr>
+
+" quick-fix window toggle
+" https://learnvimscriptthehardway.stevelosh.com/chapters/38.html
+let g:vimtex_quickfix_enabled = 0
+
+" nnoremap <leader>q :call QuickfixToggle()<cr>
+" let g:quickfix_is_open = 0
+" function! QuickfixToggle()
+"     if g:quickfix_is_open
+"         cclose
+"         let g:quickfix_is_open = 0
+"         execute g:quickfix_return_to_window . "wincmd w"
+"     else
+"         let g:quickfix_return_to_window = winnr()
+"         copen
+"         let g:quickfix_is_open = 1
+"     endif
+" endfunction
+
+""" thesaurus
+let g:tq_openoffice_en_file="/Users/uthpala/.vim_runtime/thesaurus/MyThes-1.0/th_en_US_new"
+let g:tq_mthesaur_file="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
+let g:tq_enabled_backends=["openoffice_en", "mthesaur_txt", "datamuse_com",]
+
+"set thesaurus+="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
