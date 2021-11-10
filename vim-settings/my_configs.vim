@@ -135,7 +135,7 @@ au VimEnter * wincmd h
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$' ]
 
 """ colors
-syntax enable
+"syntax enable
 :colorscheme molokai
 " :colorscheme gruvbox
 " let g:gruvbox_contrast_dark = 'hard'
@@ -326,16 +326,19 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 " let g:UltiSnipsEditSplit="vertical"
 
 " disable auto renaming items to bullets
-"let g:vimtex_syntax_conceal_disable = 1
-set conceallevel=2
-let g:tex_conceal="abdgm"
-let g:tex_superscripts= "[0-9a-zA-W.,:;+-<>/()=]"
-let g:tex_subscripts= "[0-9aehijklmnoprstuvx,+-/().]"
+let g:vimtex_syntax_conceal_disable = 1
+" set conceallevel=2
+" let g:tex_conceal="abdgm"
+" let g:tex_superscripts= "[0-9a-zA-W.,:;+-<>/()=]"
+" let g:tex_subscripts= "[0-9aehijklmnoprstuvx,+-/().]"
 
 " TOC settings
+au VimEnter *.tex :VimtexTocOpen
+au VimEnter *.tex :wincmd l
+
 let g:vimtex_toc_config = {
       \ 'name' : 'TOC',
-      \ 'layers' : ['content', 'todo', 'include'],
+      \ 'layers' : ['content'],
       \ 'resize' : 0,
       \ 'split_width' : 40,
       \ 'todo_sorted' : 0,
@@ -344,7 +347,15 @@ let g:vimtex_toc_config = {
       \ 'hide_line_numbers' : 1,
       \ 'mode' : 2,
       \ 'indent_levels' : 1,
+      \ 'fold_enable' : 0,
+      \ 'refresh_always' : 0,
       \}
+" refresh toc
+augroup VimTeX
+  autocmd!
+  autocmd BufWritePost *.tex call vimtex#toc#refresh()
+augroup END
+
 let g:tex_flavor='latex'
 " let g:vimtex_fold_enabled =1
 
@@ -392,3 +403,12 @@ let g:tq_mthesaur_file="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
 let g:tq_enabled_backends=["openoffice_en", "mthesaur_txt", "datamuse_com",]
 
 "set thesaurus+="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
+
+" resume cursor location, except for github commits
+augroup vimStartup
+au!
+autocmd BufReadPost *
+  \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+  \ |   exe "normal! g`\""
+  \ | endif
+augroup END

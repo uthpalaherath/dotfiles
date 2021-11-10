@@ -28,7 +28,7 @@
 \usepackage{float}
 \usepackage{multirow}
 \usepackage{authblk}
-\graphicspath{ {./figures/} }
+\graphicspath{{./figures/}}
 
 % Comments
 \setlength{\marginparwidth}{2cm}
@@ -37,8 +37,12 @@
 \newcommand{\uthpala} [1]
 {\todo[inline,backgroundcolor=yellow,size=\small ,bordercolor=white]{{\bf Uthpala:} #1}}
 
+% Additional sub-level
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
 
-\title{Report}
+\title{Research Statement}
 \author{Uthpala Herath}
 \affil{
 Department of Physics and Astronomy,\\
@@ -49,6 +53,7 @@ Morgantown, WV 26506, USA}
 \date{\today}
 
 \onehalfspacing
+
 \begin{document}
 \maketitle
 
@@ -58,6 +63,6 @@ Morgantown, WV 26506, USA}
 \section{Introduction}
 
 \bibliographystyle{unsrt}
-\bibliography{/Users/uthpala/Dropbox/zotero/zotero-references.bib}
+\bibliography{/Users/uthpala/Dropbox/zotero/references-zotero.bib}
 
 \end{document}

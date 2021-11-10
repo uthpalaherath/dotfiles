@@ -17,8 +17,7 @@ tmux attach -t desktop || tmux new -s desktop
 fi
 
 #Intel compilers
-source /opt/intel/bin/compilervars.sh intel64
-source /opt/intel/mkl/bin/mklvars.sh intel64
+source /home/uthpala/intel/oneapi/setvars.sh > /dev/null
 
 # Memory
 ulimit -s unlimited
@@ -26,6 +25,28 @@ ulimit -s unlimited
 # Source ~/.bash_prompt for colors
 source ~/.bash_prompt
 source ~/.aliases
+
+# Color folders
+export LS_OPTIONS='--color=auto'
+eval "$(dircolors -b)"
+alias ls='ls $LS_OPTIONS'
+alias grep='grep --color=auto'
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/uthpala/intel/oneapi/intelpython/latest/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/uthpala/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh" ]; then
+        . "/home/uthpala/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/uthpala/intel/oneapi/intelpython/latest/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -74,10 +95,7 @@ export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
 
 # LD_LIBRARY_PATH
 export LD_LIBRARY_PATH="/opt/intel/mkl/lib/intel64/:/home/uthpala/lib/gsl/lib/:$LD_LIBRARY_PATH"
-
-# anaconda
-export PATH="/home/uthpala/anaconda2/bin:$PATH"
-export PATH="/home/uthpala/anaconda3/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
 
 # dotfiles
 export PATH="~/dotfiles/:$PATH"
@@ -124,3 +142,80 @@ export PATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PATH"
 
 # VTST
 export PATH="/home/uthpala/VTST/vtstscripts-957/:$PATH"
+
+# START-QMCPACK-RELATED
+# QMCPACK and NEXUS
+export PATH=$HOME/apps/qmcpack/bin:$PATH
+export PATH=$HOME/apps/qmcpack/qmcpack/nexus/bin:$PATH
+export PYTHONPATH=$HOME/apps/qmcpack/qmcpack/nexus/lib:$PYTHONPATH
+export PYTHONPATH=$HOME/apps/qmcpack/qmcpack/utils/afqmctools:$PYTHONPATH
+# QE
+export PATH=$HOME/apps/qe-6.8/bin:$PATH
+# PySCF
+export PYTHONPATH=$HOME/apps/pyscf/pyscf:$PYTHONPATH
+export PYTHONPATH=$HOME/apps/qmcpack/qmcpack/src/QMCTools:$PYTHONPATH
+export LD_LIBRARY_PATH=$HOME/apps/pyscf/pyscf/opt/lib:$LD_LIBRARY_PATH
+# QP
+if [ -e $HOME/apps/qp2/quantum_package.rc ]; then
+source $HOME/apps/qp2/quantum_package.rc
+fi
+# DIRAC
+export PATH=$HOME/apps/dirac/bin:$PATH
+# VESTA
+export PATH=$HOME/apps/vesta/VESTA-gtk3:$PATH
+# END-QMCPACK-RELATED
+
+# abinit
+export PAWPBE="/home/uthpala/abinit/pseudo-dojo/paw_pbe_standard"
+export PAWLDA="/home/uthpala/abinit/pseudo-dojo/paw_pw_standard"
+export NC_PBEsol="/home/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8"
+
+
+#-------------------------------- FUNCTIONS -------------------------------------
+
+# extract, mkcdr and archive creattion were taken from
+# https://gist.github.com/JakubTesarek/8840983
+# Easy extract
+extract () {
+if [ -f $1 ] ; then
+case $1 in
+*.tar.bz2)   tar xvjf $1    ;;
+*.tar.gz)    tar xvzf $1    ;;
+*.bz2)       bunzip2 $1     ;;
+*.rar)       rar x $1       ;;
+*.gz)        gunzip $1      ;;
+*.tar)       tar xvf $1     ;;
+*.tbz2)      tar xvjf $1    ;;
+*.tgz)       tar xvzf $1    ;;
+*.zip)       unzip $1       ;;
+*.Z)         uncompress $1  ;;
+*.7z)        7z x $1        ;;
+*.tar.xz)    tar xf $1    ;;
+*)           echo "don't know how to extract '$1'..." ;;
+esac
+else
+echo "'$1' is not a valid file!"
+fi
+}
+# Creates directory then moves into it
+function mkcdr {
+mkdir -p -v $1
+cd $1
+}
+# Creates an archive from given directory
+mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
+mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
+mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
+
+# python
+py2(){
+    conda deactivate
+    conda activate py2
+}
+
+py3(){
+    conda deactivate
+    conda activate py3
+}
+#default
+py3

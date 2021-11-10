@@ -13,7 +13,7 @@ ZSH_THEME="honukai"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions copydir dirhistory osx)
+plugins=(git zsh-autosuggestions copydir dirhistory macos)
 
 ## Plugin settings
 
@@ -268,6 +268,9 @@ export PATH="/Users/uthpala/xcrysden-1.6.2/:$PATH"
 export PATH="/Users/uthpala/nciplot/src_nciplot_4.0/:$PATH"
 export NCIPLOT_HOME=/Users/uthpala/nciplot/
 
+# rsync
+export PATH="/usr/local/Cellar/rsync/3.2.3/bin/:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 home(){
@@ -378,6 +381,7 @@ alias makeINCAR="cp /Users/uthpala/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp /Users/uthpala/Dropbox/git/MatSciScripts/KPOINTS ."
 alias makereport="cp /Users/uthpala/Dropbox/git/dotfiles/templates/report.tex ."
 alias sed="gsed"
+alias cpr="rsync -ah --info=progress2"
 
 # MPI
 export I_MPI_CC="icc"
