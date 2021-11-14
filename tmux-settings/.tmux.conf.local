@@ -369,8 +369,8 @@ bind \\ split-window -h
 #set -g status-position top
 
 # Renumber sessions
-set-hook -g session-created "run ~/dotfiles/renumber-tmux-sessions.sh"
-set-hook -g session-closed  "run ~/dotfiles/renumber-tmux-sessions.sh"
+set-hook -g session-created "run ~/dotfiles/tmux-settings/renumber-tmux-sessions.sh"
+set-hook -g session-closed  "run ~/dotfiles/tmux-settings/renumber-tmux-sessions.sh"
 
 # Renumber windows when one of them is closed
 set-option -g renumber-windows on

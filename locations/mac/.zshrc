@@ -271,6 +271,10 @@ export NCIPLOT_HOME=/Users/uthpala/nciplot/
 # rsync
 export PATH="/usr/local/Cellar/rsync/3.2.3/bin/:$PATH"
 
+# tsase
+export PYTHONPATH=$HOME/tsase:$PYTHONPATH
+export PATH=$HOME/tsase/bin:$PATH
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 home(){
@@ -367,8 +371,8 @@ fi
 # Other ssh connections
 alias wvu="ssh -tY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
 alias sprucetmux="ssh -tY ukh0001@spruce.hpc.wvu.edu 'tmux -CC new -A -s spruce '"
-alias bridges2="ssh -Y  uthpala@br012.bridges2.psc.edu"
-alias stampede2="ssh -Y  uthpala@login1.stampede2.tacc.utexas.edu"
+alias bridges2="ssh -Y uthpala@br012.bridges2.psc.edu"
+alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
 alias cori="ssh -Y train61@cori.nersc.gov"
 
 # git repos

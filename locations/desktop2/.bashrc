@@ -29,6 +29,15 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
+#Intel compilers
+source /opt/intel/oneapi/setvars.sh > /dev/null
+
+# compilers
+export CC="mpiicc"
+export CXX="mpiicpc"
+export FC="mpiifort"
+export F77="mpiifort"
+
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -38,12 +47,14 @@ alias whitehall="ssh -XY ukh0001@157.182.3.76"
 alias thorny="ssh -tXY ukh0001@ssh.wvu.edu 'ssh -XY ukh0001@tf.hpc.wvu.edu'"
 alias bridges="ssh -tXY  uthpala@bridges.psc.xsede.org 'ssh -XY br005.pvt.bridges.psc.edu'"
 alias stampede2="ssh -XY  uthpala@login1.stampede2.tacc.utexas.edu"
+alias mount_gd="google-drive-ocamlfuse GoogleDrive"
 
 alias cleantmux="tmux kill-session -a"
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from desktop2" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 alias detach="tmux detach-client -a"
+alias cpr="rsync -ah --info=progress2"
 
 alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
@@ -51,6 +62,9 @@ alias makeabinit="cp ~/Dropbox/git/MatSciScripts/{abinit.in,abinit.files} ."
 
 alias display_off="sudo vbetool dpms off"
 alias display_on="sudo vbetool dpms on"
+# alias display_off="xset -display :0.0 dpms force off"
+# alias display_on="xset -display :0.0 dpms force on"
+
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -108,8 +122,8 @@ export PATH="/home/uthpala/VASP/vasp.5.4.4/bin/:$PATH"
 #export PATH="/home/uthpala/VASP/vasp.6.2.1/bin/:$PATH"
 
 # abinit
-export PAW_PBE="/home/uthpala/abinit/pseudo-dojo/paw_pbe_standard"
-export PAW_LDA="/home/uthpala/abinit/pseudo-dojo/paw_pw_standard"
+export PAWPBE="/home/uthpala/abinit/pseudo-dojo/paw_pbe_standard"
+export PAWLDA="/home/uthpala/abinit/pseudo-dojo/paw_pw_standard"
 export NC_PBEsol="/home/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8"
 
 # Library path
@@ -118,18 +132,17 @@ export NC_PBEsol="/home/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8
 # # /usr/local/bin/
 # export PATH="/usr/local/bin/:$PATH"
 
-
-# Anaconda
+# Intel conda
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/uthpala/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/opt/intel/oneapi/intelpython/latest/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/home/uthpala/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/uthpala/anaconda3/etc/profile.d/conda.sh"
+    if [ -f "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh" ]; then
+        . "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh"
     else
-        export PATH="/home/uthpala/anaconda3/bin:$PATH"
+        export PATH="/opt/intel/oneapi/intelpython/latest/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -137,9 +150,11 @@ unset __conda_setup
 
 # export PATH="/home/uthpala/anaconda3/bin/:$PATH"
 py2(){
+    conda deactivate
     conda activate py2
 }
 py3(){
+    conda deactivate
     conda activate py3
 }
 #default
@@ -182,7 +197,6 @@ export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
 # export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT_tetra/bin/"
 # export PATH="/home/uthpala/Dropbox/git/DMFTwDFT_tetra/scripts/:$PATH"
 
-
 # Vesta
 export PATH="/home/uthpala/VESTA/:$PATH"
 
@@ -200,14 +214,19 @@ export PATH="/home/uthpala/siesta/siesta-4.1.5/Obj/:$PATH"
 export PATH="/home/uthpala/siesta/siesta-4.1.5/Util/COOP/:$PATH"
 export PATH="/home/uthpala/siesta/siesta-4.1.5/Util/Bands/:$PATH"
 
-# glibc
-export LD_LIBRARY_PATH="/home/uthpala/glibc-2.34/build/lib/:$LD_LIBRARY_PATH"
-export PATH="/home/uthpala/glibc-2.34/build/bin/:$PATH"
+# glibc - DO NOT UNCOMMENT
+# export LD_LIBRARY_PATH="/home/uthpala/glibc-2.34/build/lib/:$LD_LIBRARY_PATH"
+# export PATH="/home/uthpala/glibc-2.34/build/bin/:$PATH"
 
 # hdf5
-#export LD_LIBRARY_PATH="/home/uthpala/hdf5-1.10.5/hdf5/lib/:$LD_LIBRARY_PATH"
+export PATH="/home/uthpala/hdf5-1.12.1/hdf5/:$PATH"
+export HDF5_ROOT="/home/uthpala/hdf5-1.12.1/hdf5/"
 export LD_LIBRARY_PATH="/home/uthpala/hdf5-1.12.1/hdf5/lib/:$LD_LIBRARY_PATH"
-export PATH="/home/uthpala/hdf5-1.12.1/hdf5/bin/:$PATH"
+export C_INCLUDE_PATH="/home/uthpala/hdf5-1.12.1/hdf5/include/:$C_INCLUDE_PATH"
+export CPLUS_INCLUDE_PATH="/home/uthpala/hdf5-1.12.1/hdf5/include/:$CPLUS_INCLUDE_PATH"
+export HDF5_LIBRARIES="/home/uthpala/hdf5-1.12.1/hdf5/lib/"
+export HDF5_HL_LIBRARIES="/home/uthpala/hdf5-1.12.1/hdf5/lib/"
+export HD5F_INCLUDE_DIRS="/home/uthpala/hdf5-1.12.1/hdf5/include/"
 
 # NETCDF
 export NETCDF_ROOT="/opt/netcdf/"
@@ -255,25 +274,32 @@ export PATH="/home/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
 # DFTB+
 export PATH="/home/uthpala/DFTB+/dftb+/bin/:$PATH"
 
-#Intel compilers
-source /opt/intel/oneapi/setvars.sh > /dev/null
-#export I_MPI_ADJUST_REDUCE=3
-# export LD_LIBRARY_PATH="/opt/intel/oneapi/compiler/latest/linux/lib/:$LD_LIBRARY_PATH"
-# export LD_LIBRARY_PATH="/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64/:$LD_LIBRARY_PATH"
-# export LD_LIBRARY_PATH="/opt/intel/oneapi/mkl/latest/lib/intel64/:$LD_LIBRARY_PATH"
-
-# # compilers
-# export CC="mpicc"
-# export CXX="mpicxx"
-# export FC="mpif90"
-# export F77="mpif90"
-
-# export I_MPI_CC="icc"
-# export I_MPI_CXX="icpc"
-# export I_MPI_FC="ifort"
-# export I_MPI_F90="ifort"
-# export I_MPI_F77="ifort"
 
 #OpenMPI
 # export LD_LIBRARY_PATH="/opt/openmpi/lib/:$LD_LIBRARY_PATH"
 # export PATH="/opt/openmpi/bin/:$PATH"
+
+# START-QMCPACK-RELATED
+# QMCPACK and NEXUS
+export PATH=$HOME/apps/qmcpack/bin:$PATH
+export PATH=$HOME/apps/qmcpack/qmcpack/nexus/bin:$PATH
+export PYTHONPATH=$HOME/apps/qmcpack/qmcpack/nexus/lib:$PYTHONPATH
+export PYTHONPATH=$HOME/apps/qmcpack/qmcpack/utils/afqmctools:$PYTHONPATH
+# QE
+export PATH=$HOME/apps/qe-6.8/bin:$PATH
+# PySCF
+export PYTHONPATH=$HOME/apps/pyscf/pyscf:$PYTHONPATH
+export PYTHONPATH=$HOME/apps/qmcpack/qmcpack/src/QMCTools:$PYTHONPATH
+export LD_LIBRARY_PATH=$HOME/apps/pyscf/pyscf/opt/lib:$LD_LIBRARY_PATH
+# QP
+if [ -e $HOME/apps/qp2/quantum_package.rc ]; then
+source $HOME/apps/qp2/quantum_package.rc
+fi
+# DIRAC
+export PATH=$HOME/apps/dirac/bin:$PATH
+# VESTA
+export PATH=$HOME/apps/vesta/VESTA-gtk3:$PATH
+# END-QMCPACK-RELATED
+
+# sod
+export PATH="/home/uthpala/sod/bin/:$PATH"

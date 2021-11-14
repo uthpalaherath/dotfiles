@@ -27,9 +27,8 @@
 " - vim-surround
 " - vimtex
 " - ultisnips
-" - unite.vim
 " - thesaurus_query.vim
-" - citation.vim
+" - vim-ycm-latex-semantic-completer (in $HOME/.vim_runtime/my_plugins/YouCompleteMe/third_party/ycmd/ycmd/completers/tex/)
 "
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
@@ -359,43 +358,9 @@ augroup END
 let g:tex_flavor='latex'
 " let g:vimtex_fold_enabled =1
 
-""" citations
-" zotero
-let g:citation_vim_mode="zotero"
-let g:citation_vim_zotero_path="/Users/uthpala/Zotero"
-let g:citation_vim_zotero_version=5
-let g:citation_vim_zotero_attachment_path="/Users/uthpala/Dropbox/zotero"
-
-" bibtex file
-" let g:citation_vim_mode="bibtex"
-" let g:citation_vim_bibtex_file="/Users/uthpala/Dropbox/zotero/zotero-references.bib"
-
-let g:citation_vim_cache_path='/Users/uthpala/.vim_runtime/cache/'
-let g:citation_vim_outer_prefix=""
-let g:citation_vim_inner_prefix=""
-let g:citation_vim_suffix=""
-
-nmap <leader>u [unite]
-nnoremap [unite] <nop>
-nnoremap <silent>[unite]c :<C-u>Unite -buffer-name=citation-start-insert -default-action=append      citation/key<cr>
-
 " quick-fix window toggle
 " https://learnvimscriptthehardway.stevelosh.com/chapters/38.html
 let g:vimtex_quickfix_enabled = 0
-
-" nnoremap <leader>q :call QuickfixToggle()<cr>
-" let g:quickfix_is_open = 0
-" function! QuickfixToggle()
-"     if g:quickfix_is_open
-"         cclose
-"         let g:quickfix_is_open = 0
-"         execute g:quickfix_return_to_window . "wincmd w"
-"     else
-"         let g:quickfix_return_to_window = winnr()
-"         copen
-"         let g:quickfix_is_open = 1
-"     endif
-" endfunction
 
 """ thesaurus
 let g:tq_openoffice_en_file="/Users/uthpala/.vim_runtime/thesaurus/MyThes-1.0/th_en_US_new"
@@ -404,6 +369,11 @@ let g:tq_enabled_backends=["openoffice_en", "mthesaur_txt", "datamuse_com",]
 
 "set thesaurus+="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
 
+" YCM cite
+let g:ycm_semantic_triggers = {
+        \ 'tex'  : ['{']
+    \}
+
 " resume cursor location, except for github commits
 augroup vimStartup
 au!
@@ -411,4 +381,11 @@ autocmd BufReadPost *
   \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
   \ |   exe "normal! g`\""
   \ | endif
+augroup END
+
+" Turn on spell checking for .tex files
+augroup texSpell
+    autocmd!
+    autocmd FileType tex setlocal spell
+    autocmd BufRead,BufNewFile *.tex setlocal spell
 augroup END
