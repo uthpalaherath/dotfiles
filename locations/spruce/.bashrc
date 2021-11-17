@@ -9,6 +9,9 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+# Source .bash_prompt for colors
+source ~/.bash_prompt
+
 # User specific aliases and functions
 ulimit -s unlimited
 module purge
@@ -28,21 +31,14 @@ if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]];
     # tmux
 fi
 
+
 #------------------------------------------- MODULES -------------------------------------------
 
-# python
-py2(){
-    module unload lang/python/3.7.2_gcc82
-    module load lang/python/2.7.15_gcc82
-}
-py3(){
-    module unload lang/python/2.7.15_gcc82
-    module load lang/python/3.7.2_gcc82
-}
-#default
-py2
+# Group modules
+export MODULEPATH=$MODULEPATH:/group/romero/local/privatemodules
 
 # compilers
+module load lang/gcc/8.2.0
 module load lang/intel/2018_u4
 
 # programs
@@ -52,7 +48,93 @@ module load lang/intel/2018_u4
 module load libs/fftw/3.3.8_intel18
 module load libs/hdf5/1.10.5_intel18
 
+# Library path
+#export LD_LIBRARY_PATH="/usr/lib64/:$LD_LIBRARY_PATH"
+#export LD_LIBRARY_PATH="/lib64/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/usr/lib/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/users/ukh0001/lib/:$LD_LIBRARY_PATH"
+
+# python
+module load python/anaconda3
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/gpfs/group/romero/local/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/gpfs/group/romero/local/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/gpfs/group/romero/local/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/gpfs/group/romero/local/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+py2(){
+    conda deactivate
+    conda activate py2
+    #module unload lang/python/intelpython_3.6.3 
+    #module load lang/python/intelpython_2.7.16 
+    
+}
+py3(){
+    conda deactivate
+    conda activate py3
+    #module unload lang/python/intelpython_2.7.16
+    #module load lang/python/intelpython_3.6.3 
+}
+#default
+py2
+
+
+
+#------------------------------------------- FUNCTIONS -------------------------------------------
+
+standby(){
+   if [ "$*" == "" ]; then
+       arg=1
+   else
+       arg=$1
+   fi
+   qsub -I -l nodes=$arg:ppn=16,walltime=4:00:00 -q standby -d $PWD
+}
+
+# extract, mkcdr and archive creattion were taken from
+# https://gist.github.com/JakubTesarek/8840983
+# Easy extract
+extract () {
+if [ -f $1 ] ; then
+case $1 in
+*.tar.bz2)   tar xvjf $1    ;;
+*.tar.gz)    tar xvzf $1    ;;
+*.bz2)       bunzip2 $1     ;;
+*.rar)       rar x $1       ;;
+*.gz)        gunzip $1      ;;
+*.tar)       tar xvf $1     ;;
+*.tbz2)      tar xvjf $1    ;;
+*.tgz)       tar xvzf $1    ;;
+*.zip)       unzip $1       ;;
+*.Z)         uncompress $1  ;;
+*.7z)        7z x $1        ;;
+*)           echo "don't know how to extract '$1'..." ;;
+esac
+else
+echo "'$1' is not a valid file!"
+fi
+}
+# Creates directory then moves into it
+function mkcdr {
+mkdir -p -v $1
+cd $1
+}
+# Creates an archive from given directory
+mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
+mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
+mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
+
 #------------------------------------------- PATHS -------------------------------------------
+
 
 # vasp
 export PATH="/users/ukh0001/local/VASP/vasp.5.4.4/bin:$PATH"
@@ -66,8 +148,6 @@ export PATH="/users/ukh0001/dotfiles/:$PATH"
 # gsl library
 export PATH="/usr/include/gsl:$PATH"
 
-# Modules
-export MODULEPATH=$MODULEPATH:/group/romero/local/privatemodules
 
 #DMFT post processing
 #export PATH="/users/ukh0001/projects/DMFT/DFTDMFT/post_processing/ancont_PM/:$PATH"
@@ -96,11 +176,6 @@ export PATH="/users/ukh0001/local/openbabel-2.4.1/bin/:$PATH"
 # local bin
 # export PATH=$HOME/.local/bin:$PATH
 
-# Library path
-#export LD_LIBRARY_PATH="/usr/lib64/:$LD_LIBRARY_PATH"
-#export LD_LIBRARY_PATH="/usr/lib/:$LD_LIBRARY_PATH"
-#export PATH="/usr/lib/:$PATH"
-#export LD_LIBRARY_PATH="/users/ukh0001/lib/:$LD_LIBRARY_PATH"
 
 
 # vim 
@@ -134,3 +209,9 @@ alias thorny="ssh -X ukh0001@thorny.hpc.wvu.edu"
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from spruce" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
+
+
+
+
+
+
