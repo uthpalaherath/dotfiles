@@ -60,37 +60,16 @@ fi
 
 #------------------------------------------- MODULES -------------------------------------------
 
-# python
-py2(){
-#module unload lang/python/intelpython_3.6.9
-#module load lang/python/intelpython_2.7.16    
-# module load lang/python/pypy2.7-v7.3.2-linux64
-#module unload lang/python/intelpython3_2020.2
-#module unload lang/python/cpython_3.8.6_gcc93
-module load lang/python/intelpython2_2019.5
-# conda deactivate
-# conda activate py2
-}
-py3(){
-source /shared/software/conda/etc/profile.d/conda.sh
-#module unload lang/python/intelpython_2.7.16
-#module load lang/python/intelpython_3.6.9
-# module unload lang/python/pypy2.7-v7.3.2-linux64
-module unload lang/python/intelpython2_2019.5
-#module load lang/python/cpython_3.8.6_gcc93
-#module load lang/python/intelpython3_2020.2
-conda activate py3
-}
-#default
-py2
-
 # compilers
-module load lang/gcc/8.2.0 
-module load lang/intel/2018_u4
-#module load lang/intel/2019_u5
-#module load lang/intel/2018
-#module load dev/cmake/3.15.4
+module load compiler/latest > /dev/null 2>&1
+module load mpi/latest > /dev/null 2>&1
+module load mkl/latest > /dev/null 2>&1
+module load lang/gcc/8.2.0 > /dev/null 2>&1
 
+# module load lang/nvidia/nvhpc/21.3
+# module load lang/gcc/8.2.0 
+# module load lang/intel/2019_u5
+# module load dev/cmake/3.15.4
 
 # libraries
 # module load libs/fftw/3.3.8_intel18
@@ -100,13 +79,39 @@ module load lang/intel/2018_u4
 # module load libs/libpsml/1.1.7_gcc82
 
 # programs
-#module load atomistic/abinit/9.2.2_intel19
-#module load atomistic/abinit/8.10.3_intel18
-#module load atomistic/elk/5.2.14_intel18
-#module load atomistic/abinit/9.4.1_intel19
+# module load atomistic/abinit/9.2.2_intel19
+# module load atomistic/abinit/8.10.3_intel18
+# module load atomistic/elk/5.2.14_intel18
+# module load atomistic/abinit/9.4.1_intel19
 
+# module load parallel/openmpi/3.1.4_intel18
 
-#module load parallel/openmpi/3.1.4_intel18
+# Python
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/shared/software/conda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/shared/software/conda/etc/profile.d/conda.sh" ]; then
+        . "/shared/software/conda/etc/profile.d/conda.sh"
+    else
+        export PATH="/shared/software/conda/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+py2(){
+    conda deactivate
+    conda activate py2
+}
+py3(){
+    conda deactivate
+    conda activate py3
+}
+# default
+py2
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -128,8 +133,9 @@ export PATH="/users/ukh0001/dotfiles/:$PATH"
 export PATH="/users/ukh0001/MatSciScripts/:$PATH"
 
 # gsl library
-export PATH="/usr/include/gsl:$PATH"
 export LD_LIBRARY_PATH="/users/ukh0001/local/gsl/lib/:$LD_LIBRARY_PATH"
+export C_INCLUDE_PATH="/users/ukh0001/local/gsl/include/:$C_INCLUDE_PATH"
+export CPLUS_INCLUDE_PATH="/users/ukh0001/local/gsl/include/:$CPLUS_INCLUDE_PATH"
 
 # libraries
 export LD_LIBRARY_PATH="/users/ukh0001/lib/:$LD_LIBRARY_PATH"
@@ -175,10 +181,22 @@ export PATH="/users/ukh0001/local/gnuplot-4.6.7/bin/bin/:$PATH"
 # NEBgen
 export PATH="/users/ukh0001/local/NEBgen/:$PATH"
 
+# SOD
+export PATH="/gpfs20/users/ukh0001/local/sod/bin/:$PATH"
+
 # MCA parameters for OpenMPI
 export OMPI_MCA_btl_openib_warn_no_device_params_found=0
 export OMPI_MCA_orte_base_help_aggregate=0
 export OMPI_MCA_mpi_show_handle_leaks=0
+
+# nvidia
+export PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/bin/:$PATH"
+export LD_LIBRARY_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/lib64/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/lib64/stubs/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/math_libs/lib64/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/users/ukh0001/lib/nvidia/stubs/:$LD_LIBRARY_PATH"
+export C_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$C_INCLUDE_PATH"
+export CPLUS_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$CPLUS_INCLUDE_PATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -198,6 +216,7 @@ alias makeabinit="cp ~/MatSciScripts/{abinit.in,abinit.files} ."
 alias detach="tmux detach-client -a"
 alias tkill="tmux kill-session"
 alias ..="cd .."
+alias cpr="rsync -ah --info=progress2"
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -257,8 +276,3 @@ cd $1
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
-
-
-
-
-
