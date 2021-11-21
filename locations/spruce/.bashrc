@@ -91,7 +91,13 @@ py2
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
-standby(){
+killtmux(){
+for arg
+do tmux kill-session -t "spruce $arg"
+done
+}
+
+standbi(){
    if [ "$*" == "" ]; then
        arg=1
    else
@@ -103,7 +109,7 @@ standby(){
 # extract, mkcdr and archive creattion were taken from
 # https://gist.github.com/JakubTesarek/8840983
 # Easy extract
-extract () {
+extract(){
 if [ -f $1 ] ; then
 case $1 in
 *.tar.bz2)   tar xvjf $1    ;;
@@ -123,15 +129,17 @@ else
 echo "'$1' is not a valid file!"
 fi
 }
+
 # Creates directory then moves into it
-function mkcdr {
+mkcdr(){
 mkdir -p -v $1
 cd $1
 }
+
 # Creates an archive from given directory
-mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
-mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
-mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
+mktar(){ tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
+mktgz(){ tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
+mktbz(){ tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -209,6 +217,7 @@ alias thorny="ssh -X ukh0001@thorny.hpc.wvu.edu"
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from spruce" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
+alias tkill="tmux kill-session"
 
 
 
