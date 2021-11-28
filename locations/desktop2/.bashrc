@@ -32,11 +32,38 @@ alias grep='grep --color=auto'
 #Intel compilers
 source /opt/intel/oneapi/setvars.sh > /dev/null
 
+# Intel conda
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/intel/oneapi/intelpython/latest/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh" ]; then
+        . "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/intel/oneapi/intelpython/latest/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+py2(){
+    conda deactivate
+    conda activate py2
+}
+py3(){
+    conda deactivate
+    conda activate py3
+}
+#default
+py3
+
 # compilers
-export CC="mpiicc"
-export CXX="mpiicpc"
-export FC="mpiifort"
-export F77="mpiifort"
+# export CC="mpiicc"
+# export CXX="mpiicpc"
+# export FC="mpiifort"
+# export F77="mpiifort"
 
 
 #------------------------------------------- ALIASES -------------------------------------------
@@ -132,33 +159,6 @@ export NC_PBEsol="/home/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8
 # # /usr/local/bin/
 # export PATH="/usr/local/bin/:$PATH"
 
-# Intel conda
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/intel/oneapi/intelpython/latest/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh" ]; then
-        . "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/intel/oneapi/intelpython/latest/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-# export PATH="/home/uthpala/anaconda3/bin/:$PATH"
-py2(){
-    conda deactivate
-    conda activate py2
-}
-py3(){
-    conda deactivate
-    conda activate py3
-}
-#default
-py3
 
 # scripts
 export PATH="~/dotfiles/:$PATH"
