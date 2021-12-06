@@ -1,15 +1,20 @@
 " theme
-colorscheme molokai
-set transparency=0
+syntax enable
 set guifont=Monaco:h15
+colorscheme molokai
+set background=dark
+set transparency=0
 
 " cursor options
-highlight Cursor guifg=white guibg=steelblue
-highlight iCursor guifg=white guibg=lightgray
-set guicursor=n-v-c:block-Cursor
-set guicursor+=i:ver100-iCursor
-set guicursor+=n-v-c:blinkon0
-set guicursor+=i:blinkwait1000
+function! SetCursor()
+    highlight Cursor guifg=white guibg=steelblue
+    highlight iCursor guifg=white guibg=lightgray
+    set guicursor=n-v-c:block-Cursor
+    set guicursor+=i:ver100-iCursor
+    set guicursor+=n-v-c:blinkon0
+    set guicursor+=i:blinkwait1000
+endfunction
+autocmd VimEnter * call SetCursor()
 
 " gitgutter colors
 highlight clear SignColumn

@@ -20,7 +20,6 @@
 " - vim-signature
 " - vim-slime
 " - vim-ipython-cell
-" - SimplyFold
 " - vim-fugitive
 " - vim-startify
 " - vim-maximizer
@@ -29,6 +28,10 @@
 " - ultisnips
 " - thesaurus_query.vim
 " - vim-ycm-latex-semantic-completer (in $HOME/.vim_runtime/my_plugins/YouCompleteMe/third_party/ycmd/ycmd/completers/tex/)
+" - limelight.vim
+" - vim-pencil
+" - vim-smoothie
+" - writer.vim
 "
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
@@ -39,7 +42,6 @@
 
 """ change current working directory to file dir
 autocmd BufEnter * silent! lcd %:p:h
-
 
 """ vim settings
 :set splitright
@@ -64,8 +66,8 @@ au VimEnter * call InsertIfEmpty()
 """ indentLine
 let g:indentLine_char = '¦'
 
-"""" ale
-let g:ale_linters = {'python':['flake8','pydocstyle']}
+""" ale
+let g:ale_linters = {'python':['flake8','pydocstyle'], 'tex': 'all', 'latex': ['proselint', 'chktex', 'lacheck']}
 let g:ale_fixers = {'*':['remove_trailing_lines','trim_whitespace'], 'python':['black']}
 let g:ale_fix_on_save = 1
 let g:ale_lint_on_enter = 0 """ Don't lint when opening a file
@@ -78,6 +80,9 @@ autocmd VimEnter * :highlight! ALEInfoSign   ctermfg=14 ctermbg=NONE
 autocmd VimEnter * :highlight! ALEError ctermfg=9 ctermbg=NONE
 autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE
 autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE
+
+" disable ALE for tex files
+autocmd BufEnter *.tex ALEDisable
 
 function! LinterStatus() abort
     let l:counts = ale#statusline#Count(bufnr(''))
@@ -93,12 +98,25 @@ set statusline+=%=
 set statusline+=\ %{LinterStatus()}
 
 """ Setting numbering
-:set number relativenumber
-:augroup numbertoggle
-:  autocmd!
-:  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-:  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-:augroup END
+function! NumControl()
+    :set number relativenumber
+    :augroup numbertoggle
+    :  autocmd!
+    :  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+    :  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+    :augroup END
+
+    " turn off all numbers for tex files
+    if &ft == "tex"
+        :set nonu nornu
+        :augroup numbertoggle
+        :  autocmd!
+        :  autocmd BufEnter,FocusGained,InsertLeave * set norelativenumber
+        :  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+        :augroup END
+    endif
+endfunction
+autocmd VimEnter * call NumControl()
 
 """" toggle line numbers
 noremap <silent> <F3> :set invnumber invrelativenumber<CR>
@@ -134,10 +152,13 @@ au VimEnter * wincmd h
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$' ]
 
 """ colors
-"syntax enable
-:colorscheme molokai
-" :colorscheme gruvbox
-" let g:gruvbox_contrast_dark = 'hard'
+filetype plugin on
+syntax on
+"set termguicolors
+syntax enable
+" autocmd BufWinEnter * colorscheme molokai
+" autocmd BufWinEnter *.tex colorscheme peaksea
+colorscheme molokai
 highlight Normal ctermbg=NONE
 highlight LineNr ctermbg=NONE
 highlight clear SignColumn
@@ -217,10 +238,10 @@ let g:changes_use_icons=0
 ":set syntax=fortran
 
 " Enable folding
-set foldmethod=indent
-set foldlevel=99
+"set foldmethod=indent
+"set foldlevel=99
 " set nofoldenable
-set foldcolumn=0
+"set foldcolumn=0
 
 
 """ vim-pydocstring
@@ -307,6 +328,19 @@ map <silent> <C-o> :bdelete<CR>
 
 """ vimtex
 let g:vimtex_view_method = 'skim'
+let g:vimtex_view_skim_reading_bar = 0
+
+" open and close $
+inoremap $ $$<left>
+
+" theme
+autocmd BufWinEnter *.tex colorscheme peaksea
+autocmd BufWinEnter *.tex WriterToggle
+autocmd BufWinEnter *.tex Limelight
+
+" disable gitgutter, indentlines and changes plugin
+au VimEnter *.tex :GitGutterToggle
+au VimEnter *.tex :IndentLinesToggle
 
 " clean files on exit
 augroup vimtex_config
@@ -326,8 +360,9 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 " disable auto renaming items to bullets
 let g:vimtex_syntax_conceal_disable = 1
+" set conceallevel=0
 " set conceallevel=2
-" let g:tex_conceal="abdgm"
+" let g:tex_conceal='abdgm'
 " let g:tex_superscripts= "[0-9a-zA-W.,:;+-<>/()=]"
 " let g:tex_subscripts= "[0-9aehijklmnoprstuvx,+-/().]"
 
@@ -356,11 +391,32 @@ augroup VimTeX
 augroup END
 
 let g:tex_flavor='latex'
-" let g:vimtex_fold_enabled =1
+let g:vimtex_fold_enabled = 0
 
 " quick-fix window toggle
 " https://learnvimscriptthehardway.stevelosh.com/chapters/38.html
 let g:vimtex_quickfix_enabled = 0
+
+let g:vimtex_quickfix_ignore_filters = [
+  \'Underfull \\hbox (badness [0-9]*) in paragraph at lines',
+  \'Overfull \\hbox ([0-9]*.[0-9]*pt too wide) in paragraph at lines',
+  \'Underfull \\hbox (badness [0-9]*) in ',
+  \'Overfull \\hbox ([0-9]*.[0-9]*pt too wide) in ',
+  \'Package hyperref Warning: Token not allowed in a PDF string',
+  \'Package typearea Warning: Bad type area settings!',
+  \]
+
+let g:Tex_IgnoredWarnings =
+    \'Underfull'."\n".
+    \'Overfull'."\n".
+    \'specifier changed to'."\n".
+    \'You have requested'."\n".
+    \'Missing number, treated as zero.'."\n".
+    \'There were undefined references'."\n".
+    \'Citation %.%# undefined'."\n".
+    \'Double space found.'."\n"
+let g:Tex_IgnoreLevel = 8
+
 
 """ thesaurus
 let g:tq_openoffice_en_file="/Users/uthpala/.vim_runtime/thesaurus/MyThes-1.0/th_en_US_new"
@@ -389,3 +445,20 @@ augroup texSpell
     autocmd FileType tex setlocal spell
     autocmd BufRead,BufNewFile *.tex setlocal spell
 augroup END
+
+""" vim-orgmode
+packloadall
+silent! helptags ALL
+:let g:org_agenda_files=['~/org/index.org','~/org/agenda.org']
+
+""" vim-pencil
+let g:pencil#wrapModeDefault = 'soft'
+augroup pencil
+  autocmd!
+  autocmd FileType tex call pencil#init()
+augroup END
+
+""" limelight
+autocmd! User GoyoEnter Limelight
+autocmd! User GoyoLeave Limelight!
+let g:limelight_paragraph_span = 1
