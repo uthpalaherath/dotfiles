@@ -392,7 +392,11 @@ let g:vimtex_syntax_conceal_disable = 1
 
 let g:vimtex_toc_config = {
       \ 'name' : 'TOC',
-      \ 'layers' : ['content'],
+      \ 'layer_status' : {
+          \ 'content': 1,
+          \ 'label': 0,
+          \ 'todo': 0,
+          \ 'include': 0},
       \ 'resize' : 0,
       \ 'split_width' : 40,
       \ 'todo_sorted' : 0,
