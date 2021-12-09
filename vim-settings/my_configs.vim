@@ -10,7 +10,6 @@
 " to ~/.vimrc after following the instructions.
 "
 " Plugins
-" - changesPlugin
 " - indentLine
 " - molokai
 " - vim-autoread
@@ -32,6 +31,8 @@
 " - vim-pencil
 " - vim-smoothie
 " - writer.vim
+" - vim-fanfingtastic
+" - vim-latexfmt
 "
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
@@ -67,8 +68,8 @@ au VimEnter * call InsertIfEmpty()
 let g:indentLine_char = '¦'
 
 """ ale
-let g:ale_linters = {'python':['flake8','pydocstyle'], 'tex': 'all', 'latex': ['proselint', 'chktex', 'lacheck']}
-let g:ale_fixers = {'*':['remove_trailing_lines','trim_whitespace'], 'python':['black']}
+let g:ale_linters = {'python':['flake8', 'pydocstyle']}
+let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black']}
 let g:ale_fix_on_save = 1
 let g:ale_lint_on_enter = 0 """ Don't lint when opening a file
 let g:ale_sign_error = '•'
@@ -153,11 +154,8 @@ let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$' ]
 
 """ colors
 filetype plugin on
-syntax on
+"syntax on
 "set termguicolors
-syntax enable
-" autocmd BufWinEnter * colorscheme molokai
-" autocmd BufWinEnter *.tex colorscheme peaksea
 colorscheme molokai
 highlight Normal ctermbg=NONE
 highlight LineNr ctermbg=NONE
@@ -223,12 +221,12 @@ nnoremap <C-W>- :new<CR>
 nnoremap <C-W>\ :vnew<CR>
 
 """ visual marks
-nnoremap <leader>m :SignatureRefresh<cr>
+nnoremap <leader>m :SignatureRefresh<CR>
 
 """ run python scripts within vim with F9
 "autocmd Filetype python nnoremap <buffer> <F5> :w<CR>:vert ter python3 "%"<CR>
-autocmd FileType python map <buffer> <F9> :w<CR>:exec '!python' shellescape(@%, 1)<CR>
-autocmd FileType python imap <buffer> <F9> <esc>:w<CR>:exec '!python' shellescape(@%, 1)<CR>
+autocmd FileType python map <buffer> <F9> :w<CR>:exec '!/Users/uthpala/.conda/envs/py3/bin/python' shellescape(@%, 1)<CR>
+autocmd FileType python imap <buffer> <F9> <esc>:w<CR>:exec '!/Users/uthpala/.conda/envs/py3/bin/python' shellescape(@%, 1)<CR>
 
 """ changesPlugin
 let g:changes_use_icons=0
@@ -326,26 +324,48 @@ onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
 """ delete buffer when navigating back
 map <silent> <C-o> :bdelete<CR>
 
+""" resume cursor location, except for github commits
+augroup vimStartup
+au!
+autocmd BufReadPost *
+  \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+  \ |   exe "normal! g`\""
+  \ | endif
+augroup END
+
+""" auto-pair modifications
+let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '```':'```', '"""':'"""', "'''":"'''", "`":"`",'$':'$'}
+
+""" ---------- LATEX SETTINGS ----------
+
+let g:vimtex_compiler_latexmk = {
+        \ 'executable' : 'latexmk',
+        \ 'options' : [
+        \   '-lualatex',
+        \   '-file-line-error',
+        \   '-synctex=1',
+        \   '-interaction=nonstopmode',
+        \ ],
+        \}
+
 """ vimtex
 let g:vimtex_view_method = 'skim'
 let g:vimtex_view_skim_reading_bar = 0
 
-" open and close $
-inoremap $ $$<left>
-
 " theme
-autocmd BufWinEnter *.tex colorscheme peaksea
-autocmd BufWinEnter *.tex WriterToggle
-autocmd BufWinEnter *.tex Limelight
+autocmd VimEnter *.tex colorscheme peaksea
+autocmd VimEnter *.tex Limelight
 
-" disable gitgutter, indentlines and changes plugin
+" disable gitgutter and indentlines
 au VimEnter *.tex :GitGutterToggle
 au VimEnter *.tex :IndentLinesToggle
 
-" clean files on exit
+" clean files on exit and key mapping
 augroup vimtex_config
     au!
     au User VimtexEventQuit call vimtex#compiler#clean(0)
+    au FileType tex nmap <buffer><silent> <leader>t <plug>(vimtex-toc-open)
+    au FileType tex nmap <buffer><silent> <leader>v <plug>(vimtex-view)
 augroup END
 
 " Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
@@ -367,8 +387,8 @@ let g:vimtex_syntax_conceal_disable = 1
 " let g:tex_subscripts= "[0-9aehijklmnoprstuvx,+-/().]"
 
 " TOC settings
-au VimEnter *.tex :VimtexTocOpen
-au VimEnter *.tex :wincmd l
+"au VimEnter *.tex :VimtexTocOpen
+"au VimEnter *.tex :wincmd l
 
 let g:vimtex_toc_config = {
       \ 'name' : 'TOC',
@@ -417,39 +437,23 @@ let g:Tex_IgnoredWarnings =
     \'Double space found.'."\n"
 let g:Tex_IgnoreLevel = 8
 
-
 """ thesaurus
 let g:tq_openoffice_en_file="/Users/uthpala/.vim_runtime/thesaurus/MyThes-1.0/th_en_US_new"
 let g:tq_mthesaur_file="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
 let g:tq_enabled_backends=["openoffice_en", "mthesaur_txt", "datamuse_com",]
-
 "set thesaurus+="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
 
-" YCM cite
+""" YCM cite
 let g:ycm_semantic_triggers = {
         \ 'tex'  : ['{']
     \}
 
-" resume cursor location, except for github commits
-augroup vimStartup
-au!
-autocmd BufReadPost *
-  \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-  \ |   exe "normal! g`\""
-  \ | endif
-augroup END
-
-" Turn on spell checking for .tex files
+""" Turn on spell checking for .tex files
 augroup texSpell
     autocmd!
     autocmd FileType tex setlocal spell
     autocmd BufRead,BufNewFile *.tex setlocal spell
 augroup END
-
-""" vim-orgmode
-packloadall
-silent! helptags ALL
-:let g:org_agenda_files=['~/org/index.org','~/org/agenda.org']
 
 """ vim-pencil
 let g:pencil#wrapModeDefault = 'soft'
@@ -461,4 +465,45 @@ augroup END
 """ limelight
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
-let g:limelight_paragraph_span = 1
+"let g:limelight_paragraph_span = 1
+
+" Reformat lines (getting the spacing correct)
+" adopted from https://tex.stackexchange.com/questions/1548/intelligent-paragraph-reflowing-in-vim
+
+" fun! TeX_fmt()
+"     if (getline(".") != "")
+"     let save_cursor = getpos(".")
+"         let op_wrapscan = &wrapscan
+"         set nowrapscan
+"         let par_begin = '^\(%D\)\=\s*\($\|\\label\|\\begin\|\\end\|\\[\|\\]\|\\\(sub\)*section\>\|\\item\>\|\\NC\>\|\\blank\>\|\\noindent\>\)'
+"         let par_end   = '^\(%D\)\=\s*\($\|\\begin\|\\end\|\\[\|\\]\|\\place\|\\\(sub\)*section\>\|\\item\>\|\\NC\>\|\\blank\>\)'
+"     try
+"       exe '?'.par_begin.'?+'
+"     catch /E384/
+"       1
+"     endtry
+"         norm V
+"     try
+"       exe '/'.par_end.'/-'
+"     catch /E385/
+"       $
+"     endtry
+"     norm gq
+"         let &wrapscan = op_wrapscan
+"     call setpos('.', save_cursor)
+"     endif
+" endfun
+
+"autocmd BufWritePost *.tex call TeX_fmt()
+" autocmd BufWritePost *.tex :normal gwip " format paragraph on save
+
+""" vim-latexfmt
+let g:latexfmt_no_join_any = [ '\(\\)\@1<!%','\begin', '\end', '\section', '\subsection', '\subsubsection', '\document', '\(\\)\@1<!\[', '\]' ]
+let g:latexfmt_no_join_next = [ '\\', '\centering', '\includegraphics' ]
+let g:latexfmt_no_join_prev = [ '\item', '\label' ]
+let g:latexfmt_verbatim_envs = [ 'table', 'equation', 'align', 'eqnarray', '\(\\)\@1<!\['  ]
+
+map <silent> <leader>ik <Plug>latexfmt_format
+autocmd BufWritePost *.tex :normal ,ik  " format paragraph on save
+
+" ---------- END OF LATEX SETTINGS ----------

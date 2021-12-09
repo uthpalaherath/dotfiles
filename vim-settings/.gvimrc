@@ -1,9 +1,10 @@
 " theme
-syntax enable
+"syntax enable
 set guifont=Monaco:h15
 colorscheme molokai
 set background=dark
 set transparency=0
+autocmd VimEnter *.tex WriterToggle
 
 " cursor options
 function! SetCursor()

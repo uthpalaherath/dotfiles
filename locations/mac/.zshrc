@@ -214,7 +214,7 @@ export PATH="/usr/local/opt/openssl/bin:$PATH"
 export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
 
 # texlive
-export PATH="/usr/local/texlive/2020/bin/x86_64-darwin/:$PATH"
+export PATH="/usr/local/texlive/2021/bin/universal-darwin/:$PATH"
 
 # pandoc-templates
 export PATH="/Users/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
@@ -393,5 +393,3 @@ export I_MPI_CXX="icpc"
 export I_MPI_FC="ifort"
 export I_MPI_F90="ifort"
 export I_MPI_F77="ifort"
-
-
