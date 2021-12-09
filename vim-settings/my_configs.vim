@@ -491,7 +491,42 @@ autocmd! User GoyoLeave Limelight!
 " autocmd BufWritePost *.tex :normal gwip " format paragraph on save
 
 """ vim-latexfmt
-let g:latexfmt_no_join_any = [ '\(\\)\@1<!%','\begin', '\end', '\section', '\subsection', '\subsubsection', '\document', '\(\\)\@1<!\[', '\]', '\bigskip', '\smallskip', '\import']
+let g:latexfmt_no_join_any = [
+            \ '\(\\)\@1<!%',
+            \ '\begin',
+            \ '\end',
+            \ '\section',
+            \ '\subsection',
+            \ '\subsubsection',
+            \ '\document',
+            \ '\(\\)\@1<!\[',
+            \ '\]',
+            \ '\bigskip',
+            \ '\smallskip',
+            \ '\import',
+            \ '\usepackage',
+            \ '\hypersetup',
+            \ '\newcommand',
+            \ '\todo',
+            \ '\include',
+            \ '\singlespace',
+            \ '\oneandhalfspace',
+            \ '\newpage',
+            \ '\phantomsection',
+            \ '\addtocontents',
+            \ '\listoffigures',
+            \ '\listoftables',
+            \ '\title',
+            \ '\author',
+            \ '\degreeName',
+            \ '\paperType',
+            \ '\defensemonth',
+            \ '\gradmonth',
+            \ '\gradyear',
+            \ '\chair',
+            \ '\keywords',
+            \ '\newif',
+            \]
 let g:latexfmt_no_join_next = [ '\\', '\centering', '\includegraphics' ]
 let g:latexfmt_no_join_prev = [ '\item', '\label' ]
 let g:latexfmt_verbatim_envs = [ 'table', 'equation', 'align', 'eqnarray', '\(\\)\@1<!\['  ]
