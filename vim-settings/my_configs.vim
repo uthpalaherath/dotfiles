@@ -415,8 +415,9 @@ let g:vimtex_fold_enabled = 0
 
 " quick-fix window toggle
 " https://learnvimscriptthehardway.stevelosh.com/chapters/38.html
-let g:vimtex_quickfix_enabled = 0
-
+let g:vimtex_quickfix_enabled = 1
+let g:vimtex_quickfix_open_on_warning = 0
+let g:vimtex_quickfix_autoclose_after_keystrokes = 1
 let g:vimtex_quickfix_ignore_filters = [
   \'Underfull \\hbox (badness [0-9]*) in paragraph at lines',
   \'Overfull \\hbox ([0-9]*.[0-9]*pt too wide) in paragraph at lines',
@@ -424,18 +425,10 @@ let g:vimtex_quickfix_ignore_filters = [
   \'Overfull \\hbox ([0-9]*.[0-9]*pt too wide) in ',
   \'Package hyperref Warning: Token not allowed in a PDF string',
   \'Package typearea Warning: Bad type area settings!',
+  \'Marginpar on page',
+  \'Split bibliography detected',
+  \'Package biblatex Warning',
   \]
-
-let g:Tex_IgnoredWarnings =
-    \'Underfull'."\n".
-    \'Overfull'."\n".
-    \'specifier changed to'."\n".
-    \'You have requested'."\n".
-    \'Missing number, treated as zero.'."\n".
-    \'There were undefined references'."\n".
-    \'Citation %.%# undefined'."\n".
-    \'Double space found.'."\n"
-let g:Tex_IgnoreLevel = 8
 
 """ thesaurus
 let g:tq_openoffice_en_file="/Users/uthpala/.vim_runtime/thesaurus/MyThes-1.0/th_en_US_new"
@@ -498,7 +491,7 @@ autocmd! User GoyoLeave Limelight!
 " autocmd BufWritePost *.tex :normal gwip " format paragraph on save
 
 """ vim-latexfmt
-let g:latexfmt_no_join_any = [ '\(\\)\@1<!%','\begin', '\end', '\section', '\subsection', '\subsubsection', '\document', '\(\\)\@1<!\[', '\]' ]
+let g:latexfmt_no_join_any = [ '\(\\)\@1<!%','\begin', '\end', '\section', '\subsection', '\subsubsection', '\document', '\(\\)\@1<!\[', '\]', '\bigskip', '\smallskip', '\import']
 let g:latexfmt_no_join_next = [ '\\', '\centering', '\includegraphics' ]
 let g:latexfmt_no_join_prev = [ '\item', '\label' ]
 let g:latexfmt_verbatim_envs = [ 'table', 'equation', 'align', 'eqnarray', '\(\\)\@1<!\['  ]
