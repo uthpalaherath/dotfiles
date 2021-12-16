@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=jobname
 #SBATCH -N 1
-#SBATCH --ntasks-per-node=64
-#SBATCH -t 72:00:00
+#SBATCH --ntasks-per-node=128
+#SBATCH -t 48:00:00
 ##SBATCH --mem=10GB
 ##SBATCH -p RM-shared #### RM-small, LM
 
