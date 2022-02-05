@@ -163,7 +163,6 @@ export PATH="/users/ukh0001/local/siesta/siesta-4.1.5/Obj/:$PATH"
 #export PATH="/users/ukh0001/local/siesta/siesta-dmft-bandwin/Obj/:$PATH"
 #export PATH="/users/ukh0001/local/siesta/siesta-dmft-original/Obj/:$PATH"
 
-
 # local bin
 #export PATH=$HOME/.local/bin:$PATH
 
@@ -276,3 +275,17 @@ cd $1
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
+
+# Check if VASP relaxation is obtained for batch jobs when relaxed with 
+# Convergence.py and relax.dat is created.
+relaxed (){
+    rm -f unrelaxed_list.dat
+    folder_list=$(ls | grep -E '^[0-9]+$')
+    for i in $folder_list; 
+        do if [ -f $i/relax.dat ] ; then
+               echo $i 
+           else
+               echo $i >> unrelaxed_list.dat 
+           fi
+        done
+}
