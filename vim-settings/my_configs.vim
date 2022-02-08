@@ -68,7 +68,7 @@ au VimEnter * call InsertIfEmpty()
 let g:indentLine_char = '¦'
 
 """ ale
-let g:ale_linters = {'python':['flake8', 'pydocstyle']}
+let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale']}
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black']}
 let g:ale_fix_on_save = 1
 let g:ale_lint_on_enter = 0 """ Don't lint when opening a file
@@ -371,9 +371,9 @@ augroup END
 " Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
 " - https://github.com/Valloric/YouCompleteMe
 " - https://github.com/nvim-lua/completion-nvim
-let g:UltiSnipsExpandTrigger="<c-l>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsExpandTrigger="<C-l>"
+let g:UltiSnipsJumpForwardTrigger="<C-b>"
+let g:UltiSnipsJumpBackwardTrigger="<C-z>"
 
 " If you want :UltiSnipsEdit to split your window.
 " let g:UltiSnipsEditSplit="vertical"
@@ -462,6 +462,7 @@ augroup END
 """ limelight
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
+noremap <silent> <F5> :Limelight!!<CR>
 "let g:limelight_paragraph_span = 1
 
 " Reformat lines (getting the spacing correct)
@@ -530,6 +531,7 @@ let g:latexfmt_no_join_any = [
             \ '\chair',
             \ '\keywords',
             \ '\newif',
+            \ '\entryextra',
             \]
 let g:latexfmt_no_join_next = [ '\\', '\centering', '\includegraphics' ]
 let g:latexfmt_no_join_prev = [ '\item', '\label' ]

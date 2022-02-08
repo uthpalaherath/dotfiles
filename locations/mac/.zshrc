@@ -13,7 +13,7 @@ ZSH_THEME="honukai"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions copydir dirhistory macos)
+plugins=(git zsh-autosuggestions) # copydir dirhistory macos)
 
 ## Plugin settings
 
@@ -161,6 +161,51 @@ umount_all(){
     umount -f /Users/uthpala/HPC/romeronas/home
 }
 
+# Check if VASP relaxation is obtained for batch jobs when relaxed with
+# Convergence.py and relax.dat is created.
+relaxed(){
+    rm -f unrelaxed_list.dat
+    folder_list=$(ls | grep -E '^[0-9]+$')
+    for i in $folder_list;
+        do if [ -f $i/relax.dat ] ; then
+            echo $i
+        else
+            printf "$i\t" >> unrelaxed_list.dat
+        fi
+        done
+}
+
+# Clean VASP files in current directoy and subdirectories.
+# For only current directory use cleanvasp.sh
+cleanvaspall(){
+    find . \( \
+        -name "CHGCAR*" -o \
+        -name "OUTCAR*" -o \
+        -name "CHG" -o \
+        -name "DOSCAR" -o \
+        -name "EIGENVAL" -o \
+        -name "ENERGY" -o \
+        -name "IBZKPT" -o \
+        -name "OSZICAR*" -o \
+        -name "PCDAT" -o \
+        -name "REPORT" -o \
+        -name "TIMEINFO" -o \
+        -name "WAVECAR" -o \
+        -name "XDATCAR" -o \
+        -name "wannier90.wout" -o \
+        -name "wannier90.amn" -o \
+        -name "wannier90.mmn" -o \
+        -name "wannier90.eig" -o \
+        -name "wannier90.chk" -o \
+        -name "wannier90.node*" -o \
+        -name "PROCAR" -o \
+        -name "*.o[0-9]*" -o \
+        -name "vasprun.xml" -o \
+        -name "relax.dat" -o \
+        -name "CONTCAR*" \
+    \) -type f $1
+}
+
 #------------------------------------------- PATHS -------------------------------------------
 
 # projects directory
@@ -173,6 +218,15 @@ export PATH="/usr/local/sbin:$PATH"
 
 # System library
 export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/:$DYLD_LIBRARY_PATH"
+
+# Libraries
+export DYLD_LIBRARY_PATH="/Users/uthpala/lib/:$DYLD_LIBRARY_PATH"
+
+# GSL
+export DYLD_LIBRARY_PATH="/usr/local/Cellar/gsl/2.7.1/lib/:$DYLD_LIBRARY_PATH$"
+
+# Scalapack
+export DYLD_LIBRARY_PATH="/usr/local/Cellar/scalapack/2.1.0_3/lib/:$DYLD_LIBRARY_PATH"
 
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
@@ -259,7 +313,7 @@ export PAWLDA="/Users/uthpala/abinit/pseudo-dojo/paw_pw_standard/"
 export PATH="/Users/uthpala/Dropbox/git/NEBgen/:$PATH"
 
 # VTST
-export PATH="/Users/uthpala//VTST/vtstscripts-972/:$PATH"
+export PATH="/Users/uthpala/VTST/vtstscripts-978/:$PATH"
 
 # xcrysden
 export PATH="/Users/uthpala/xcrysden-1.6.2/:$PATH"
@@ -275,11 +329,15 @@ export PATH="/usr/local/Cellar/rsync/3.2.3/bin/:$PATH"
 export PYTHONPATH=$HOME/tsase:$PYTHONPATH
 export PATH=$HOME/tsase/bin:$PATH
 
+# FHI-aims
+export PATH="/Users/uthpala/FHIaims/bin/:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 home(){
 # logging through ssh.wvu.edu
-alias spruce="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@spruce.hpc.wvu.edu'"
+#alias spruce="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@spruce.hpc.wvu.edu'"
+alias spruce="ssh -Y ukh0001@spruce.hpc.wvu.edu"
 alias thorny="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
 alias whitehall="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
 alias whitehall2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
@@ -363,7 +421,8 @@ else
     if [[ $WORK_ENV == "WVU.Encrypted" ]] || [[ $WORK_ENV == "eduroam" ]];  then
         work_wifi
     else
-        home
+        #home
+        work_wifi
     fi
 fi
 
@@ -393,3 +452,10 @@ export I_MPI_CXX="icpc"
 export I_MPI_FC="ifort"
 export I_MPI_F90="ifort"
 export I_MPI_F77="ifort"
+
+# compilers
+export CC="mpicc"
+export CXX="mpicxx"
+export FC="mpif90"
+export OMPI_CC=gcc-11
+export OMPI_CXX=g++-11

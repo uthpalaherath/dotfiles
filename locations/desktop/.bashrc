@@ -47,7 +47,13 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-
+# compilers
+export OMPI_FC=gfortran-11
+export OMPI_CC=gcc-11
+export OMPI_CXX=g++-11
+export CC="mpicc"
+export CXX="mpicxx"
+export FC="mpif90"
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias ll='ls -alF'
@@ -62,6 +68,7 @@ alias spruce2="ssh -XYC ukh0001@ssh.wvu.edu"
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from desktop" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
+alias mount_gd="google-drive-ocamlfuse GoogleDrive"
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -88,33 +95,34 @@ export WANNIER_DIR="/home/uthpala/wannier90/wannier90-1.2/"
 #export PATH="/home/uthpala/Dropbox/Research/Projects/DMFT/codes/vaspDMFT/post_processing/ancont_PM/:$PATH"
 #export PATH="/home/uthpala/Dropbox/Research/Projects/DMFT/codes/vaspDMFT/post_processing/bands/:$PATH"
 
-# DMFTwDFT bin
+# DMFTwDFT
+# export PATH="/home/uthpala/DMFTwDFT/bin/:$PATH"
+# export PATH="/home/uthpala/DMFTwDFT/scripts/:$PATH"
+# export PYTHONPATH="/home/uthpala/DMFTwDFT/bin/:$PYTHONPATH"
+# export DMFT_ROOT="/home/uthpala/DMFTwDFT/bin/"
 export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
+export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
 export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
 export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
 
 # LD_LIBRARY_PATH
 export LD_LIBRARY_PATH="/opt/intel/mkl/lib/intel64/:/home/uthpala/lib/gsl/lib/:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/home/uthpala/lib/hdf5-1.12.1/hdf5/lib/:$LD_LIBRARY_PATH$"
 
 # dotfiles
 export PATH="~/dotfiles/:$PATH"
 
 # siesta
-export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
-export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/Bands/:$PATH"
-export PATH="/home/uthpala/siesta/siesta-4.1-b4/Util/Contrib/APostnikov/:$PATH"
+export PATH="/home/uthpala/siesta/siesta-4.1.5/Obj/:$PATH"
+export PATH="/home/uthpala/siesta/siesta-4.1.5/Util/Bands/:$PATH"
+export PATH="/home/uthpala/siesta/siesta-4.1.5/Util/Contrib/APostnikov/:$PATH"
 export PATH="/home/uthpala/siesta/siestal/Obj/:$PATH"
 export PATH="/home/uthpala/siesta/siestaw/Obj/:$PATH"
 
 # elk
 export PATH="/home/uthpala/elk-5.2.14/src/:$PATH"
 export PATH="/home/uthpala/elk-5.2.14/src/spacegroup/:$PATH"
-
-# cc
-export CXX="mpiicpc"
-export CC="mpiicc"
-export FC="mpiifort"
 
 # sod
 export PATH="/home/uthpala/sod/bin/:$PATH"
@@ -150,7 +158,8 @@ export PATH=$HOME/apps/qmcpack/qmcpack/nexus/bin:$PATH
 export PYTHONPATH=$HOME/apps/qmcpack/qmcpack/nexus/lib:$PYTHONPATH
 export PYTHONPATH=$HOME/apps/qmcpack/qmcpack/utils/afqmctools:$PYTHONPATH
 # QE
-export PATH=$HOME/apps/qe-6.8/bin:$PATH
+#export PATH=$HOME/apps/qe-6.8/bin:$PATH
+export PATH=$HOME/qe/qe-7.0/bin:$PATH
 # PySCF
 export PYTHONPATH=$HOME/apps/pyscf/pyscf:$PYTHONPATH
 export PYTHONPATH=$HOME/apps/qmcpack/qmcpack/src/QMCTools:$PYTHONPATH
@@ -170,6 +179,8 @@ export PAWPBE="/home/uthpala/abinit/pseudo-dojo/paw_pbe_standard"
 export PAWLDA="/home/uthpala/abinit/pseudo-dojo/paw_pw_standard"
 export NC_PBEsol="/home/uthpala/abinit/pseudo-dojo/nc-fr-04_pbesol_standard_psp8"
 
+# FHI-aims
+export PATH="/home/uthpala/FHIaims/bin/:$PATH$"
 
 #-------------------------------- FUNCTIONS -------------------------------------
 
