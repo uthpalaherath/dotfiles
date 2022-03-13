@@ -119,6 +119,10 @@ py2
 
 #------------------------------------------- PATHS -------------------------------------------
 
+# Matplotlib
+export PYTHONPATH="/users/ukh0001/dotfiles/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/users/ukh0001/dotfiles/matplotlib/"
+
 # vasp
 export PATH="/users/ukh0001/local/VASP/vasp.5.4.4/bin/:$PATH"
 #export PATH="/users/ukh0001/local/VASP/vasp.6.2.1/bin/:$PATH"
