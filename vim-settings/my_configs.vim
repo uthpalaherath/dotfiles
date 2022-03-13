@@ -82,6 +82,9 @@ autocmd VimEnter * :highlight! ALEError ctermfg=9 ctermbg=NONE
 autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE
 autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE
 
+" flake8 file
+let g:syntastic_python_flake8_config_file='/Users/uthpala/.flake8'
+
 " disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
 
@@ -151,6 +154,10 @@ au VimEnter * wincmd h
 :let g:NERDTreeShowLineNumbers=0
 :autocmd BufEnter NERD_* setlocal nornu
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$' ]
+
+" set autochdir
+" let NERDTreeChDirMode=2
+" nnoremap <leader>nn :NERDTree .<CR>
 
 """ colors
 filetype plugin on
@@ -351,10 +358,10 @@ let g:vimtex_compiler_latexmk = {
 """ vimtex
 let g:vimtex_view_method = 'skim'
 let g:vimtex_view_skim_reading_bar = 0
+let g:vimtex_view_skim_sync = 0
 
 " theme
 autocmd VimEnter *.tex colorscheme peaksea
-autocmd VimEnter *.tex Limelight
 
 " disable gitgutter and indentlines
 au VimEnter *.tex :GitGutterToggle
@@ -460,6 +467,7 @@ augroup pencil
 augroup END
 
 """ limelight
+"autocmd VimEnter *.tex Limelight
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
 noremap <silent> <F5> :Limelight!!<CR>
@@ -532,6 +540,7 @@ let g:latexfmt_no_join_any = [
             \ '\keywords',
             \ '\newif',
             \ '\entryextra',
+            \ '\graphicspath',
             \]
 let g:latexfmt_no_join_next = [ '\\', '\centering', '\includegraphics' ]
 let g:latexfmt_no_join_prev = [ '\item', '\label' ]

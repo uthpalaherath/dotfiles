@@ -16,9 +16,6 @@ tmux attach -t desktop || tmux new -s desktop
 #tmux
 fi
 
-#Intel compilers
-source /home/uthpala/intel/oneapi/setvars.sh > /dev/null
-
 # Memory
 ulimit -s unlimited
 
@@ -31,6 +28,13 @@ export LS_OPTIONS='--color=auto'
 eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
+
+#Intel compilers
+source /home/uthpala/intel/oneapi/setvars.sh > /dev/null
+
+# Intel Libraries
+export LD_LIBRARY_PATH="/home/uthpala/intel/oneapi/vpl/2021.6.0/lib:/home/uthpala/intel/oneapi/tbb/2021.4.0/env/../lib/intel64/gcc4.8:/home/uthpala/intel/oneapi/mpi/2021.4.0//libfabric/lib:/home/uthpala/intel/oneapi/mpi/2021.4.0//lib/release:/home/uthpala/intel/oneapi/mpi/2021.4.0//lib:/home/uthpala/intel/oneapi/mkl/2021.4.0/lib/intel64:/home/uthpala/intel/oneapi/itac/2021.4.0/slib:/home/uthpala/intel/oneapi/ipp/2021.4.0/lib/intel64:/home/uthpala/intel/oneapi/ippcp/2021.4.0/lib/intel64:/home/uthpala/intel/oneapi/ipp/2021.4.0/lib/intel64:/home/uthpala/intel/oneapi/dnnl/2021.4.0/cpu_dpcpp_gpu_dpcpp/lib:/home/uthpala/intel/oneapi/debugger/10.2.4/gdb/intel64/lib:/home/uthpala/intel/oneapi/debugger/10.2.4/libipt/intel64/lib:/home/uthpala/intel/oneapi/debugger/10.2.4/dep/lib:/home/uthpala/intel/oneapi/dal/2021.4.0/lib/intel64:/home/uthpala/intel/oneapi/compiler/2021.4.0/linux/lib:/home/uthpala/intel/oneapi/compiler/2021.4.0/linux/lib/x64:/home/uthpala/intel/oneapi/compiler/2021.4.0/linux/lib/emu:/home/uthpala/intel/oneapi/compiler/2021.4.0/linux/lib/oclfpga/host/linux64/lib:/home/uthpala/intel/oneapi/compiler/2021.4.0/linux/lib/oclfpga/linux64/lib:/home/uthpala/intel/oneapi/compiler/2021.4.0/linux/compiler/lib/intel64_lin:/home/uthpala/intel/oneapi/ccl/2021.4.0/lib/cpu_gpu_dpcpp:/:$LD_LIBRARY_PATH"
+
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -48,12 +52,13 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 # compilers
-export OMPI_FC=gfortran-11
-export OMPI_CC=gcc-11
-export OMPI_CXX=g++-11
-export CC="mpicc"
-export CXX="mpicxx"
-export FC="mpif90"
+# export OMPI_FC=gfortran-11
+# export OMPI_CC=gcc-11
+# export OMPI_CXX=g++-11
+# export CC="mpicc"
+# export CXX="mpicxx"
+# export FC="mpif90"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias ll='ls -alF'
@@ -70,6 +75,11 @@ alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from desktop"
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 alias mount_gd="google-drive-ocamlfuse GoogleDrive"
 
+alias makeINCAR="cp ~/Dropbox/git/MatSciScripts/INCAR ."
+alias makeKPOINTS="cp ~/Dropbox/git/MatSciScripts/KPOINTS ."
+alias makeabinit="cp ~/Dropbox/git/MatSciScripts/{abinit.in,abinit.files} ."
+
+
 #------------------------------------------- PATHS -------------------------------------------
 
 # SET MPI
@@ -84,8 +94,8 @@ export PATH="/home/uthpala/VASP/vasp.5.4.4_dmft/bin/:$PATH"
 export PATH="/home/uthpala/VASP/vasp_dmft/:$PATH"
 
 # wannier90
-export PATH="/home/uthpala/wannier90/wannier90-1.2:$PATH"
-export WANNIER_DIR="/home/uthpala/wannier90/wannier90-1.2/"
+export PATH="/home/uthpala/wannier90/wannier90-3.1.0/:$PATH"
+export WANNIER_DIR="/home/uthpala/wannier90/wannier90-3.1.0/"
 
 # DMFT project
 #export WIEN_DMFT_ROOT="/home/uthpala/Dropbox/Research/Projects/DMFT/codes/vaspDMFT/bin/"
@@ -100,15 +110,15 @@ export WANNIER_DIR="/home/uthpala/wannier90/wannier90-1.2/"
 # export PATH="/home/uthpala/DMFTwDFT/scripts/:$PATH"
 # export PYTHONPATH="/home/uthpala/DMFTwDFT/bin/:$PYTHONPATH"
 # export DMFT_ROOT="/home/uthpala/DMFTwDFT/bin/"
-export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
-export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
-export PYTHONPATH="/home/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
-export DMFT_ROOT="/home/uthpala/Dropbox/git/DMFTwDFT/bin/"
+export PATH="/home/uthpala/DMFTwDFT/bin/:$PATH"
+export PATH="/home/uthpala/DMFTwDFT/scripts/:$PATH"
+export PYTHONPATH="/home/uthpala/DMFTwDFT/bin/:$PYTHONPATH"
+export DMFT_ROOT="/home/uthpala/DMFTwDFT/bin/"
 
 # LD_LIBRARY_PATH
-export LD_LIBRARY_PATH="/opt/intel/mkl/lib/intel64/:/home/uthpala/lib/gsl/lib/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/home/uthpala/lib/gsl/lib/:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH"
-export LD_LIBRARY_PATH="/home/uthpala/lib/hdf5-1.12.1/hdf5/lib/:$LD_LIBRARY_PATH$"
+export LD_LIBRARY_PATH="/home/uthpala/lib/hdf5-1.12.1/hdf5/lib/:$LD_LIBRARY_PATH"
 
 # dotfiles
 export PATH="~/dotfiles/:$PATH"
@@ -147,6 +157,7 @@ export HD5F_INCLUDE_DIRS="/home/uthpala/lib/hdf5-1.10.4/hdf5/include/"
 
 # MatSciScripts
 export PATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PATH"
+export PYTHONPATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PYTHONPATH"
 
 # VTST
 export PATH="/home/uthpala/VTST/vtstscripts-957/:$PATH"

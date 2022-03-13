@@ -145,7 +145,7 @@ mount_all(){
     mount_whitehall;
     mount_desktop;
     mount_desktop2;
-    mount_romeronas;
+    #mount_romeronas;
     mount_bridges2;
 }
 
@@ -164,19 +164,26 @@ umount_all(){
 # Check if VASP relaxation is obtained for batch jobs when relaxed with
 # Convergence.py and relax.dat is created.
 relaxed(){
-    rm -f unrelaxed_list.dat
-    folder_list=$(ls | grep -E '^[0-9]+$')
-    for i in $folder_list;
-        do if [ -f $i/relax.dat ] ; then
+ if [[ "$*" == "" ]]; then
+     arg="^[0-9]+$"
+ else
+     arg=$1
+ fi
+
+ rm -f unrelaxed_list.dat
+ folder_list=$(ls | grep -E $arg)
+ for i in $folder_list;
+     do if [[ -f "${i}/relax.dat" ]]; then
             echo $i
         else
-            printf "$i\t" >> unrelaxed_list.dat
+            printf "${i}\t" >> unrelaxed_list.dat
         fi
-        done
+     done
 }
 
 # Clean VASP files in current directoy and subdirectories.
 # For only current directory use cleanvasp.sh
+# Add -delete flag to delete.
 cleanvaspall(){
     find . \( \
         -name "CHGCAR*" -o \
@@ -206,7 +213,112 @@ cleanvaspall(){
     \) -type f $1
 }
 
+#---------- Create jobscripts for HPC ------------
+
+# spruce
+makejob_spruce(){
+queue=${1:-standby}
+nodes=${2:-1}
+ppn=${3:-16}
+jobname=${4:-jobname}
+
+case $queue in
+  standby) walltime=4:00:00 ;;
+  alromero) walltime=1000:00:00 ;;
+  comm_mmem_day) walltime=24:00:00 ;;
+  comm_mmem_week) walltime=168:00:00 ;;
+  debug) walltime=00:15:00 ;;
+  *) walltime=4:00:00 ;;
+esac
+
+echo "\
+#!/bin/bash
+#PBS -N $jobname
+#PBS -q $queue
+#PBS -l walltime=$walltime
+#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=6gb
+#PBS -m ae
+#PBS -M ukh0001@mix.wvu.edu
+#PBS -j oe
+
+source ~/.bashrc
+ulimit -s unlimited
+
+cd \$WORK_DIR/
+" > jobscript.sh
+}
+
+# thorny
+makejob_thorny(){
+ queue=${1:-standby}
+ nodes=${2:-1}
+ ppn=${3:-40}
+ jobname=${4:-jobname}
+
+ case $queue in
+     standby) walltime=4:00:00 ;;
+     alromero) walltime=1000:00:00 ;;
+     comm_small_day) walltime=24:00:00 ;;
+     comm_small_week) walltime=168:00:00 ;;
+     debug) walltime=1:00:00 ;;
+     *) walltime=4:00:00 ;;
+ esac
+
+echo "\
+#!/bin/bash
+#PBS -N $jobname
+#PBS -q $queue
+#PBS -l walltime=$walltime
+#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=8gb
+#PBS -m ae
+#PBS -M ukh0001@mix.wvu.edu
+#PBS -j oe
+
+source ~/.bashrc
+ulimit -s unlimited
+
+cd \$WORK_DIR/
+" > jobscript.sh
+}
+
+# bridges2
+makejob_bridges2(){
+ nodes=${1:-1}
+ ppn=${2:-128}
+ jobname=${3:-jobname}
+
+echo "\
+#!/bin/bash
+#SBATCH --job-name=$jobname
+#SBATCH -N $nodes
+#SBATCH --ntasks-per-node=$ppn
+#SBATCH -t 48:00:00
+##SBATCH --mem=10GB
+##SBATCH -p RM-shared
+
+set -x
+source ~/.bashrc
+ulimit -s unlimited
+
+cd \$WORK_DIR/
+" > jobscript.sh
+}
+
+# selector
+makejob(){
+    case $1 in
+        spruce) makejob_spruce $2 $3 $4 $5 ;;
+        thorny) makejob_thorny $2 $3 $4 $5 ;;
+        bridges2) makejob_bridges2 $2 $3 $4 ;;
+        *) makejob_thorny $2 $3 $4 $5 ;;
+    esac
+}
+
 #------------------------------------------- PATHS -------------------------------------------
+
+# Matplotlib
+export PYTHONPATH="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/:$PYTHONPATH$"
+export MPLCONFIGDIR="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/"
 
 # projects directory
 export PROJECTS="/Volumes/GoogleDrive/My Drive/research/projects/"
@@ -232,11 +344,12 @@ export DYLD_LIBRARY_PATH="/usr/local/Cellar/scalapack/2.1.0_3/lib/:$DYLD_LIBRARY
 export PYTHONDONTWRITEBYTECODE=1
 
 # DMFTwDFT
-export PATH="/Users/utphala/Dropbox/git/DMFTwDFT/bin/:$PATH"
+export PATH="/Users/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
 export PATH="/Users/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
 export PYTHONPATH="/Users/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
 
 # adding wannier and vasp directories
+export DYLD_LIBRARY_PATH="/Users/uthpala/wannier90/wannier90-3.1.0/:$DYLD_LIBRARY_PATH"
 export PATH="/Users/uthpala/wannier90/wannier90-3.1.0/:$PATH"
 export PATH="/Users/uthpala/VASP/vasp.5.4.4/bin/:$PATH"
 #export PATH="/Users/uthpala/VASP/vasp.6.2.1/bin/:$PATH"
@@ -341,6 +454,7 @@ alias spruce="ssh -Y ukh0001@spruce.hpc.wvu.edu"
 alias thorny="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
 alias whitehall="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
 alias whitehall2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
+alias whitehall2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.77'"
 alias desktop="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y uthpala@157.182.27.178'"
 alias desktop2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y uthpala@157.182.28.27'"
 alias romeronas="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu'"
@@ -367,6 +481,7 @@ alias spruce="source ~/.bash_profile; ssh -Y ukh0001@spruce.hpc.wvu.edu"
 alias thorny="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
 alias whitehall="ssh -Y ukh0001@157.182.3.76"
 alias whitehall2="ssh -Y ukh0001@157.182.3.75"
+alias whitehall3="ssh -Y ukh0001@157.182.3.77"
 alias desktop="ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.27.178'"
 alias desktop2="ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.28.27'"
 alias romeronas="ssh -tY ukh0001@157.182.3.76 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu'"
@@ -393,6 +508,7 @@ alias spruce="ssh -Y ukh0001@spruce.hpc.wvu.edu"
 alias thorny="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
 alias whitehall="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
 alias whitehall2="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
+alias whitehall3="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@157.182.3.77'"
 alias desktop="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.27.178''"
 alias desktop2="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.28.27''"
 alias romeronas="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu''"
@@ -447,15 +563,16 @@ alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 
 # MPI
-export I_MPI_CC="icc"
-export I_MPI_CXX="icpc"
-export I_MPI_FC="ifort"
-export I_MPI_F90="ifort"
-export I_MPI_F77="ifort"
+# export I_MPI_CC="icc"
+# export I_MPI_CXX="icpc"
+# export I_MPI_FC="ifort"
+# export I_MPI_F90="ifort"
+# export I_MPI_F77="ifort"
 
 # compilers
 export CC="mpicc"
 export CXX="mpicxx"
 export FC="mpif90"
-export OMPI_CC=gcc-11
-export OMPI_CXX=g++-11
+export OMPI_CC=gcc
+export OMPI_CXX=g++
+export OMPI_FC=gfortran

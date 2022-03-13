@@ -1,0 +1,20 @@
+# tex.mplstyle for Latex publication figures
+
+axes.axisbelow : True       # Draw axis grid lines and ticks below patches (True); above
+                            # patches but below lines ('line'); or above all (False).
+                            # Forces grid lines below figures.
+
+font.size : 10              # Font size in pt.
+grid.linewidth : 1.2        # In pt.
+legend.framealpha : 1       # Legend patch transparency.
+legend.scatterpoints : 3    # Number of scatter points in legend.
+lines.linewidth : 3         # line width in pt.
+
+text.usetex: True
+font.family: serif
+axes.labelsize: 10
+legend.fontsize: 8
+xtick.labelsize: 8
+ytick.labelsize: 8
+pdf.fonttype: 42
+ps.fonttype: 42

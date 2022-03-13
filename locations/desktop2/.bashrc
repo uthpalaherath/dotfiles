@@ -29,23 +29,20 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
-#OpenMPI
-# export LD_LIBRARY_PATH="/opt/openmpi/lib/:$LD_LIBRARY_PATH"
-# export PATH="/opt/openmpi/bin/:$PATH"
 
 #Intel compilers
 source /home/uthpala/intel/oneapi/setvars.sh > /dev/null
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/uthpala/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/home/uthpala/intel/oneapi/intelpython/latest/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/home/uthpala/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/uthpala/anaconda3/etc/profile.d/conda.sh"
+    if [ -f "/home/uthpala/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh" ]; then
+        . "/home/uthpala/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh"
     else
-        export PATH="/home/uthpala/anaconda3/bin:$PATH"
+        export PATH="/home/uthpala/intel/oneapi/intelpython/latest/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -62,11 +59,36 @@ py3(){
 #default
 py3
 
-# compilers
-export CC="mpiicc"
-export CXX="mpiicpc"
-export FC="mpiifort"
-export F77="mpiifort"
+### COMPILERS
+# gnu compilers
+gnu(){
+    export OMPI_CC=gcc
+    export OMPI_CXX=g++
+    export OMPI_FC=gfortran
+    export CC="mpicc"
+    export CXX="mpicxx"
+    export FC="mpif90"
+    export F77="mpif90"
+}
+
+# intel compilers
+intel(){
+    export OMPI_CC=icc
+    export OMPI_CXX=icpc
+    export OMPI_FC=ifort
+    export CC="mpiicc"
+    export CXX="mpiicpc"
+    export FC="mpiifort"
+    export F77="mpiifort"
+}
+# default
+intel
+
+#OpenMPI
+# export PATH="/home/uthpala/openmpi/openmpi-4.1.2/build/bin/:$PATH"
+# export LD_LIBRARY_PATH="/home/uthpala/openmpi/openmpi-4.1.2/build/lib/:$LD_LIBRARY_PATH"
+# export C_INCLUDE_PATH="/home/uthpala/openmpi/openmpi-4.1.2/build/include/:$C_INCLUDE_PATH"
+# export CPLUS_INCLUDE_PATH="/home/uthpala/openmpi/openmpi-4.1.2/build/include/:$CPLUS_INCLUDE_PATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -200,7 +222,7 @@ export PATH="/home/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
 export PATH="/home/uthpala/VESTA/:$PATH"
 
 # globus
-export PATH="/home/uthpala/globusconnectpersonal/:$PATH"
+export PATH="/home/uthpala/globusconnectpersonal-3.1.6/:$PATH"
 
 # siesta
 # export PATH="/home/uthpala/siesta/siesta-4.1-b4/Obj/:$PATH"
@@ -228,8 +250,8 @@ export HDF5_HL_LIBRARIES="/home/uthpala/hdf5-1.12.1/hdf5/lib/"
 export HD5F_INCLUDE_DIRS="/home/uthpala/hdf5-1.12.1/hdf5/include/"
 
 # NETCDF
-export NETCDF_ROOT="/opt/netcdf/"
-export LD_LIBRARY_PATH="/opt/netcdf/lib/:$LD_LIBRARY_PATH"
+export NETCDF_ROOT="/home/uthpala/netcdf/netcdf-c-4.8.1/build/"
+export LD_LIBRARY_PATH="/home/uthpala/netcdf/netcdf-c-4.8.1/build/lib/:$LD_LIBRARY_PATH"
 
 # EDMFT
 #export WIEN_DMFT_ROOT=$HOME/EDMFT/bin
@@ -262,8 +284,7 @@ export PATH="$HOME/gems/bin:$PATH"
 export PATH="/home/uthpala/Dropbox/git/MatSciScripts/:$PATH"
 
 # Quantum Espresso
-#export PATH="/home/uthpala/qe-6.5/bin/:$PATH"
-export PATH="/home/uthpala/qe-6.8/bin/:$PATH"
+export PATH="/home/uthpala/qe/qe-7.0/bin/:$PATH"
 
 # Pandoc
 export PATH="/home/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
