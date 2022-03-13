@@ -1,0 +1,41 @@
+windows:
+  - name: 1
+    root: ~
+    layout: even-horizontal
+    commands:
+      - desktop
+  - name: 2
+    root: ~
+    layout: even-horizontal
+    commands:
+      - desktop2
+  - name: 3
+    root: ~
+    layout: even-horizontal
+    commands:
+      - whitehall
+  - name: 4
+    root: ~
+    layout: even-horizontal
+    commands:
+      - whitehall2
+  - name: 5
+    root: ~
+    layout: even-horizontal
+    commands:
+      - spruce
+  - name: 6
+    root: ~
+    layout: even-horizontal
+    commands:
+      - thorny
+  - name: 7
+    root: ~
+    layout: even-horizontal
+    commands:
+      - bridges2
+  - name: 8
+    root: ~
+    layout: even-horizontal
+    commands:
+      - stampede2

@@ -68,7 +68,7 @@ au VimEnter * call InsertIfEmpty()
 let g:indentLine_char = '¦'
 
 """ ale
-let g:ale_linters = {'python':['flake8', 'pydocstyle']}
+let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale']}
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black']}
 let g:ale_fix_on_save = 1
 let g:ale_lint_on_enter = 0 """ Don't lint when opening a file
@@ -81,6 +81,9 @@ autocmd VimEnter * :highlight! ALEInfoSign   ctermfg=14 ctermbg=NONE
 autocmd VimEnter * :highlight! ALEError ctermfg=9 ctermbg=NONE
 autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE
 autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE
+
+" flake8 file
+let g:syntastic_python_flake8_config_file='/Users/uthpala/.flake8'
 
 " disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
@@ -123,7 +126,8 @@ autocmd VimEnter * call NumControl()
 noremap <silent> <F3> :set invnumber invrelativenumber<CR>
 
 """ toggle indentLines and gitgutter
-noremap <silent> <F4> :GitGutterToggle<CR> :IndentLinesToggle<CR>
+noremap <silent> <F4> :IndentLinesToggle<CR>
+noremap <silent> <F5> :GitGutterToggle<CR> 
 
 """"" Remapping keys
 :imap jk <ESC>`^
@@ -151,6 +155,10 @@ au VimEnter * wincmd h
 :let g:NERDTreeShowLineNumbers=0
 :autocmd BufEnter NERD_* setlocal nornu
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$' ]
+
+" set autochdir
+" let NERDTreeChDirMode=2
+" nnoremap <leader>nn :NERDTree .<CR>
 
 """ colors
 filetype plugin on
@@ -351,10 +359,10 @@ let g:vimtex_compiler_latexmk = {
 """ vimtex
 let g:vimtex_view_method = 'skim'
 let g:vimtex_view_skim_reading_bar = 0
+let g:vimtex_view_skim_sync = 0
 
 " theme
 autocmd VimEnter *.tex colorscheme peaksea
-autocmd VimEnter *.tex Limelight
 
 " disable gitgutter and indentlines
 au VimEnter *.tex :GitGutterToggle
@@ -371,9 +379,9 @@ augroup END
 " Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
 " - https://github.com/Valloric/YouCompleteMe
 " - https://github.com/nvim-lua/completion-nvim
-let g:UltiSnipsExpandTrigger="<c-l>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsExpandTrigger="<C-l>"
+let g:UltiSnipsJumpForwardTrigger="<C-b>"
+let g:UltiSnipsJumpBackwardTrigger="<C-z>"
 
 " If you want :UltiSnipsEdit to split your window.
 " let g:UltiSnipsEditSplit="vertical"
@@ -460,8 +468,10 @@ augroup pencil
 augroup END
 
 """ limelight
+"autocmd VimEnter *.tex Limelight
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
+noremap <silent> <F5> :Limelight!!<CR>
 "let g:limelight_paragraph_span = 1
 
 " Reformat lines (getting the spacing correct)
@@ -530,6 +540,8 @@ let g:latexfmt_no_join_any = [
             \ '\chair',
             \ '\keywords',
             \ '\newif',
+            \ '\entryextra',
+            \ '\graphicspath',
             \]
 let g:latexfmt_no_join_next = [ '\\', '\centering', '\includegraphics' ]
 let g:latexfmt_no_join_prev = [ '\item', '\label' ]
