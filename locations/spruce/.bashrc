@@ -31,6 +31,9 @@ if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]];
     # tmux
 fi
 
+# ENV
+NUM_CORES=$(( PBS_NUM_NODES*PBS_NUM_PPN ))
+WORK_DIR=$PBS_O_WORKDIR
 
 #------------------------------------------- MODULES -------------------------------------------
 
@@ -144,16 +147,87 @@ mktbz(){ tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 # Check if VASP relaxation is obtained for batch jobs when relaxed with 
 # Convergence.py and relax.dat is created.
 relaxed (){
-    rm -f unrelaxed_list.dat
-    folder_list=$(ls | grep -E '^[0-9]+$')
-    for i in $folder_list; 
-        do if [ -f $i/relax.dat ] ; then
-              echo $i 
-           else
-              echo $i >> unrelaxed_list.dat 
-           fi
-        done
+ if [ "$*" == "" ]; then
+     arg="^[0-9]+$"
+ else
+     arg=$1
+ fi
+
+ rm -f unrelaxed_list.dat
+ folder_list=$(ls | grep -E $arg)
+ for i in $folder_list;
+     do if [ -f $i/relax.dat ] ; then
+            echo $i
+        else
+            printf "$i\t" >> unrelaxed_list.dat
+        fi
+     done
 }
+
+
+# Clean VASP files in current directoy and subdirectories.
+# For only current directory use cleanvasp.sh
+cleanvaspall(){
+    find . \( \
+        -name "CHGCAR*" -o \
+        -name "OUTCAR*" -o \
+        -name "CHG" -o \
+        -name "DOSCAR" -o \
+        -name "EIGENVAL" -o \
+        -name "ENERGY" -o \
+        -name "IBZKPT" -o \
+        -name "OSZICAR*" -o \
+        -name "PCDAT" -o \
+        -name "REPORT" -o \
+        -name "TIMEINFO" -o \
+        -name "WAVECAR" -o \
+        -name "XDATCAR" -o \
+        -name "wannier90.wout" -o \
+        -name "wannier90.amn" -o \
+        -name "wannier90.mmn" -o \
+        -name "wannier90.eig" -o \
+        -name "wannier90.chk" -o \
+        -name "wannier90.node*" -o \
+        -name "PROCAR" -o \
+        -name "*.o[0-9]*" -o \
+        -name "vasprun.xml" -o \
+        -name "relax.dat" -o \
+        -name "CONTCAR*" \
+    \) -type f $1
+}
+
+makejob(){
+ queue=${1:-standby}
+ nodes=${2:-1}
+ ppn=${3:-16}
+ jobname=${4:-jobname}
+
+ case $queue in
+     standby) walltime=4:00:00 ;;
+     alromero) walltime=1000:00:00 ;;
+     comm_mmem_day) walltime=24:00:00 ;;
+     comm_mmem_week) walltime=168:00:00 ;;
+     debug) walltime=00:15:00 ;;
+     *) walltime=4:00:00 ;;
+ esac
+
+echo "\
+#!/bin/bash
+#PBS -N $jobname
+#PBS -q $queue
+#PBS -l walltime=$walltime
+#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=6gb
+#PBS -m ae
+#PBS -M ukh0001@mix.wvu.edu
+#PBS -j oe
+
+source ~/.bashrc
+ulimit -s unlimited
+
+cd \$WORKDIR/
+" > jobscript.sh
+}
+
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -224,6 +298,7 @@ alias interact="qsub -I -l nodes=1:ppn=16,walltime=1000:00:00 -q alromero" ##,pv
 alias standby="qsub -I -l nodes=1:ppn=16,walltime=4:00:00 -q standby" 
 alias interact_lm="qsub -I -l nodes=1:ppn=24:broadwell:large,pvmem=20gb,walltime=20:00:00 -q alromero"
 alias q="qstat -u ukh0001"
+alias qs="qstat -u ukh0001 |tee -a ~/jobs.log"
 alias qq="qstat -q"
 alias qstatuswatch='watch -d "qstat -u ukh0001"'
 alias scratch='cd /scratch/ukh0001'
@@ -235,7 +310,7 @@ alias tkill="tmux kill-session"
 
 alias makeINCAR="cp ~/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
-alias makejob="cp ~/dotfiles/locations/spruce/jobscript.sh ."
+#alias makejob="cp ~/dotfiles/locations/spruce/jobscript.sh ."
 alias makeabinit="cp ~/MatSciScripts/{abinit.in,abinit.files} ."
 alias detach="tmux detach-client -a"
 alias tkill="tmux kill-session"
