@@ -123,7 +123,8 @@ autocmd VimEnter * call NumControl()
 noremap <silent> <F3> :set invnumber invrelativenumber<CR>
 
 """ toggle indentLines and gitgutter
-noremap <silent> <F4> :GitGutterToggle<CR> :IndentLinesToggle<CR>
+noremap <silent> <F4> :IndentLinesToggle<CR>
+noremap <silent> <F5> :GitGutterToggle<CR> 
 
 """"" Remapping keys
 :imap jk <ESC>`^
