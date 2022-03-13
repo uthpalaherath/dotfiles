@@ -141,14 +141,28 @@ mktar(){ tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz(){ tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz(){ tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 
+# Check if VASP relaxation is obtained for batch jobs when relaxed with 
+# Convergence.py and relax.dat is created.
+relaxed (){
+    rm -f unrelaxed_list.dat
+    folder_list=$(ls | grep -E '^[0-9]+$')
+    for i in $folder_list; 
+        do if [ -f $i/relax.dat ] ; then
+              echo $i 
+           else
+              echo $i >> unrelaxed_list.dat 
+           fi
+        done
+}
+
 #------------------------------------------- PATHS -------------------------------------------
 
 
 # vasp
 export PATH="/users/ukh0001/local/VASP/vasp.5.4.4/bin:$PATH"
-export PATH="/users/ukh0001/local/p4vasp/bin/:$PATH"
-export PATH="/users/ukh0001/local/VASP/vasp.5.4.4_dmft/bin/:$PATH"
-export PATH="/users/ukh0001/local/VASP/vasp_dmft/:$PATH"
+# export PATH="/users/ukh0001/local/p4vasp/bin/:$PATH"
+# export PATH="/users/ukh0001/local/VASP/vasp.5.4.4_dmft/bin/:$PATH"
+# export PATH="/users/ukh0001/local/VASP/vasp_dmft/:$PATH"
 
 # dotfiles 
 export PATH="/users/ukh0001/dotfiles/:$PATH"
@@ -201,7 +215,7 @@ export PATH="/users/ukh0001/MatSciScripts/:$PATH"
 export PATH="/users/ukh0001/local/MechElastic/:$PATH"
 
 # VTST
-export PATH="/users/ukh0001/local/VTST/vtstscripts-957/:$PATH"
+export PATH="/users/ukh0001/local/VTST/vtstscripts-967/:$PATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -218,6 +232,15 @@ alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from spruce" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 alias tkill="tmux kill-session"
+
+alias makeINCAR="cp ~/MatSciScripts/INCAR ."
+alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
+alias makejob="cp ~/dotfiles/locations/spruce/jobscript.sh ."
+alias makeabinit="cp ~/MatSciScripts/{abinit.in,abinit.files} ."
+alias detach="tmux detach-client -a"
+alias tkill="tmux kill-session"
+alias ..="cd .."
+alias cpr="rsync -ah --info=progress2"
 
 
 
