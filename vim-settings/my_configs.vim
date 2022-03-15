@@ -448,9 +448,13 @@ let g:tq_enabled_backends=["openoffice_en", "mthesaur_txt", "datamuse_com",]
 "set thesaurus+="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
 
 """ YCM cite
-let g:ycm_semantic_triggers = {
-        \ 'tex'  : ['{']
-    \}
+" let g:ycm_semantic_triggers = {
+"         \ 'tex'  : ['{']
+"     \}
+if !exists('g:ycm_semantic_triggers')
+    let g:ycm_semantic_triggers = {}
+endif
+au VimEnter * let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
 
 """ Turn on spell checking for .tex files
 augroup texSpell
@@ -472,36 +476,6 @@ autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
 noremap <silent> <F5> :Limelight!!<CR>
 "let g:limelight_paragraph_span = 1
-
-" Reformat lines (getting the spacing correct)
-" adopted from https://tex.stackexchange.com/questions/1548/intelligent-paragraph-reflowing-in-vim
-
-" fun! TeX_fmt()
-"     if (getline(".") != "")
-"     let save_cursor = getpos(".")
-"         let op_wrapscan = &wrapscan
-"         set nowrapscan
-"         let par_begin = '^\(%D\)\=\s*\($\|\\label\|\\begin\|\\end\|\\[\|\\]\|\\\(sub\)*section\>\|\\item\>\|\\NC\>\|\\blank\>\|\\noindent\>\)'
-"         let par_end   = '^\(%D\)\=\s*\($\|\\begin\|\\end\|\\[\|\\]\|\\place\|\\\(sub\)*section\>\|\\item\>\|\\NC\>\|\\blank\>\)'
-"     try
-"       exe '?'.par_begin.'?+'
-"     catch /E384/
-"       1
-"     endtry
-"         norm V
-"     try
-"       exe '/'.par_end.'/-'
-"     catch /E385/
-"       $
-"     endtry
-"     norm gq
-"         let &wrapscan = op_wrapscan
-"     call setpos('.', save_cursor)
-"     endif
-" endfun
-
-"autocmd BufWritePost *.tex call TeX_fmt()
-" autocmd BufWritePost *.tex :normal gwip " format paragraph on save
 
 """ vim-latexfmt
 let g:latexfmt_no_join_any = [

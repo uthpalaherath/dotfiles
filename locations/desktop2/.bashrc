@@ -162,6 +162,9 @@ mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 
 #------------------------------------------- PATHS -------------------------------------------
 
+# Matplotlib
+export PYTHONPATH="/home/uthpala/Dropbox/git/dotfiles/matplotlib/:$PYTHONPATH$"
+export MPLCONFIGDIR="/home/uthpala/Dropbox/git/dotfiles/matplotlib/"
 
 # set MPI
 # export I_MPI_SHM_LMT=shm
