@@ -10,13 +10,17 @@
 # smaller 8.33
 
 
-axes.labelsize          : 10.0
+axes.labelsize          : 11.0
 axes.linewidth          : 1.0
 #axes.prop_cycle        : cycler('color', ['0173b2', 'de8f05', '029e73', 'd55e00', 'cc78bc', 'ca9161', 'fbafe4', '949494', 'ece133', '56b4e9'])
 #axes.prop_cycle	        : cycler('color', ['000000', 'e69f00', '56b4e9', '009e73', 'f0e442', '0072b2', 'd55e00', 'cc79a7'])
 
 # color-blind colors
 axes.prop_cycle : cycler('color', ["E69F00", "56B4E9", "009E73", "0072B2", "D55E00", "CC79A7", "F0E442"])
+
+axes.axisbelow : True       # Draw axis grid lines and ticks below patches (True); above
+                            # patches but below lines ('line'); or above all (False).
+                            # Forces grid lines below figures.
 
 figure.facecolor        : 'white'
 #figure.figsize          : 3.375, 3.00
@@ -52,6 +56,7 @@ xtick.major.size        : 5
 xtick.minor.size        : 2
 xtick.major.width       : 1.0
 xtick.minor.width       : 0.5
+xtick.labelsize         : 8.0
 
 ytick.direction         : in
 ytick.left              : True
@@ -60,6 +65,7 @@ ytick.major.size        : 5
 ytick.minor.size        : 2
 ytick.major.width       : 1.0
 ytick.minor.width       : 0.5
+ytick.labelsize         : 8.0
 
 # Special sauce
 # Read more about the stix font here https://tex.stackexchange.com/questions/452133/font-used-by-revtex
@@ -70,7 +76,7 @@ font.family             : serif
 font.serif              : STIX
 mathtext.fontset        : stix
 
-lines.linewidth         : 1.1
+lines.linewidth         : 1.0
 lines.markersize        : 5
 
 axes.titlesize          : small # Font size of subtplot title

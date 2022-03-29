@@ -71,7 +71,7 @@ py3(){
 py3
 
 # itermocil
-complete -W "$(itermocil --list)" itermocil
+# complete -W "$(itermocil --list)" itermocil
 
 # Display Python environment
 export VIRTUAL_ENV_DISABLE_PROMPT=yes

@@ -33,6 +33,8 @@
 " - writer.vim
 " - vim-fanfingtastic
 " - vim-latexfmt
+" - vim-litecorrect
+" - vim-textobj-sentence (depends on vim-textobj-user)
 "
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
@@ -127,7 +129,7 @@ noremap <silent> <F3> :set invnumber invrelativenumber<CR>
 
 """ toggle indentLines and gitgutter
 noremap <silent> <F4> :IndentLinesToggle<CR>
-noremap <silent> <F5> :GitGutterToggle<CR> 
+noremap <silent> <F5> :GitGutterToggle<CR>
 
 """"" Remapping keys
 :imap jk <ESC>`^
@@ -380,7 +382,7 @@ augroup END
 " - https://github.com/Valloric/YouCompleteMe
 " - https://github.com/nvim-lua/completion-nvim
 let g:UltiSnipsExpandTrigger="<C-l>"
-let g:UltiSnipsJumpForwardTrigger="<C-b>"
+let g:UltiSnipsJumpForwardTrigger="<C-l>"
 let g:UltiSnipsJumpBackwardTrigger="<C-z>"
 
 " If you want :UltiSnipsEdit to split your window.
@@ -448,14 +450,6 @@ let g:tq_mthesaur_file="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
 let g:tq_enabled_backends=["openoffice_en", "mthesaur_txt", "datamuse_com",]
 "set thesaurus+="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
 
-""" YCM cite
-" let g:ycm_semantic_triggers = {
-"         \ 'tex'  : ['{']
-"     \}
-if !exists('g:ycm_semantic_triggers')
-    let g:ycm_semantic_triggers = {}
-endif
-au VimEnter * let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
 
 """ Turn on spell checking for .tex files
 augroup texSpell
@@ -523,5 +517,59 @@ let g:latexfmt_verbatim_envs = [ 'table', 'equation', 'align', 'eqnarray', '\(\\
 
 map <silent> <leader>ik <Plug>latexfmt_format
 autocmd BufWritePost *.tex :normal ,ik  " format paragraph on save
+
+" YCM don't open autocomplete too frequently
+let g:ycm_min_num_of_chars_for_completion = 1
+let g:ycm_min_num_of_chars_for_completion_enabled = g:ycm_min_num_of_chars_for_completion
+let g:ycm_min_num_of_chars_for_completion_disabled = 999
+
+function FixLaTeXCompletion()
+  if &ft == 'tex' && g:ycm_min_num_of_chars_for_completion != g:ycm_min_num_of_chars_for_completion_disabled
+    let g:ycm_min_num_of_chars_for_completion = g:ycm_min_num_of_chars_for_completion_disabled
+    normal! YcmRestartServer
+  endif
+  if &ft != 'tex' && g:ycm_min_num_of_chars_for_completion == g:ycm_min_num_of_chars_for_completion_disabled
+    let g:ycm_min_num_of_chars_for_completion = g:ycm_min_num_of_chars_for_completion_enabled
+    normal! YcmRestartServer
+  endif
+endfunction
+
+augroup tex_ycm
+  autocmd!
+
+  " Connect VimTeX and YouCompleteMe.
+  " Taken from |:help vimtex-complete-youcompleteme|.
+  " autocmd VimEnter * let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
+
+    """ YCM cite
+    " let g:ycm_semantic_triggers = {
+    "         \ 'tex'  : ['{']
+    "     \}
+    if !exists('g:ycm_semantic_triggers')
+        let g:ycm_semantic_triggers = {}
+    endif
+    au VimEnter *.tex let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
+
+  " Make YouCompleteMe *not* suggest identifiers in TeX documents.
+  " References:
+  " 1. |:help g:ycm_min_num_of_chars_for_completion|
+  " 2. https://github.com/ycm-core/YouCompleteMe/issues/872
+  autocmd BufEnter * call FixLaTeXCompletion()
+augroup end
+
+""" vim-litecorrect
+augroup litecorrect
+  autocmd!
+  autocmd FileType tex call litecorrect#init()
+augroup END
+
+
+""" vim-textobj-sentence
+set nocompatible
+filetype plugin indent on
+augroup textobj_sentence
+  autocmd!
+  autocmd FileType tex call textobj#sentence#init()
+augroup END
 
 " ---------- END OF LATEX SETTINGS ----------

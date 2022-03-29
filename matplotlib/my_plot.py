@@ -25,6 +25,8 @@ def set_size(width, fraction=1, subplots=(1, 1)):
         width_pt = 426.79135
     elif width == "beamer":
         width_pt = 307.28987
+    elif width == "prb":
+        width_pt = 510
     else:
         width_pt = width
 
