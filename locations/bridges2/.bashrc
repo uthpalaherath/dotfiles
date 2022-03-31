@@ -33,6 +33,9 @@ ulimit -s unlimited
 # Reverse search history
 export HISTIGNORE="pwd:ls:cd"
 
+# ENV
+NUM_CORES=$SLURM_NTASKS
+WORK_DIR=$SLURM_SUBMIT_DIR
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -127,6 +130,79 @@ mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 
+# Clean VASP files in current directoy and subdirectories.
+# For only current directory use cleanvasp.sh
+cleanvaspall(){
+ find . \( \
+     -name "CHGCAR*" -o \
+     -name "OUTCAR*" -o \
+     -name "CHG" -o \
+     -name "DOSCAR" -o \
+     -name "EIGENVAL" -o \
+     -name "ENERGY" -o \
+     -name "IBZKPT" -o \
+     -name "OSZICAR*" -o \
+     -name "PCDAT" -o \
+     -name "REPORT" -o \
+     -name "TIMEINFO" -o \
+     -name "WAVECAR" -o \
+     -name "XDATCAR" -o \
+     -name "wannier90.wout" -o \
+     -name "wannier90.amn" -o \
+     -name "wannier90.mmn" -o \
+     -name "wannier90.eig" -o \
+     -name "wannier90.chk" -o \
+     -name "wannier90.node*" -o \
+     -name "PROCAR" -o \
+     -name "*.o[0-9]*" -o \
+     -name "vasprun.xml" -o \
+     -name "relax.dat" -o \
+     -name "CONTCAR*" \
+ \) -type f $1
+}
+
+# Check if VASP relaxation is obtained for batch jobs when relaxed with
+# Convergence.py and relax.dat is created.
+relaxed (){
+ if [ "$*" == "" ]; then
+     arg="^[0-9]+$"
+ else
+     arg=$1
+ fi
+
+ rm -f unrelaxed_list.dat
+ folder_list=$(ls | grep -E $arg)
+ for i in $folder_list;
+     do if [ -f $i/relax.dat ] ; then
+            echo $i
+        else
+            printf "$i\t" >> unrelaxed_list.dat
+        fi
+     done
+}
+
+# bridges2
+makejob(){
+ nodes=${1:-1}
+ ppn=${2:-128}
+ jobname=${3:-jobname}
+
+echo "\
+#!/bin/bash
+#SBATCH --job-name=$jobname
+#SBATCH -N $nodes
+#SBATCH --ntasks-per-node=$ppn
+#SBATCH -t 48:00:00
+##SBATCH --mem=10GB
+##SBATCH -p RM-shared
+
+set -x
+source ~/.bashrc
+ulimit -s unlimited
+
+cd \$WORK_DIR/
+" > jobscript.sh
+}
 
 
 #------------------------------------------- PATHS -------------------------------------------
