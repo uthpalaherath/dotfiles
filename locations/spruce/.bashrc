@@ -231,6 +231,9 @@ cd \$WORKDIR/
 
 #------------------------------------------- PATHS -------------------------------------------
 
+# Matplotlib
+export PYTHONPATH="/users/ukh0001/dotfiles/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/users/ukh0001/dotfiles/matplotlib/"
 
 # vasp
 export PATH="/users/ukh0001/local/VASP/vasp.5.4.4/bin:$PATH"
@@ -298,7 +301,7 @@ alias interact="qsub -I -l nodes=1:ppn=16,walltime=1000:00:00 -q alromero" ##,pv
 alias standby="qsub -I -l nodes=1:ppn=16,walltime=4:00:00 -q standby" 
 alias interact_lm="qsub -I -l nodes=1:ppn=24:broadwell:large,pvmem=20gb,walltime=20:00:00 -q alromero"
 alias q="qstat -u ukh0001"
-alias qs="qstat -u ukh0001 |tee -a ~/jobs.log"
+alias qs="qstat -u ukh0001 | tee -a ~/logs/jobs_$(date +%T_%F).log"
 alias qq="qstat -q"
 alias qstatuswatch='watch -d "qstat -u ukh0001"'
 alias scratch='cd /scratch/ukh0001'
@@ -316,9 +319,4 @@ alias detach="tmux detach-client -a"
 alias tkill="tmux kill-session"
 alias ..="cd .."
 alias cpr="rsync -ah --info=progress2"
-
-
-
-
-
 
