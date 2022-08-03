@@ -43,12 +43,6 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
-#export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
-export OMP_NUM_THREADS=1
-export MKL_NUM_THREADS=1
-export MKL_DYNAMIC=FALSE
-
-
 # compilers
 # export CC="mpicc"
 # export CXX="mpicxx"
@@ -56,11 +50,17 @@ export MKL_DYNAMIC=FALSE
 # export MPICC="mpicc"
 # export MPIFC="mpif90"
 
+export FC=ftn
+export CC=cc
+export CXX=CC
+
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias q='squeue -u uthpala --format="%.18i %.9P %30j %.8u %.2t %.10M %.6D %R"'
+alias q='squeue -u uthpala --format="%.18i %.9P %50j %.8u %.2t %.10M %.6D %R"'
 alias sac="sacct --format="JobID,JobName%30,State,User""
 alias scratch="cd $PSCRATCH"
+alias interact="salloc --nodes 1 --ntasks-per-node=128 --qos interactive --time 04:00:00 --constraint cpu --account=m3337 --cpus-per-task=2"
+alias interact_gpu="salloc --nodes 1 --ntasks-per-node=64 --qos interactive --time 04:00:00 --constraint gpu --gpus 4 --account=m3337_g --cpus-per-task=2"
 
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from perlmutter" && git push && cd -'
@@ -76,17 +76,30 @@ alias tkill="tmux kill-session"
 
 #------------------------------------------- MODULES -------------------------------------------
 
-module load PrgEnv-gnu
-module load craype/2.7.13
-module load gcc/10.3.0
-module load cray-mpich/8.1.13
-module load cudatoolkit/11.2
-module load craype-accel-nvidia80
+module load PrgEnv-gnu >/dev/null
+module load craype/2.7.13 >/dev/null
+module load gcc/10.3.0 >/dev/null
+module load cray-mpich/8.1.13 >/dev/null
+module load cudatoolkit/11.7 >/dev/null
+module load craype-accel-nvidia80 >/dev/null
+module load cray-libsci/21.08.1.2
+
+module load craype-x86-milan
+module load cray-fftw/3.3.8.13
 
 # CUDA
 export CRAY_ACCEL_TARGET=nvidia80
-export LIBRARY_PATH="${LIBRARY_PATH}:${CUDATOOLKIT_HOME}/../../math_libs/lib64"
-export CPATH="${CPATH}:${CUDATOOLKIT_HOME}/../../math_libs/include"
+export LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LIBRARY_PATH"
+export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/lib64/:$LD_LIBRARY_PATH"
+export CPATH="${CUDATOOLKIT_HOME}/../../math_libs/include:$CPATH"
+export CUDA_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$CUDA_PATH"
+
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export MKL_DYNAMIC=FALSE
+
+#export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -231,14 +244,23 @@ relaxed (){
 
 #------------------------------------------- PATHS -------------------------------------------
 
-# FHI-aims
-export PATH="/global/homes/u/uthpala/local/FHIaims/bin/:$PATH"
+# slate
+# export LD_LIBRARY_PATH="~/local/slate-2021.05.02_default_gpu/build/lib64/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/global/u2/u/uthpala/local/slate-2021.05.02_gpu/build/opt/slate/lib/:$LD_LIBRARY_PATH"
 
-# libxc
-export LD_LIBRARY_PATH="/global/homes/u/uthpala/lib/libxc-5.2.3/build/lib/:$LD_LIBRARY_PATH"
+# libraries
+#export LD_LIBRARY_PATH="~/lib/BLAS-3.10.0/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="~/lib/fftw-3.3.10/build/lib/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="~/lib/lapack-3.10.1/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="~/lib/libxc-5.2.3/build/lib/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="~/lib/scalapack-2.2.0/:$LD_LIBRARY_PATH"
+
+# FHI-aims
+export PATH="~/local/FHIaims/bin/:$PATH"
+export PATH="/global/homes/u/uthpala/local/Yi/FHIaims/bin/:$PATH"
 
 # MatSciScripts
-export PATH="/global/homes/u/uthpala/MatSciScripts/:$PATH"
+export PATH="~/MatSciScripts/:$PATH"
 
 # dotfiles
 export PATH="~/dotfiles/:$PATH"
