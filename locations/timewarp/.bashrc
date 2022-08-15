@@ -1,4 +1,4 @@
-# .bashrc for timewarp (bridges2.psc.xsede.org)
+# .bashrc for timewarp (timewarp.egr.duke.edu)
 # -Uthpala Herath
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
@@ -47,13 +47,22 @@ export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/uti
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+export SLURM_CPU_BIND="cores"
+
+# compilers
+export CC="mpiicc"
+export CXX="mpiicpc"
+export FC="mpiifort"
+export MPICC="mpiicc"
+export MPIFC="mpiifort"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias q='squeue -u ukh --format="%.18i %.9P %30j %.8u %.2t %.10M %.6D %R"'
+alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
 alias sac="sacct --format="JobID,JobName%30,State,User""
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
-alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from bridges2" && git push && cd -'
+alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from timewarp" && git push && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 
 alias makeINCAR="cp ~/MatSciScripts/INCAR ."
@@ -223,54 +232,16 @@ export PATH="/home/ukh/local/bin/:$PATH"
 
 # FHI-aims
 export PATH="/home/ukh/local/FHIaims/bin/:$PATH"
+export PATH="/home/ukh/local/FHIaims/utilities/:$PATH"
 
 # MatSciScripts
-export PATH="/jet/home/uthpala/MatSciScripts/:$PATH"
+export PATH="/home/ukh/MatSciScripts/:$PATH"
 
 # dotfiles
-export PATH="~/dotfiles/:$PATH"
-
-# abinit
-export PATH="/jet/home/uthpala/local/abinit/abinit-8.10.3/build/bin/:$PATH"
-#export PATH="/jet/home/uthpala/local/abinit/abinit-9.4.1/build/bin/:$PATH"
-#export PATH="/jet/home/uthpala/local/abinit/abinit-9.2.2/build/bin/:$PATH"
-export PAWLDA="/jet/home/uthpala/local/abinit/pseudo-dojo/paw_pw_standard"
-export PAWPBE="/jet/home/uthpala/local/abinit/pseudo-dojo/paw_pbe_standard"
-
-# wannier90
-export PATH="/jet/home/uthpala/local/wannier90/wannier90-3.1.0/:$PATH"
-
-# vasp
-export PATH="/jet/home/uthpala/local/VASP/vasp.5.4.4/bin/:$PATH"
-
-# # DMFTwDFT_eb
-# export PATH="/jet/home/uthpala/projects/DMFTwDFT_eb/bin/:$PATH"
-# export PATH="/jet/home/uthpala/projects/DMFTwDFT_eb/scripts/:$PATH"
-# export PYTHONPATH="/jet/home/uthpala/projects/DMFTwDFT_eb/bin/:$PYTHONPATH"
-
-# DMFTwDFT
-export PATH="/jet/home/uthpala/projects/DMFTwDFT/bin/:$PATH"
-export PATH="/jet/home/uthpala/projects/DMFTwDFT/scripts/:$PATH"
-export PYTHONPATH="/jet/home/uthpala/projects/DMFTwDFT/bin/:$PYTHONPATH"
-
-# compilers
-export CC="mpiicc"
-export CXX="mpiicpc"
-export FC="mpiifort"
-export MPICC="mpiicc"
-export MPIFC="mpiifort"
-
-# NEBgen
-export PATH="~/local/NEBgen/:$PATH"
-
-# VTST
-export PATH="/jet/home/uthpala/local/VTST/vtstscripts-972/:$PATH"
+export PATH="/home/ukh/dotfiles/:$PATH"
 
 # gsl
 export LD_LIBRARY_PATH="/jet/home/uthpala/lib/gsl-2.6/build/lib/:$LD_LIBRARY_PATH"
 
-# tsase
-export PYTHONPATH=$HOME/tsase:$PYTHONPATH
-export PATH=$HOME/tsase/bin:$PATH
 
 
