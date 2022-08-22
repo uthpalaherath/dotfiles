@@ -1,4 +1,5 @@
 # .bashrc for perlmutter (perlmutter-p1.nersc.gov)
+# and cori (cori.nersc.gov)
 # -Uthpala Herath
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
@@ -20,8 +21,13 @@ fi
 source ~/.bash_prompt
 
 # tmux
-#export PATH="/jet/home/uthpala/local/bin/:$PATH"
-export TMUX_DEVICE_NAME=perlmutter
+if [[ $NERSC_HOST="cori" ]]; then
+    export TMUX_DEVICE_NAME=cori
+else
+    export TMUX_DEVICE_NAME=perlmutter
+fi
+
+# Launch tmux
 if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
 	tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
     #tmux
@@ -43,22 +49,20 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
-# compilers
-# export CC="mpicc"
-# export CXX="mpicxx"
-# export FC="mpif90"
-# export MPICC="mpicc"
-# export MPIFC="mpif90"
-
-export FC=ftn
-export CC=cc
-export CXX=CC
+if [[ $NERSC_HOST="cori" ]]; then
+    export FC=mpiifort
+    export CC=mpiicc
+    export CXX=mpiicpc
+else
+    export FC=ftn
+    export CC=cc
+    export CXX=CC
+fi
 
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u uthpala --format="%.18i %.9P %50j %.8u %.2t %.10M %.6D %R"'
 alias sac="sacct --format="JobID,JobName%30,State,User""
-alias scratch="cd $PSCRATCH"
 alias interact="salloc --nodes 1 --ntasks-per-node=128 --qos interactive --time 04:00:00 --constraint cpu --account=m3337 --cpus-per-task=2"
 alias interact_gpu="salloc --nodes 1 --ntasks-per-node=64 --qos interactive --time 04:00:00 --constraint gpu --gpus 4 --account=m3337_g --cpus-per-task=2"
 
@@ -68,38 +72,52 @@ alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 
 alias makeINCAR="cp ~/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
-alias makejob="cp ~/dotfiles/locations/perlmutter/jobscript.sh ."
 alias ..="cd .."
 alias detach="tmux detach-client -a"
 alias cpr="rsync -ah --info=progress2"
 alias tkill="tmux kill-session"
 
+if [[ $NERSC_HOST="cori" ]]; then
+    alias scratch="cd $SCRATCH"
+    alias makejob="cp ~/dotfiles/locations/perlmutter/jobscript_cori.sh ./jobscript.sh"
+else
+    alias scratch="cd $PSCRATCH"
+    alias makejob="cp ~/dotfiles/locations/perlmutter/jobscript.sh ."
+fi
+
 #------------------------------------------- MODULES -------------------------------------------
-
-module load PrgEnv-gnu >/dev/null
-module load craype/2.7.13 >/dev/null
-module load gcc/10.3.0 >/dev/null
-module load cray-mpich/8.1.13 >/dev/null
-module load cudatoolkit/11.7 >/dev/null
-module load craype-accel-nvidia80 >/dev/null
-module load cray-libsci/21.08.1.2
-
-module load craype-x86-milan
-module load cray-fftw/3.3.8.13
-
-# CUDA
-export CRAY_ACCEL_TARGET=nvidia80
-export LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LIBRARY_PATH"
-export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LD_LIBRARY_PATH"
-export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/lib64/:$LD_LIBRARY_PATH"
-export CPATH="${CUDATOOLKIT_HOME}/../../math_libs/include:$CPATH"
-export CUDA_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$CUDA_PATH"
 
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
 
-#export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
+if [[ $NERSC_HOST="cori" ]]; then
+    module load PrgEnv-intel/6.0.10
+    module load craype/2.7.10
+    module load gcc/11.2.0
+    module load intel/19.1.2.254
+    module load impi/2020.up4
+
+else
+    module load PrgEnv-gnu >/dev/null
+    module load craype/2.7.13 >/dev/null
+    module load gcc/10.3.0 >/dev/null
+    module load cray-mpich/8.1.13 >/dev/null
+    module load cudatoolkit/11.7 >/dev/null
+    module load craype-accel-nvidia80 >/dev/null
+    module load cray-libsci/21.08.1.2
+
+    module load craype-x86-milan
+    module load cray-fftw/3.3.8.13
+
+    # CUDA
+    export CRAY_ACCEL_TARGET=nvidia80
+    export LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LIBRARY_PATH"
+    export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/lib64/:$LD_LIBRARY_PATH"
+    export CPATH="${CUDATOOLKIT_HOME}/../../math_libs/include:$CPATH"
+    export CUDA_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$CUDA_PATH"
+fi
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
