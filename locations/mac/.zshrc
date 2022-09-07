@@ -568,6 +568,8 @@ alias makereport="cp /Users/uthpala/Dropbox/git/dotfiles/templates/report.tex ."
 alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 
+alias ctags="`brew --prefix`/bin/ctags"
+
 # MPI
 # export I_MPI_CC="icc"
 # export I_MPI_CXX="icpc"
