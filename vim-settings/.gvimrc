@@ -6,16 +6,16 @@ set background=dark
 set transparency=0
 autocmd VimEnter *.tex WriterToggle
 
-" cursor options
-function! SetCursor()
-    highlight Cursor guifg=white guibg=steelblue
-    highlight iCursor guifg=white guibg=lightgray
-    set guicursor=n-v-c:block-Cursor
-    set guicursor+=i:ver100-iCursor
-    set guicursor+=n-v-c:blinkon0
-    set guicursor+=i:blinkwait1000
-endfunction
-autocmd VimEnter * call SetCursor()
+" " cursor options
+" function! SetCursor()
+"     highlight Cursor guifg=white guibg=steelblue
+"     highlight iCursor guifg=white guibg=lightgray
+"     set guicursor=n-v-c:block-Cursor
+"     set guicursor+=i:ver100-iCursor
+"     set guicursor+=n-v-c:blinkon0
+"     set guicursor+=i:blinkwait1000
+" endfunction
+" autocmd VimEnter * call SetCursor()
 
 " gitgutter colors
 highlight clear SignColumn
