@@ -343,7 +343,7 @@ let &t_EI = "\e[2 q"
 " Disable all blinking:
 :set guicursor+=a:blinkon0
 " reset cursor when vim exits
-autocmd VimLeave * silent !echo -ne "\033]112\007"
+autocmd VimLeave * silent !echo -ne "\e[6 q""]"
 
 """ resume cursor location, except for github commits
 augroup vimStartup
