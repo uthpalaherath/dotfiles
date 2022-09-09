@@ -43,11 +43,14 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
+# Intel compilers
+source /home/ukh/intel/oneapi/setvars.sh > /dev/null
+
 export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
-export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+# export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
 export SLURM_CPU_BIND="cores"
 
 # compilers
@@ -61,6 +64,8 @@ export MPIFC="mpiifort"
 
 alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
 alias sac="sacct --format="JobID,JobName%30,State,User""
+alias interact="salloc --nodes 1 --ntasks-per-node=20 --qos interactive --time 04:00:00"
+
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from timewarp" && git push && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
@@ -75,13 +80,14 @@ alias tkill="tmux kill-session"
 
 #------------------------------------------- MODULES -------------------------------------------
 
-module load intel-compilers-2018.4
-module load intel-mkl-2018.4
-module load intel-mpi-2018.4
-module load cmake-3.14.4
 module load gcc-8.2
-#module load hdf5
+module load cmake-3.14.4
 
+# module load intel-compilers-2018.4
+# module load intel-mkl-2018.4
+# module load intel-mpi-2018.4
+
+#module load hdf5
 # module load python3.8.11
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
@@ -224,6 +230,9 @@ relaxed (){
 #" > jobscript.sh
 #}
 
+jobinfo(){
+    scontrol show jobid -dd $1
+}
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -243,5 +252,8 @@ export PATH="/home/ukh/dotfiles/:$PATH"
 # gsl
 export LD_LIBRARY_PATH="/jet/home/uthpala/lib/gsl-2.6/build/lib/:$LD_LIBRARY_PATH"
 
+# ctags
+export PATH="/home/ukh/local/ctags-5.8/build/bin/:$PATH"
 
-
+# vim
+export PATH="/home/ukh/local/vim/build/bin/:$PATH"

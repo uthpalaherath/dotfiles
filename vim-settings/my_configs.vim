@@ -348,10 +348,9 @@ let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '```':'```', '"""'
 
 """ ctags
 nnoremap <leader>. :CtrlPTag<cr>
-set tags=./tags;/
+set tags+=tags;/
 
 " Open the definition in a new tab
-"map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 :nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
 
 " Open the definition in a vertical split
