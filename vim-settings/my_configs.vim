@@ -335,15 +335,31 @@ onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
 map <silent> <C-o> :bdelete<CR>
 
 """ cursor options
-function! SetCursor()
- highlight Cursor guifg=white guibg=steelblue
- highlight iCursor guifg=white guibg=lightgray
- set guicursor=n-v-c:block-Cursor
- set guicursor+=i:ver100-iCursor
- set guicursor+=n-v-c:blinkon0
- set guicursor+=i:blinkwait1000
-endfunction
-autocmd VimEnter * call SetCursor()
+if exists('$TMUX')
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+:autocmd InsertEnter * set cul
+:autocmd InsertLeave * set nocul
+highlight Cursor guifg=white guibg=steelblue
+highlight iCursor guifg=white guibg=lightgray
+set guicursor=n-v-c:block-Cursor
+set guicursor+=i:ver100-iCursor
+set guicursor+=n-v-c:blinkon0
+set guicursor+=i:blinkwait1000
+
+" function! SetCursor()
+"  highlight Cursor guifg=white guibg=steelblue
+"  highlight iCursor guifg=white guibg=lightgray
+"  set guicursor=n-v-c:block-Cursor
+"  set guicursor+=i:ver100-iCursor
+"  set guicursor+=n-v-c:blinkon0
+"  set guicursor+=i:blinkwait1000
+" endfunction
+" autocmd VimEnter * call SetCursor()
 
 """ resume cursor location, except for github commits
 augroup vimStartup
