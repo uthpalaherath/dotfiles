@@ -386,7 +386,8 @@ bind-key -n C-S-Left swap-window -t -1\; select-window -t -1
 bind-key -n C-S-Right swap-window -t +1\; select-window -t +1
 
 # vim cursor compatibility
-set -ga terminal-overrides ',*:Ss=\E[%p1%d q:Se=\E[2 q'
+set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
+
 
 # -- tpm -----------------------------------------------------------------------
 
