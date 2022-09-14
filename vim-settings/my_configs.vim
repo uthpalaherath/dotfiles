@@ -85,7 +85,7 @@ autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE
 autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE
 
 " flake8 file
-let g:syntastic_python_flake8_config_file='/Users/uthpala/.flake8'
+let g:syntastic_python_flake8_config_file='~/.flake8'
 
 " disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
@@ -225,6 +225,8 @@ highlight GitGutterAdd ctermfg=2
 highlight GitGutterChange ctermfg=3
 highlight GitGutterDelete ctermfg=1
 highlight GitGutterChangeDelete ctermfg=4
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plug>(GitGutterPrevHunk)
 
 """ split screen shortcuts
 nnoremap <C-W>- :new<CR>
@@ -368,7 +370,6 @@ set tags+=tags;/
 
 " Open the definition in a vertical split
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-
 
 """ ---------- LATEX SETTINGS ----------
 
