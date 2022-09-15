@@ -35,6 +35,7 @@
 " - vim-latexfmt
 " - vim-litecorrect
 " - vim-textobj-sentence (depends on vim-textobj-user)
+" - nerdtree-git-plugin
 "
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
@@ -371,6 +372,10 @@ set tags+=tags;/
 " Open the definition in a vertical split
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
+""" nerdtree-git-plugin
+let g:NERDTreeGitStatusConcealBrackets = 0 " default: 0
+let g:NERDTreeGitStatusShowClean = 0 " default: 0
+
 """ ---------- LATEX SETTINGS ----------
 
 let g:vimtex_compiler_latexmk = {
@@ -474,7 +479,6 @@ let g:tq_openoffice_en_file="/Users/uthpala/.vim_runtime/thesaurus/MyThes-1.0/th
 let g:tq_mthesaur_file="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
 let g:tq_enabled_backends=["openoffice_en", "mthesaur_txt", "datamuse_com",]
 "set thesaurus+="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
-
 
 """ Turn on spell checking for .tex files
 augroup texSpell

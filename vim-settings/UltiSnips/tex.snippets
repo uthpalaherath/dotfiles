@@ -1,0 +1,29 @@
+snippet wrap "Wrap figure environment" b
+\begin{wrapfigure}{R}{0.5\textwidth}
+	\begin{center}
+		\includegraphics[width=0.48\textwidth]{${4:name.ext}}
+	\end{center}
+	\caption{${4/(\w+)\.\w+/\u$1/}$0}%
+	\label{fig:${4/(\w+)\.\w+/$1/}}
+\end{wrapfigure}
+endsnippet
+
+snippet Fig. "Figure reference" Ai
+Fig.~\ref{fig$1}
+endsnippet
+
+snippet Eq. "Equation reference" Ai
+Eq.~\eqref{eq$1}
+endsnippet
+
+snippet Sec. "Section reference" Ai
+Sec.~\ref{sec$1}
+endsnippet
+
+snippet Table "Table reference" Ai
+Table~\ref{tab$1}
+endsnippet
+
+snippet " "Latex quote" i
+\`\`${1:${VISUAL}}''
+endsnippet
