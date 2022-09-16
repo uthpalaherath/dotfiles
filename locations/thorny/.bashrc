@@ -208,6 +208,9 @@ export LD_LIBRARY_PATH="/users/ukh0001/lib/nvidia/stubs/:$LD_LIBRARY_PATH"
 export C_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$C_INCLUDE_PATH"
 export CPLUS_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$CPLUS_INCLUDE_PATH"
 
+# ctags
+export PATH="/users/ukh0001/local/ctags-5.8/build/bin/:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q="qstat -u ukh0001"
