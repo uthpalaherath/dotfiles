@@ -87,7 +87,7 @@ module load cmake-3.14.4
 # module load intel-mkl-2018.4
 # module load intel-mpi-2018.4
 
-#module load hdf5
+# module load hdf5
 # module load python3.8.11
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
@@ -257,3 +257,23 @@ export PATH="/home/ukh/local/ctags-5.8/build/bin/:$PATH"
 
 # vim
 export PATH="/home/ukh/local/vim/build/bin/:$PATH"
+
+# git
+# export PATH="/home/ukh/local/git-2.37.3/:$PATH"
+
+# curl
+export PATH="/home/ukh/local/curl-7.85.0/build/bin/:$PATH"
+export LD_LIBRARY_PATH="/home/ukh/local/curl-7.85.0/build/lib/:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/home/ukh/local/curl-7.85.0/build/pkgconfig:$PKG_CONFIG_PATH"
+export MANPATH="/home/ukh/local/curl-7.85.0/build/share/man:$MANPATH"
+
+# python library
+export PATH="/home/ukh/local/Python-3.9.9/build/bin:$PATH"
+export LD_LIBRARY_PATH="/home/ukh/local/Python-3.9.9/build/lib:$LD_LIBRARY_PATH"
+
+# go
+export PATH="/home/ukh/local/go/bin/:$PATH"
+
+# clang
+export PATH="/home/ukh/local/llvm-project/build/bin:$PATH"
+export LD_LIBRARY_PATH="/home/ukh/local/llvm-project/build/lib:$LD_LIBRARY_PATH"

@@ -86,7 +86,7 @@ autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE
 autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE
 
 " flake8 file
-let g:syntastic_python_flake8_config_file='~/.flake8'
+let g:syntastic_python_flake8_config_file='~/dotfiles/vim-settings/.flake8'
 
 " disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
@@ -177,9 +177,9 @@ let &t_SI .= "\<Esc>[?2004h"
 let &t_EI .= "\<Esc>[?2004l"
 inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
 function! XTermPasteBegin()
-set pastetoggle=<Esc>[201~
-set paste
-return ""
+    set pastetoggle=<Esc>[201~
+    set paste
+    return ""
 endfunction
 
 """ copy to buffer (Only works on Mac)
@@ -411,6 +411,7 @@ augroup END
 " Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
 " - https://github.com/Valloric/YouCompleteMe
 " - https://github.com/nvim-lua/completion-nvim
+let g:UltiSnipsSnippetsDir = "~/dotfiles/vim-settings/UltiSnips/"
 let g:UltiSnipsExpandTrigger="<C-l>"
 let g:UltiSnipsJumpForwardTrigger="<C-l>"
 let g:UltiSnipsJumpBackwardTrigger="<C-z>"
