@@ -14,7 +14,7 @@
 " - molokai
 " - vim-autoread
 " - vim-gitgutter
-" - vim-pydocstring
+" - vim-python-docstring
 " - YouCompleteMe
 " - vim-signature
 " - vim-slime
@@ -165,10 +165,11 @@ let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$' ]
 
 """ colors
 filetype plugin on
+set t_Co=256
 "syntax on
 "set termguicolors
 colorscheme molokai
-highlight Normal ctermbg=NONE
+"highlight Normal ctermbg=NONE
 highlight LineNr ctermbg=NONE
 highlight clear SignColumn
 
@@ -254,11 +255,8 @@ let g:changes_use_icons=0
 " set nofoldenable
 "set foldcolumn=0
 
-
-""" vim-pydocstring
-let g:pydocstring_doq_path = '/usr/local/bin/doq'
-let g:pydocstring_formatter = 'numpy'
-let g:pydocstring_templates_path = '~/.vim_runtime/pydocstringtemplates'
+""" vim-python-docstring
+let g:python_style = 'numpy'
 
 """ vim-slime
 let g:slime_target = "vimterminal"
@@ -312,6 +310,9 @@ nnoremap <Leader>q :SlimeSend1 %reset -f<CR>
 
 " map <Leader>q to exit debug mode or IPython
 "nnoremap <Leader>q :SlimeSend1 exit<CR>
+
+" map terminal scroll to Ctrl+b
+tnoremap <c-b> <c-\><c-n>
 
 """ Startify
 let g:startify_session_persistence = 1

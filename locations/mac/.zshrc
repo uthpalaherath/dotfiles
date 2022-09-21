@@ -84,6 +84,14 @@ function virtenv_indicator {
     fi
 }
 
+# tmux
+export TMUX_DEVICE_NAME=MBP
+tm(){
+if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
+ tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
+fi
+}
+
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
