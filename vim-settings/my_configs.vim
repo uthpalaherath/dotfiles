@@ -336,7 +336,7 @@ onoremap <silent> i/ :<C-U>normal! T/vt/<CR>
 onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
 
 """ delete buffer when navigating back
-map <silent> <C-o> :bdelete<CR>
+"map <silent> <C-o> :bdelete<CR>
 
 """ cursor options
 :autocmd InsertEnter * set cul
