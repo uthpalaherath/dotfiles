@@ -379,18 +379,7 @@ let g:NERDTreeGitStatusShowClean = 0 " default: 0
 
 """ vim-diff ignore whitespace
 set diffopt+=iwhite
-set diffexpr=DiffW()
-function DiffW()
-  let opt = ""
-   if &diffopt =~ "icase"
-     let opt = opt . "-i "
-   endif
-   if &diffopt =~ "iwhite"
-     let opt = opt . "-w " " swapped vim's -b with -w
-   endif
-   silent execute "!diff -a --binary " . opt .
-     \ v:fname_in . " " . v:fname_new .  " > " . v:fname_out
-endfunction
+set diffexpr=""
 
  """ ---------- LATEX SETTINGS ----------
 
