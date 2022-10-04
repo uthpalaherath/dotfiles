@@ -51,7 +51,7 @@ export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
 # export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
-export SLURM_CPU_BIND="cores"
+# export SLURM_CPU_BIND="cores"
 
 # compilers
 export CC="mpiicc"
@@ -82,6 +82,7 @@ alias tkill="tmux kill-session"
 
 module load gcc-8.2
 module load cmake-3.14.4
+module load git-2.37.3
 
 # module load intel-compilers-2018.4
 # module load intel-mkl-2018.4

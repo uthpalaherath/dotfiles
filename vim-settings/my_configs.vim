@@ -377,7 +377,22 @@ map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 let g:NERDTreeGitStatusConcealBrackets = 0 " default: 0
 let g:NERDTreeGitStatusShowClean = 0 " default: 0
 
-""" ---------- LATEX SETTINGS ----------
+""" vim-diff ignore whitespace
+set diffopt+=iwhite
+set diffexpr=DiffW()
+function DiffW()
+  let opt = ""
+   if &diffopt =~ "icase"
+     let opt = opt . "-i "
+   endif
+   if &diffopt =~ "iwhite"
+     let opt = opt . "-w " " swapped vim's -b with -w
+   endif
+   silent execute "!diff -a --binary " . opt .
+     \ v:fname_in . " " . v:fname_new .  " > " . v:fname_out
+endfunction
+
+ """ ---------- LATEX SETTINGS ----------
 
 let g:vimtex_compiler_latexmk = {
         \ 'executable' : 'latexmk',
