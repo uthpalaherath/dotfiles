@@ -23,6 +23,8 @@
 " - vim-startify
 " - vim-maximizer
 " - vim-surround
+" - nerdtree-git-plugin
+" - tagbar
 " - vimtex
 " - ultisnips
 " - thesaurus_query.vim
@@ -35,7 +37,6 @@
 " - vim-latexfmt
 " - vim-litecorrect
 " - vim-textobj-sentence (depends on vim-textobj-user)
-" - nerdtree-git-plugin
 "
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
@@ -368,6 +369,9 @@ nnoremap <leader>. :CtrlPTag<cr>
 set tags+=tags;/
 " Auto generate tags file on write of files
 autocmd BufWritePost *.c,*.h,*.f90,*.F,*.F90 silent! !ctags . &
+
+""" tagbar
+nmap <F8> :TagbarToggle<CR>
 
 " Open the definition in a new tab
 :nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
