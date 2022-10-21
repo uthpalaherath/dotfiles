@@ -366,6 +366,8 @@ let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '```':'```', '"""'
 """ ctags
 nnoremap <leader>. :CtrlPTag<cr>
 set tags+=tags;/
+" Auto generate tags file on write of files
+autocmd BufWritePost *.c,*.h,*.f90,*.F,*.F90 silent! !ctags . &
 
 " Open the definition in a new tab
 :nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
