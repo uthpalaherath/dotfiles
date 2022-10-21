@@ -222,6 +222,31 @@ cleanvaspall(){
     \) -type f $1
 }
 
+# Compiler setting
+intel(){
+# OpenMPI (compiled with intel)
+export PATH="/Users/uthpala/lib/openmpi-4.1.4/bin/:$PATH"
+export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.4/lib/:$DYLD_LIBRARY_PATH"
+export OMPI_CC=icc
+export OMPI_CXX=icpc
+export OMPI_FC=ifort
+}
+
+gnu(){
+# OpenMPI (GNU)
+export PATH="/Users/uthpala/lib/openmpi-4.1.4-gnu/bin/:$PATH"
+export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.4-gnu/lib/:$DYLD_LIBRARY_PATH"
+export OMPI_CC=gcc-11
+export OMPI_CXX=g++-11
+export OMPI_FC=gfortran-11
+}
+# default
+intel
+
+export CC="mpicc"
+export CXX="mpicxx"
+export FC="mpif90"
+
 #---------- Create jobscripts for HPC ------------
 
 # spruce
@@ -347,7 +372,8 @@ export DYLD_LIBRARY_PATH="/Users/uthpala/lib/:$DYLD_LIBRARY_PATH"
 export DYLD_LIBRARY_PATH="/usr/local/Cellar/gsl/2.7.1/lib/:$DYLD_LIBRARY_PATH$"
 
 # Scalapack
-export DYLD_LIBRARY_PATH="/usr/local/Cellar/scalapack/2.1.0_3/lib/:$DYLD_LIBRARY_PATH"
+#export DYLD_LIBRARY_PATH="/usr/local/Cellar/scalapack/2.1.0_3/lib/:$DYLD_LIBRARY_PATH"
+export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0/:$DYLD_LIBRARY_PATH"
 
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
@@ -452,8 +478,8 @@ export PYTHONPATH=$HOME/tsase:$PYTHONPATH
 export PATH=$HOME/tsase/bin:$PATH
 
 # FHI-aims
-export PATH="/Users/uthpala/FHIaims/bin/:$PATH"
-export PATH="/Users/uthpala/FHIaims/utilities/:$PATH"
+export PATH="/Users/uthpala/FHIaims_intel/bin/:$PATH"
+export PATH="/Users/uthpala/FHIaims_intel/utilities/:$PATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -577,18 +603,3 @@ alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 
 alias ctags="`brew --prefix`/bin/ctags"
-
-# MPI
-# export I_MPI_CC="icc"
-# export I_MPI_CXX="icpc"
-# export I_MPI_FC="ifort"
-# export I_MPI_F90="ifort"
-# export I_MPI_F77="ifort"
-
-# compilers
-export CC="mpicc"
-export CXX="mpicxx"
-export FC="mpif90"
-export OMPI_CC=gcc
-export OMPI_CXX=g++
-export OMPI_FC=gfortran

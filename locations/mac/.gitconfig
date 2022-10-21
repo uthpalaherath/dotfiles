@@ -1,0 +1,27 @@
+# This is Git's per-user configuration file.
+[user]
+# Please adapt and uncomment the following lines:
+	name = Uthpala Herath
+    email = ukh0001@mix.wvu.edu
+
+[alias]
+    dc = diff --cached
+    #pull_force = "!git fetch --all; git reset --hard HEAD; git merge '@{u}'"
+    #pull_stash = "!git fetch --all; git stash; git merge '@{u}'; git stash pop"
+[diff]
+    tool = meld
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
+
+[merge]
+    tool = meld
+[mergetool "meld"]
+    # Choose one of these 2 lines (not both!)
+    cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
+    #cmd = meld "$LOCAL" "$BASE" "$REMOTE" --output "$MERGED"
+[mergetool]
+    keepBackup = false
+[credential]
+	helper = store
