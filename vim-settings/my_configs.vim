@@ -387,7 +387,7 @@ set diffexpr=""
 " Customize colors
 :highlight CocFloating ctermbg=238
 :highlight CocFloating ctermfg=Gray
-:highlight CocMenuSel ctermbg=242
+:highlight CocMenuSel ctermbg=240
 
 " Some servers have issues with backup files, see #649.
 set nobackup
