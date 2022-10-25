@@ -603,3 +603,5 @@ alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 
 alias ctags="`brew --prefix`/bin/ctags"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

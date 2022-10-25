@@ -15,7 +15,7 @@
 " - vim-autoread
 " - vim-gitgutter
 " - vim-python-docstring
-" - YouCompleteMe
+" - coc-vim
 " - vim-signature
 " - vim-slime
 " - vim-ipython-cell
@@ -28,7 +28,6 @@
 " - vimtex
 " - ultisnips
 " - thesaurus_query.vim
-" - vim-ycm-latex-semantic-completer (in $HOME/.vim_runtime/my_plugins/YouCompleteMe/third_party/ycmd/ycmd/completers/tex/)
 " - limelight.vim
 " - vim-pencil
 " - vim-smoothie
@@ -37,6 +36,10 @@
 " - vim-latexfmt
 " - vim-litecorrect
 " - vim-textobj-sentence (depends on vim-textobj-user)
+"
+" DEPRICATED
+" - YouCompleteMe
+" - vim-ycm-latex-semantic-completer (in $HOME/.vim_runtime/my_plugins/YouCompleteMe/third_party/ycmd/ycmd/completers/tex/)
 "
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
@@ -72,7 +75,8 @@ au VimEnter * call InsertIfEmpty()
 let g:indentLine_char = '¦'
 
 """ ale
-let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale']}
+let g:ale_disable_lsp = 1
+let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale'], 'c':['clang'], 'cpp':['clang'], 'fortran':['fortran-linter','language_server', 'gcc'],'sh': ['language_server']}
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black']}
 let g:ale_fix_on_save = 1
 let g:ale_lint_on_enter = 0 """ Don't lint when opening a file
@@ -203,22 +207,6 @@ vnoremap <silent> P "_dp
 
 """ Get rid of annoying autocomment in new line
 au FileType * set fo-=c fo-=r fo-=o
-
-""" YCM options
-let g:ycm_complete_in_comments=0
-let g:ycm_collect_identifiers_from_tags_files=1
-let g:ycm_min_num_of_chars_for_completion=1
-let g:ycm_cache_omnifunc=0
-let g:ycm_seed_identifiers_with_syntax=1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_auto_hover=''
-let g:ycm_goto_buffer_command = 'new-or-existing-tab'
-"set updatetime=1000
-"set completeopt-=preview
-set completeopt+=popup
-nmap <leader>d <plug>(YCMHover)
-nnoremap <silent> <leader>gd :YcmCompleter GoTo<CR>
 
 """ gitgutter
 let g:gitgutter_enabled = 1
@@ -386,6 +374,87 @@ let g:NERDTreeGitStatusShowClean = 0 " default: 0
 """ vim-diff ignore whitespace
 set diffopt+=iwhite
 set diffexpr=""
+
+""" coc-vim
+" coc-settings.json
+" {
+"   diagnostic.displayByAle: true,
+"   coc.preferences.snippets.enable: true,
+"   suggest.snippetIndicator: "",
+"   suggest.noselect: true,
+" }
+
+" Customize colors
+:highlight CocFloating ctermbg=238
+:highlight CocFloating ctermfg=Gray
+:highlight CocMenuSel ctermbg=242
+
+" Some servers have issues with backup files, see #649.
+set nobackup
+set nowritebackup
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+set signcolumn=yes
+
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: There's always complete item selected by default, you may want to enable
+" no select by `"suggest.noselect": true` in your configuration file.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+
 
  """ ---------- LATEX SETTINGS ----------
 
@@ -558,45 +627,6 @@ let g:latexfmt_verbatim_envs = [ 'table', 'equation', 'align', 'eqnarray', '\(\\
 
 map <silent> <leader>ik <Plug>latexfmt_format
 autocmd BufWritePost *.tex :normal ,ik  " format paragraph on save
-
-" YCM don't open autocomplete too frequently
-let g:ycm_min_num_of_chars_for_completion = 1
-let g:ycm_min_num_of_chars_for_completion_enabled = g:ycm_min_num_of_chars_for_completion
-let g:ycm_min_num_of_chars_for_completion_disabled = 999
-
-function FixLaTeXCompletion()
-  if &ft == 'tex' && g:ycm_min_num_of_chars_for_completion != g:ycm_min_num_of_chars_for_completion_disabled
-    let g:ycm_min_num_of_chars_for_completion = g:ycm_min_num_of_chars_for_completion_disabled
-    normal! YcmRestartServer
-  endif
-  if &ft != 'tex' && g:ycm_min_num_of_chars_for_completion == g:ycm_min_num_of_chars_for_completion_disabled
-    let g:ycm_min_num_of_chars_for_completion = g:ycm_min_num_of_chars_for_completion_enabled
-    normal! YcmRestartServer
-  endif
-endfunction
-
-augroup tex_ycm
-  autocmd!
-
-  " Connect VimTeX and YouCompleteMe.
-  " Taken from |:help vimtex-complete-youcompleteme|.
-  " autocmd VimEnter * let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
-
-    """ YCM cite
-    " let g:ycm_semantic_triggers = {
-    "         \ 'tex'  : ['{']
-    "     \}
-    if !exists('g:ycm_semantic_triggers')
-        let g:ycm_semantic_triggers = {}
-    endif
-    au VimEnter *.tex let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
-
-  " Make YouCompleteMe *not* suggest identifiers in TeX documents.
-  " References:
-  " 1. |:help g:ycm_min_num_of_chars_for_completion|
-  " 2. https://github.com/ycm-core/YouCompleteMe/issues/872
-  autocmd BufEnter * call FixLaTeXCompletion()
-augroup end
 
 """ vim-litecorrect
 augroup litecorrect
