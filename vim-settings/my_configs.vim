@@ -83,12 +83,12 @@ let g:ale_lint_on_enter = 0 """ Don't lint when opening a file
 let g:ale_sign_error = '•'
 let g:ale_sign_warning = '.'
 autocmd VimEnter * :let g:ale_change_sign_column_color = 0
-autocmd VimEnter * :highlight! ALEErrorSign ctermfg=9 ctermbg=NONE
-autocmd VimEnter * :highlight! ALEWarningSign ctermfg=11 ctermbg=NONE
-autocmd VimEnter * :highlight! ALEInfoSign   ctermfg=14 ctermbg=NONE
-autocmd VimEnter * :highlight! ALEError ctermfg=9 ctermbg=NONE
-autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE
-autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE
+autocmd VimEnter * :highlight! ALEErrorSign ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
+autocmd VimEnter * :highlight! ALEWarningSign ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
+autocmd VimEnter * :highlight! ALEInfoSign   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
+autocmd VimEnter * :highlight! ALEError ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
+autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
+autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
 
 " flake8 file
 let g:syntastic_python_flake8_config_file='~/dotfiles/vim-settings/.flake8'
@@ -385,9 +385,9 @@ set diffexpr=""
 " }
 
 " Customize colors
-:highlight CocFloating ctermbg=238
-:highlight CocFloating ctermfg=Gray
-:highlight CocMenuSel ctermbg=240
+:highlight CocFloating ctermbg=238 guibg=#444444
+:highlight CocFloating ctermfg=Gray guifg=Gray
+:highlight CocMenuSel ctermbg=240 guibg=#585858
 
 " Some servers have issues with backup files, see #649.
 set nobackup
