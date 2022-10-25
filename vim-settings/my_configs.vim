@@ -175,8 +175,9 @@ set t_Co=256
 "set termguicolors
 colorscheme molokai
 "highlight Normal ctermbg=NONE
-highlight LineNr ctermbg=NONE
 highlight clear SignColumn
+highlight LineNr ctermbg=235
+highlight LineNr ctermfg=241
 
 """ paste without auto-indent
 let &t_SI .= "\<Esc>[?2004h"

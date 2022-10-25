@@ -269,8 +269,8 @@ export PKG_CONFIG_PATH="/home/ukh/local/curl-7.85.0/build/pkgconfig:$PKG_CONFIG_
 export MANPATH="/home/ukh/local/curl-7.85.0/build/share/man:$MANPATH"
 
 # python library
-export PATH="/home/ukh/local/Python-3.9.9/build/bin:$PATH"
-export LD_LIBRARY_PATH="/home/ukh/local/Python-3.9.9/build/lib:$LD_LIBRARY_PATH"
+# export PATH="/home/ukh/local/Python-3.9.9/build/bin:$PATH"
+# export LD_LIBRARY_PATH="/home/ukh/local/Python-3.9.9/build/lib:$LD_LIBRARY_PATH"
 
 # go
 export PATH="/home/ukh/local/go/bin/:$PATH"
@@ -278,3 +278,13 @@ export PATH="/home/ukh/local/go/bin/:$PATH"
 # clang
 export PATH="/home/ukh/local/llvm-project/build/bin:$PATH"
 export LD_LIBRARY_PATH="/home/ukh/local/llvm-project/build/lib:$LD_LIBRARY_PATH"
+
+# yarn
+export PATH="/home/ukh/.vim_runtime/my_plugins/node_modules/yarn/bin/:$PATH"
+
+# libtool
+export PATH="/home/ukh/local/libtool-2.4.6/build/bin/:$PATH"
+export LD_LIBRARY_PATH="/home/ukh/local/libtool-2.4.6/build/lib:$LD_LIBRARY_PATH"
+
+# nvim
+export PATH="/home/ukh/local/neovim/bin/:$PATH"
