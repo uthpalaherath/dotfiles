@@ -213,10 +213,10 @@ au FileType * set fo-=c fo-=r fo-=o
 let g:gitgutter_enabled = 1
 " Colors
 let g:gitgutter_override_sign_column_highlight = 0
-highlight GitGutterAdd ctermfg=2
-highlight GitGutterChange ctermfg=3
-highlight GitGutterDelete ctermfg=1
-highlight GitGutterChangeDelete ctermfg=4
+highlight GitGutterAdd ctermfg=2 guifg=#008000
+highlight GitGutterChange ctermfg=3 guifg=#808000
+highlight GitGutterDelete ctermfg=1 guifg=#800000
+highlight GitGutterChangeDelete ctermfg=4 guifg=#000080
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
 
