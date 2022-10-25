@@ -24,6 +24,7 @@
 " - vim-maximizer
 " - vim-surround
 " - nerdtree-git-plugin
+" - vim-bracketed-paste
 " - tagbar
 " - vimtex
 " - ultisnips
@@ -179,18 +180,8 @@ highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
 
-""" paste without auto-indent
-let &t_SI .= "\<Esc>[?2004h"
-let &t_EI .= "\<Esc>[?2004l"
-inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
-function! XTermPasteBegin()
-    set pastetoggle=<Esc>[201~
-    set paste
-    return ""
-endfunction
-
 """ copy to buffer (Only works on Mac)
-map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
+" map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
 
 """ yank/paste to/from the OS clipboard
 noremap <silent> <leader>y "+y

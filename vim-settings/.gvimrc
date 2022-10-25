@@ -6,12 +6,6 @@ set background=dark
 set transparency=0
 autocmd VimEnter *.tex WriterToggle
 
-" cursor
-augroup tune_colors | au!
-        au ColorScheme * hi Cursor guifg=white guibg=steelblue
-        au ColorScheme * hi iCursor guifg=white guibg=steelblue
-augroup END
-
 " " cursor options
 " function! SetCursor()
 "     highlight Cursor guifg=white guibg=steelblue
