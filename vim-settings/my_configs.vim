@@ -77,7 +77,7 @@ let g:indentLine_char = '¦'
 
 """ ale
 let g:ale_disable_lsp = 1
-let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale'], 'c':['clang'], 'cpp':['clang'], 'fortran':['fortran-linter','language_server', 'gcc'],'sh': ['language_server']}
+let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale']}
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black']}
 let g:ale_fix_on_save = 1
 let g:ale_lint_on_enter = 0 """ Don't lint when opening a file
@@ -348,7 +348,7 @@ let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '```':'```', '"""'
 nnoremap <leader>. :CtrlPTag<cr>
 set tags+=tags;/
 " Auto generate tags file on write of files
-autocmd BufWritePost *.c,*.h,*.f90,*.F,*.F90 silent! !ctags . &
+" autocmd BufWritePost *.c,*.h,*.f90,*.F,*.F90 silent! !ctags . &
 
 """ tagbar
 nmap <F8> :TagbarToggle<CR>
