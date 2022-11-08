@@ -27,7 +27,7 @@
 " - vim-bracketed-paste
 " - tagbar
 " - vimtex
-" - ultisnips
+" - ultisnips (Don't install when using coc-vim)
 " - thesaurus_query.vim
 " - limelight.vim
 " - vim-pencil
@@ -163,7 +163,7 @@ autocmd VimEnter * call StartUp()
 au VimEnter * wincmd h
 :let g:NERDTreeShowLineNumbers=0
 :autocmd BufEnter NERD_* setlocal nornu
-let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$' ]
+let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 
 " set autochdir
 " let NERDTreeChDirMode=2
@@ -466,7 +466,8 @@ let g:vimtex_view_skim_reading_bar = 0
 let g:vimtex_view_skim_sync = 0
 
 " theme
-autocmd VimEnter *.tex colorscheme peaksea
+"autocmd VimEnter *.tex colorscheme peaksea
+autocmd VimEnter *.tex colorscheme iceberg
 
 " disable gitgutter and indentlines
 au VimEnter *.tex :GitGutterToggle
@@ -480,16 +481,10 @@ augroup vimtex_config
     au FileType tex nmap <buffer><silent> <leader>v <plug>(vimtex-view)
 augroup END
 
-" Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
-" - https://github.com/Valloric/YouCompleteMe
-" - https://github.com/nvim-lua/completion-nvim
-let g:UltiSnipsSnippetsDir = "~/dotfiles/vim-settings/UltiSnips/"
-let g:UltiSnipsExpandTrigger="<C-l>"
-let g:UltiSnipsJumpForwardTrigger="<C-l>"
-let g:UltiSnipsJumpBackwardTrigger="<C-z>"
-
-" If you want :UltiSnipsEdit to split your window.
-" let g:UltiSnipsEditSplit="vertical"
+""" coc-snippets
+imap <C-l> <Plug>(coc-snippets-expand-jump)
+let g:coc_snippet_prev = '<c-k>'
+vmap <C-j> <Plug>(coc-snippets-select)
 
 " disable auto renaming items to bullets
 let g:vimtex_syntax_conceal_disable = 1
@@ -612,6 +607,7 @@ let g:latexfmt_no_join_any = [
             \ '\newif',
             \ '\entryextra',
             \ '\graphicspath',
+            \ '\noindent',
             \]
 let g:latexfmt_no_join_next = [ '\\', '\centering', '\includegraphics' ]
 let g:latexfmt_no_join_prev = [ '\item', '\label' ]
