@@ -351,7 +351,7 @@ makejob(){
 #------------------------------------------- PATHS -------------------------------------------
 
 # Matplotlib
-export PYTHONPATH="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/:$PYTHONPATH$"
+export PYTHONPATH="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/:$PYTHONPATH"
 export MPLCONFIGDIR="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/"
 
 # projects directory

@@ -247,9 +247,8 @@ let g:slime_python_ipython = 1
 let g:slime_dont_ask_default = 1
 
 " map <Leader>s to start IPython
-"nnoremap <Leader>s :vert term <CR> :SlimeSend1 ipython --matplotlib<CR>
-nnoremap <Leader>s :vert term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
-nnoremap <Leader>S :term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
+nnoremap <Leader>S :vert term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
+"nnoremap <Leader>S :term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
 
 " map <Leader>r to run script
 nnoremap <Leader>r :IPythonCellRun<CR>
@@ -270,8 +269,9 @@ nnoremap <Leader>l :IPythonCellClear<CR>
 nnoremap <Leader>x :IPythonCellClose<CR>
 
 " map [c and ]c to jump to the previous and next cell header
-nnoremap [c :IPythonCellPrevCell<CR>
-nnoremap ]c :IPythonCellNextCell<CR>
+" Note: conflicts with vimdiff
+" nnoremap [c :IPythonCellPrevCell<CR>
+" nnoremap ]c :IPythonCellNextCell<CR>
 
 " map <Leader>h to send the current line or current selection to IPython
 nmap <Leader>h <Plug>SlimeLineSend
@@ -446,8 +446,6 @@ endfunction
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
-
-
  """ ---------- LATEX SETTINGS ----------
 
 let g:vimtex_compiler_latexmk = {
@@ -566,7 +564,7 @@ augroup END
 "autocmd VimEnter *.tex Limelight
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
-noremap <silent> <F5> :Limelight!!<CR>
+noremap <silent> <F6> :Limelight!!<CR>
 "let g:limelight_paragraph_span = 1
 
 """ vim-latexfmt
