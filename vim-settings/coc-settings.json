@@ -1,0 +1,14 @@
+{
+  "diagnostic.displayByAle": true,
+  "coc.preferences.snippets.enable": true,
+  "suggest.snippetIndicator": "",
+  "suggest.noselect": true,
+
+  "languageserver": {
+     "fortran": {
+       "command": "fortls",
+       "filetypes": ["fortran"],
+       "rootPatterns": [".fortls", ".git/"]
+      }
+    }
+}

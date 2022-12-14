@@ -13,7 +13,7 @@ ZSH_THEME="honukai"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions copydir dirhistory macos)
+plugins=(git zsh-autosuggestions) # copydir dirhistory macos)
 
 ## Plugin settings
 
@@ -71,7 +71,7 @@ py3(){
 py3
 
 # itermocil
-complete -W "$(itermocil --list)" itermocil
+# complete -W "$(itermocil --list)" itermocil
 
 # Display Python environment
 export VIRTUAL_ENV_DISABLE_PROMPT=yes
@@ -82,6 +82,14 @@ function virtenv_indicator {
     else
         psvar[1]=${CONDA_DEFAULT_ENV##*/}
     fi
+}
+
+# tmux
+export TMUX_DEVICE_NAME=MBP
+tm(){
+if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
+ tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
+fi
 }
 
 
@@ -145,7 +153,7 @@ mount_all(){
     mount_whitehall;
     mount_desktop;
     mount_desktop2;
-    mount_romeronas;
+    #mount_romeronas;
     mount_bridges2;
 }
 
@@ -159,9 +167,192 @@ umount_all(){
     umount -f /Users/uthpala/HPC/thorny/home
     umount -f /Users/uthpala/HPC/whitehall/home
     umount -f /Users/uthpala/HPC/romeronas/home
+    umount -f /Users/uthpala/HPC/timewarp/home
+}
+
+# Check if VASP relaxation is obtained for batch jobs when relaxed with
+# Convergence.py and relax.dat is created.
+relaxed(){
+ if [[ "$*" == "" ]]; then
+     arg="^[0-9]+$"
+ else
+     arg=$1
+ fi
+
+ rm -f unrelaxed_list.dat
+ folder_list=$(ls | grep -E $arg)
+ for i in $folder_list;
+     do if [[ -f "${i}/relax.dat" ]]; then
+            echo $i
+        else
+            printf "${i}\t" >> unrelaxed_list.dat
+        fi
+     done
+}
+
+# Clean VASP files in current directoy and subdirectories.
+# For only current directory use cleanvasp.sh
+# Add -delete flag to delete.
+cleanvaspall(){
+    find . \( \
+        -name "CHGCAR*" -o \
+        -name "OUTCAR*" -o \
+        -name "CHG" -o \
+        -name "DOSCAR" -o \
+        -name "EIGENVAL" -o \
+        -name "ENERGY" -o \
+        -name "IBZKPT" -o \
+        -name "OSZICAR*" -o \
+        -name "PCDAT" -o \
+        -name "REPORT" -o \
+        -name "TIMEINFO" -o \
+        -name "WAVECAR" -o \
+        -name "XDATCAR" -o \
+        -name "wannier90.wout" -o \
+        -name "wannier90.amn" -o \
+        -name "wannier90.mmn" -o \
+        -name "wannier90.eig" -o \
+        -name "wannier90.chk" -o \
+        -name "wannier90.node*" -o \
+        -name "PROCAR" -o \
+        -name "*.o[0-9]*" -o \
+        -name "vasprun.xml" -o \
+        -name "relax.dat" -o \
+        -name "CONTCAR*" \
+    \) -type f $1
+}
+
+# Compiler setting
+intel(){
+# OpenMPI (compiled with intel)
+export PATH="/Users/uthpala/lib/openmpi-4.1.4/bin/:$PATH"
+export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.4/lib/:$DYLD_LIBRARY_PATH"
+export OMPI_CC="icc"
+export OMPI_CXX="icpc"
+export OMPI_FC="ifort"
+}
+
+gnu(){
+# OpenMPI (GNU)
+export PATH="/Users/uthpala/lib/openmpi-4.1.4-gnu/bin/:$PATH"
+export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.4-gnu/lib/:$DYLD_LIBRARY_PATH"
+export OMPI_CC="gcc-11"
+export OMPI_CXX="g++-11"
+export OMPI_FC="gfortran-11"
+}
+# default
+intel
+
+export CC="mpicc"
+export CXX="mpicxx"
+export FC="mpif90"
+
+#---------- Create jobscripts for HPC ------------
+
+# spruce
+makejob_spruce(){
+queue=${1:-standby}
+nodes=${2:-1}
+ppn=${3:-16}
+jobname=${4:-jobname}
+
+case $queue in
+  standby) walltime=4:00:00 ;;
+  alromero) walltime=1000:00:00 ;;
+  comm_mmem_day) walltime=24:00:00 ;;
+  comm_mmem_week) walltime=168:00:00 ;;
+  debug) walltime=00:15:00 ;;
+  *) walltime=4:00:00 ;;
+esac
+
+echo "\
+#!/bin/bash
+#PBS -N $jobname
+#PBS -q $queue
+#PBS -l walltime=$walltime
+#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=6gb
+#PBS -m ae
+#PBS -M ukh0001@mix.wvu.edu
+#PBS -j oe
+
+source ~/.bashrc
+ulimit -s unlimited
+
+cd \$WORK_DIR/
+" > jobscript.sh
+}
+
+# thorny
+makejob_thorny(){
+ queue=${1:-standby}
+ nodes=${2:-1}
+ ppn=${3:-40}
+ jobname=${4:-jobname}
+
+ case $queue in
+     standby) walltime=4:00:00 ;;
+     alromero) walltime=1000:00:00 ;;
+     comm_small_day) walltime=24:00:00 ;;
+     comm_small_week) walltime=168:00:00 ;;
+     debug) walltime=1:00:00 ;;
+     *) walltime=4:00:00 ;;
+ esac
+
+echo "\
+#!/bin/bash
+#PBS -N $jobname
+#PBS -q $queue
+#PBS -l walltime=$walltime
+#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=8gb
+#PBS -m ae
+#PBS -M ukh0001@mix.wvu.edu
+#PBS -j oe
+
+source ~/.bashrc
+ulimit -s unlimited
+
+cd \$WORK_DIR/
+" > jobscript.sh
+}
+
+# bridges2
+makejob_bridges2(){
+ nodes=${1:-1}
+ ppn=${2:-128}
+ jobname=${3:-jobname}
+
+echo "\
+#!/bin/bash
+#SBATCH --job-name=$jobname
+#SBATCH -N $nodes
+#SBATCH --ntasks-per-node=$ppn
+#SBATCH -t 48:00:00
+##SBATCH --mem=10GB
+##SBATCH -p RM-shared
+
+set -x
+source ~/.bashrc
+ulimit -s unlimited
+
+cd \$WORK_DIR/
+" > jobscript.sh
+}
+
+# selector
+makejob(){
+    case $1 in
+        spruce) makejob_spruce $2 $3 $4 $5 ;;
+        thorny) makejob_thorny $2 $3 $4 $5 ;;
+        bridges2) makejob_bridges2 $2 $3 $4 ;;
+        *) makejob_thorny $2 $3 $4 $5 ;;
+    esac
 }
 
 #------------------------------------------- PATHS -------------------------------------------
+
+# Matplotlib
+export PYTHONPATH="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/"
 
 # projects directory
 export PROJECTS="/Volumes/GoogleDrive/My Drive/research/projects/"
@@ -174,15 +365,26 @@ export PATH="/usr/local/sbin:$PATH"
 # System library
 export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/:$DYLD_LIBRARY_PATH"
 
+# Libraries
+export DYLD_LIBRARY_PATH="/Users/uthpala/lib/:$DYLD_LIBRARY_PATH"
+
+# GSL
+export DYLD_LIBRARY_PATH="/usr/local/Cellar/gsl/2.7.1/lib/:$DYLD_LIBRARY_PATH$"
+
+# Scalapack
+#export DYLD_LIBRARY_PATH="/usr/local/Cellar/scalapack/2.1.0_3/lib/:$DYLD_LIBRARY_PATH"
+export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0/:$DYLD_LIBRARY_PATH"
+
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
 
 # DMFTwDFT
-export PATH="/Users/utphala/Dropbox/git/DMFTwDFT/bin/:$PATH"
+export PATH="/Users/uthpala/Dropbox/git/DMFTwDFT/bin/:$PATH"
 export PATH="/Users/uthpala/Dropbox/git/DMFTwDFT/scripts/:$PATH"
 export PYTHONPATH="/Users/uthpala/Dropbox/git/DMFTwDFT/bin/:$PYTHONPATH"
 
 # adding wannier and vasp directories
+export DYLD_LIBRARY_PATH="/Users/uthpala/wannier90/wannier90-3.1.0/:$DYLD_LIBRARY_PATH"
 export PATH="/Users/uthpala/wannier90/wannier90-3.1.0/:$PATH"
 export PATH="/Users/uthpala/VASP/vasp.5.4.4/bin/:$PATH"
 #export PATH="/Users/uthpala/VASP/vasp.6.2.1/bin/:$PATH"
@@ -259,7 +461,7 @@ export PAWLDA="/Users/uthpala/abinit/pseudo-dojo/paw_pw_standard/"
 export PATH="/Users/uthpala/Dropbox/git/NEBgen/:$PATH"
 
 # VTST
-export PATH="/Users/uthpala//VTST/vtstscripts-972/:$PATH"
+export PATH="/Users/uthpala/VTST/vtstscripts-978/:$PATH"
 
 # xcrysden
 export PATH="/Users/uthpala/xcrysden-1.6.2/:$PATH"
@@ -275,21 +477,28 @@ export PATH="/usr/local/Cellar/rsync/3.2.3/bin/:$PATH"
 export PYTHONPATH=$HOME/tsase:$PYTHONPATH
 export PATH=$HOME/tsase/bin:$PATH
 
+# FHI-aims
+export PATH="/Users/uthpala/FHIaims_intel/bin/:$PATH"
+export PATH="/Users/uthpala/FHIaims_intel/utilities/:$PATH"
+
+# nodejs
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
-home(){
+# WVU Connections
 # logging through ssh.wvu.edu
-alias spruce="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@spruce.hpc.wvu.edu'"
+
+alias spruce="ssh -Y ukh0001@spruce.hpc.wvu.edu"
 alias thorny="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
 alias whitehall="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
 alias whitehall2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
+alias whitehall3="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.77'"
 alias desktop="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y uthpala@157.182.27.178'"
 alias desktop2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y uthpala@157.182.28.27'"
 alias romeronas="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu'"
 
 # Mounting HPC drives without ssh options
-alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
-alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
 alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
 alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_desktop="umount ~/HPC/desktop/home; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
@@ -297,99 +506,34 @@ alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~
 alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 
-# displayplacer
-alias tilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 origin:(0,0)" "id:C2097269-10CA-BCCD-27DB-89E19E08AB82 origin:(-480,-1080)" "id:07A349AF-E29A-3929-480A-9EC29E4735C0 origin:(1440,-1080) degree:90"'
-alias untilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 origin:(0,0)" "id:C2097269-10CA-BCCD-27DB-89E19E08AB82 origin:(-758,-1080)" "id:07A349AF-E29A-3929-480A-9EC29E4735C0 origin:(1168,-1080) degree:0"'
-
-}
-
-work(){
-# logging through LAN at work
-alias spruce="source ~/.bash_profile; ssh -Y ukh0001@spruce.hpc.wvu.edu"
-alias thorny="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
-alias whitehall="ssh -Y ukh0001@157.182.3.76"
-alias whitehall2="ssh -Y ukh0001@157.182.3.75"
-alias desktop="ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.27.178'"
-alias desktop2="ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.28.27'"
-alias romeronas="ssh -tY ukh0001@157.182.3.76 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu'"
-
-# Mounting HPC drives without ssh options from LAN at work
-alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
-alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
-alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
-alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh'"
-alias mount_desktop="umount ~/HPC/desktop/home; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
-alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
-alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@157.182.3.76: ~/HPC/whitehall/home"
-alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@157.182.3.76 ssh'"
-
-# displayplacer
-alias tilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 res:1440x900 color_depth:4 scaling:on origin:(0,0) degree:0" "id:247A815E-9870-CE8E-7EDC-D015E567AFEE res:1920x1080 hz:60 color_depth:8 scaling:off origin:(-480,-1080) degree:0" "id:0B4ACE63-92C5-E254-1091-1F70FF062540 res:1080x1920 hz:60 color_depth:8 scaling:off origin:(1440,-1202) degree:90"'
-alias untilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 res:1440x900 color_depth:4 scaling:on origin:(0,0) degree:0" "id:247A815E-9870-CE8E-7EDC-D015E567AFEE res:1920x1080 hz:60 color_depth:8 scaling:off origin:(-991,-1080) degree:0" "id:0B4ACE63-92C5-E254-1091-1F70FF062540 res:1920x1080 hz:60 color_depth:8 scaling:off origin:(929,-1080) degree:0"'
-
-}
-
-work_wifi(){
-# logging through spruce
-alias spruce="ssh -Y ukh0001@spruce.hpc.wvu.edu"
-alias thorny="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
-alias whitehall="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
-alias whitehall2="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
-alias desktop="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.27.178''"
-alias desktop2="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y uthpala@157.182.28.27''"
-alias romeronas="ssh -tY ukh0001@spruce.hpc.wvu.edu 'ssh -tY ukh0001@157.182.3.76 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu''"
-
-# Mounting HPC drives without ssh options through spruce
-alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
-alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
-alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
-alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh'"
-alias mount_desktop="umount ~/HPC/desktop/home; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh -t ukh0001@157.182.3.76 ssh'"
-alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh -t ukh0001@157.182.3.76 ssh'"
-alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh'"
-alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@spruce.hpc.wvu.edu ssh -t ukh0001@157.182.3.76 ssh'"
-
-# displayplacer
-alias tilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 res:1440x900 color_depth:4 scaling:on origin:(0,0) degree:0" "id:247A815E-9870-CE8E-7EDC-D015E567AFEE res:1920x1080 hz:60 color_depth:8 scaling:off origin:(-480,-1080) degree:0" "id:0B4ACE63-92C5-E254-1091-1F70FF062540 res:1080x1920 hz:60 color_depth:8 scaling:off origin:(1440,-1202) degree:90"'
-alias untilt='displayplacer "id:CF4E66DD-D7CF-37EA-2ED6-9978A8FF6618 res:1440x900 color_depth:4 scaling:on origin:(0,0) degree:0" "id:247A815E-9870-CE8E-7EDC-D015E567AFEE res:1920x1080 hz:60 color_depth:8 scaling:off origin:(-991,-1080) degree:0" "id:0B4ACE63-92C5-E254-1091-1F70FF062540 res:1920x1080 hz:60 color_depth:8 scaling:off origin:(929,-1080) degree:0"'
-
-}
-# setting up working environment based on the network SSID
-#WORK_ENV=$(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | awk '/ SSID:/ {print $2}')
-WORK_ENV=$(/Sy*/L*/Priv*/Apple8*/V*/C*/R*/airport -I | awk '/ SSID:/ {print $1="";print $0}' | awk '{ gsub(/ /,""); print }' | xargs)
-if [[ $(hostname | awk -F '-' '{print $1}') == "ip" ]]; then
-    work
-else
-    if [[ $WORK_ENV == "WVU.Encrypted" ]] || [[ $WORK_ENV == "eduroam" ]];  then
-        work_wifi
-    else
-        home
-    fi
-fi
-
-
 # Other ssh connections
 alias wvu="ssh -tY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
 alias sprucetmux="ssh -tY ukh0001@spruce.hpc.wvu.edu 'tmux -CC new -A -s spruce '"
 alias bridges2="ssh -Y uthpala@br012.bridges2.psc.edu"
 alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
-alias cori="ssh -Y train61@cori.nersc.gov"
+alias cori="ssh -Y uthpala@cori.nersc.gov"
+alias timewarp='ssh -Y ukh@timewarp.egr.duke.edu'
+alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
+
+# Mounting drives
+alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
+alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
+alias mount_timewarp="umount ~/HPC/timewarp/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp.egr.duke.edu: ~/HPC/timewarp/home"
+alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
 
 # git repos
-alias cleantmux='tmux kill-session -a'
-alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 alias dotrebase='cd /Users/uthpala/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd /Users/uthpala/dotfiles && git add . && git commit -m "Update from mac" && git push || true && cd -'
 alias dotpull='cd /Users/uthpala/dotfiles && git pull || true && cd -'
+
+# Generate files
 alias makeINCAR="cp /Users/uthpala/Dropbox/git/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp /Users/uthpala/Dropbox/git/MatSciScripts/KPOINTS ."
 alias makereport="cp /Users/uthpala/Dropbox/git/dotfiles/templates/report.tex ."
+
+# Other system aliases
+alias cleantmux='tmux kill-session -a'
+alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
-
-# MPI
-export I_MPI_CC="icc"
-export I_MPI_CXX="icpc"
-export I_MPI_FC="ifort"
-export I_MPI_F90="ifort"
-export I_MPI_F77="ifort"
+alias ctags="`brew --prefix`/bin/ctags"

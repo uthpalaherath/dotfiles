@@ -58,6 +58,10 @@ fi
 #     fi
 # fi
 
+# ENV 
+NUM_CORES=$(( PBS_NUM_NODES*PBS_NUM_PPN ))
+WORK_DIR=$PBS_O_WORKDIR
+
 #------------------------------------------- MODULES -------------------------------------------
 
 # compilers
@@ -69,7 +73,7 @@ module load lang/gcc/8.2.0 > /dev/null 2>&1
 # module load lang/nvidia/nvhpc/21.3
 # module load lang/gcc/8.2.0 
 # module load lang/intel/2019_u5
-# module load dev/cmake/3.15.4
+module load dev/cmake/3.21.1
 
 # libraries
 # module load libs/fftw/3.3.8_intel18
@@ -114,6 +118,13 @@ py3(){
 py2
 
 #------------------------------------------- PATHS -------------------------------------------
+
+# aims
+export PATH="/scratch/ukh0001/FHIaims/bin/:$PATH"
+
+# Matplotlib
+export PYTHONPATH="/users/ukh0001/dotfiles/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/users/ukh0001/dotfiles/matplotlib/"
 
 # vasp
 export PATH="/users/ukh0001/local/VASP/vasp.5.4.4/bin/:$PATH"
@@ -163,7 +174,6 @@ export PATH="/users/ukh0001/local/siesta/siesta-4.1.5/Obj/:$PATH"
 #export PATH="/users/ukh0001/local/siesta/siesta-dmft-bandwin/Obj/:$PATH"
 #export PATH="/users/ukh0001/local/siesta/siesta-dmft-original/Obj/:$PATH"
 
-
 # local bin
 #export PATH=$HOME/.local/bin:$PATH
 
@@ -198,9 +208,13 @@ export LD_LIBRARY_PATH="/users/ukh0001/lib/nvidia/stubs/:$LD_LIBRARY_PATH"
 export C_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$C_INCLUDE_PATH"
 export CPLUS_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$CPLUS_INCLUDE_PATH"
 
+# ctags
+export PATH="/users/ukh0001/local/ctags-5.8/build/bin/:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q="qstat -u ukh0001"
+alias qs="qstat -u ukh0001 | tee -a ~/jobs.log"
 alias qq="qstat -q"
 alias qstatuswatch='watch -d "qstat -u ukh0001"'
 alias scratch='cd /scratch/ukh0001'
@@ -211,7 +225,7 @@ alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 
 alias makeINCAR="cp ~/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
-alias makejob="cp ~/dotfiles/locations/thorny/jobscript.sh ."
+#alias makejob="cp ~/dotfiles/locations/thorny/jobscript.sh ."
 alias makeabinit="cp ~/MatSciScripts/{abinit.in,abinit.files} ."
 alias detach="tmux detach-client -a"
 alias tkill="tmux kill-session"
@@ -276,3 +290,86 @@ cd $1
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
+
+# Check if VASP relaxation is obtained for batch jobs when relaxed with 
+# Convergence.py and relax.dat is created.
+relaxed (){
+    if [ "$*" == "" ]; then
+        arg="^[0-9]+$"
+    else
+        arg=$1
+    fi
+
+    rm -f unrelaxed_list.dat
+    folder_list=$(ls | grep -E $arg)
+    for i in $folder_list; 
+        do if [ -f $i/relax.dat ] ; then
+               echo $i 
+           else
+               printf "$i\t" >> unrelaxed_list.dat 
+           fi
+        done
+}
+
+# Clean VASP files in current directoy and subdirectories.
+# For only current directory use cleanvasp.sh
+cleanvaspall(){
+    find . \( \
+        -name "CHGCAR*" -o \
+        -name "OUTCAR*" -o \
+        -name "CHG" -o \
+        -name "DOSCAR" -o \
+        -name "EIGENVAL" -o \
+        -name "ENERGY" -o \
+        -name "IBZKPT" -o \
+        -name "OSZICAR*" -o \
+        -name "PCDAT" -o \
+        -name "REPORT" -o \
+        -name "TIMEINFO" -o \
+        -name "WAVECAR" -o \
+        -name "XDATCAR" -o \
+        -name "wannier90.wout" -o \
+        -name "wannier90.amn" -o \
+        -name "wannier90.mmn" -o \
+        -name "wannier90.eig" -o \
+        -name "wannier90.chk" -o \
+        -name "wannier90.node*" -o \
+        -name "PROCAR" -o \
+        -name "*.o[0-9]*" -o \
+        -name "vasprun.xml" -o \
+        -name "relax.dat" -o \
+        -name "CONTCAR*" \
+    \) -type f $1
+}
+
+makejob(){
+    queue=${1:-standby}
+    nodes=${2:-1}
+    ppn=${3:-40}
+    jobname=${4:-jobname}
+
+    case $queue in
+        standby) walltime=4:00:00 ;;
+        alromero) walltime=1000:00:00 ;;
+        comm_small_day) walltime=24:00:00 ;;
+        comm_small_week) walltime=168:00:00 ;;
+        debug) walltime=1:00:00 ;;
+        *) walltime=4:00:00 ;;
+    esac
+
+echo "\
+#!/bin/bash
+#PBS -N $jobname 
+#PBS -q $queue
+#PBS -l walltime=$walltime
+#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=8gb
+#PBS -m ae
+#PBS -M ukh0001@mix.wvu.edu
+#PBS -j oe
+
+source ~/.bashrc
+ulimit -s unlimited
+
+cd \$WORK_DIR/
+" > jobscript.sh
+}
