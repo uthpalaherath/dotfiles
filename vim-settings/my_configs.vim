@@ -467,6 +467,11 @@ let g:vimtex_view_skim_sync = 0
 "autocmd VimEnter *.tex colorscheme peaksea
 autocmd VimEnter *.tex colorscheme iceberg
 
+augroup tex_syntax
+  au!
+  autocmd BufNewFile,BufRead *.tex   set syntax=on
+augroup END
+
 " disable gitgutter and indentlines
 au VimEnter *.tex :GitGutterToggle
 au VimEnter *.tex :IndentLinesToggle

@@ -366,14 +366,14 @@ export PATH="/usr/local/sbin:$PATH"
 export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/:$DYLD_LIBRARY_PATH"
 
 # Libraries
-export DYLD_LIBRARY_PATH="/Users/uthpala/lib/:$DYLD_LIBRARY_PATH"
+#export DYLD_LIBRARY_PATH="/Users/uthpala/lib/:$DYLD_LIBRARY_PATH"
 
 # GSL
 export DYLD_LIBRARY_PATH="/usr/local/Cellar/gsl/2.7.1/lib/:$DYLD_LIBRARY_PATH$"
 
 # Scalapack
-#export DYLD_LIBRARY_PATH="/usr/local/Cellar/scalapack/2.1.0_3/lib/:$DYLD_LIBRARY_PATH"
-export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0/:$DYLD_LIBRARY_PATH"
+# export DYLD_LIBRARY_PATH="/usr/local/Cellar/scalapack/2.2.0_1/lib/:$DYLD_LIBRARY_PATH"
+# export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0/:$DYLD_LIBRARY_PATH"
 
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
@@ -478,8 +478,8 @@ export PYTHONPATH=$HOME/tsase:$PYTHONPATH
 export PATH=$HOME/tsase/bin:$PATH
 
 # FHI-aims
-export PATH="/Users/uthpala/FHIaims_intel/bin/:$PATH"
-export PATH="/Users/uthpala/FHIaims_intel/utilities/:$PATH"
+export PATH="/Users/uthpala/FHIaims/bin/:$PATH"
+export PATH="/Users/uthpala/FHIaims/utilities/:$PATH"
 
 # nodejs
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
@@ -489,7 +489,7 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 # WVU Connections
 # logging through ssh.wvu.edu
 
-alias spruce="ssh -Y ukh0001@spruce.hpc.wvu.edu"
+alias spruce="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@spruce.hpc.wvu.edu'"
 alias thorny="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
 alias whitehall="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
 alias whitehall2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
@@ -514,12 +514,14 @@ alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
 alias cori="ssh -Y uthpala@cori.nersc.gov"
 alias timewarp='ssh -Y ukh@timewarp.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
+alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
 
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
 alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
 alias mount_timewarp="umount ~/HPC/timewarp/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp.egr.duke.edu: ~/HPC/timewarp/home"
 alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
+alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
 
 # git repos
 alias dotrebase='cd /Users/uthpala/dotfiles && git pull --rebase || true && cd -'
