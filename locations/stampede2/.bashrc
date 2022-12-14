@@ -129,8 +129,7 @@ fi
 # tmux
 export TMUX_DEVICE_NAME=stampede2
 if command -v ~/bin/tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-~/bin/tmux attach -t stampede2 || ~/bin/tmux new -s stampede2 
-#tmux
+    ~/bin/tmux new-session -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME 
 fi
 
 # Source global definitions
@@ -144,9 +143,31 @@ ulimit -s unlimited
 # Source for colorful terminal
 source ~/.bash_prompt
 
+# Color folders
+export LS_OPTIONS='--color=auto'
+eval "$(dircolors -b)"
+alias ls='ls $LS_OPTIONS'
+alias grep='grep --color=auto'
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home1/05979/uthpala/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home1/05979/uthpala/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home1/05979/uthpala/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home1/05979/uthpala/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias q="squeue -u uthpala"
+#alias q="squeue -u uthpala"
+alias q='squeue -u uthpala --format="%.18i %.9P %30j %.8u %.2t %.10M %.6D %R"'
 alias sac="sacct --format="JobID,JobName%30,State,User""
 alias scratch="cd /scratch/05979/uthpala"
 alias interact="idev -p normal -N 1 --tasks-per-node 16 -m 240 -A TG-DMR140031"
@@ -155,23 +176,86 @@ alias standby="idev -p development -N 1 --tasks-per-node 16 -m 120 -A TG-DMR1400
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from stampede2" && git push || true && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
+alias detach="tmux detach-client -a"
 
 alias makeINCAR="cp ~/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
 alias makejob="cp ~/dotfiles/locations/stampede2/jobscript.sh ."
-
+alias makeabinit="cp ~/MatSciScripts/{abinit.files,abinit.in} ."
 
 #------------------------------------------- MODULES -------------------------------------------
 
+# Purge
+module purge
+
 # compilers
 module load intel/18.0.2
+#module load gcc/7.1.0
+#module load gcc/7.3.0
+#module load gcc/9.1.0
 
-# python
-#module load python2/2.7.15
-module load python3/3.7.0
+# sourcing intel compilers
+source /opt/intel/compilers_and_libraries_2018.2.199/linux/bin/compilervars.sh intel64
+source /opt/intel/compilers_and_libraries_2018.2.199/linux/mkl/bin/mklvars.sh intel64
+
 
 # libraries
-module load gsl/2.3
+module load gsl/2.6
+# module load netcdf/4.6.2
+
+
+#------------------------------------------- FUNCTIONS -------------------------------------------
+
+checkjob(){
+    scontrol show job=$1
+}
+
+# extract, mkcdr and archive creattion were taken from
+# https://gist.github.com/JakubTesarek/8840983
+# Easy extract
+extract () {
+if [ -f $1 ] ; then
+case $1 in
+*.tar.bz2)   tar xvjf $1    ;;
+*.tar.gz)    tar xvzf $1    ;;
+*.bz2)       bunzip2 $1     ;;
+*.rar)       rar x $1       ;;
+*.gz)        gunzip $1      ;;
+*.tar)       tar xvf $1     ;;
+*.tbz2)      tar xvjf $1    ;;
+*.tgz)       tar xvzf $1    ;;
+*.zip)       unzip $1       ;;
+*.Z)         uncompress $1  ;;
+*.7z)        7z x $1        ;;
+*)           echo "don't know how to extract '$1'..." ;;
+esac
+else
+echo "'$1' is not a valid file!"
+fi
+}
+# Creates directory then moves into it
+function mkcdr {
+mkdir -p -v $1
+cd $1
+}
+# Creates an archive from given directory
+mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
+mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
+mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
+
+# python
+py2(){
+    conda deactivate
+    conda activate py2
+}
+
+py3(){
+    conda deactivate
+    conda activate py3
+
+}
+# default
+py3
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -187,11 +271,18 @@ export PATH="~/dotfiles/:$PATH"
 # wannier90
 export PATH="~/local/wannier90/wannier90-1.2/:$PATH"
 export WANNIER_DIR="~/local/wannier90/wannier90-1.2/"
+export PATH="~/local/wannier90/wannier90-3.1.0/:$PATH"
 
 # vasp
 export PATH="~/local/VASP/vasp_dmft/:$PATH"
 export PATH="~/local/VASP/vasp.5.4.4_dmft/bin/:$PATH"
 export PATH="~/local/VASP/vasp.5.4.4/bin/:$PATH"
+
+# Abinit
+export PATH="/home1/05979/uthpala/local/abinit/abinit-8.10.3/build/bin/:$PATH"
+export PAW_PBE="/home1/05979/uthpala/local/abinit/pseudo-dojo/paw_pbe_standard/"
+export PAW_LDA="/home1/05979/uthpala/local/abinit/pseudo-dojo/paw_pw_standard/"
+
 
 # DMFT
 #export PATH="/home/uthpala/projects/DFTDMFT/bin/:$PATH"
@@ -206,11 +297,34 @@ export PATH="~/local/VASP/vasp.5.4.4/bin/:$PATH"
 export PATH="~/projects/DMFTwDFT/bin/:$PATH"
 export PYTHONPATH="~/projects/DMFTwDFT/bin/:$PYTHONPATH"
 export DMFT_ROOT="~/projects/DMFTwDFT/bin/"
+export PATH="~/projects/DMFTwDFT/scripts/:$PATH"
+
+# # DMFTwDFT_eb
+# export PATH="~/projects/DMFTwDFT_eb/bin/:$PATH"
+# export PYTHONPATH="~/projects/DMFTwDFT_eb/bin/:$PYTHONPATH"
+# export DMFT_ROOT="~/projects/DMFTwDFT_eb/bin/"
+# export PATH="~/projects/DMFTwDFT_eb/scripts/:$PATH"
+
+
+# Dispy
+export PATH="/home1/05979/uthpala/local/DiSPy/scripts/:$PATH"
+
+# NEBgen
+export PATH="/home1/05979/uthpala/local/NEBgen/:$PATH"
+
+#VTST
+export PATH="/home1/05979/uthpala/local/VTST/vtstscripts-957/:$PATH"
+
 
 # compilers
 export CC="mpiicc"
 export CXX="mpiicpc"
 export FC="mpiifort"
+
+# GSL LIBRARY
+export LD_LIBRARY_PATH="/home1/05979/uthpala/local/gsl-2.6/bin/lib/:$LD_LIBRARY_PATH"
+
+
 
 
 
