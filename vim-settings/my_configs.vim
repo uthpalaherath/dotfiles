@@ -226,9 +226,12 @@ autocmd FileType python imap <buffer> <F9> <esc>:w<CR>:exec '!/Users/uthpala/.co
 """ changesPlugin
 let g:changes_use_icons=0
 
-""" Fortran line lengths
+""" Fortran
 ":let b:fortran_fixed_source=0
 ":set syntax=fortran
+let fortran_free_source=1
+let fortran_do_enddo=1
+let fortran_more_precise=1
 
 " Enable folding
 "set foldmethod=indent

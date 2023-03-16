@@ -168,6 +168,7 @@ umount_all(){
     umount -f /Users/uthpala/HPC/whitehall/home
     umount -f /Users/uthpala/HPC/romeronas/home
     umount -f /Users/uthpala/HPC/timewarp/home
+    umount -f /Users/uthpala/HPC/frontera/home
 }
 
 # Check if VASP relaxation is obtained for batch jobs when relaxed with
@@ -478,8 +479,9 @@ export PYTHONPATH=$HOME/tsase:$PYTHONPATH
 export PATH=$HOME/tsase/bin:$PATH
 
 # FHI-aims
-export PATH="/Users/uthpala/FHIaims/bin/:$PATH"
-export PATH="/Users/uthpala/FHIaims/utilities/:$PATH"
+export PATH="/Users/uthpala/FHIaims/FHIaims_intel/bin/:$PATH"
+# export PATH="/Users/uthpala/FHIaims/FHIaims_intel/utilities/:$PATH"
+export SPECIES_DEFAULTS="/Users/uthpala/FHIaims/FHIaims_intel/species_defaults/"
 
 # nodejs
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
@@ -490,7 +492,8 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 # logging through ssh.wvu.edu
 
 alias spruce="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@spruce.hpc.wvu.edu'"
-alias thorny="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
+#alias thorny="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@tf.hpc.wvu.edu'"
+alias thorny="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@trcis001.hpc.wvu.edu'"
 alias whitehall="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
 alias whitehall2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
 alias whitehall3="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.77'"
@@ -514,12 +517,14 @@ alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
 alias cori="ssh -Y uthpala@cori.nersc.gov"
 alias timewarp='ssh -Y ukh@timewarp.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
-alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
+#alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
+alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
 
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
 alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
 alias mount_timewarp="umount ~/HPC/timewarp/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp.egr.duke.edu: ~/HPC/timewarp/home"
+alias mount_cori="umount ~/HPC/cori/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@cori.nersc.gov: ~/HPC/cori/home"
 alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
 alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
 
