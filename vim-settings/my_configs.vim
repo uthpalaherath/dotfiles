@@ -26,8 +26,9 @@
 " - nerdtree-git-plugin
 " - vim-bracketed-paste
 " - tagbar
+" - vim-easytags
 " - vimtex
-" - ultisnips (Don't install when using coc-vim)
+" - coc-snippets - Replaces ultisnips (Don't install when using coc-vim)
 " - thesaurus_query.vim
 " - limelight.vim
 " - vim-pencil
@@ -73,9 +74,10 @@ endfunction
 au VimEnter * call InsertIfEmpty()
 
 """ indentLine
-let g:indentLine_char = '¦'
+let g:indentLine_char = '┊'
 
 """ ale
+let g:ale_virtualtext_cursor = 0
 let g:ale_disable_lsp = 1
 let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale']}
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black']}
@@ -170,9 +172,9 @@ let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 " nnoremap <leader>nn :NERDTree .<CR>
 
 """ colors
-filetype plugin on
+filetype plugin indent on
 set t_Co=256
-"syntax on
+syntax on
 "set termguicolors
 colorscheme molokai
 "highlight Normal ctermbg=NONE
@@ -631,7 +633,6 @@ augroup END
 
 """ vim-textobj-sentence
 set nocompatible
-filetype plugin indent on
 augroup textobj_sentence
   autocmd!
   autocmd FileType tex call textobj#sentence#init()
