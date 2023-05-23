@@ -81,6 +81,7 @@ module load cmake-3.14.4
 module load git-2.37.3
 
 intel(){
+    module load gcc-12.2.0
     module load compiler/latest
     module load mkl/latest
     module load mpi/latest
