@@ -26,8 +26,9 @@
 " - nerdtree-git-plugin
 " - vim-bracketed-paste
 " - tagbar
+" - vim-easytags
 " - vimtex
-" - ultisnips (Don't install when using coc-vim)
+" - coc-snippets - Replaces ultisnips (Don't install when using coc-vim)
 " - thesaurus_query.vim
 " - limelight.vim
 " - vim-pencil
@@ -76,6 +77,7 @@ au VimEnter * call InsertIfEmpty()
 let g:indentLine_char = '┊'
 
 """ ale
+let g:ale_virtualtext_cursor = 0
 let g:ale_disable_lsp = 1
 let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale']}
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black']}
