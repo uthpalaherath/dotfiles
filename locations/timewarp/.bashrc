@@ -3,7 +3,7 @@
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
 
-module purge
+# module purge
 
 #set stty off
  if [[ -t 0 && $- = *i* ]]
@@ -43,14 +43,11 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
-# Intel compilers
-source /home/ukh/intel/oneapi/setvars.sh > /dev/null
-
 export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
-# export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
 # export SLURM_CPU_BIND="cores"
 
 # compilers
@@ -80,16 +77,21 @@ alias tkill="tmux kill-session"
 
 #------------------------------------------- MODULES -------------------------------------------
 
-module load gcc-8.2
 module load cmake-3.14.4
 module load git-2.37.3
 
-# module load intel-compilers-2018.4
-# module load intel-mkl-2018.4
-# module load intel-mpi-2018.4
+intel(){
+    module load compiler/latest
+    module load mkl/latest
+    module load mpi/latest
+}
 
-# module load hdf5
-# module load python3.8.11
+gnu(){
+    module load gcc-12.2.0
+}
+
+# default
+intel
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -259,9 +261,6 @@ export PATH="/home/ukh/local/ctags-5.8/build/bin/:$PATH"
 # vim
 export PATH="/home/ukh/local/vim/build/bin/:$PATH"
 
-# git
-# export PATH="/home/ukh/local/git-2.37.3/:$PATH"
-
 # curl
 export PATH="/home/ukh/local/curl-7.85.0/build/bin/:$PATH"
 export LD_LIBRARY_PATH="/home/ukh/local/curl-7.85.0/build/lib/:$LD_LIBRARY_PATH"
@@ -279,8 +278,8 @@ export PATH="/home/ukh/local/go/bin/:$PATH"
 export PATH="/home/ukh/local/llvm-project/build/bin:$PATH"
 export LD_LIBRARY_PATH="/home/ukh/local/llvm-project/build/lib:$LD_LIBRARY_PATH"
 
-# yarn
-export PATH="/home/ukh/.vim_runtime/my_plugins/node_modules/yarn/bin/:$PATH"
+# node
+export PATH="/home/ukh/local/node-v16.10.0-linux-x64/bin/:$PATH"
 
 # libtool
 export PATH="/home/ukh/local/libtool-2.4.6/build/bin/:$PATH"

@@ -73,7 +73,7 @@ endfunction
 au VimEnter * call InsertIfEmpty()
 
 """ indentLine
-let g:indentLine_char = '¦'
+let g:indentLine_char = '┊'
 
 """ ale
 let g:ale_disable_lsp = 1
@@ -170,9 +170,9 @@ let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 " nnoremap <leader>nn :NERDTree .<CR>
 
 """ colors
-filetype plugin on
+filetype plugin indent on
 set t_Co=256
-"syntax on
+syntax on
 "set termguicolors
 colorscheme molokai
 "highlight Normal ctermbg=NONE
@@ -631,7 +631,6 @@ augroup END
 
 """ vim-textobj-sentence
 set nocompatible
-filetype plugin indent on
 augroup textobj_sentence
   autocmd!
   autocmd FileType tex call textobj#sentence#init()
