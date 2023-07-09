@@ -39,11 +39,10 @@ ys_hg_prompt_info() {
 }
 
 # Prompt format: \n # USER at MACHINE in DIRECTORY on git:BRANCH STATE [TIME] \n $
-PROMPT='
+# PROMPT='
 # %{$fg_bold[grey]%}[%{$reset_color%}%{$fg_bold[${host_color}]%}%n@%m%{$reset_color%}%{$fg_bold[grey]%}]%{$reset_color%} %{$fg_bold[blue]%}%10c%{$reset_color%} $(git_prompt_info) $(git_remote_status)
 # %{$fg_bold[cyan]%}❯%{$reset_color%} '
-PROMPT="
-%(1V.(%1v) .)%{$terminfo[bold]$fg[magenta]%}#%{$reset_color%} \
+PROMPT="%{$terminfo[bold]$fg[magenta]%}#%{$reset_color%} \
 %{$fg[magenta]%}%n \
 %{$fg_bold[grey]%}at \
 %{$FG[172]%}$(box_name) \
