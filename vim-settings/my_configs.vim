@@ -471,6 +471,7 @@ let g:vimtex_view_skim_sync = 0
 " theme
 "autocmd VimEnter *.tex colorscheme peaksea
 autocmd VimEnter *.tex colorscheme iceberg
+autocmd VimEnter *.tex syntax on
 
 augroup tex_syntax
   au!
