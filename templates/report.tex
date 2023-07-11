@@ -29,6 +29,9 @@
 \usepackage{tabularx}
 \usepackage[version=3]{mhchem}
 \usepackage{caption}
+\usepackage{authblk}
+\usepackage{setspace}
+\usepackage{titlesec}
 \captionsetup[table]{font=small}
 \captionsetup[figure]{font=small}
 \graphicspath{ {./figures/} }
@@ -45,16 +48,20 @@
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
 
-\title{Research Statement}
-\author{Uthpala Herath}
-\affil{
-Department of Physics and Astronomy,\\
-West Virginia University,\\
-Morgantown, WV 26506, USA}
+% General
+\titlelabel{\thetitle.\quad}
 \renewcommand\Affilfont{\itshape\small}
 
-\date{\today}
+\title{Article Title}
 
+\author[1]{Uthpala Herath}
+
+\affil[1]{
+Department of Mechanical Engineering and Materials Science, \protect\\
+Duke University, \protect\\
+Durham, NC 27708, USA}
+
+\date{\today}
 \onehalfspacing
 
 \begin{document}
@@ -66,6 +73,6 @@ Morgantown, WV 26506, USA}
 \section{Introduction}
 
 \bibliographystyle{unsrt}
-\bibliography{references-zotero.bib}
+\bibliography{references-zotero.bib, references.bib}
 
 \end{document}

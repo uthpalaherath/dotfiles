@@ -47,8 +47,10 @@ export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/uti
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
-export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+#export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
 # export SLURM_CPU_BIND="cores"
+unset I_MPI_PMI_LIBRARY
+export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
 
 # compilers
 export CC="mpiicc"
@@ -81,10 +83,16 @@ module load cmake-3.14.4
 module load git-2.37.3
 
 intel(){
+    module unload intel-compilers-2018.4
     module load gcc-12.2.0
     module load compiler/latest
     module load mkl/latest
     module load mpi/latest
+}
+
+intel18(){
+    module load intel-compilers-2018.4
+    source /opt/intel/bin/compilervars.sh intel64
 }
 
 gnu(){
@@ -288,3 +296,6 @@ export LD_LIBRARY_PATH="/home/ukh/local/libtool-2.4.6/build/lib:$LD_LIBRARY_PATH
 
 # nvim
 export PATH="/home/ukh/local/neovim/bin/:$PATH"
+
+# abacus
+export PATH="/home/ukh/local/abacus/build/bin/:$PATH"

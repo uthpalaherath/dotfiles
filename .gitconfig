@@ -1,0 +1,15 @@
+[user]
+   name = Uthpala Herath
+   email = uthpala.herath@duke.edu
+[diff]
+   tool = vimdiff
+   prompt = false
+[merge]
+   tool = diffconflicts
+   prompt = false
+   conflictstyle = diff3
+[mergetool "diffconflicts"]
+   cmd = vim -c DiffConflicts \"$MERGED\" \"$BASE\" \"$LOCAL\" \"$REMOTE\"
+   trustExitCode = true
+[mergetool]
+   keepBackup = false
