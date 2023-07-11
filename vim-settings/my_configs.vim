@@ -451,6 +451,10 @@ endfunction
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
+""" Count search instances 
+autocmd VimEnter * set shortmess-=S
+
+
  """ ---------- LATEX SETTINGS ----------
 
 let g:vimtex_compiler_latexmk = {
