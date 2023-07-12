@@ -174,7 +174,7 @@ let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 """ colors
 filetype plugin indent on
 set t_Co=256
-syntax on
+"syntax on
 "set termguicolors
 colorscheme molokai
 "highlight Normal ctermbg=NONE
