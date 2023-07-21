@@ -14,6 +14,7 @@ ZSH_THEME="honukai"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git zsh-autosuggestions) # copydir dirhistory macos)
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 ## Plugin settings
 
@@ -62,9 +63,9 @@ gnu(){
     # OpenMPI (GNU)
     export PATH="/Users/uthpala/lib/openmpi-4.1.4-gnu/bin/:$PATH"
     export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.4-gnu/lib/:$DYLD_LIBRARY_PATH"
-    export OMPI_CC="gcc-11"
-    export OMPI_CXX="g++-11"
-    export OMPI_FC="gfortran-11"
+    export OMPI_CC="gcc"
+    export OMPI_CXX="g++"
+    export OMPI_FC="gfortran"
 }
 # default
 intel

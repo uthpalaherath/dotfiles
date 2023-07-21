@@ -133,12 +133,8 @@ function! NumControl()
 endfunction
 autocmd VimEnter * call NumControl()
 
-"""" toggle line numbers
-noremap <silent> <F3> :set invnumber invrelativenumber<CR>
-
-""" toggle indentLines and gitgutter
-noremap <silent> <F4> :IndentLinesToggle<CR>
-noremap <silent> <F5> :GitGutterToggle<CR>
+"""" toggle line numbers, indentLines and gitgutter
+noremap <silent> <F3> :set invnumber invrelativenumber \| IndentLinesToggle \| :GitGutterToggle <CR>
 
 """"" Remapping keys
 :imap jk <ESC>`^
@@ -174,7 +170,7 @@ let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 """ colors
 filetype plugin indent on
 set t_Co=256
-syntax on
+"syntax on
 "set termguicolors
 colorscheme molokai
 "highlight Normal ctermbg=NONE
@@ -369,7 +365,7 @@ let g:NERDTreeGitStatusConcealBrackets = 0 " default: 0
 let g:NERDTreeGitStatusShowClean = 0 " default: 0
 
 """ vim-diff ignore whitespace
-set diffopt+=iwhite
+set diffopt+=iwhiteall,filler
 set diffexpr=""
 
 """ coc-vim
