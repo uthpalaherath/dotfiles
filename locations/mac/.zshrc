@@ -14,7 +14,7 @@ ZSH_THEME="honukai"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git zsh-autosuggestions) # copydir dirhistory macos)
-DISABLE_UNTRACKED_FILES_DIRTY="true"
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 ## Plugin settings
 
@@ -49,8 +49,8 @@ intel(){
     export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0_intel/:$DYLD_LIBRARY_PATH"
 
     # OpenMPI (compiled with intel)
-    export PATH="/Users/uthpala/lib/openmpi-4.1.5/build/bin/:$PATH"
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.5/build/lib/:$DYLD_LIBRARY_PATH"
+    export PATH="/Users/uthpala/lib/openmpi-4.1.6_intel/build/bin/:$PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.6_intel/build/lib/:$DYLD_LIBRARY_PATH"
     export OMPI_CC="icc"
     export OMPI_CXX="icpc"
     export OMPI_FC="ifort"
@@ -58,11 +58,11 @@ intel(){
 
 gnu(){
     # Scalapack
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0/:$DYLD_LIBRARY_PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0_gnu/:$DYLD_LIBRARY_PATH"
 
     # OpenMPI (GNU)
-    export PATH="/Users/uthpala/lib/openmpi-4.1.4-gnu/bin/:$PATH"
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.4-gnu/lib/:$DYLD_LIBRARY_PATH"
+    export PATH="/Users/uthpala/lib/openmpi-4.1.6_gnu/build/bin/:$PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.6_gnu/build/lib/:$DYLD_LIBRARY_PATH"
     export OMPI_CC="gcc"
     export OMPI_CXX="g++"
     export OMPI_FC="gfortran"
@@ -475,9 +475,9 @@ export PYTHONPATH=$HOME/tsase:$PYTHONPATH
 export PATH=$HOME/tsase/bin:$PATH
 
 # FHI-aims
-export PATH="/Users/uthpala/apps/FHIaims/FHIaims_intel/bin/:$PATH"
-export PATH="/Users/uthpala/apps/FHIaims/FHIaims_intel/utilities/:$PATH"
-export SPECIES_DEFAULTS="/Users/uthpala/apps/FHIaims/FHIaims_intel/species_defaults/"
+export PATH="/Users/uthpala/apps/FHIaims/FHIaims/bin/:$PATH"
+export PATH="/Users/uthpala/apps/FHIaims/FHIaims/utilities/:$PATH"
+export SPECIES_DEFAULTS="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/"
 
 # nodejs
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
@@ -540,3 +540,7 @@ alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 alias ctags="`brew --prefix`/bin/ctags"
+
+# docker
+alias cleandocker="docker image prune -a -f && docker volume prune -f"
+alias cleandockerall="docker system prune -a -f"
