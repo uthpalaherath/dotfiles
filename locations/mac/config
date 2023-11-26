@@ -1,0 +1,8 @@
+Host *
+    ServerAliveInterval 60
+    ServerAliveCountMax 10
+    TCPKeepAlive yes
+    ForwardX11 yes
+    ForwardX11Trusted yes
+    ForwardAgent yes
+    XAuthLocation /opt/X11/bin/xauth

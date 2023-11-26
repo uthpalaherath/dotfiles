@@ -14,8 +14,8 @@
 " - molokai
 " - vim-autoread
 " - vim-gitgutter
-" - vim-pydocstring
-" - YouCompleteMe
+" - vim-python-docstring
+" - coc-vim
 " - vim-signature
 " - vim-slime
 " - vim-ipython-cell
@@ -23,10 +23,13 @@
 " - vim-startify
 " - vim-maximizer
 " - vim-surround
+" - nerdtree-git-plugin
+" - vim-bracketed-paste
+" - tagbar
+" - vim-easytags
 " - vimtex
-" - ultisnips
+" - coc-snippets - Replaces ultisnips (Don't install when using coc-vim)
 " - thesaurus_query.vim
-" - vim-ycm-latex-semantic-completer (in $HOME/.vim_runtime/my_plugins/YouCompleteMe/third_party/ycmd/ycmd/completers/tex/)
 " - limelight.vim
 " - vim-pencil
 " - vim-smoothie
@@ -35,6 +38,10 @@
 " - vim-latexfmt
 " - vim-litecorrect
 " - vim-textobj-sentence (depends on vim-textobj-user)
+"
+" DEPRICATED
+" - YouCompleteMe
+" - vim-ycm-latex-semantic-completer (in $HOME/.vim_runtime/my_plugins/YouCompleteMe/third_party/ycmd/ycmd/completers/tex/)
 "
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
@@ -67,9 +74,11 @@ endfunction
 au VimEnter * call InsertIfEmpty()
 
 """ indentLine
-let g:indentLine_char = '¦'
+let g:indentLine_char = '┊'
 
 """ ale
+let g:ale_virtualtext_cursor = 0
+let g:ale_disable_lsp = 1
 let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale']}
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black']}
 let g:ale_fix_on_save = 1
@@ -77,15 +86,15 @@ let g:ale_lint_on_enter = 0 """ Don't lint when opening a file
 let g:ale_sign_error = '•'
 let g:ale_sign_warning = '.'
 autocmd VimEnter * :let g:ale_change_sign_column_color = 0
-autocmd VimEnter * :highlight! ALEErrorSign ctermfg=9 ctermbg=NONE
-autocmd VimEnter * :highlight! ALEWarningSign ctermfg=11 ctermbg=NONE
-autocmd VimEnter * :highlight! ALEInfoSign   ctermfg=14 ctermbg=NONE
-autocmd VimEnter * :highlight! ALEError ctermfg=9 ctermbg=NONE
-autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE
-autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE
+autocmd VimEnter * :highlight! ALEErrorSign ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
+autocmd VimEnter * :highlight! ALEWarningSign ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
+autocmd VimEnter * :highlight! ALEInfoSign   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
+autocmd VimEnter * :highlight! ALEError ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
+autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
+autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
 
 " flake8 file
-let g:syntastic_python_flake8_config_file='/Users/uthpala/.flake8'
+let g:syntastic_python_flake8_config_file='~/dotfiles/vim-settings/.flake8'
 
 " disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
@@ -124,12 +133,8 @@ function! NumControl()
 endfunction
 autocmd VimEnter * call NumControl()
 
-"""" toggle line numbers
-noremap <silent> <F3> :set invnumber invrelativenumber<CR>
-
-""" toggle indentLines and gitgutter
-noremap <silent> <F4> :IndentLinesToggle<CR>
-noremap <silent> <F5> :GitGutterToggle<CR>
+"""" toggle line numbers, indentLines and gitgutter
+noremap <silent> <F3> :set invnumber invrelativenumber \| IndentLinesToggle \| :GitGutterToggle <CR>
 
 """"" Remapping keys
 :imap jk <ESC>`^
@@ -156,33 +161,25 @@ autocmd VimEnter * call StartUp()
 au VimEnter * wincmd h
 :let g:NERDTreeShowLineNumbers=0
 :autocmd BufEnter NERD_* setlocal nornu
-let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$' ]
+let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 
 " set autochdir
 " let NERDTreeChDirMode=2
 " nnoremap <leader>nn :NERDTree .<CR>
 
 """ colors
-filetype plugin on
+filetype plugin indent on
+set t_Co=256
 "syntax on
 "set termguicolors
 colorscheme molokai
-highlight Normal ctermbg=NONE
-highlight LineNr ctermbg=NONE
+"highlight Normal ctermbg=NONE
 highlight clear SignColumn
-
-""" paste without auto-indent
-let &t_SI .= "\<Esc>[?2004h"
-let &t_EI .= "\<Esc>[?2004l"
-inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
-function! XTermPasteBegin()
-set pastetoggle=<Esc>[201~
-set paste
-return ""
-endfunction
+highlight LineNr ctermbg=235
+highlight LineNr ctermfg=241
 
 """ copy to buffer (Only works on Mac)
-map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
+" map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
 
 """ yank/paste to/from the OS clipboard
 noremap <silent> <leader>y "+y
@@ -201,30 +198,16 @@ vnoremap <silent> P "_dp
 """ Get rid of annoying autocomment in new line
 au FileType * set fo-=c fo-=r fo-=o
 
-""" YCM options
-let g:ycm_complete_in_comments=0
-let g:ycm_collect_identifiers_from_tags_files=1
-let g:ycm_min_num_of_chars_for_completion=1
-let g:ycm_cache_omnifunc=0
-let g:ycm_seed_identifiers_with_syntax=1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_auto_hover=''
-let g:ycm_goto_buffer_command = 'new-or-existing-tab'
-"set updatetime=1000
-"set completeopt-=preview
-set completeopt+=popup
-nmap <leader>d <plug>(YCMHover)
-nnoremap <silent> <leader>gd :YcmCompleter GoTo<CR>
-
 """ gitgutter
 let g:gitgutter_enabled = 1
 " Colors
 let g:gitgutter_override_sign_column_highlight = 0
-highlight GitGutterAdd ctermfg=2
-highlight GitGutterChange ctermfg=3
-highlight GitGutterDelete ctermfg=1
-highlight GitGutterChangeDelete ctermfg=4
+highlight GitGutterAdd ctermfg=2 guifg=#008000
+highlight GitGutterChange ctermfg=3 guifg=#808000
+highlight GitGutterDelete ctermfg=1 guifg=#800000
+highlight GitGutterChangeDelete ctermfg=4 guifg=#000080
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plug>(GitGutterPrevHunk)
 
 """ split screen shortcuts
 nnoremap <C-W>- :new<CR>
@@ -241,9 +224,12 @@ autocmd FileType python imap <buffer> <F9> <esc>:w<CR>:exec '!/Users/uthpala/.co
 """ changesPlugin
 let g:changes_use_icons=0
 
-""" Fortran line lengths
+""" Fortran
 ":let b:fortran_fixed_source=0
 ":set syntax=fortran
+let fortran_free_source=1
+let fortran_do_enddo=1
+let fortran_more_precise=1
 
 " Enable folding
 "set foldmethod=indent
@@ -251,11 +237,8 @@ let g:changes_use_icons=0
 " set nofoldenable
 "set foldcolumn=0
 
-
-""" vim-pydocstring
-let g:pydocstring_doq_path = '/usr/local/bin/doq'
-let g:pydocstring_formatter = 'numpy'
-let g:pydocstring_templates_path = '~/.vim_runtime/pydocstringtemplates'
+""" vim-python-docstring
+let g:python_style = 'numpy'
 
 """ vim-slime
 let g:slime_target = "vimterminal"
@@ -265,9 +248,8 @@ let g:slime_python_ipython = 1
 let g:slime_dont_ask_default = 1
 
 " map <Leader>s to start IPython
-"nnoremap <Leader>s :vert term <CR> :SlimeSend1 ipython --matplotlib<CR>
-nnoremap <Leader>s :vert term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
-nnoremap <Leader>S :term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
+nnoremap <Leader>S :vert term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
+nnoremap <Leader>s :term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
 
 " map <Leader>r to run script
 nnoremap <Leader>r :IPythonCellRun<CR>
@@ -288,8 +270,9 @@ nnoremap <Leader>l :IPythonCellClear<CR>
 nnoremap <Leader>x :IPythonCellClose<CR>
 
 " map [c and ]c to jump to the previous and next cell header
-nnoremap [c :IPythonCellPrevCell<CR>
-nnoremap ]c :IPythonCellNextCell<CR>
+" Note: conflicts with vimdiff
+" nnoremap [c :IPythonCellPrevCell<CR>
+" nnoremap ]c :IPythonCellNextCell<CR>
 
 " map <Leader>h to send the current line or current selection to IPython
 nmap <Leader>h <Plug>SlimeLineSend
@@ -309,6 +292,9 @@ nnoremap <Leader>q :SlimeSend1 %reset -f<CR>
 
 " map <Leader>q to exit debug mode or IPython
 "nnoremap <Leader>q :SlimeSend1 exit<CR>
+
+" map terminal scroll to Ctrl+b
+tnoremap <c-b> <c-\><c-n>
 
 """ Startify
 let g:startify_session_persistence = 1
@@ -332,7 +318,20 @@ onoremap <silent> i/ :<C-U>normal! T/vt/<CR>
 onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
 
 """ delete buffer when navigating back
-map <silent> <C-o> :bdelete<CR>
+"map <silent> <C-o> :bdelete<CR>
+
+""" cursor options
+:autocmd InsertEnter * set cul
+:autocmd InsertLeave * set nocul
+
+" cursor style
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
+
+" Disable all blinking:
+:set guicursor+=a:blinkon0
+" reset cursor when vim exits
+autocmd VimLeave * silent !echo -ne "\e[6 q""]"
 
 """ resume cursor location, except for github commits
 augroup vimStartup
@@ -346,7 +345,129 @@ augroup END
 """ auto-pair modifications
 let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '```':'```', '"""':'"""', "'''":"'''", "`":"`",'$':'$'}
 
-""" ---------- LATEX SETTINGS ----------
+""" ctags
+nnoremap <leader>. :CtrlPTag<cr>
+set tags+=tags;/
+" Auto generate tags file on write of files
+" autocmd BufWritePost *.c,*.h,*.f90,*.F,*.F90 silent! !ctags . &
+
+""" tagbar
+nmap <F8> :TagbarToggle<CR>
+
+" Open the definition in a new tab
+:nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
+
+" Open the definition in a vertical split
+map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+""" nerdtree-git-plugin
+let g:NERDTreeGitStatusConcealBrackets = 0 " default: 0
+let g:NERDTreeGitStatusShowClean = 0 " default: 0
+
+""" vim-diff ignore whitespace
+set diffopt+=iwhiteall,filler
+set diffexpr=""
+
+""" coc-vim
+" coc-settings.json
+" {
+"   diagnostic.displayByAle: true,
+"   coc.preferences.snippets.enable: true,
+"   suggest.snippetIndicator: "",
+"   suggest.noselect: true,
+" }
+
+" Customize colors
+:highlight CocFloating ctermbg=238 guibg=#444444
+:highlight CocFloating ctermfg=Gray guifg=Gray
+:highlight CocMenuSel ctermbg=240 guibg=#585858
+
+" Some servers have issues with backup files, see #649.
+set nobackup
+set nowritebackup
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+set signcolumn=yes
+
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: There's always complete item selected by default, you may want to enable
+" no select by `"suggest.noselect": true` in your configuration file.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+""" Count search instances
+autocmd VimEnter * set shortmess-=S
+
+""" Ack.vim
+" Use ripgrep for searching
+" Options include:
+" --vimgrep -> Needed to parse the rg response properly for ack.vim
+" --type-not sql -> Avoid huge sql file dumps as it slows down the search
+" --smart-case -> Search case insensitive if all lowercase pattern, Search case sensitively otherwise
+let g:ackprg = 'rg --vimgrep --type-not sql --smart-case'
+
+" Auto close the Quickfix list after pressing '<enter>' on a list item
+let g:ack_autoclose = 0
+
+" Any empty ack search will search for the work the cursor is on
+let g:ack_use_cword_for_empty_search = 1
+
+" Don't jump to first match
+cnoreabbrev Ack Ack!
+
+ """ ---------- LATEX SETTINGS ----------
 
 let g:vimtex_compiler_latexmk = {
         \ 'executable' : 'latexmk',
@@ -364,7 +485,14 @@ let g:vimtex_view_skim_reading_bar = 0
 let g:vimtex_view_skim_sync = 0
 
 " theme
-autocmd VimEnter *.tex colorscheme peaksea
+"autocmd VimEnter *.tex colorscheme peaksea
+autocmd VimEnter *.tex colorscheme iceberg
+autocmd VimEnter *.tex syntax on
+
+augroup tex_syntax
+  au!
+  autocmd BufNewFile,BufRead *.tex   set syntax=on
+augroup END
 
 " disable gitgutter and indentlines
 au VimEnter *.tex :GitGutterToggle
@@ -378,15 +506,10 @@ augroup vimtex_config
     au FileType tex nmap <buffer><silent> <leader>v <plug>(vimtex-view)
 augroup END
 
-" Trigger configuration. You need to change this to something other than <tab> if you use one of the following:
-" - https://github.com/Valloric/YouCompleteMe
-" - https://github.com/nvim-lua/completion-nvim
-let g:UltiSnipsExpandTrigger="<C-l>"
-let g:UltiSnipsJumpForwardTrigger="<C-l>"
-let g:UltiSnipsJumpBackwardTrigger="<C-z>"
-
-" If you want :UltiSnipsEdit to split your window.
-" let g:UltiSnipsEditSplit="vertical"
+""" coc-snippets
+imap <C-l> <Plug>(coc-snippets-expand-jump)
+let g:coc_snippet_prev = '<c-k>'
+vmap <C-j> <Plug>(coc-snippets-select)
 
 " disable auto renaming items to bullets
 let g:vimtex_syntax_conceal_disable = 1
@@ -450,7 +573,6 @@ let g:tq_mthesaur_file="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
 let g:tq_enabled_backends=["openoffice_en", "mthesaur_txt", "datamuse_com",]
 "set thesaurus+="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
 
-
 """ Turn on spell checking for .tex files
 augroup texSpell
     autocmd!
@@ -469,7 +591,7 @@ augroup END
 "autocmd VimEnter *.tex Limelight
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
-noremap <silent> <F5> :Limelight!!<CR>
+noremap <silent> <F6> :Limelight!!<CR>
 "let g:limelight_paragraph_span = 1
 
 """ vim-latexfmt
@@ -510,6 +632,7 @@ let g:latexfmt_no_join_any = [
             \ '\newif',
             \ '\entryextra',
             \ '\graphicspath',
+            \ '\noindent',
             \]
 let g:latexfmt_no_join_next = [ '\\', '\centering', '\includegraphics' ]
 let g:latexfmt_no_join_prev = [ '\item', '\label' ]
@@ -517,45 +640,6 @@ let g:latexfmt_verbatim_envs = [ 'table', 'equation', 'align', 'eqnarray', '\(\\
 
 map <silent> <leader>ik <Plug>latexfmt_format
 autocmd BufWritePost *.tex :normal ,ik  " format paragraph on save
-
-" YCM don't open autocomplete too frequently
-let g:ycm_min_num_of_chars_for_completion = 1
-let g:ycm_min_num_of_chars_for_completion_enabled = g:ycm_min_num_of_chars_for_completion
-let g:ycm_min_num_of_chars_for_completion_disabled = 999
-
-function FixLaTeXCompletion()
-  if &ft == 'tex' && g:ycm_min_num_of_chars_for_completion != g:ycm_min_num_of_chars_for_completion_disabled
-    let g:ycm_min_num_of_chars_for_completion = g:ycm_min_num_of_chars_for_completion_disabled
-    normal! YcmRestartServer
-  endif
-  if &ft != 'tex' && g:ycm_min_num_of_chars_for_completion == g:ycm_min_num_of_chars_for_completion_disabled
-    let g:ycm_min_num_of_chars_for_completion = g:ycm_min_num_of_chars_for_completion_enabled
-    normal! YcmRestartServer
-  endif
-endfunction
-
-augroup tex_ycm
-  autocmd!
-
-  " Connect VimTeX and YouCompleteMe.
-  " Taken from |:help vimtex-complete-youcompleteme|.
-  " autocmd VimEnter * let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
-
-    """ YCM cite
-    " let g:ycm_semantic_triggers = {
-    "         \ 'tex'  : ['{']
-    "     \}
-    if !exists('g:ycm_semantic_triggers')
-        let g:ycm_semantic_triggers = {}
-    endif
-    au VimEnter *.tex let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
-
-  " Make YouCompleteMe *not* suggest identifiers in TeX documents.
-  " References:
-  " 1. |:help g:ycm_min_num_of_chars_for_completion|
-  " 2. https://github.com/ycm-core/YouCompleteMe/issues/872
-  autocmd BufEnter * call FixLaTeXCompletion()
-augroup end
 
 """ vim-litecorrect
 augroup litecorrect
@@ -566,7 +650,6 @@ augroup END
 
 """ vim-textobj-sentence
 set nocompatible
-filetype plugin indent on
 augroup textobj_sentence
   autocmd!
   autocmd FileType tex call textobj#sentence#init()

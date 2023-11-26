@@ -1,9 +1,9 @@
-# .bashrc for timewarp (bridges2.psc.xsede.org)
+# .bashrc for timewarp (timewarp.egr.duke.edu)
 # -Uthpala Herath
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
 
-module purge
+# module purge
 
 #set stty off
  if [[ -t 0 && $- = *i* ]]
@@ -47,13 +47,26 @@ export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/uti
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
+#export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+# export SLURM_CPU_BIND="cores"
+unset I_MPI_PMI_LIBRARY
+export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
+
+# compilers
+export CC="mpiicc"
+export CXX="mpiicpc"
+export FC="mpiifort"
+export MPICC="mpiicc"
+export MPIFC="mpiifort"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias q='squeue -u ukh --format="%.18i %.9P %30j %.8u %.2t %.10M %.6D %R"'
+alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
 alias sac="sacct --format="JobID,JobName%30,State,User""
+alias interact="salloc --nodes 1 --ntasks-per-node=20 --qos interactive --time 04:00:00"
+
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
-alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from bridges2" && git push && cd -'
+alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from timewarp" && git push && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 
 alias makeINCAR="cp ~/MatSciScripts/INCAR ."
@@ -66,14 +79,28 @@ alias tkill="tmux kill-session"
 
 #------------------------------------------- MODULES -------------------------------------------
 
-module load intel-compilers-2018.4
-module load intel-mkl-2018.4
-module load intel-mpi-2018.4
 module load cmake-3.14.4
-module load gcc-8.2
-#module load hdf5
+module load git-2.37.3
 
-# module load python3.8.11
+intel(){
+    module unload intel-compilers-2018.4
+    module load gcc-12.2.0
+    module load compiler/latest
+    module load mkl/latest
+    module load mpi/latest
+}
+
+intel18(){
+    module load intel-compilers-2018.4
+    source /opt/intel/bin/compilervars.sh intel64
+}
+
+gnu(){
+    module load gcc-12.2.0
+}
+
+# default
+intel
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -215,6 +242,9 @@ relaxed (){
 #" > jobscript.sh
 #}
 
+jobinfo(){
+    scontrol show jobid -dd $1
+}
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -223,54 +253,49 @@ export PATH="/home/ukh/local/bin/:$PATH"
 
 # FHI-aims
 export PATH="/home/ukh/local/FHIaims/bin/:$PATH"
+export PATH="/home/ukh/local/FHIaims/utilities/:$PATH"
 
 # MatSciScripts
-export PATH="/jet/home/uthpala/MatSciScripts/:$PATH"
+export PATH="/home/ukh/MatSciScripts/:$PATH"
 
 # dotfiles
-export PATH="~/dotfiles/:$PATH"
-
-# abinit
-export PATH="/jet/home/uthpala/local/abinit/abinit-8.10.3/build/bin/:$PATH"
-#export PATH="/jet/home/uthpala/local/abinit/abinit-9.4.1/build/bin/:$PATH"
-#export PATH="/jet/home/uthpala/local/abinit/abinit-9.2.2/build/bin/:$PATH"
-export PAWLDA="/jet/home/uthpala/local/abinit/pseudo-dojo/paw_pw_standard"
-export PAWPBE="/jet/home/uthpala/local/abinit/pseudo-dojo/paw_pbe_standard"
-
-# wannier90
-export PATH="/jet/home/uthpala/local/wannier90/wannier90-3.1.0/:$PATH"
-
-# vasp
-export PATH="/jet/home/uthpala/local/VASP/vasp.5.4.4/bin/:$PATH"
-
-# # DMFTwDFT_eb
-# export PATH="/jet/home/uthpala/projects/DMFTwDFT_eb/bin/:$PATH"
-# export PATH="/jet/home/uthpala/projects/DMFTwDFT_eb/scripts/:$PATH"
-# export PYTHONPATH="/jet/home/uthpala/projects/DMFTwDFT_eb/bin/:$PYTHONPATH"
-
-# DMFTwDFT
-export PATH="/jet/home/uthpala/projects/DMFTwDFT/bin/:$PATH"
-export PATH="/jet/home/uthpala/projects/DMFTwDFT/scripts/:$PATH"
-export PYTHONPATH="/jet/home/uthpala/projects/DMFTwDFT/bin/:$PYTHONPATH"
-
-# compilers
-export CC="mpiicc"
-export CXX="mpiicpc"
-export FC="mpiifort"
-export MPICC="mpiicc"
-export MPIFC="mpiifort"
-
-# NEBgen
-export PATH="~/local/NEBgen/:$PATH"
-
-# VTST
-export PATH="/jet/home/uthpala/local/VTST/vtstscripts-972/:$PATH"
+export PATH="/home/ukh/dotfiles/:$PATH"
 
 # gsl
 export LD_LIBRARY_PATH="/jet/home/uthpala/lib/gsl-2.6/build/lib/:$LD_LIBRARY_PATH"
 
-# tsase
-export PYTHONPATH=$HOME/tsase:$PYTHONPATH
-export PATH=$HOME/tsase/bin:$PATH
+# ctags
+export PATH="/home/ukh/local/ctags-5.8/build/bin/:$PATH"
 
+# vim
+export PATH="/home/ukh/local/vim/build/bin/:$PATH"
 
+# curl
+export PATH="/home/ukh/local/curl-7.85.0/build/bin/:$PATH"
+export LD_LIBRARY_PATH="/home/ukh/local/curl-7.85.0/build/lib/:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/home/ukh/local/curl-7.85.0/build/pkgconfig:$PKG_CONFIG_PATH"
+export MANPATH="/home/ukh/local/curl-7.85.0/build/share/man:$MANPATH"
+
+# python library
+# export PATH="/home/ukh/local/Python-3.9.9/build/bin:$PATH"
+# export LD_LIBRARY_PATH="/home/ukh/local/Python-3.9.9/build/lib:$LD_LIBRARY_PATH"
+
+# go
+export PATH="/home/ukh/local/go/bin/:$PATH"
+
+# clang
+export PATH="/home/ukh/local/llvm-project/build/bin:$PATH"
+export LD_LIBRARY_PATH="/home/ukh/local/llvm-project/build/lib:$LD_LIBRARY_PATH"
+
+# node
+export PATH="/home/ukh/local/node-v16.10.0-linux-x64/bin/:$PATH"
+
+# libtool
+export PATH="/home/ukh/local/libtool-2.4.6/build/bin/:$PATH"
+export LD_LIBRARY_PATH="/home/ukh/local/libtool-2.4.6/build/lib:$LD_LIBRARY_PATH"
+
+# nvim
+export PATH="/home/ukh/local/neovim/bin/:$PATH"
+
+# abacus
+export PATH="/home/ukh/local/abacus/build/bin/:$PATH"

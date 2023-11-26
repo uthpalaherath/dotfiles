@@ -73,7 +73,7 @@ module load lang/gcc/8.2.0 > /dev/null 2>&1
 # module load lang/nvidia/nvhpc/21.3
 # module load lang/gcc/8.2.0 
 # module load lang/intel/2019_u5
-# module load dev/cmake/3.15.4
+module load dev/cmake/3.21.1
 
 # libraries
 # module load libs/fftw/3.3.8_intel18
@@ -118,6 +118,9 @@ py3(){
 py2
 
 #------------------------------------------- PATHS -------------------------------------------
+
+# aims
+export PATH="/scratch/ukh0001/FHIaims/bin/:$PATH"
 
 # Matplotlib
 export PYTHONPATH="/users/ukh0001/dotfiles/matplotlib/:$PYTHONPATH"
@@ -204,6 +207,9 @@ export LD_LIBRARY_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/math_l
 export LD_LIBRARY_PATH="/users/ukh0001/lib/nvidia/stubs/:$LD_LIBRARY_PATH"
 export C_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$C_INCLUDE_PATH"
 export CPLUS_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$CPLUS_INCLUDE_PATH"
+
+# ctags
+export PATH="/users/ukh0001/local/ctags-5.8/build/bin/:$PATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
