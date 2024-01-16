@@ -29,6 +29,7 @@
 \usepackage{tabularx}
 \usepackage[version=3]{mhchem}
 \usepackage{caption}
+\usepackage{framed}
 \usepackage{authblk}
 \usepackage{setspace}
 \usepackage{titlesec}
@@ -47,6 +48,11 @@
 \newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
+
+% Frame size
+\renewenvironment{framed}[1][\hsize]
+{\MakeFramed{\hsize#1\advance\hsize-\width \FrameRestore}}%
+{\endMakeFramed}
 
 % General
 \titlelabel{\thetitle.\quad}

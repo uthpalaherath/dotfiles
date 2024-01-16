@@ -94,7 +94,7 @@ autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE guifg=#ffff00 
 autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
 
 " flake8 file
-let g:syntastic_python_flake8_config_file='~/dotfiles/vim-settings/.flake8'
+"let g:syntastic_python_flake8_config_file='~/dotfiles/vim-settings/.flake8'
 
 " disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
@@ -180,6 +180,7 @@ colorscheme molokai
 highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
+set re=0
 
 " Use new regular expression engine
 set re=0
