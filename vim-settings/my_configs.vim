@@ -151,6 +151,9 @@ set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeQuitOnOpen = 1
+let g:NERDTreeGitStatusConcealBrackets = 0 " default: 0
+let g:NERDTreeGitStatusShowClean = 0 " default: 0
+let NERDTreeNaturalSort = 1
 
 function! StartUp()
     if 0 == argc()
@@ -170,13 +173,17 @@ let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 """ colors
 filetype plugin indent on
 set t_Co=256
-"syntax on
+syntax on
 "set termguicolors
 colorscheme molokai
 "highlight Normal ctermbg=NONE
 highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
+
+" Use new regular expression engine
+set re=0
+set redrawtime=10000
 
 """ copy to buffer (Only works on Mac)
 " map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
@@ -360,10 +367,6 @@ nmap <F8> :TagbarToggle<CR>
 " Open the definition in a vertical split
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
-""" nerdtree-git-plugin
-let g:NERDTreeGitStatusConcealBrackets = 0 " default: 0
-let g:NERDTreeGitStatusShowClean = 0 " default: 0
-
 """ vim-diff ignore whitespace
 set diffopt+=iwhiteall,filler
 set diffexpr=""
@@ -466,6 +469,21 @@ let g:ack_use_cword_for_empty_search = 1
 
 " Don't jump to first match
 cnoreabbrev Ack Ack!
+
+""" show function name
+" function! ShowFuncName()
+"     let cursor_pos = getpos('.')
+"     echohl ModeMsg
+"     normal! [[k
+"     echo getline('.')
+"     echohl None
+"     call setpos('.', cursor_pos)
+" endfunction
+function! SubName() abort
+    let prev_sub_line_num = search('subroutine ', 'bcnW')
+    return matchstr(getline(prev_sub_line_num), 'subroutine \zs\w\+')
+endfunction
+set stl+=%{SubName()}
 
  """ ---------- LATEX SETTINGS ----------
 
