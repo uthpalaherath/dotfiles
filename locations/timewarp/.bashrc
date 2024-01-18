@@ -47,17 +47,10 @@ export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/uti
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
-#export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
 # export SLURM_CPU_BIND="cores"
-unset I_MPI_PMI_LIBRARY
-export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
-
-# compilers
-export CC="mpiicc"
-export CXX="mpiicpc"
-export FC="mpiifort"
-export MPICC="mpiicc"
-export MPIFC="mpiifort"
+# unset I_MPI_PMI_LIBRARY
+# export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -76,6 +69,8 @@ alias ..="cd .."
 alias detach="tmux detach-client -a"
 alias cpr="rsync -ah --info=progress2"
 alias tkill="tmux kill-session"
+alias cleandocker="docker image prune -a -f && docker volume prune -f"
+alias cleandockerall="docker system prune -a -f"
 
 #------------------------------------------- MODULES -------------------------------------------
 
@@ -83,11 +78,20 @@ module load cmake-3.14.4
 module load git-2.37.3
 
 intel(){
-    module unload intel-compilers-2018.4
-    module load gcc-12.2.0
+    #module unload intel-compilers-2018.4
+    #module load gcc-7.5
     module load compiler/latest
     module load mkl/latest
     module load mpi/latest
+    source /Space/globalspace/intel-2023.0/setvars.sh > /dev/null
+    export LD_LIBRARY_PATH="/opt/intel/lib/intel64/:$LD_LIBRARY_PATH"
+
+    # compilers
+    export CC="mpiicc"
+    export CXX="mpiicpc"
+    export FC="mpiifort"
+    export MPICC="mpiicc"
+    export MPIFC="mpiifort"
 }
 
 intel18(){
@@ -96,7 +100,23 @@ intel18(){
 }
 
 gnu(){
+    # module load gcc-7.5
+    # module load gcc-8.2
     module load gcc-12.2.0
+    export PATH="/home/ukh/lib/openmpi-4.1.5/build/bin/:$PATH$"
+    export LD_LIBRARY_PATH="/home/ukh/lib/openmpi-4.1.5/build/lib/:$LD_LIBRARY_PATH"
+
+    # export PATH="/home/ukh/lib/mpich-3.2.1/build/bin/:$PATH"
+    # export LD_LIBRARY_PATH="/home/ukh/lib/mpich-3.2.1/build/lib/:$LD_LIBRARY_PATH"
+    # export MPI_ROOT="/home/ukh/lib/mpich-3.2.1/build/"
+
+    # compilers
+    export CC="mpicc"
+    export CXX="mpicxx"
+    export FC="mpif90"
+    export MPICC="mpicc"
+    export MPIFC="mpif90"
+
 }
 
 # default
@@ -299,3 +319,6 @@ export PATH="/home/ukh/local/neovim/bin/:$PATH"
 
 # abacus
 export PATH="/home/ukh/local/abacus/build/bin/:$PATH"
+
+# globus
+export PATH="/home/ukh/local/globusconnectpersonal-3.2.0/:$PATH"
