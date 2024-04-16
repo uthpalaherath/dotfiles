@@ -29,6 +29,7 @@
 " - git-blame
 " - git-time-lapse
 " - vim-easytags
+" - git-blame.vim
 " - vimtex
 " - coc-snippets - Replaces ultisnips (Don't install when using coc-vim)
 " - thesaurus_query.vim
@@ -218,6 +219,15 @@ highlight GitGutterDelete ctermfg=1 guifg=#800000
 highlight GitGutterChangeDelete ctermfg=4 guifg=#000080
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
+let g:gitgutter_highlight_linenrs = 1
+let g:gitgutter_preview_win_floating = 1
+
+" show in status bar
+function! GitStatus()
+  let [a,m,r] = GitGutterGetHunkSummary()
+  return printf('+%d ~%d -%d', a, m, r)
+endfunction
+set statusline+=%{GitStatus()}
 
 """ split screen shortcuts
 nnoremap <C-W>- :new<CR>
@@ -487,6 +497,14 @@ cnoreabbrev Ack Ack!
 "     return matchstr(getline(prev_sub_line_num), 'subroutine \zs\w\+')
 " endfunction
 " set stl+=%{SubName()}
+
+""" github-copilot
+"let g:copilot_assume_mapped = v:true
+imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
+let g:copilot_no_tab_map = v:true
+
+""" git-blame.vim
+nnoremap <Leader>g :<C-u>call gitblame#echo()<CR>
 
 """ github-copilot
 "let g:copilot_assume_mapped = v:true
