@@ -42,15 +42,18 @@ export LS_OPTIONS='--color=auto'
 eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
+alias cat='pygmentize -g'
 
 export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
-export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+#export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+export I_MPI_PMI_LIBRARY=/usr/lib/x86_64-linux-gnu/libpmi.so.0
 # export SLURM_CPU_BIND="cores"
 # unset I_MPI_PMI_LIBRARY
 # export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
+export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -74,17 +77,20 @@ alias cleandockerall="docker system prune -a -f"
 
 #------------------------------------------- MODULES -------------------------------------------
 
-module load cmake-3.14.4
-module load git-2.37.3
+# module load cmake-3.14.4
+# module load git-2.37.3
 
 intel(){
     #module unload intel-compilers-2018.4
     #module load gcc-7.5
-    module load compiler/latest
-    module load mkl/latest
-    module load mpi/latest
-    source /Space/globalspace/intel-2023.0/setvars.sh > /dev/null
-    export LD_LIBRARY_PATH="/opt/intel/lib/intel64/:$LD_LIBRARY_PATH"
+    # module load compiler/latest
+    # module load mkl/latest
+    # module load mpi/latest
+    # source /Space/globalspace/intel-2023.0/setvars.sh > /dev/null
+    # export LD_LIBRARY_PATH="/opt/intel/lib/intel64/:$LD_LIBRARY_PATH"
+
+    # 2024
+    source /home/ukh/intel/oneapi/setvars.sh > /dev/null
 
     # compilers
     export CC="mpiicc"
@@ -291,10 +297,10 @@ export PATH="/home/ukh/local/ctags-5.8/build/bin/:$PATH"
 export PATH="/home/ukh/local/vim/build/bin/:$PATH"
 
 # curl
-export PATH="/home/ukh/local/curl-7.85.0/build/bin/:$PATH"
-export LD_LIBRARY_PATH="/home/ukh/local/curl-7.85.0/build/lib/:$LD_LIBRARY_PATH"
-export PKG_CONFIG_PATH="/home/ukh/local/curl-7.85.0/build/pkgconfig:$PKG_CONFIG_PATH"
-export MANPATH="/home/ukh/local/curl-7.85.0/build/share/man:$MANPATH"
+# export PATH="/home/ukh/local/curl-7.85.0/build/bin/:$PATH"
+# export LD_LIBRARY_PATH="/home/ukh/local/curl-7.85.0/build/lib/:$LD_LIBRARY_PATH"
+# export PKG_CONFIG_PATH="/home/ukh/local/curl-7.85.0/build/pkgconfig:$PKG_CONFIG_PATH"
+# export MANPATH="/home/ukh/local/curl-7.85.0/build/share/man:$MANPATH"
 
 # python library
 # export PATH="/home/ukh/local/Python-3.9.9/build/bin:$PATH"
@@ -322,3 +328,6 @@ export PATH="/home/ukh/local/abacus/build/bin/:$PATH"
 
 # globus
 export PATH="/home/ukh/local/globusconnectpersonal-3.2.0/:$PATH"
+
+# scalapack
+export LD_LIBRARY_PATH="/home/ukh/lib/scalapack-2.2.0/:$LD_LIBRARY_PATH"
