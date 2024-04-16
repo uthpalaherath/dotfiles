@@ -14,7 +14,7 @@ ZSH_THEME="honukai"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git zsh-autosuggestions) # copydir dirhistory macos)
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 ## Plugin settings
 
@@ -482,6 +482,10 @@ export SPECIES_DEFAULTS="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/"
 
 # nodejs
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+# Scripts directory
+export PATH="/Users/uthpala/Library/CloudStorage/Dropbox/docs/Jobs/Scripts/:$PATH"
+export PYTHONPATH="/Users/uthpala/Library/CloudStorage/Dropbox/docs/Jobs/Scripts/:$PYTHONPATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 

@@ -1,5 +1,6 @@
-\documentclass[12pt]{article}
-\usepackage[letterpaper, margin=1in]{geometry}
+\documentclass[11pt]{article}
+\usepackage[letterpaper, top=1in, bottom=1in, left=1in,
+right=1in]{geometry}
 
 % Useful packages
 \usepackage[utf8]{inputenc}
@@ -33,12 +34,12 @@
 \usepackage{authblk}
 \usepackage{setspace}
 \usepackage{titlesec}
-\captionsetup[table]{font=small}
-\captionsetup[figure]{font=small}
+\usepackage[capitalise]{cleveref}
+\captionsetup[table]{font=small} \captionsetup[figure]{font=small}
 \graphicspath{ {./figures/} }
 
 % Comments
-\setlength{\marginparwidth}{2cm}
+%\setlength{\marginparwidth}{2cm}
 \newcommand{\TODO} [1]
 {\todo[inline,backgroundcolor=lime,size=\small ,bordercolor=white]{{\bf TO-DO:\\} #1}}
 \newcommand{\uthpala} [1]

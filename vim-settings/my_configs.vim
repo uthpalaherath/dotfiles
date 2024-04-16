@@ -26,6 +26,8 @@
 " - nerdtree-git-plugin
 " - vim-bracketed-paste
 " - tagbar
+" - git-blame
+" - git-time-lapse
 " - vim-easytags
 " - vimtex
 " - coc-snippets - Replaces ultisnips (Don't install when using coc-vim)
@@ -398,11 +400,11 @@ set updatetime=300
 " diagnostics appear/become resolved.
 set signcolumn=yes
 
-" Use tab for trigger completion with characters ahead and navigate.
+" Use tab for trigger completion with characters ahead and navigate
 " NOTE: There's always complete item selected by default, you may want to enable
-" no select by `"suggest.noselect": true` in your configuration file.
+" no select by `"suggest.noselect": true` in your configuration file
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
+" other plugin before putting this into your config
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
@@ -410,7 +412,7 @@ inoremap <silent><expr> <TAB>
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice.
+" <C-g>u breaks current undo, please make your own choice
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
@@ -419,7 +421,7 @@ function! CheckBackspace() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" Use <c-space> to trigger completion.
+" Use <c-space> to trigger completion
 if has('nvim')
   inoremap <silent><expr> <c-space> coc#refresh()
 else
@@ -480,13 +482,25 @@ cnoreabbrev Ack Ack!
 "     echohl None
 "     call setpos('.', cursor_pos)
 " endfunction
-function! SubName() abort
-    let prev_sub_line_num = search('subroutine ', 'bcnW')
-    return matchstr(getline(prev_sub_line_num), 'subroutine \zs\w\+')
-endfunction
-set stl+=%{SubName()}
+" function! SubName() abort
+"     let prev_sub_line_num = search('subroutine ', 'bcnW')
+"     return matchstr(getline(prev_sub_line_num), 'subroutine \zs\w\+')
+" endfunction
+" set stl+=%{SubName()}
 
- """ ---------- LATEX SETTINGS ----------
+""" github-copilot
+"let g:copilot_assume_mapped = v:true
+imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
+let g:copilot_no_tab_map = v:true
+
+""" git-blame
+nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
+
+""" git-time-lapse
+" :GitTimeLapse
+" nmap <Leader>gt <Plug>(git-time-lapse)
+
+""" ---------- LATEX SETTINGS ----------
 
 let g:vimtex_compiler_latexmk = {
         \ 'executable' : 'latexmk',
@@ -521,6 +535,7 @@ au VimEnter *.tex :IndentLinesToggle
 augroup vimtex_config
     au!
     au User VimtexEventQuit call vimtex#compiler#clean(0)
+    "au User VimtexEventQuit call vimtex#latexmk#clean(0)
     au FileType tex nmap <buffer><silent> <leader>t <plug>(vimtex-toc-open)
     au FileType tex nmap <buffer><silent> <leader>v <plug>(vimtex-view)
 augroup END
