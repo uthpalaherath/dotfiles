@@ -14,7 +14,7 @@ ZSH_THEME="honukai"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git zsh-autosuggestions) # copydir dirhistory macos)
-DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="false"
 
 ## Plugin settings
 
