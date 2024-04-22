@@ -24,7 +24,6 @@ source ~/.bash_prompt
 export TMUX_DEVICE_NAME=timewarp
 if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
 	tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
-    #tmux
 fi
 
 # Memory
