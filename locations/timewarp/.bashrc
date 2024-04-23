@@ -3,8 +3,6 @@
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
 
-# module purge
-
 #set stty off
  if [[ -t 0 && $- = *i* ]]
  then
@@ -20,7 +18,6 @@ fi
 source ~/.bash_prompt
 
 # tmux
-#export PATH="/jet/home/uthpala/local/bin/:$PATH"
 export TMUX_DEVICE_NAME=timewarp
 if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
 	tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
@@ -43,7 +40,7 @@ alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 alias cat='pygmentize -g'
 
-export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
+#export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
@@ -53,7 +50,6 @@ export I_MPI_PMI_LIBRARY=/usr/lib/x86_64-linux-gnu/libpmi.so.0
 # unset I_MPI_PMI_LIBRARY
 # export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
 export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH
-
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
@@ -148,14 +144,10 @@ unset __conda_setup
 py2(){
 conda deactivate
 conda activate py2
-# module unload anaconda3/2020.11
-# module load anaconda2/2019.10
 }
 py3(){
 conda deactivate
 conda activate py3
-# module unload anaconda2/2019.10
-# module load anaconda3/2020.11
 }
 #default
 py3
@@ -273,9 +265,6 @@ jobinfo(){
 
 #------------------------------------------- PATHS -------------------------------------------
 
-# tmux
-export PATH="/home/ukh/local/bin/:$PATH"
-
 # FHI-aims
 export PATH="/home/ukh/local/FHIaims/bin/:$PATH"
 export PATH="/home/ukh/local/FHIaims/utilities/:$PATH"
@@ -292,38 +281,16 @@ export LD_LIBRARY_PATH="/jet/home/uthpala/lib/gsl-2.6/build/lib/:$LD_LIBRARY_PAT
 # ctags
 export PATH="/home/ukh/local/ctags-5.8/build/bin/:$PATH"
 
-# vim
-export PATH="/home/ukh/local/vim/build/bin/:$PATH"
-
-# curl
-# export PATH="/home/ukh/local/curl-7.85.0/build/bin/:$PATH"
-# export LD_LIBRARY_PATH="/home/ukh/local/curl-7.85.0/build/lib/:$LD_LIBRARY_PATH"
-# export PKG_CONFIG_PATH="/home/ukh/local/curl-7.85.0/build/pkgconfig:$PKG_CONFIG_PATH"
-# export MANPATH="/home/ukh/local/curl-7.85.0/build/share/man:$MANPATH"
-
-# python library
-# export PATH="/home/ukh/local/Python-3.9.9/build/bin:$PATH"
-# export LD_LIBRARY_PATH="/home/ukh/local/Python-3.9.9/build/lib:$LD_LIBRARY_PATH"
-
 # go
 export PATH="/home/ukh/local/go/bin/:$PATH"
 
-# clang
-export PATH="/home/ukh/local/llvm-project/build/bin:$PATH"
-export LD_LIBRARY_PATH="/home/ukh/local/llvm-project/build/lib:$LD_LIBRARY_PATH"
-
 # node
-export PATH="/home/ukh/local/node-v16.10.0-linux-x64/bin/:$PATH"
+export PATH="/home/ukh/local/node-v21.7.3-linux-x64/bin/:$PATH"
+export LD_LIBRARY_PATH="/home/ukh/local/node-v21.7.3-linux-x64/lib/:$LD_LIBRARY_PATH"
 
 # libtool
 export PATH="/home/ukh/local/libtool-2.4.6/build/bin/:$PATH"
 export LD_LIBRARY_PATH="/home/ukh/local/libtool-2.4.6/build/lib:$LD_LIBRARY_PATH"
-
-# nvim
-export PATH="/home/ukh/local/neovim/bin/:$PATH"
-
-# abacus
-export PATH="/home/ukh/local/abacus/build/bin/:$PATH"
 
 # globus
 export PATH="/home/ukh/local/globusconnectpersonal-3.2.0/:$PATH"
