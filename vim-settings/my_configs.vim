@@ -373,6 +373,7 @@ set tags+=tags;/
 
 """ tagbar
 nmap <F8> :TagbarToggle<CR>
+let g:tagbar_sort = 0
 
 " Open the definition in a new tab
 :nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
