@@ -178,9 +178,9 @@ let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 " nnoremap <leader>nn :NERDTree .<CR>
 
 """ colors
+syntax on
 filetype plugin indent on
 set t_Co=256
-syntax on
 "set termguicolors
 colorscheme molokai
 "highlight Normal ctermbg=NONE
@@ -542,7 +542,7 @@ autocmd VimEnter *.tex syntax on
 
 augroup tex_syntax
   au!
-  autocmd BufNewFile,BufRead *.tex   set syntax=on
+  autocmd BufNewFile,BufRead *.tex set syntax=on
 augroup END
 
 " disable gitgutter and indentlines
