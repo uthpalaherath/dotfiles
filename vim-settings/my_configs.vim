@@ -9,45 +9,49 @@
 " in the ~/.vim_runtime directory. It is automatically linked
 " to ~/.vimrc after following the instructions.
 "
-" Plugins
-" - indentLine
-" - molokai
-" - vim-autoread
-" - vim-gitgutter
-" - vim-python-docstring
-" - coc-vim
-" - vim-signature
-" - vim-slime
-" - vim-ipython-cell
-" - vim-fugitive
-" - vim-startify
-" - vim-maximizer
-" - vim-surround
-" - nerdtree-git-plugin
-" - vim-bracketed-paste
-" - tagbar
-" - git-blame
-" - git-time-lapse
-" - vim-easytags
-" - git-blame.vim
-" - vimtex
-" - coc-snippets - Replaces ultisnips (Don't install when using coc-vim)
-" - thesaurus_query.vim
-" - limelight.vim
-" - vim-pencil
-" - vim-smoothie
-" - writer.vim
-" - vim-fanfingtastic
-" - vim-latexfmt
-" - vim-litecorrect
-" - vim-textobj-sentence (depends on vim-textobj-user)
-"
-" DEPRICATED
-" - YouCompleteMe
-" - vim-ycm-latex-semantic-completer (in $HOME/.vim_runtime/my_plugins/YouCompleteMe/third_party/ycmd/ycmd/completers/tex/)
-"
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
+
+""" Plugin Manager
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+call plug#begin('~/.vim_runtime/my_plugins')
+
+" Plugins list
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'whiteinge/diffconflicts'
+Plug 'zivyangll/git-blame.vim'
+Plug 'junkblocker/git-time-lapse'
+Plug 'Yggdroot/indentLine'
+Plug 'tomasr/molokai'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'preservim/tagbar'
+Plug 'djoshea/vim-autoread'
+Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'hanschen/vim-ipython-cell'
+Plug 'szw/vim-maximizer'
+Plug 'pixelneo/vim-python-docstring'
+Plug 'kshenoy/vim-signature'
+Plug 'jpalardy/vim-slime'
+Plug 'psliwka/vim-smoothie'
+Plug 'mhinz/vim-startify'
+
+" Latex plugins
+Plug 'cocopon/iceberg.vim'
+Plug 'junegunn/limelight.vim'
+Plug 'Ron89/thesaurus_query.vim'
+Plug 'dahu/vim-fanfingtastic'
+Plug 'engeljh/vim-latexfmt'
+Plug 'preservim/vim-litecorrect'
+Plug 'preservim/vim-pencil'
+Plug 'kana/vim-textobj-user'
+Plug 'preservim/vim-textobj-sentence'
+Plug 'lervag/vimtex'
+Plug 'honza/writer.vim'
+call plug#end()
 
 :set encoding=utf-8
 :set fileencoding=utf-8
@@ -183,7 +187,6 @@ colorscheme molokai
 highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
-set re=0
 
 " Use new regular expression engine
 set re=0
@@ -235,11 +238,6 @@ nnoremap <C-W>\ :vnew<CR>
 
 """ visual marks
 nnoremap <leader>m :SignatureRefresh<CR>
-
-""" run python scripts within vim with F9
-"autocmd Filetype python nnoremap <buffer> <F5> :w<CR>:vert ter python3 "%"<CR>
-autocmd FileType python map <buffer> <F9> :w<CR>:exec '!/Users/uthpala/.conda/envs/py3/bin/python' shellescape(@%, 1)<CR>
-autocmd FileType python imap <buffer> <F9> <esc>:w<CR>:exec '!/Users/uthpala/.conda/envs/py3/bin/python' shellescape(@%, 1)<CR>
 
 """ changesPlugin
 let g:changes_use_icons=0
@@ -330,9 +328,6 @@ nnoremap <silent><C-W>z :MaximizerToggle<CR>
 vnoremap <silent><C-W>z :MaximizerToggle<CR>gv
 inoremap <silent><C-W>z <C-o>:MaximizerToggle<CR>
 
-""" snip-mate
-let g:snipMate = { 'snippet_version' : 1 }
-
 """ inner slashes
 onoremap <silent> i/ :<C-U>normal! T/vt/<CR>
 onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
@@ -393,6 +388,18 @@ set diffexpr=""
 "   suggest.snippetIndicator: "",
 "   suggest.noselect: true,
 " }
+
+" Snippets are stored in ~/.config/coc/ultisnips
+" vim-snipmate
+let g:snipMate = { 'snippet_version' : 1 }
+
+" coc-snippets
+imap <C-l> <Plug>(coc-snippets-expand-jump)
+let g:coc_snippet_prev = '<c-k>'
+vmap <C-j> <Plug>(coc-snippets-select)
+
+" Install extensions
+let g:coc_global_extensions = ['coc-snippets', 'coc-clangd', 'coc-python']
 
 " Customize colors
 :highlight CocFloating ctermbg=238 guibg=#444444
@@ -504,14 +511,6 @@ cnoreabbrev Ack Ack!
 imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
 let g:copilot_no_tab_map = v:true
 
-""" git-blame.vim
-nnoremap <Leader>g :<C-u>call gitblame#echo()<CR>
-
-""" github-copilot
-"let g:copilot_assume_mapped = v:true
-imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
-let g:copilot_no_tab_map = v:true
-
 """ git-blame
 nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
 
@@ -558,11 +557,6 @@ augroup vimtex_config
     au FileType tex nmap <buffer><silent> <leader>t <plug>(vimtex-toc-open)
     au FileType tex nmap <buffer><silent> <leader>v <plug>(vimtex-view)
 augroup END
-
-""" coc-snippets
-imap <C-l> <Plug>(coc-snippets-expand-jump)
-let g:coc_snippet_prev = '<c-k>'
-vmap <C-j> <Plug>(coc-snippets-select)
 
 " disable auto renaming items to bullets
 let g:vimtex_syntax_conceal_disable = 1
@@ -699,7 +693,6 @@ augroup litecorrect
   autocmd!
   autocmd FileType tex call litecorrect#init()
 augroup END
-
 
 """ vim-textobj-sentence
 set nocompatible
