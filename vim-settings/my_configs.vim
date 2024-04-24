@@ -500,21 +500,6 @@ let g:ack_use_cword_for_empty_search = 1
 " Don't jump to first match
 cnoreabbrev Ack Ack!
 
-""" show function name
-" function! ShowFuncName()
-"     let cursor_pos = getpos('.')
-"     echohl ModeMsg
-"     normal! [[k
-"     echo getline('.')
-"     echohl None
-"     call setpos('.', cursor_pos)
-" endfunction
-" function! SubName() abort
-"     let prev_sub_line_num = search('subroutine ', 'bcnW')
-"     return matchstr(getline(prev_sub_line_num), 'subroutine \zs\w\+')
-" endfunction
-" set stl+=%{SubName()}
-
 """ github-copilot
 "let g:copilot_assume_mapped = v:true
 imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
