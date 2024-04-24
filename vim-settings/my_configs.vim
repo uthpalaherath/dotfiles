@@ -381,13 +381,25 @@ set diffopt+=iwhiteall,filler
 set diffexpr=""
 
 """ coc-vim
-" coc-settings.json
-" {
-"   diagnostic.displayByAle: true,
-"   coc.preferences.snippets.enable: true,
-"   suggest.snippetIndicator: "",
-"   suggest.noselect: true,
-" }
+" ~/.vim/coc-settings.json
+"
+"{
+"  "diagnostic.displayByAle": true,
+"  "coc.preferences.snippets.enable": true,
+"  "suggest.snippetIndicator": "",
+"  "suggest.noselect": true,
+
+"  "languageserver": {
+"     "fortran": {
+"       "command": "fortls",
+"       "filetypes": ["fortran"],
+"       "rootPatterns": [".fortls", ".git/"]
+"      }
+"    }
+"}
+
+" Install extensions
+let g:coc_global_extensions = ['coc-snippets', 'coc-clangd', 'coc-python']
 
 " Snippets are stored in ~/.config/coc/ultisnips
 " vim-snipmate
@@ -397,9 +409,6 @@ let g:snipMate = { 'snippet_version' : 1 }
 imap <C-l> <Plug>(coc-snippets-expand-jump)
 let g:coc_snippet_prev = '<c-k>'
 vmap <C-j> <Plug>(coc-snippets-select)
-
-" Install extensions
-let g:coc_global_extensions = ['coc-snippets', 'coc-clangd', 'coc-python']
 
 " Customize colors
 :highlight CocFloating ctermbg=238 guibg=#444444
