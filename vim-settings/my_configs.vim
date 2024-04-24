@@ -467,6 +467,9 @@ endfunction
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
+" Add (Neo)Vim's native statusline support
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
 """ Count search instances
 autocmd VimEnter * set shortmess-=S
 
