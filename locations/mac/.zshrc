@@ -14,7 +14,7 @@ ZSH_THEME="honukai"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git zsh-autosuggestions) # copydir dirhistory macos)
-DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="false"
 
 ## Plugin settings
 
@@ -49,8 +49,8 @@ intel(){
     export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0_intel/:$DYLD_LIBRARY_PATH"
 
     # OpenMPI (compiled with intel)
-    export PATH="/Users/uthpala/lib/openmpi-4.1.5/build/bin/:$PATH"
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.5/build/lib/:$DYLD_LIBRARY_PATH"
+    export PATH="/Users/uthpala/lib/openmpi-4.1.6_intel/build/bin/:$PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.6_intel/build/lib/:$DYLD_LIBRARY_PATH"
     export OMPI_CC="icc"
     export OMPI_CXX="icpc"
     export OMPI_FC="ifort"
@@ -58,11 +58,11 @@ intel(){
 
 gnu(){
     # Scalapack
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0/:$DYLD_LIBRARY_PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0_gnu/:$DYLD_LIBRARY_PATH"
 
     # OpenMPI (GNU)
-    export PATH="/Users/uthpala/lib/openmpi-4.1.4-gnu/bin/:$PATH"
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.4-gnu/lib/:$DYLD_LIBRARY_PATH"
+    export PATH="/Users/uthpala/lib/openmpi-4.1.6_gnu/build/bin/:$PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.6_gnu/build/lib/:$DYLD_LIBRARY_PATH"
     export OMPI_CC="gcc"
     export OMPI_CXX="g++"
     export OMPI_FC="gfortran"
@@ -199,6 +199,7 @@ umount_all(){
     umount -f /Users/uthpala/HPC/whitehall/home
     umount -f /Users/uthpala/HPC/romeronas/home
     umount -f /Users/uthpala/HPC/timewarp/home
+    umount -f /Users/uthpala/HPC/timewarp2/home
     umount -f /Users/uthpala/HPC/frontera/home
 }
 
@@ -475,12 +476,16 @@ export PYTHONPATH=$HOME/tsase:$PYTHONPATH
 export PATH=$HOME/tsase/bin:$PATH
 
 # FHI-aims
-export PATH="/Users/uthpala/apps/FHIaims/FHIaims_intel/bin/:$PATH"
-export PATH="/Users/uthpala/apps/FHIaims/FHIaims_intel/utilities/:$PATH"
-export SPECIES_DEFAULTS="/Users/uthpala/apps/FHIaims/FHIaims_intel/species_defaults/"
+export PATH="/Users/uthpala/apps/FHIaims/FHIaims/bin/:$PATH"
+export PATH="/Users/uthpala/apps/FHIaims/FHIaims/utilities/:$PATH"
+export SPECIES_DEFAULTS="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/"
 
 # nodejs
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+# Scripts directory
+export PATH="/Users/uthpala/Library/CloudStorage/Dropbox/docs/Jobs/Scripts/:$PATH"
+export PYTHONPATH="/Users/uthpala/Library/CloudStorage/Dropbox/docs/Jobs/Scripts/:$PYTHONPATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -512,6 +517,7 @@ alias bridges2="ssh -Y uthpala@br012.bridges2.psc.edu"
 alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
 alias cori="ssh -Y uthpala@cori.nersc.gov"
 alias timewarp='ssh -Y ukh@timewarp.egr.duke.edu'
+alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 #alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
 alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
@@ -520,6 +526,7 @@ alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
 alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
 alias mount_timewarp="umount ~/HPC/timewarp/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp.egr.duke.edu: ~/HPC/timewarp/home"
+alias mount_timewarp2="umount ~/HPC/timewarp2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp2/home"
 alias mount_cori="umount ~/HPC/cori/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@cori.nersc.gov: ~/HPC/cori/home"
 alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
 alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
@@ -540,3 +547,7 @@ alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 alias ctags="`brew --prefix`/bin/ctags"
+
+# docker
+alias cleandocker="docker image prune -a -f && docker volume prune -f"
+alias cleandockerall="docker system prune -a -f"

@@ -4,8 +4,6 @@
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
 
-module purge
-
 #set stty off
  if [[ -t 0 && $- = *i* ]]
  then
@@ -21,11 +19,7 @@ fi
 source ~/.bash_prompt
 
 # tmux
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    export TMUX_DEVICE_NAME=cori
-else
-    export TMUX_DEVICE_NAME=perlmutter
-fi
+export TMUX_DEVICE_NAME=perlmutter
 
 # Launch tmux
 if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
@@ -49,16 +43,6 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    export FC=mpiifort
-    export CC=mpiicc
-    export CXX=mpiicpc
-else
-    export FC=ftn
-    export CC=cc
-    export CXX=CC
-fi
-
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u uthpala --format="%.18i %.9P %50j %.8u %.2t %.10M %.6D %R"'
@@ -74,16 +58,10 @@ alias detach="tmux detach-client -a"
 alias cpr="rsync -ah --info=progress2"
 alias tkill="tmux kill-session"
 
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    alias scratch="cd $SCRATCH"
-    alias makejob="cp ~/dotfiles/locations/perlmutter/jobscript_cori.sh ./jobscript.sh"
-    alias interact="salloc --nodes 1 --ntasks-per-node=68 --qos interactive --time 04:00:00 --constraint knl,quad,cache --account=m3337"
-else
-    alias scratch="cd $PSCRATCH"
-    alias makejob="cp ~/dotfiles/locations/perlmutter/jobscript.sh ."
-    alias interact="salloc --nodes 1 --ntasks-per-node=128 --qos interactive --time 04:00:00 --constraint cpu --account=m3337 --cpus-per-task=2"
-    alias interact_gpu="salloc --nodes 1 --ntasks-per-node=64 --qos interactive --time 04:00:00 --constraint gpu --gpus 4 --account=m3337_g --cpus-per-task=2"
-fi
+alias scratch="cd $PSCRATCH"
+alias makejob="cp ~/dotfiles/locations/perlmutter/jobscript.sh ."
+alias interact="salloc --nodes 1 --ntasks-per-node=128 --qos interactive --time 04:00:00 --constraint cpu --account=m3337 --cpus-per-task=2"
+alias interact_gpu="salloc --nodes 1 --ntasks-per-node=64 --qos interactive --time 04:00:00 --constraint gpu --gpus 4 --account=m3337_g --cpus-per-task=2"
 
 #------------------------------------------- MODULES -------------------------------------------
 
@@ -91,41 +69,70 @@ export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
 
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    # module load PrgEnv-intel/6.0.10
-    # module load craype/2.7.10
-    # module load gcc/11.2.0
-    module load gcc/10.3.0
-    # module load intel/19.1.2.254
-    # module load impi/2020.up4
+intel(){
+    #module load craype-x86-milan
+    module load PrgEnv-intel
+    #module load gpu
+    #module load xpmem
+    #module load craype-network-ucx
+    source /opt/intel/oneapi/setvars.sh > /dev/null
+    #export I_MPI_PMI_LIBRARY=/usr/lib64/slurmpmi/libpmi.so
+    #module load cudatoolkit/11.7
+}
 
-    #Intel compilers
-    source ~/intel/oneapi/setvars.sh > /dev/null
-    export I_MPI_PMI_LIBRARY=/usr/lib64/slurmpmi/libpmi.so
-
-else
+gnu(){
     module load PrgEnv-gnu
-    module load craype/2.7.16
-    module load gcc/10.3.0
-    module load cray-mpich/8.1.17
-    module load cudatoolkit/11.7
-    module load craype-accel-nvidia80
-    module load cray-libsci/21.08.1.2
+    export MKLROOT=/opt/intel/oneapi/mkl/2023.2.0
+    export LD_LIBRARY_PATH="/opt/intel/oneapi/mkl/2023.2.0/lib/intel64/:$LD_LIBRARY_PATH"
 
+    # module use /global/common/software/m3169/perlmutter/modulefiles
+    # module load openmpi
+
+    #export I_MPI_PMI_LIBRARY=/usr/lib64/slurmpmi/libpmi.so
+    #module load craype-x86-milan
+    #module load gpu
+    # module load xpmem
+    # module load gcc-native/12.3
+    # module load cudatoolkit/12.2
+    # module load craype-accel-nvidia80
+    #module load craype/2.7.30
+    #module load cray-mpich/8.1.28
+    # module load craype-network-ucx
+    #module load cray-mpich-ucx/8.1.28
+
+    #module load craype-network-ucx
+    #module load gcc/12.2.0
+    #module load cray-mpich-ucx
+    #module load cray-ucx
+    # module use /global/common/software/m3169/perlmutter/modulefiles
+    # module use openmpi
+}
+
+cray(){
+    module load PrgEnv-cray/8.3.3
     module load craype-x86-milan
-    module load cray-fftw/3.3.8.13
+    module load gpu
+    module load xpmem
+}
 
-    #Intel compilers
-    source ~/intel/oneapi/setvars.sh > /dev/null
+#default
+gnu
 
-    # CUDA
-    export CRAY_ACCEL_TARGET=nvidia80
-    export LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LIBRARY_PATH"
-    export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LD_LIBRARY_PATH"
-    export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/lib64/:$LD_LIBRARY_PATH"
-    export CPATH="${CUDATOOLKIT_HOME}/../../math_libs/include:$CPATH"
-    export CUDA_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$CUDA_PATH"
-fi
+# programs
+module load cmake/3.24.3
+# module load cray-libsci/23.09.1.1
+
+# CUDA
+export CRAY_ACCEL_TARGET=nvidia80
+export LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LIBRARY_PATH"
+export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/lib64/:$LD_LIBRARY_PATH"
+export CPATH="${CUDATOOLKIT_HOME}/../../math_libs/include:$CPATH"
+export CUDA_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$CUDA_PATH"
+
+export FC=ftn
+export CC=cc
+export CXX=CC
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -280,10 +287,10 @@ export LD_LIBRARY_PATH="~/lib/fftw-3.3.10/build/lib/:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH="~/lib/lapack-3.10.1/:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH="~/lib/libxc-5.2.3/build/lib/:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH="~/lib/scalapack-2.2.0/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/global/homes/u/uthpala/lib/openblas/:$LD_LIBRARY_PATH"
 
 # FHI-aims
-export PATH="~/local/FHIaims/bin/:$PATH"
-export PATH="/global/homes/u/uthpala/local/Yi/FHIaims/bin/:$PATH"
+export PATH="/global/u2/u/uthpala/local/FHIaims/FHIaims_intel/bin/:$PATH"
 
 # MatSciScripts
 export PATH="~/MatSciScripts/:$PATH"
@@ -293,3 +300,6 @@ export PATH="~/dotfiles/:$PATH"
 
 # ctags
 export PATH="/global/homes/u/uthpala/local/ctags-5.8/build/bin/:$PATH"
+
+# nodejs
+export PATH="/global/homes/u/uthpala/local/node-v19.6.0/build/bin/:$PATH"

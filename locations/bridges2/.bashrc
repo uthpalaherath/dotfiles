@@ -51,16 +51,21 @@ alias dotpull='cd ~/dotfiles && git pull || true && cd -'
 
 alias makeINCAR="cp ~/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
-alias makejob="cp ~/dotfiles/locations/bridges2/jobscript.sh ."
+#alias makejob="cp ~/dotfiles/locations/bridges2/jobscript.sh ."
 alias ..="cd .."
 alias detach="tmux detach-client -a"
 alias cpr="rsync -ah --info=progress2"
 
 #------------------------------------------- MODULES -------------------------------------------
 
-#module load gcc/10.2.0
-module load intel/20.4
-module load hdf5/1.12.0-intel20.4
+#Intel compilers
+# source /ocean/projects/phy150003p/uthpala/intel/oneapi/setvars.sh > /dev/null
+module load intel/2021.3.0
+module load intelmpi/2021.3.0-intel2021.3.0
+
+# module load gcc/10.2.0
+# module load intel/20.4
+# module load hdf5/1.12.0-intel20.4
 module load parallel-netcdf/1.12.1
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
@@ -204,14 +209,27 @@ cd \$WORK_DIR/
 " > jobscript.sh
 }
 
+jobinfo(){
+    scontrol show jobid -dd $1
+}
 
 #------------------------------------------- PATHS -------------------------------------------
+
+# cmake
+export PATH="/jet/home/uthpala/local/cmake-3.24.0/build/bin/:$PATH"
+
+# aims
+export PATH="/jet/home/uthpala/local/FHIaims/bin/:$PATH"
 
 # MatSciScripts
 export PATH="/jet/home/uthpala/MatSciScripts/:$PATH"
 
 # dotfiles
 export PATH="~/dotfiles/:$PATH"
+export PYTHONPATH="/jet/home/uthpala/dotfiles/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/jet/home/uthpala/dotfiles/matplotlib/"
+
+
 
 # abinit
 export PATH="/jet/home/uthpala/local/abinit/abinit-8.10.3/build/bin/:$PATH"

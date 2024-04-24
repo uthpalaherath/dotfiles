@@ -9,42 +9,49 @@
 " in the ~/.vim_runtime directory. It is automatically linked
 " to ~/.vimrc after following the instructions.
 "
-" Plugins
-" - indentLine
-" - molokai
-" - vim-autoread
-" - vim-gitgutter
-" - vim-python-docstring
-" - coc-vim
-" - vim-signature
-" - vim-slime
-" - vim-ipython-cell
-" - vim-fugitive
-" - vim-startify
-" - vim-maximizer
-" - vim-surround
-" - nerdtree-git-plugin
-" - vim-bracketed-paste
-" - tagbar
-" - vim-easytags
-" - vimtex
-" - coc-snippets - Replaces ultisnips (Don't install when using coc-vim)
-" - thesaurus_query.vim
-" - limelight.vim
-" - vim-pencil
-" - vim-smoothie
-" - writer.vim
-" - vim-fanfingtastic
-" - vim-latexfmt
-" - vim-litecorrect
-" - vim-textobj-sentence (depends on vim-textobj-user)
-"
-" DEPRICATED
-" - YouCompleteMe
-" - vim-ycm-latex-semantic-completer (in $HOME/.vim_runtime/my_plugins/YouCompleteMe/third_party/ycmd/ycmd/completers/tex/)
-"
 " author: Uthpala Herath
 " my fork: https://github.com/uthpalaherath/vimrc
+
+""" Plugin Manager
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+call plug#begin('~/.vim_runtime/my_plugins')
+
+" Plugins list
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'whiteinge/diffconflicts'
+Plug 'zivyangll/git-blame.vim'
+Plug 'junkblocker/git-time-lapse'
+Plug 'Yggdroot/indentLine'
+Plug 'tomasr/molokai'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'preservim/tagbar'
+Plug 'djoshea/vim-autoread'
+Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'hanschen/vim-ipython-cell'
+Plug 'szw/vim-maximizer'
+Plug 'pixelneo/vim-python-docstring'
+Plug 'kshenoy/vim-signature'
+Plug 'jpalardy/vim-slime'
+Plug 'psliwka/vim-smoothie'
+Plug 'mhinz/vim-startify'
+
+" Latex plugins
+Plug 'cocopon/iceberg.vim'
+Plug 'junegunn/limelight.vim'
+Plug 'Ron89/thesaurus_query.vim'
+Plug 'dahu/vim-fanfingtastic'
+Plug 'engeljh/vim-latexfmt'
+Plug 'preservim/vim-litecorrect'
+Plug 'preservim/vim-pencil'
+Plug 'kana/vim-textobj-user'
+Plug 'preservim/vim-textobj-sentence'
+Plug 'lervag/vimtex'
+Plug 'honza/writer.vim'
+call plug#end()
 
 :set encoding=utf-8
 :set fileencoding=utf-8
@@ -94,7 +101,7 @@ autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE guifg=#ffff00 
 autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
 
 " flake8 file
-let g:syntastic_python_flake8_config_file='~/dotfiles/vim-settings/.flake8'
+"let g:syntastic_python_flake8_config_file='~/dotfiles/vim-settings/.flake8'
 
 " disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
@@ -151,6 +158,9 @@ set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeQuitOnOpen = 1
+let g:NERDTreeGitStatusConcealBrackets = 0 " default: 0
+let g:NERDTreeGitStatusShowClean = 0 " default: 0
+let NERDTreeNaturalSort = 1
 
 function! StartUp()
     if 0 == argc()
@@ -168,15 +178,19 @@ let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 " nnoremap <leader>nn :NERDTree .<CR>
 
 """ colors
+syntax on
 filetype plugin indent on
 set t_Co=256
-"syntax on
 "set termguicolors
 colorscheme molokai
 "highlight Normal ctermbg=NONE
 highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
+
+" Use new regular expression engine
+set re=0
+set redrawtime=10000
 
 """ copy to buffer (Only works on Mac)
 " map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
@@ -208,6 +222,15 @@ highlight GitGutterDelete ctermfg=1 guifg=#800000
 highlight GitGutterChangeDelete ctermfg=4 guifg=#000080
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
+let g:gitgutter_highlight_linenrs = 1
+let g:gitgutter_preview_win_floating = 1
+
+" show in status bar
+function! GitStatus()
+  let [a,m,r] = GitGutterGetHunkSummary()
+  return printf('+%d ~%d -%d', a, m, r)
+endfunction
+set statusline+=%{GitStatus()}
 
 """ split screen shortcuts
 nnoremap <C-W>- :new<CR>
@@ -215,11 +238,6 @@ nnoremap <C-W>\ :vnew<CR>
 
 """ visual marks
 nnoremap <leader>m :SignatureRefresh<CR>
-
-""" run python scripts within vim with F9
-"autocmd Filetype python nnoremap <buffer> <F5> :w<CR>:vert ter python3 "%"<CR>
-autocmd FileType python map <buffer> <F9> :w<CR>:exec '!/Users/uthpala/.conda/envs/py3/bin/python' shellescape(@%, 1)<CR>
-autocmd FileType python imap <buffer> <F9> <esc>:w<CR>:exec '!/Users/uthpala/.conda/envs/py3/bin/python' shellescape(@%, 1)<CR>
 
 """ changesPlugin
 let g:changes_use_icons=0
@@ -310,9 +328,6 @@ nnoremap <silent><C-W>z :MaximizerToggle<CR>
 vnoremap <silent><C-W>z :MaximizerToggle<CR>gv
 inoremap <silent><C-W>z <C-o>:MaximizerToggle<CR>
 
-""" snip-mate
-let g:snipMate = { 'snippet_version' : 1 }
-
 """ inner slashes
 onoremap <silent> i/ :<C-U>normal! T/vt/<CR>
 onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
@@ -353,16 +368,13 @@ set tags+=tags;/
 
 """ tagbar
 nmap <F8> :TagbarToggle<CR>
+let g:tagbar_sort = 0
 
 " Open the definition in a new tab
 :nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
 
 " Open the definition in a vertical split
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-
-""" nerdtree-git-plugin
-let g:NERDTreeGitStatusConcealBrackets = 0 " default: 0
-let g:NERDTreeGitStatusShowClean = 0 " default: 0
 
 """ vim-diff ignore whitespace
 set diffopt+=iwhiteall,filler
@@ -376,6 +388,18 @@ set diffexpr=""
 "   suggest.snippetIndicator: "",
 "   suggest.noselect: true,
 " }
+
+" Snippets are stored in ~/.config/coc/ultisnips
+" vim-snipmate
+let g:snipMate = { 'snippet_version' : 1 }
+
+" coc-snippets
+imap <C-l> <Plug>(coc-snippets-expand-jump)
+let g:coc_snippet_prev = '<c-k>'
+vmap <C-j> <Plug>(coc-snippets-select)
+
+" Install extensions
+let g:coc_global_extensions = ['coc-snippets', 'coc-clangd', 'coc-python']
 
 " Customize colors
 :highlight CocFloating ctermbg=238 guibg=#444444
@@ -394,11 +418,11 @@ set updatetime=300
 " diagnostics appear/become resolved.
 set signcolumn=yes
 
-" Use tab for trigger completion with characters ahead and navigate.
+" Use tab for trigger completion with characters ahead and navigate
 " NOTE: There's always complete item selected by default, you may want to enable
-" no select by `"suggest.noselect": true` in your configuration file.
+" no select by `"suggest.noselect": true` in your configuration file
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
+" other plugin before putting this into your config
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
@@ -406,7 +430,7 @@ inoremap <silent><expr> <TAB>
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice.
+" <C-g>u breaks current undo, please make your own choice
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
@@ -415,7 +439,7 @@ function! CheckBackspace() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" Use <c-space> to trigger completion.
+" Use <c-space> to trigger completion
 if has('nvim')
   inoremap <silent><expr> <c-space> coc#refresh()
 else
@@ -467,7 +491,34 @@ let g:ack_use_cword_for_empty_search = 1
 " Don't jump to first match
 cnoreabbrev Ack Ack!
 
- """ ---------- LATEX SETTINGS ----------
+""" show function name
+" function! ShowFuncName()
+"     let cursor_pos = getpos('.')
+"     echohl ModeMsg
+"     normal! [[k
+"     echo getline('.')
+"     echohl None
+"     call setpos('.', cursor_pos)
+" endfunction
+" function! SubName() abort
+"     let prev_sub_line_num = search('subroutine ', 'bcnW')
+"     return matchstr(getline(prev_sub_line_num), 'subroutine \zs\w\+')
+" endfunction
+" set stl+=%{SubName()}
+
+""" github-copilot
+"let g:copilot_assume_mapped = v:true
+imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
+let g:copilot_no_tab_map = v:true
+
+""" git-blame
+nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
+
+""" git-time-lapse
+" :GitTimeLapse
+" nmap <Leader>gt <Plug>(git-time-lapse)
+
+""" ---------- LATEX SETTINGS ----------
 
 let g:vimtex_compiler_latexmk = {
         \ 'executable' : 'latexmk',
@@ -491,7 +542,7 @@ autocmd VimEnter *.tex syntax on
 
 augroup tex_syntax
   au!
-  autocmd BufNewFile,BufRead *.tex   set syntax=on
+  autocmd BufNewFile,BufRead *.tex set syntax=on
 augroup END
 
 " disable gitgutter and indentlines
@@ -502,14 +553,10 @@ au VimEnter *.tex :IndentLinesToggle
 augroup vimtex_config
     au!
     au User VimtexEventQuit call vimtex#compiler#clean(0)
+    "au User VimtexEventQuit call vimtex#latexmk#clean(0)
     au FileType tex nmap <buffer><silent> <leader>t <plug>(vimtex-toc-open)
     au FileType tex nmap <buffer><silent> <leader>v <plug>(vimtex-view)
 augroup END
-
-""" coc-snippets
-imap <C-l> <Plug>(coc-snippets-expand-jump)
-let g:coc_snippet_prev = '<c-k>'
-vmap <C-j> <Plug>(coc-snippets-select)
 
 " disable auto renaming items to bullets
 let g:vimtex_syntax_conceal_disable = 1
@@ -646,7 +693,6 @@ augroup litecorrect
   autocmd!
   autocmd FileType tex call litecorrect#init()
 augroup END
-
 
 """ vim-textobj-sentence
 set nocompatible

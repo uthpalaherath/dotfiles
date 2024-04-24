@@ -1,0 +1,79 @@
+\documentclass[
+ reprint,
+%preprint,
+ amsmath,amssymb, aps,
+prb,
+showkeys, dvipsnames, ]{revtex4-2}
+\usepackage{ulem}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}% Include figure files
+\usepackage{dcolumn}% Align table columns on decimal point
+\usepackage{bm}% bold math
+\usepackage{xr-hyper}
+\usepackage{hyperref}% add hypertext capabilities
+\hypersetup{colorlinks=true,linkcolor=blue,filecolor=magenta,urlcolor=cyan,citecolor=blue}
+\usepackage[mathlines]{lineno}% Enable numbering of text and display math
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{todonotes}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{verbatimbox}
+\usepackage{soul}
+\usepackage{subcaption}
+\usepackage{fancyvrb}
+\usepackage{braket}
+\usepackage{wrapfig}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage[version=3]{mhchem}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage[capitalise]{cleveref}
+\captionsetup[table]{font=small}
+\captionsetup[figure]{font=small}
+\graphicspath{ {./figures/} }
+
+% Comments
+\setlength{\marginparwidth}{2cm}
+\newcommand{\TODO} [1]
+{\todo[inline,backgroundcolor=lime,size=\small ,bordercolor=white]{#1}}
+\newcommand{\uthpala} [1]
+{\todo[inline,backgroundcolor=yellow,size=\small ,bordercolor=white]{{\bf
+Uthpala:} #1}}
+
+\begin{document}
+\preprint{APS/123-QED}
+\titleformat{\section}{\raggedright\bfseries}{\thesection.}{1em}{}
+
+\title{Report}
+
+\author{Uthpala Herath}
+\email{uthpala.herath@duke.edu}
+% \altaffiliation[Also at]{
+% Department of Physics and Astronomy,
+% West Virginia University,
+% Morgantown, WV 26506-6315, USA
+% }
+\affiliation{
+Department of Mechanical Engineering and Materials Science,
+Duke University, Durham, NC 27708, USA
+}
+
+
+%\keywords{Suggested keywords}
+\maketitle
+%\tableofcontents
+\onecolumngrid
+
+%---------------------------- BODY ------------------------------
+\vspace{-0.5cm}
+\section{Section 1}
+
+
+\bibliography{references-zotero.bib,references.bib}
+\end{document}\grid
