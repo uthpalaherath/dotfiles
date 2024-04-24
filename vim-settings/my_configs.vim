@@ -10,7 +10,6 @@
 " to ~/.vimrc after following the instructions.
 "
 " author: Uthpala Herath
-" my fork: https://github.com/uthpalaherath/vimrc
 
 """ Plugin Manager
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
@@ -83,7 +82,7 @@ au VimEnter * call InsertIfEmpty()
 """ indentLine
 let g:indentLine_char = '┊'
 
-""" ale
+""" ALE
 let g:ale_virtualtext_cursor = 0
 let g:ale_disable_lsp = 1
 let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale']}
@@ -127,13 +126,13 @@ function! NumControl()
 endfunction
 autocmd VimEnter * call NumControl()
 
-"""" toggle line numbers, indentLines and gitgutter
+""" toggle line numbers, indentLines and gitgutter
 noremap <silent> <F3> :set invnumber invrelativenumber \| IndentLinesToggle \| :GitGutterToggle <CR>
 
-""""" Remapping keys
+""" Remapping keys
 :imap jk <ESC>`^
 
-"""" Tab settings
+""" Tab settings
 set tabstop=4           """ width that a <TAB> character displays as
 set expandtab           " convert <TAB> key-presses to spaces
 set shiftwidth=4        " number of spaces to use for each step of (auto)indent
@@ -388,11 +387,8 @@ set diffexpr=""
 " Install extensions
 let g:coc_global_extensions = ['coc-snippets', 'coc-clangd', 'coc-python']
 
-" Snippets are stored in ~/.config/coc/ultisnips
-" vim-snipmate
-let g:snipMate = { 'snippet_version' : 1 }
-
 " coc-snippets
+" Snippets are stored in ~/.config/coc/ultisnips
 imap <C-l> <Plug>(coc-snippets-expand-jump)
 let g:coc_snippet_prev = '<c-k>'
 vmap <C-j> <Plug>(coc-snippets-select)
