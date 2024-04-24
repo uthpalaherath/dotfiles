@@ -211,13 +211,6 @@ nmap [h <Plug>(GitGutterPrevHunk)
 let g:gitgutter_highlight_linenrs = 1
 let g:gitgutter_preview_win_floating = 1
 
-" show in status bar
-function! GitStatus()
-  let [a,m,r] = GitGutterGetHunkSummary()
-  return printf('+%d ~%d -%d', a, m, r)
-endfunction
-set statusline+=%{GitStatus()}
-
 """ split screen shortcuts
 nnoremap <C-W>- :new<CR>
 nnoremap <C-W>\ :vnew<CR>
@@ -462,9 +455,6 @@ endfunction
 
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Add (Neo)Vim's native statusline support
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 """ Count search instances
 autocmd VimEnter * set shortmess-=S
