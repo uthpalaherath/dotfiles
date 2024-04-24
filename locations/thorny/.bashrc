@@ -8,9 +8,6 @@ if [ -f /etc/bashrc ]; then
         . /etc/bashrc
 fi
 
-# purge
-module purge 
-
 # Memory
 ulimit -s unlimited
 
@@ -59,21 +56,42 @@ fi
 # fi
 
 # ENV 
-NUM_CORES=$(( PBS_NUM_NODES*PBS_NUM_PPN ))
-WORK_DIR=$PBS_O_WORKDIR
+NUM_CORES=$SLURM_NTASKS
+WORK_DIR=$SLURM_SUBMIT_DIR
 
 #------------------------------------------- MODULES -------------------------------------------
 
 # compilers
-module load compiler/latest > /dev/null 2>&1
-module load mpi/latest > /dev/null 2>&1
-module load mkl/latest > /dev/null 2>&1
-module load lang/gcc/8.2.0 > /dev/null 2>&1
+gnu(){
+    module load lang/gcc/12.2.0
+
+    export CC=mpicc
+    export CXX=mpicxx
+    export FC=mpif90
+}
+
+intel(){
+    # module load compiler/latest > /dev/null 2>&1
+    # module load mpi/latest > /dev/null 2>&1
+    # module load mkl/latest > /dev/null 2>&1
+
+    module load compiler/2023.1.0
+    module load mkl/2023.2.0
+    module load mpi/latest > /dev/null 2>&1
+
+    export CC=mpiicc
+    export CXX=mpiicpc
+    export FC=mpiifort
+}
+# default
+intel
+
 
 # module load lang/nvidia/nvhpc/21.3
-# module load lang/gcc/8.2.0 
-# module load lang/intel/2019_u5
 module load dev/cmake/3.21.1
+module load dev/git/2.29.1
+module load parallel/cuda/12.3
+module load sched/slurm/22.05
 
 # libraries
 # module load libs/fftw/3.3.8_intel18
@@ -83,24 +101,22 @@ module load dev/cmake/3.21.1
 # module load libs/libpsml/1.1.7_gcc82
 
 # programs
-# module load atomistic/abinit/9.2.2_intel19
-# module load atomistic/abinit/8.10.3_intel18
-# module load atomistic/elk/5.2.14_intel18
-# module load atomistic/abinit/9.4.1_intel19
-
+module load atomistic/abinit/9.8.4_intel22_impi22
 # module load parallel/openmpi/3.1.4_intel18
 
 # Python
+module load lang/python/intelpython_3.9
+
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/shared/software/conda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/shared/software/intel/oneapi/intelpython/latest/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/shared/software/conda/etc/profile.d/conda.sh" ]; then
-        . "/shared/software/conda/etc/profile.d/conda.sh"
+    if [ -f "/shared/software/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh" ]; then
+        . "/shared/software/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh"
     else
-        export PATH="/shared/software/conda/bin:$PATH"
+        export PATH="/shared/software/intel/oneapi/intelpython/latest/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -119,8 +135,13 @@ py2
 
 #------------------------------------------- PATHS -------------------------------------------
 
+# slurm
+export PATH="/opt/slurm/latest/bin/:$PATH"
+export I_MPI_PMI_LIBRARY="/opt/slurm/latest/lib64/libpmi.so.0"
+
 # aims
 export PATH="/scratch/ukh0001/FHIaims/bin/:$PATH"
+export PATH="/scratch/ukh0001/FHIaims/utilities/:$PATH"
 
 # Matplotlib
 export PYTHONPATH="/users/ukh0001/dotfiles/matplotlib/:$PYTHONPATH"
@@ -195,25 +216,26 @@ export PATH="/users/ukh0001/local/NEBgen/:$PATH"
 export PATH="/gpfs20/users/ukh0001/local/sod/bin/:$PATH"
 
 # MCA parameters for OpenMPI
-export OMPI_MCA_btl_openib_warn_no_device_params_found=0
-export OMPI_MCA_orte_base_help_aggregate=0
-export OMPI_MCA_mpi_show_handle_leaks=0
+# export OMPI_MCA_btl_openib_warn_no_device_params_found=0
+# export OMPI_MCA_orte_base_help_aggregate=0
+# export OMPI_MCA_mpi_show_handle_leaks=0
 
 # nvidia
-export PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/bin/:$PATH"
-export LD_LIBRARY_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/lib64/:$LD_LIBRARY_PATH"
-export LD_LIBRARY_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/lib64/stubs/:$LD_LIBRARY_PATH"
-export LD_LIBRARY_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/math_libs/lib64/:$LD_LIBRARY_PATH"
-export LD_LIBRARY_PATH="/users/ukh0001/lib/nvidia/stubs/:$LD_LIBRARY_PATH"
-export C_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$C_INCLUDE_PATH"
-export CPLUS_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$CPLUS_INCLUDE_PATH"
+# export PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/bin/:$PATH"
+# export LD_LIBRARY_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/lib64/:$LD_LIBRARY_PATH"
+# export LD_LIBRARY_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/lib64/stubs/:$LD_LIBRARY_PATH"
+# export LD_LIBRARY_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/math_libs/lib64/:$LD_LIBRARY_PATH"
+# export LD_LIBRARY_PATH="/users/ukh0001/lib/nvidia/stubs/:$LD_LIBRARY_PATH"
+# export C_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$C_INCLUDE_PATH"
+# export CPLUS_INCLUDE_PATH="/shared/software/nvidia/hpc_sdk/Linux_x86_64/2021/cuda/include/:$CPLUS_INCLUDE_PATH"
 
 # ctags
 export PATH="/users/ukh0001/local/ctags-5.8/build/bin/:$PATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias q="qstat -u ukh0001"
+#alias q="qstat -u ukh0001"
+alias q='squeue -u ukh0001 --format="%.18i %.9P %30j %.8u %.2t %.10M %.6D %R"'
 alias qs="qstat -u ukh0001 | tee -a ~/jobs.log"
 alias qq="qstat -q"
 alias qstatuswatch='watch -d "qstat -u ukh0001"'
@@ -246,7 +268,8 @@ standby(){
     else
         arg=$1
     fi
-    qsub -I -l nodes=$arg:ppn=40,walltime=4:00:00 -q standby -d $PWD
+    # qsub -I -l nodes=$arg:ppn=40,walltime=4:00:00 -q standby -d $PWD
+    qsub -I -l nodes=$arg:ppn=40,walltime=4:00:00 -q standby 
 }
 
 debugger(){
@@ -359,17 +382,23 @@ makejob(){
 
 echo "\
 #!/bin/bash
-#PBS -N $jobname 
-#PBS -q $queue
-#PBS -l walltime=$walltime
-#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=8gb
-#PBS -m ae
-#PBS -M ukh0001@mix.wvu.edu
-#PBS -j oe
+#SBATCH --job-name=$jobname 
+#SBATCH --nodes=$nodes 
+#SBATCH --ntasks-per-node=$ppn
+#SBATCH -c 1    # CPU's per task
+#SBATCH --partition $queue
+#SBATCH --time=$walltime
+#SBATCH --mail-user=ukh0001@mix.wvu.edu
+#SBATCH --mail-type=NONE
 
 source ~/.bashrc
 ulimit -s unlimited
+module load sched/slurm
 
 cd \$WORK_DIR/
+srun -n \$NUM_CORES 
 " > jobscript.sh
 }
+
+
+
