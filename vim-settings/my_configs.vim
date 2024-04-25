@@ -37,6 +37,7 @@ Plug 'kshenoy/vim-signature'
 Plug 'jpalardy/vim-slime'
 Plug 'psliwka/vim-smoothie'
 Plug 'mhinz/vim-startify'
+Plug 'will133/vim-dirdiff'
 
 " Latex plugins
 Plug 'cocopon/iceberg.vim'
