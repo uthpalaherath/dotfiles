@@ -255,15 +255,6 @@ cleanvaspall(){
     \) -type f $1
 }
 
-# DirDiff
-function dirdiff()
-{
-    # Shell-escape each path:
-    DIR1=$(printf '%q' "$1"); shift
-    DIR2=$(printf '%q' "$1"); shift
-    vim $@ -c "ZFDirDiff $DIR1 $DIR2"
-}
-
 #---------- Create jobscripts for HPC ------------
 
 # spruce

@@ -499,7 +499,7 @@ let g:ZFDirDiff_ignoreSpace = 1
 let g:ZFIgnoreOption_ZFDirDiff = {
             \   'bin' : 1,
             \   'media' : 1,
-            \   'ZFDirDiff' : 1,
+            \   'common' : 1,
             \ }
 
 """ ---------- LATEX SETTINGS ----------
