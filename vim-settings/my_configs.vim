@@ -40,7 +40,6 @@ Plug 'mhinz/vim-startify'
 Plug 'ZSaberLv0/ZFVimDirDiff'
 Plug 'ZSaberLv0/ZFVimJob'
 Plug 'ZSaberLv0/ZFVimIgnore'
-Plug 'ZSaberLv0/ZFVimBackup'
 
 " Latex plugins
 Plug 'cocopon/iceberg.vim'
@@ -493,7 +492,6 @@ nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
 " nmap <Leader>gt <Plug>(git-time-lapse)
 
 """ ZRDirDiff
-let g:ZFDirDiff_autoBackup = 0
 let g:ZFDirDiff_ignoreEmptyDir = 1
 let g:ZFDirDiff_ignoreSpace = 1
 let g:ZFIgnoreOption_ZFDirDiff = {
