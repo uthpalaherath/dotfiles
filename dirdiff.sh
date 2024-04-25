@@ -3,8 +3,8 @@
 # from: https://github.com/ZSaberLv0/ZFVimDirDiff
 
 WORK_DIR=$(cd "$(dirname "$0")"; pwd)
-PATH_A=$1
-PATH_B=$2
+PATH_A=$(pwd)/$1
+PATH_B=$(pwd)/$2
 if test "0" = "1" \
     || test "x-$PATH_A" = "x-" \
     || test "x-$PATH_B" = "x-" \
