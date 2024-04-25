@@ -37,7 +37,10 @@ Plug 'kshenoy/vim-signature'
 Plug 'jpalardy/vim-slime'
 Plug 'psliwka/vim-smoothie'
 Plug 'mhinz/vim-startify'
-Plug 'will133/vim-dirdiff'
+Plug 'ZSaberLv0/ZFVimDirDiff'
+Plug 'ZSaberLv0/ZFVimJob'
+Plug 'ZSaberLv0/ZFVimIgnore'
+Plug 'ZSaberLv0/ZFVimBackup'
 
 " Latex plugins
 Plug 'cocopon/iceberg.vim'
@@ -488,6 +491,16 @@ nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
 """ git-time-lapse
 " :GitTimeLapse
 " nmap <Leader>gt <Plug>(git-time-lapse)
+
+""" ZRDirDiff
+let g:ZFDirDiff_autoBackup = 0
+let g:ZFDirDiff_ignoreEmptyDir = 1
+let g:ZFDirDiff_ignoreSpace = 1
+let g:ZFIgnoreOption_ZFDirDiff = {
+            \   'bin' : 1,
+            \   'media' : 1,
+            \   'ZFDirDiff' : 1,
+            \ }
 
 """ ---------- LATEX SETTINGS ----------
 
