@@ -25,35 +25,14 @@ export PATH
 
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
 
-
 # tmux 
 module load utils/tmux/3.1 #3.0a
 export TMUX_DEVICE_NAME=thorny
-
-# # renumbering sessions
-# sessions=$(tmux ls | cut -f1 -d':' | cut -f2 -d ' ' | sort -n)
-# new=0
-# for old in $sessions
-# do
-#   tmux rename -t $old "${TMUX_DEVICE_NAME}-${new}"
-#   ((new++))
-# done
-
-# # kill detached sessions
-# tmux list-sessions | grep -E -v '\(attached\)$' | while IFS='\n' read line; do
-#     tmux kill-session -t "${line%%:*}"
-# done
 
 # Create new tmux or attach to existing session 
 if command -v tmux &> /dev/null && [ -t 0  ] && [ -z "$TMUX" ] && [[ $- = *i* ]]; then
     tmux new-session -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME 
 fi
-
-# if [ $(hostname | awk -F'.' '{print substr($1,1,5)}') == "trcis" ]; then
-#     if command -v tmux &> /dev/null && [ -t 0  ] && [ -z "$TMUX" ] && [[ $- = *i* ]]; then
-#         tmux new-session -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME 
-#     fi
-# fi
 
 # ENV 
 NUM_CORES=$SLURM_NTASKS
