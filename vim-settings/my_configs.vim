@@ -39,6 +39,7 @@ Plug 'psliwka/vim-smoothie'
 Plug 'ZSaberLv0/ZFVimDirDiff'
 Plug 'ZSaberLv0/ZFVimJob'
 Plug 'ZSaberLv0/ZFVimIgnore'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 "Plug 'mhinz/vim-startify'
 
 " Latex plugins
@@ -143,6 +144,21 @@ set softtabstop=4       " backspace after pressing <TAB> will remove up to this 
 set autoindent          " copy indent from current line when starting a new line
 set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 
+""" colors
+syntax on
+filetype plugin indent on
+set t_Co=256
+"set termguicolors
+colorscheme molokai
+"highlight Normal ctermbg=NONE
+highlight clear SignColumn
+highlight LineNr ctermbg=235
+highlight LineNr ctermfg=241
+
+" Use new regular expression engine
+set re=0
+set redrawtime=10000
+
 """ NERDtree configuration
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
@@ -161,25 +177,10 @@ au VimEnter * wincmd h
 :let g:NERDTreeShowLineNumbers=0
 :autocmd BufEnter NERD_* setlocal nornu
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
-
+:hi Directory guifg=#FF0000 ctermfg=blue
 " set autochdir
 " let NERDTreeChDirMode=2
 " nnoremap <leader>nn :NERDTree .<CR>
-
-""" colors
-syntax on
-filetype plugin indent on
-set t_Co=256
-"set termguicolors
-colorscheme molokai
-"highlight Normal ctermbg=NONE
-highlight clear SignColumn
-highlight LineNr ctermbg=235
-highlight LineNr ctermfg=241
-
-" Use new regular expression engine
-set re=0
-set redrawtime=10000
 
 """ copy to buffer (Only works on Mac)
 " map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
