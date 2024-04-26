@@ -160,11 +160,12 @@ set re=0
 set redrawtime=10000
 
 """ NERDtree configuration
+let NERDTreeShowLineNumbers = 0
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeQuitOnOpen = 1
-let g:NERDTreeGitStatusConcealBrackets = 0 " default: 0
-let g:NERDTreeGitStatusShowClean = 0 " default: 0
+let NERDTreeGitStatusConcealBrackets = 0 " default: 0
+let NERDTreeGitStatusShowClean = 0 " default: 0
 let NERDTreeNaturalSort = 1
 
 function! StartUp()
@@ -173,11 +174,11 @@ function! StartUp()
     end
 endfunction
 autocmd VimEnter * call StartUp()
-au VimEnter * wincmd h
-:let g:NERDTreeShowLineNumbers=0
-:autocmd BufEnter NERD_* setlocal nornu
+autocmd VimEnter * wincmd h
+autocmd BufEnter NERD_* setlocal nornu nonu
+hi Directory guifg=#FF0000 ctermfg=blue
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
-:hi Directory guifg=#FF0000 ctermfg=blue
+
 " set autochdir
 " let NERDTreeChDirMode=2
 " nnoremap <leader>nn :NERDTree .<CR>
@@ -213,7 +214,7 @@ highlight GitGutterChangeDelete ctermfg=4 guifg=#000080
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
 let g:gitgutter_highlight_linenrs = 1
-let g:gitgutter_preview_win_floating = 1
+let g:gitgutter_preview_win_floating = 0
 
 """ split screen shortcuts
 nnoremap <C-W>- :new<CR>
