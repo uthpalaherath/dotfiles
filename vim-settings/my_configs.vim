@@ -36,10 +36,10 @@ Plug 'pixelneo/vim-python-docstring'
 Plug 'kshenoy/vim-signature'
 Plug 'jpalardy/vim-slime'
 Plug 'psliwka/vim-smoothie'
-Plug 'mhinz/vim-startify'
 Plug 'ZSaberLv0/ZFVimDirDiff'
 Plug 'ZSaberLv0/ZFVimJob'
 Plug 'ZSaberLv0/ZFVimIgnore'
+"Plug 'mhinz/vim-startify'
 
 " Latex plugins
 Plug 'cocopon/iceberg.vim'
@@ -297,12 +297,12 @@ nnoremap <Leader>q :SlimeSend1 %reset -f<CR>
 tnoremap <c-b> <c-\><c-n>
 
 """ Startify
-let g:startify_session_persistence = 1
-let g:startify_lists = [
-      \ { 'type': 'sessions',  'header': ['   Sessions']       },
-      \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
-      \ ]
-let g:startify_bookmarks = [ '~/.vim_runtime/my_configs.vim' ]
+" let g:startify_session_persistence = 1
+" let g:startify_lists = [
+"       \ { 'type': 'sessions',  'header': ['   Sessions']       },
+"       \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+"       \ ]
+" let g:startify_bookmarks = [ '~/.vim_runtime/my_configs.vim' ]
 
 """ vim-maximizer
 let g:maximizer_default_mapping_key = '<C-W>z'
