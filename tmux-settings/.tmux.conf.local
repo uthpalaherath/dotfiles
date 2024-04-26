@@ -436,6 +436,9 @@ bind % split-window -h -c "#{pane_current_path}"
 # vim cursor compatibility
 set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
 
+# focus events for vim line numbering
+set-option -g focus-events on
+
 # -- tpm -----------------------------------------------------------------------
 
 # while I don't use tpm myself, many people requested official support so here
