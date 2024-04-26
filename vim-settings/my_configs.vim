@@ -40,6 +40,7 @@ Plug 'ZSaberLv0/ZFVimDirDiff'
 Plug 'ZSaberLv0/ZFVimJob'
 Plug 'ZSaberLv0/ZFVimIgnore'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
 "Plug 'mhinz/vim-startify'
 
 " Latex plugins
@@ -59,6 +60,7 @@ call plug#end()
 :set encoding=utf-8
 :set fileencoding=utf-8
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
+:set number
 
 """ change current working directory to file dir
 autocmd BufEnter * silent! lcd %:p:h
@@ -109,27 +111,6 @@ autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff g
 " disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
 
-""" Setting numbering
-function! NumControl()
-    :set number relativenumber
-    :augroup numbertoggle
-    :  autocmd!
-    :  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-    :  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-    :augroup END
-
-    " turn off all numbers for tex files
-    if &ft == "tex"
-        :set nonu nornu
-        :augroup numbertoggle
-        :  autocmd!
-        :  autocmd BufEnter,FocusGained,InsertLeave * set norelativenumber
-        :  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-        :augroup END
-    endif
-endfunction
-autocmd VimEnter * call NumControl()
-
 """ toggle line numbers, indentLines and gitgutter
 noremap <silent> <F3> :set invnumber invrelativenumber \| IndentLinesToggle \| :GitGutterToggle <CR>
 
@@ -175,13 +156,8 @@ function! StartUp()
 endfunction
 autocmd VimEnter * call StartUp()
 autocmd VimEnter * wincmd h
-autocmd BufEnter NERD_* setlocal nornu nonu
 hi Directory guifg=#FF0000 ctermfg=blue
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
-
-" set autochdir
-" let NERDTreeChDirMode=2
-" nnoremap <leader>nn :NERDTree .<CR>
 
 """ copy to buffer (Only works on Mac)
 " map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
@@ -503,6 +479,9 @@ let g:ZFIgnoreOption_ZFDirDiff = {
             \ }
 
 """ ---------- LATEX SETTINGS ----------
+
+" turn off line numbers for tex files
+autocmd filetype tex setlocal nonumber norelativenumber
 
 let g:vimtex_compiler_latexmk = {
         \ 'executable' : 'latexmk',
