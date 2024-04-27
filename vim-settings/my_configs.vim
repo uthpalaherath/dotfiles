@@ -158,6 +158,7 @@ function! StartUp()
 endfunction
 autocmd VimEnter * call StartUp()
 autocmd VimEnter * wincmd h
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 hi Directory guifg=#FF0000 ctermfg=blue
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 
