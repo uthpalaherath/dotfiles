@@ -50,6 +50,7 @@ export I_MPI_PMI_LIBRARY=/usr/lib/x86_64-linux-gnu/libpmi.so.0
 # unset I_MPI_PMI_LIBRARY
 # export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
 export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH
+export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
 
 #------------------------------------------- ALIASES -------------------------------------------
 
