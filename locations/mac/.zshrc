@@ -121,6 +121,10 @@ tm(){
     fi
 }
 
+#FZF
+export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+export EDITOR="vim"
+
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
 cd() {
@@ -543,7 +547,11 @@ alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 alias ctags="`brew --prefix`/bin/ctags"
+alias createbib="ln ~/Dropbox/references-zotero.bib"
 
 # docker
 alias cleandocker="docker image prune -a -f && docker volume prune -f"
 alias cleandockerall="docker system prune -a -f"
+
+# FZF
+alias f='vim "$(fzf)"'
