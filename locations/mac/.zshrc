@@ -204,157 +204,16 @@ umount_all(){
     umount -f /Users/uthpala/HPC/frontera/home
 }
 
-# Check if VASP relaxation is obtained for batch jobs when relaxed with
-# Convergence.py and relax.dat is created.
-relaxed(){
- if [[ "$*" == "" ]]; then
-     arg="^[0-9]+$"
- else
-     arg=$1
- fi
-
- rm -f unrelaxed_list.dat
- folder_list=$(ls | grep -E $arg)
- for i in $folder_list;
-     do if [[ -f "${i}/relax.dat" ]]; then
-            echo $i
-        else
-            printf "${i}\t" >> unrelaxed_list.dat
-        fi
-     done
+# using ripgrep combined with preview
+# find-in-file - usage: fif <searchTerm>
+fif() {
+  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
+  rg --files-with-matches --no-messages "$1" | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow' --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
 }
 
-# Clean VASP files in current directoy and subdirectories.
-# For only current directory use cleanvasp.sh
-# Add -delete flag to delete.
-cleanvaspall(){
-    find . \( \
-        -name "CHGCAR*" -o \
-        -name "OUTCAR*" -o \
-        -name "CHG" -o \
-        -name "DOSCAR" -o \
-        -name "EIGENVAL" -o \
-        -name "ENERGY" -o \
-        -name "IBZKPT" -o \
-        -name "OSZICAR*" -o \
-        -name "PCDAT" -o \
-        -name "REPORT" -o \
-        -name "TIMEINFO" -o \
-        -name "WAVECAR" -o \
-        -name "XDATCAR" -o \
-        -name "wannier90.wout" -o \
-        -name "wannier90.amn" -o \
-        -name "wannier90.mmn" -o \
-        -name "wannier90.eig" -o \
-        -name "wannier90.chk" -o \
-        -name "wannier90.node*" -o \
-        -name "PROCAR" -o \
-        -name "*.o[0-9]*" -o \
-        -name "vasprun.xml" -o \
-        -name "relax.dat" -o \
-        -name "CONTCAR*" \
-    \) -type f $1
-}
-
-#---------- Create jobscripts for HPC ------------
-
-# spruce
-makejob_spruce(){
-queue=${1:-standby}
-nodes=${2:-1}
-ppn=${3:-16}
-jobname=${4:-jobname}
-
-case $queue in
-  standby) walltime=4:00:00 ;;
-  alromero) walltime=1000:00:00 ;;
-  comm_mmem_day) walltime=24:00:00 ;;
-  comm_mmem_week) walltime=168:00:00 ;;
-  debug) walltime=00:15:00 ;;
-  *) walltime=4:00:00 ;;
-esac
-
-echo "\
-#!/bin/bash
-#PBS -N $jobname
-#PBS -q $queue
-#PBS -l walltime=$walltime
-#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=6gb
-#PBS -m ae
-#PBS -M ukh0001@mix.wvu.edu
-#PBS -j oe
-
-source ~/.bashrc
-ulimit -s unlimited
-
-cd \$WORK_DIR/
-" > jobscript.sh
-}
-
-# thorny
-makejob_thorny(){
- queue=${1:-standby}
- nodes=${2:-1}
- ppn=${3:-40}
- jobname=${4:-jobname}
-
- case $queue in
-     standby) walltime=4:00:00 ;;
-     alromero) walltime=1000:00:00 ;;
-     comm_small_day) walltime=24:00:00 ;;
-     comm_small_week) walltime=168:00:00 ;;
-     debug) walltime=1:00:00 ;;
-     *) walltime=4:00:00 ;;
- esac
-
-echo "\
-#!/bin/bash
-#PBS -N $jobname
-#PBS -q $queue
-#PBS -l walltime=$walltime
-#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=8gb
-#PBS -m ae
-#PBS -M ukh0001@mix.wvu.edu
-#PBS -j oe
-
-source ~/.bashrc
-ulimit -s unlimited
-
-cd \$WORK_DIR/
-" > jobscript.sh
-}
-
-# bridges2
-makejob_bridges2(){
- nodes=${1:-1}
- ppn=${2:-128}
- jobname=${3:-jobname}
-
-echo "\
-#!/bin/bash
-#SBATCH --job-name=$jobname
-#SBATCH -N $nodes
-#SBATCH --ntasks-per-node=$ppn
-#SBATCH -t 48:00:00
-##SBATCH --mem=10GB
-##SBATCH -p RM-shared
-
-set -x
-source ~/.bashrc
-ulimit -s unlimited
-
-cd \$WORK_DIR/
-" > jobscript.sh
-}
-
-# selector
-makejob(){
-    case $1 in
-        spruce) makejob_spruce $2 $3 $4 $5 ;;
-        thorny) makejob_thorny $2 $3 $4 $5 ;;
-        bridges2) makejob_bridges2 $2 $3 $4 ;;
-        *) makejob_thorny $2 $3 $4 $5 ;;
-    esac
+# fh - repeat history
+fh() {
+  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed -E 's/ *[0-9]*\*? *//' | sed -E 's/\\/\\\\/g')
 }
 
 #------------------------------------------- PATHS -------------------------------------------
