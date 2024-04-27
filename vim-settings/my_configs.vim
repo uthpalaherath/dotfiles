@@ -41,6 +41,8 @@ Plug 'ZSaberLv0/ZFVimJob'
 Plug 'ZSaberLv0/ZFVimIgnore'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 "Plug 'mhinz/vim-startify'
 
 " Latex plugins
@@ -446,7 +448,10 @@ autocmd VimEnter * set shortmess-=S
 " --vimgrep -> Needed to parse the rg response properly for ack.vim
 " --type-not sql -> Avoid huge sql file dumps as it slows down the search
 " --smart-case -> Search case insensitive if all lowercase pattern, Search case sensitively otherwise
-let g:ackprg = 'rg --vimgrep --type-not sql --smart-case'
+" --follow -> Follow symlinks
+" --hidden -> Search hidden files
+let g:ackprg = 'rg --vimgrep --type-not sql --smart-case --follow --hidden'
+let g:repprg = 'rg --vimgrep --type-not sql --smart-case --follow --hidden'
 
 " Auto close the Quickfix list after pressing '<enter>' on a list item
 let g:ack_autoclose = 0
@@ -456,6 +461,15 @@ let g:ack_use_cword_for_empty_search = 1
 
 " Don't jump to first match
 cnoreabbrev Ack Ack!
+
+""" FZF
+let $FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}"'
+let g:ctrlp_map = ''
+nnoremap <silent> <C-f> :Files<CR>
+nnoremap <silent> <Leader>f :Rg<CR>
+command! -bang -nargs=* Rg call
+ \ fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden "
+ \ .shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 
 """ github-copilot
 "let g:copilot_assume_mapped = v:true

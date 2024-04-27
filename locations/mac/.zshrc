@@ -13,7 +13,7 @@ ZSH_THEME="honukai"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions) # copydir dirhistory macos)
+plugins=(git zsh-autosuggestions fzf) # copydir dirhistory macos)
 DISABLE_UNTRACKED_FILES_DIRTY="false"
 
 ## Plugin settings
@@ -23,8 +23,8 @@ bindkey '`' autosuggest-accept
 CASE_SENSITIVE="true"
 HYPHEN_INSENSITIVE="true"
 
-# FZF
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --zsh)"
 
 source $ZSH/oh-my-zsh.sh
 add-zsh-hook precmd virtenv_indicator
@@ -46,11 +46,11 @@ intel(){
     source /opt/intel/oneapi/setvars.sh  > /dev/null
 
     # Scalapack
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0_intel/:$DYLD_LIBRARY_PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/INTEL/scalapack-2.2.0/:$DYLD_LIBRARY_PATH"
 
     # OpenMPI (compiled with intel)
-    export PATH="/Users/uthpala/lib/openmpi-4.1.6_intel/build/bin/:$PATH"
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.6_intel/build/lib/:$DYLD_LIBRARY_PATH"
+    export PATH="/Users/uthpala/lib/INTEL/openmpi-5.0.3/build/bin/:$PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/INTEL/openmpi-5.0.3/build/lib/:$DYLD_LIBRARY_PATH"
     export OMPI_CC="icc"
     export OMPI_CXX="icpc"
     export OMPI_FC="ifort"
@@ -58,11 +58,11 @@ intel(){
 
 gnu(){
     # Scalapack
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0_gnu/:$DYLD_LIBRARY_PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/GNU/scalapack-2.2.0/:$DYLD_LIBRARY_PATH"
 
     # OpenMPI (GNU)
-    export PATH="/Users/uthpala/lib/openmpi-4.1.6_gnu/build/bin/:$PATH"
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.6_gnu/build/lib/:$DYLD_LIBRARY_PATH"
+    export PATH="/Users/uthpala/lib/GNU/openmpi-5.0.3/build/bin/:$PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/GNU/openmpi-5.0.3/build/lib/:$DYLD_LIBRARY_PATH"
     export OMPI_CC="gcc"
     export OMPI_CXX="g++"
     export OMPI_FC="gfortran"
@@ -120,9 +120,6 @@ tm(){
         tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
     fi
 }
-
-# itermocil
-# complete -W "$(itermocil --list)" itermocil
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
