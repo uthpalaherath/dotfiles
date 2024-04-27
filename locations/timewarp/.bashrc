@@ -71,6 +71,7 @@ alias cpr="rsync -ah --info=progress2"
 alias tkill="tmux kill-session"
 alias cleandocker="docker image prune -a -f && docker volume prune -f"
 alias cleandockerall="docker system prune -a -f"
+alias f='vim "$(fzf)"'
 
 #------------------------------------------- MODULES -------------------------------------------
 
