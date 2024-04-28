@@ -451,8 +451,8 @@ autocmd VimEnter * set shortmess-=S
 " --smart-case -> Search case insensitive if all lowercase pattern, Search case sensitively otherwise
 " --follow -> Follow symlinks
 " --hidden -> Search hidden files
-let g:ackprg = 'rg --vimgrep --type-not sql --smart-case --follow --hidden'
-let g:repprg = 'rg --vimgrep --type-not sql --smart-case --follow --hidden'
+let g:ackprg = 'rg --vimgrep --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}"'
+let g:repprg = 'rg --vimgrep --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}"'
 
 " Auto close the Quickfix list after pressing '<enter>' on a list item
 let g:ack_autoclose = 0
@@ -469,8 +469,8 @@ let g:ctrlp_map = ''
 nnoremap <silent> <C-f> :Files<CR>
 nnoremap <silent> <Leader>f :Rg<CR>
 command! -bang -nargs=* Rg call
- \ fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden "
- \ .shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
+ \ fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden -g '!{node_modules,.git}' "
+ \ .shellescape(<q-args>), 1, fzf#vim#with_preview(), <bang>0)
 
 """ github-copilot
 "let g:copilot_assume_mapped = v:true
