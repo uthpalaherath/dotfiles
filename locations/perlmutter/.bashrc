@@ -43,6 +43,20 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
+#FZF
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
+export FZF_CTRL_R_OPTS="
+  --preview 'echo {}' --preview-window 'hidden'
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'Press CTRL-Y to copy command into clipboard'"
+export FZF_ALT_C_OPTS="
+  --walker-skip .git,node_modules,target
+  --preview 'tree -C {}'"
+export EDITOR="vim"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u uthpala --format="%.18i %.9P %50j %.8u %.2t %.10M %.6D %R"'
@@ -200,80 +214,12 @@ mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 
-# Clean VASP files in current directoy and subdirectories.
-# For only current directory use cleanvasp.sh
-cleanvaspall(){
- find . \( \
-     -name "CHGCAR*" -o \
-     -name "OUTCAR*" -o \
-     -name "CHG" -o \
-     -name "DOSCAR" -o \
-     -name "EIGENVAL" -o \
-     -name "ENERGY" -o \
-     -name "IBZKPT" -o \
-     -name "OSZICAR*" -o \
-     -name "PCDAT" -o \
-     -name "REPORT" -o \
-     -name "TIMEINFO" -o \
-     -name "WAVECAR" -o \
-     -name "XDATCAR" -o \
-     -name "wannier90.wout" -o \
-     -name "wannier90.amn" -o \
-     -name "wannier90.mmn" -o \
-     -name "wannier90.eig" -o \
-     -name "wannier90.chk" -o \
-     -name "wannier90.node*" -o \
-     -name "PROCAR" -o \
-     -name "*.o[0-9]*" -o \
-     -name "vasprun.xml" -o \
-     -name "relax.dat" -o \
-     -name "CONTCAR*" \
- \) -type f $1
+# find-in-file - usage: fif <searchTerm> <directory>
+fif() {
+  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
+  if [ -z "$2" ]; then directory="./"; else directory="$2"; fi
+  rg --files-with-matches --no-messages "$1" "$directory" | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow' --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
 }
-
-# Check if VASP relaxation is obtained for batch jobs when relaxed with
-# Convergence.py and relax.dat is created.
-relaxed (){
- if [ "$*" == "" ]; then
-     arg="^[0-9]+$"
- else
-     arg=$1
- fi
-
- rm -f unrelaxed_list.dat
- folder_list=$(ls | grep -E $arg)
- for i in $folder_list;
-     do if [ -f $i/relax.dat ] ; then
-            echo $i
-        else
-            printf "$i\t" >> unrelaxed_list.dat
-        fi
-     done
-}
-
-# perlmutter
-#makejob(){
-# nodes=${1:-1}
-# ppn=${2:-128}
-# jobname=${3:-jobname}
-
-#echo "\
-##!/bin/bash
-##SBATCH --job-name=$jobname
-##SBATCH -N $nodes
-##SBATCH --ntasks-per-node=$ppn
-##SBATCH -t 48:00:00
-###SBATCH --mem=10GB
-###SBATCH -p RM-shared
-
-#set -x
-#source ~/.bashrc
-#ulimit -s unlimited
-
-#cd \$WORK_DIR/
-#" > jobscript.sh
-#}
-
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -303,3 +249,7 @@ export PATH="/global/homes/u/uthpala/local/ctags-5.8/build/bin/:$PATH"
 
 # nodejs
 export PATH="/global/homes/u/uthpala/local/node-v19.6.0/build/bin/:$PATH"
+
+# ripgrep and bat
+export PATH="/global/homes/u/uthpala/local/ripgrep/:$PATH"
+export PATH="/global/homes/u/uthpala/local/bat/:$PATH"
