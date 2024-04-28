@@ -123,6 +123,15 @@ tm(){
 
 #FZF
 export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
+export FZF_CTRL_R_OPTS="
+  --preview 'echo {}' --preview-window 'hidden'
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'Press CTRL-Y to copy command into clipboard'"
+export FZF_ALT_C_OPTS="
+  --walker-skip .git,node_modules,target
+  --preview 'tree -C {}'"
 export EDITOR="vim"
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
@@ -204,16 +213,11 @@ umount_all(){
     umount -f /Users/uthpala/HPC/frontera/home
 }
 
-# using ripgrep combined with preview
-# find-in-file - usage: fif <searchTerm>
+# find-in-file - usage: fif <searchTerm> <directory>
 fif() {
   if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
-  rg --files-with-matches --no-messages "$1" | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow' --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
-}
-
-# fh - repeat history
-fh() {
-  print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed -E 's/ *[0-9]*\*? *//' | sed -E 's/\\/\\\\/g')
+  if [ -z "$2" ]; then directory="./"; else directory="$2"; fi
+  rg --files-with-matches --no-messages "$1" "$directory" | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow' --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
 }
 
 #------------------------------------------- PATHS -------------------------------------------
@@ -411,6 +415,3 @@ alias createbib="ln ~/Dropbox/references-zotero.bib"
 # docker
 alias cleandocker="docker image prune -a -f && docker volume prune -f"
 alias cleandockerall="docker system prune -a -f"
-
-# FZF
-alias f='vim "$(fzf)"'
