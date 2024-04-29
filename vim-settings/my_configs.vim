@@ -475,9 +475,15 @@ command! -bang -nargs=* RgBuf call
   \ .shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 3..'}), <bang>0)
 
 " Rg with arguments allowed
-command! -bang -nargs=* Rg call
-  \ fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden -g '!{node_modules,.git}' "
-  \ .<q-args>, 1, fzf#vim#with_preview({'options': '--delimiter : --nth 3..'}), <bang>0)
+command! -bang -nargs=* Rg call HandleRgCommand(<q-args>, <bang>0)
+function! HandleRgCommand(args, bang)
+    if a:args == ''
+        echo "USAGE: Rg PATTERN [OPTIONS] [PATH]"
+    else
+        call fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden -g '!{node_modules,.git}' "
+        \ . a:args, 1, fzf#vim#with_preview({'options': '--delimiter : --nth 3..'}), a:bang)
+    endif
+endfunction
 
 " Rg word under cursor
 nnoremap <silent> <leader>* :RgBuf <C-R><C-W><CR>
