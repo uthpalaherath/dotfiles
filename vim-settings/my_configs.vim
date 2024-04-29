@@ -489,7 +489,7 @@ endfunction
 nnoremap <silent> <leader>* :RgBuf <C-R><C-W><CR>
 
 " Search only within current open buffer
-command! -bang -nargs=* CustomBLines
+command! -bang -nargs=* BLines
     \ call fzf#vim#grep(
     \   'rg --with-filename --line-number --no-heading --smart-case --color=always . '.fnameescape(expand('%:p')), 1,
     \   fzf#vim#with_preview({'options': '--layout reverse --keep-right --delimiter : --nth 3.. --preview "bat -p --color always {}"'}, 'right:60%' ))
