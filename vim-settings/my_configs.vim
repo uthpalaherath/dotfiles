@@ -467,16 +467,27 @@ cnoreabbrev Ack Ack!
 let $FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}"'
 let g:ctrlp_map = ''
 nnoremap <silent> <C-f> :Files<CR>
-command! -bang -nargs=* Rg call
- \ fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden -g '!{node_modules,.git}' "
- \ .<q-args>, 1, fzf#vim#with_preview(), <bang>0)
+nnoremap <silent> <Leader>f :RgBuf<CR>
 
-" Search current open file with <leader>+f
+" Rg without file names in search results
+command! -bang -nargs=* RgBuf call
+  \ fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden -g '!{node_modules,.git}' "
+  \ .shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 3..'}), <bang>0)
+
+" Rg with arguments allowed
+command! -bang -nargs=* Rg call
+  \ fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden -g '!{node_modules,.git}' "
+  \ .<q-args>, 1, fzf#vim#with_preview({'options': '--delimiter : --nth 3..'}), <bang>0)
+
+" Rg word under cursor
+nnoremap <silent> <leader>* :RgBuf <C-R><C-W><CR>
+
+" Search only within current open buffer
 command! -bang -nargs=* CustomBLines
     \ call fzf#vim#grep(
     \   'rg --with-filename --line-number --no-heading --smart-case --color=always . '.fnameescape(expand('%:p')), 1,
     \   fzf#vim#with_preview({'options': '--layout reverse --keep-right --delimiter : --nth 3.. --preview "bat -p --color always {}"'}, 'right:60%' ))
-nnoremap <leader>f :CustomBLines<Cr>
+" nnoremap <leader>f :CustomBLines<Cr>
 
 """ github-copilot
 "let g:copilot_assume_mapped = v:true
