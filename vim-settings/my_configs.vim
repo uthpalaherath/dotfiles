@@ -151,13 +151,13 @@ let NERDTreeGitStatusConcealBrackets = 0 " default: 0
 let NERDTreeGitStatusShowClean = 0 " default: 0
 let NERDTreeNaturalSort = 1
 
-function! StartUp()
-    if 0 == argc()
-        NERDTree
-    end
-endfunction
-autocmd VimEnter * call StartUp()
-autocmd VimEnter * wincmd h
+" function! StartUp()
+"     if 0 == argc()
+"         NERDTree
+"     end
+" endfunction
+" autocmd VimEnter * call StartUp()
+" autocmd VimEnter * wincmd h
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 hi Directory guifg=#FF0000 ctermfg=blue
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
@@ -467,10 +467,16 @@ cnoreabbrev Ack Ack!
 let $FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}"'
 let g:ctrlp_map = ''
 nnoremap <silent> <C-f> :Files<CR>
-nnoremap <silent> <Leader>f :Rg<CR>
 command! -bang -nargs=* Rg call
  \ fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden -g '!{node_modules,.git}' "
- \ .shellescape(<q-args>), 1, fzf#vim#with_preview(), <bang>0)
+ \ .<q-args>, 1, fzf#vim#with_preview(), <bang>0)
+
+" Search current open file with <leader>+f
+command! -bang -nargs=* CustomBLines
+    \ call fzf#vim#grep(
+    \   'rg --with-filename --column --line-number --no-heading --smart-case . '.fnameescape(expand('%:p')), 1,
+    \   fzf#vim#with_preview({'options': '--keep-right --delimiter : --nth 4.. --preview "bat -p --color always {}"'}, 'right:60%' ))
+nnoremap <leader>f :CustomBLines<Cr>
 
 """ github-copilot
 "let g:copilot_assume_mapped = v:true
