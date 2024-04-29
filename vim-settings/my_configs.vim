@@ -266,7 +266,7 @@ xmap <Leader>h <Plug>SlimeRegionSend
 nnoremap <Leader>qq :IPythonCellRestart<CR>
 
 " map <Leader> q to reset variables
-nnoremap <Leader>q :SlimeSend1 %reset -f<CR>
+" nnoremap <Leader>q :SlimeSend1 %reset -f<CR>
 
 " map <Leader>d to start debug mode
 "nnoremap <Leader>d :SlimeSend1 %debug<CR>
@@ -494,6 +494,9 @@ command! -bang -nargs=* CustomBLines
     \   'rg --with-filename --line-number --no-heading --smart-case --color=always . '.fnameescape(expand('%:p')), 1,
     \   fzf#vim#with_preview({'options': '--layout reverse --keep-right --delimiter : --nth 3.. --preview "bat -p --color always {}"'}, 'right:60%' ))
 " nnoremap <leader>f :CustomBLines<Cr>
+
+" Command history
+nnoremap <silent> <leader>q :call fzf#vim#command_history({'sink': 'e', 'window': 'botright 20new', 'options': '--no-preview'})<CR>
 
 """ github-copilot
 "let g:copilot_assume_mapped = v:true
