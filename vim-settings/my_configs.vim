@@ -475,7 +475,7 @@ command! -bang -nargs=* Rg call
 command! -bang -nargs=* CustomBLines
     \ call fzf#vim#grep(
     \   'rg --with-filename --column --line-number --no-heading --smart-case . '.fnameescape(expand('%:p')), 1,
-    \   fzf#vim#with_preview({'options': '--keep-right --delimiter : --nth 4.. --preview "bat -p --color always {}"'}, 'right:60%' ))
+    \   fzf#vim#with_preview({'options': '--layout reverse --keep-right --delimiter : --nth 4.. --preview "bat -p --color always {}"'}, 'right:60%' ))
 nnoremap <leader>f :CustomBLines<Cr>
 
 """ github-copilot
