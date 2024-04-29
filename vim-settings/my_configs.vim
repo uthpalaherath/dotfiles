@@ -474,7 +474,7 @@ command! -bang -nargs=* Rg call
 " Search current open file with <leader>+f
 command! -bang -nargs=* CustomBLines
     \ call fzf#vim#grep(
-    \   'rg --with-filename --line-number --no-heading --smart-case . '.fnameescape(expand('%:p')), 1,
+    \   'rg --with-filename --line-number --no-heading --smart-case --color=always . '.fnameescape(expand('%:p')), 1,
     \   fzf#vim#with_preview({'options': '--layout reverse --keep-right --delimiter : --nth 3.. --preview "bat -p --color always {}"'}, 'right:60%' ))
 nnoremap <leader>f :CustomBLines<Cr>
 
