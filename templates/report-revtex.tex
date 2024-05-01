@@ -1,9 +1,9 @@
 \documentclass[
- reprint,
+reprint,
 %preprint,
- amsmath,amssymb, aps,
-prb,
-showkeys, dvipsnames, ]{revtex4-2}
+amsmath,amssymb, aps,
+prb, showkeys, dvipsnames]{revtex4-2}
+
 \usepackage{ulem}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -46,6 +46,20 @@ showkeys, dvipsnames, ]{revtex4-2}
 {\todo[inline,backgroundcolor=yellow,size=\small ,bordercolor=white]{{\bf
 Uthpala:} #1}}
 
+% Cross-referencing
+\newcommand*{\addFileDependency}[1]{
+\typeout{(#1)}
+\@addtofilelist{#1}
+\IfFileExists{#1}{}{\typeout{No file #1.}}
+}\makeatother
+\newcommand*{\myexternaldocument}[1]{
+\externaldocument{#1}
+\addFileDependency{#1.tex}
+\addFileDependency{#1.aux}
+}
+% Prefix of cross-referenced document
+\externaldocument[sm-]{sm}
+
 \begin{document}
 \preprint{APS/123-QED}
 \titleformat{\section}{\raggedright\bfseries}{\thesection.}{1em}{}
@@ -55,15 +69,15 @@ Uthpala:} #1}}
 \author{Uthpala Herath}
 \email{uthpala.herath@duke.edu}
 % \altaffiliation[Also at]{
-% Department of Physics and Astronomy,
-% West Virginia University,
-% Morgantown, WV 26506-6315, USA
 % }
 \affiliation{
 Department of Mechanical Engineering and Materials Science,
 Duke University, Durham, NC 27708, USA
 }
 
+\date{\today}
+% \begin{abstract}
+% \end{abstract}
 
 %\keywords{Suggested keywords}
 \maketitle

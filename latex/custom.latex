@@ -1,0 +1,203 @@
+\documentclass[
+reprint,
+%preprint,
+amsmath,amssymb, aps,
+prb,
+showkeys, dvipsnames]{revtex4-2}
+
+\usepackage{ulem}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}% Include figure files
+\usepackage{dcolumn}% Align table columns on decimal point
+\usepackage{bm}% bold math
+\usepackage{xr-hyper}
+\usepackage{hyperref}% add hypertext capabilities
+\hypersetup{colorlinks=true,linkcolor=blue,filecolor=magenta,urlcolor=cyan,citecolor=blue}
+\usepackage[mathlines]{lineno}% Enable numbering of text and display math
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{todonotes}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{verbatimbox}
+\usepackage{soul}
+\usepackage{subcaption}
+\usepackage{fancyvrb}
+\usepackage{braket}
+\usepackage{wrapfig}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage[version=3]{mhchem}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage[capitalise]{cleveref}
+\captionsetup[table]{font=small}
+\captionsetup[figure]{font=small}
+\graphicspath{ {./figures/} }
+
+% Comments
+\setlength{\marginparwidth}{2cm}
+\newcommand{\TODO} [1]
+{\todo[inline,backgroundcolor=lime,size=\small ,bordercolor=white]{#1}}
+\newcommand{\uthpala} [1]
+{\todo[inline,backgroundcolor=yellow,size=\small ,bordercolor=white]{{\bf
+Uthpala:} #1}}
+
+% Cross-referencing
+\newcommand*{\addFileDependency}[1]{
+\typeout{(#1)}
+\@addtofilelist{#1}
+\IfFileExists{#1}{}{\typeout{No file #1.}}
+}\makeatother
+\newcommand*{\myexternaldocument}[1]{%
+\externaldocument{#1}
+\addFileDependency{#1.tex}
+\addFileDependency{#1.aux}
+}
+% Prefix of cross-referenced document
+\externaldocument[sm-]{sm}
+
+\begin{document}
+\preprint{APS/123-QED}
+\titleformat{\section}{\raggedright\bfseries}{\thesection.}{1em}{}
+$if(has-frontmatter)$
+\frontmatter
+$endif$
+$if(title)$
+$if(beamer)$
+\frame{\titlepage}
+$else$
+% \maketitle
+$endif$
+$if(title)$
+\title{$title$$if(thanks)$\thanks{$thanks$}$endif$}
+$endif$
+$if(subtitle)$
+$if(beamer)$
+$else$
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+$endif$
+\subtitle{$subtitle$}
+$endif$
+
+\author{$for(author)$$author$$sep$ \and $endfor$}
+\email{uthpala.herath@duke.edu}
+% \altaffiliation[Also at]{
+% }
+\affiliation{
+Department of Mechanical Engineering and Materials Science,
+Duke University, Durham, NC 27708, USA
+}
+\date{$date$}
+$if(beamer)$
+$if(institute)$
+\institute{$for(institute)$$institute$$sep$ \and $endfor$}
+$endif$
+$if(titlegraphic)$
+\titlegraphic{\includegraphics{$titlegraphic$}}
+$endif$
+$if(logo)$
+\logo{\includegraphics{$logo$}}
+$endif$
+$endif$
+
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+$endif$
+
+%\keywords{}
+\maketitle
+$for(include-before)$
+$include-before$
+$endfor$
+$if(toc)$
+$if(toc-title)$
+\renewcommand*\contentsname{$toc-title$}
+$endif$
+$if(beamer)$
+\begin{frame}[allowframebreaks]
+$if(toc-title)$
+  \frametitle{$toc-title$}
+$endif$
+  \tableofcontents[hideallsubsections]
+\end{frame}
+$else$
+{
+$if(colorlinks)$
+\hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$$endif$}
+$endif$
+\setcounter{tocdepth}{$toc-depth$}
+\tableofcontents
+}
+$endif$
+$endif$
+$if(lof)$
+\listoffigures
+$endif$
+$if(lot)$
+\listoftables
+$endif$
+$if(linestretch)$
+\setstretch{$linestretch$}
+$endif$
+$if(has-frontmatter)$
+\mainmatter
+$endif$
+
+\onecolumngrid
+%---------------------------- BODY ------------------------------
+\vspace{-0.5cm}
+
+$body$
+
+$if(has-frontmatter)$
+\backmatter
+$endif$
+$if(natbib)$
+$if(bibliography)$
+$if(biblio-title)$
+$if(has-chapters)$
+\renewcommand\bibname{$biblio-title$}
+$else$
+\renewcommand\refname{$biblio-title$}
+$endif$
+$endif$
+$if(beamer)$
+\begin{frame}[allowframebreaks]{$biblio-title$}
+  \bibliographytrue
+$endif$
+\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+$if(beamer)$
+\end{frame}
+$endif$
+
+$endif$
+$endif$
+$if(biblatex)$
+$if(beamer)$
+\begin{frame}[allowframebreaks]{$biblio-title$}
+  \bibliographytrue
+  \printbibliography[heading=none]
+\end{frame}
+$else$
+\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
+$endif$
+
+$endif$
+$for(include-after)$
+$include-after$
+
+$endfor$
+\end{document}\grid

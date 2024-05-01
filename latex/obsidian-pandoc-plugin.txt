@@ -1,0 +1,11 @@
+--number-sections
+--filter pandoc-xnos
+--filter pandoc-crossref
+--natbib
+--bibliography=/Users/uthpala/Dropbox/references-zotero.bib
+--template=/Users/uthpala/.pandoc/templates/custom.latex
+-V colorlinks=true
+-V linkcolor=blue
+-V urlcolor=magenta
+-V toccolor=gray
+-M cref=true
