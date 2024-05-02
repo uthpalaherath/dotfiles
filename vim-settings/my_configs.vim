@@ -138,6 +138,13 @@ highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
 
+" colors for vimdiff
+if &diff
+    "syntax off
+    colorscheme gruvbox
+    let g:gruvbox_contrast = "soft"
+endif
+
 " Use new regular expression engine
 set re=0
 set redrawtime=10000

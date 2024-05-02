@@ -94,14 +94,14 @@ alias f='vim "$(fzf)"'
 intel(){
     #module unload intel-compilers-2018.4
     #module load gcc-7.5
-    # module load compiler/latest
-    # module load mkl/latest
-    # module load mpi/latest
-    # source /Space/globalspace/intel-2023.0/setvars.sh > /dev/null
-    # export LD_LIBRARY_PATH="/opt/intel/lib/intel64/:$LD_LIBRARY_PATH"
+    module load compiler/latest
+    module load mkl/latest
+    module load mpi/latest
+    source /Space/globalspace/intel-2023.0/setvars.sh > /dev/null
+    export LD_LIBRARY_PATH="/opt/intel/lib/intel64/:$LD_LIBRARY_PATH"
 
     # 2024
-    source /home/ukh/intel/oneapi/setvars.sh > /dev/null
+    # source /home/ukh/intel/oneapi/setvars.sh > /dev/null
 
     # compilers
     export CC="mpiicc"
