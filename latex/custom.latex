@@ -189,6 +189,13 @@ $endif$
 
 $body$
 
+% \begin{acknowledgments}
+% \end{acknowledgments}
+
+% APPENDIX
+% \appendix
+% \section{First appendix}
+
 $if(has-frontmatter)$
 \backmatter
 $endif$
