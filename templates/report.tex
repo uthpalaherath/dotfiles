@@ -3,11 +3,13 @@
 right=1in]{geometry}
 
 % Useful packages
+\usepackage{ulem}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{graphicx}% Include figure files
 \usepackage{dcolumn}% Align table columns on decimal point
 \usepackage{bm}% bold math
+\usepackage{xr-hyper}
 \usepackage{hyperref}% add hypertext capabilities
 \hypersetup{colorlinks=true,linkcolor=blue,filecolor=magenta,urlcolor=cyan,citecolor=blue}
 \usepackage[mathlines]{lineno}% Enable numbering of text and display math
@@ -45,6 +47,20 @@ right=1in]{geometry}
 \newcommand{\uthpala} [1]
 {\todo[inline,backgroundcolor=yellow,size=\small ,bordercolor=white]{{\bf Uthpala:} #1}}
 
+% Cross-referencing
+\newcommand*{\addFileDependency}[1]{
+\typeout{(#1)}
+\@addtofilelist{#1}
+\IfFileExists{#1}{}{\typeout{No file #1.}}
+}\makeatother
+\newcommand*{\myexternaldocument}[1]{
+\externaldocument{#1}
+\addFileDependency{#1.tex}
+\addFileDependency{#1.aux}
+}
+% Prefix of cross-referenced document
+\externaldocument[sm-]{sm}
+
 % Additional sub-level
 \newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
 \setcounter{secnumdepth}{4}
@@ -58,6 +74,24 @@ right=1in]{geometry}
 % General
 \titlelabel{\thetitle.\quad}
 \renewcommand\Affilfont{\itshape\small}
+
+% Syntax highlighting for listings environment
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color
+  basicstyle=\footnotesize,        % size of fonts used for the code
+  breaklines=true,                 % automatic line breaking only at whitespace
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  keywordstyle=\color{blue},       % keyword style
+  stringstyle=\color{mymauve},     % string literal style
+}
+
+%---------------------------- FRONT MATTER ------------------------------
 
 \title{Article Title}
 
@@ -76,6 +110,8 @@ Durham, NC 27708, USA}
 
 \begin{abstract}
 \end{abstract}
+
+%---------------------------- BODY ------------------------------
 
 \section{Introduction}
 
