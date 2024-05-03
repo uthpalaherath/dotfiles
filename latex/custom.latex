@@ -23,7 +23,6 @@ showkeys, dvipsnames]{revtex4-2}
 \usepackage{verbatim}
 \usepackage{verbatimbox}
 \usepackage{soul}
-\usepackage{subcaption}
 \usepackage{fancyvrb}
 \usepackage{braket}
 \usepackage{wrapfig}
@@ -32,12 +31,17 @@ showkeys, dvipsnames]{revtex4-2}
 \usepackage{multirow}
 \usepackage{tabularx}
 \usepackage[version=3]{mhchem}
-\usepackage{caption}
 \usepackage{titlesec}
 \usepackage[capitalise]{cleveref}
-\captionsetup[table]{font=small}
-\captionsetup[figure]{font=small}
 \graphicspath{ {./figures/} }
+
+% Remove the following packages if using "longtable"
+% \usepackage{caption}
+% \usepackage{subcaption}
+% \captionsetup[table]{font=small}
+% \captionsetup[figure]{font=small}
+%
+\usepackage{longtable}
 
 % Comments
 \setlength{\marginparwidth}{2cm}
