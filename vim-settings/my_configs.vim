@@ -63,6 +63,10 @@ call plug#end()
 :set fileencoding=utf-8
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
 :set number
+:set nowrap
+
+""" Toggle line wrap
+map <F9> :set wrap!<CR>
 
 """ change current working directory to file dir
 autocmd BufEnter * silent! lcd %:p:h
