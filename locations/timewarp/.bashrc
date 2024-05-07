@@ -215,6 +215,37 @@ fif() {
       --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
 }
 
+# find-in-all - usage: fia <directory> <searchTerm>
+fia() {
+    local directory=$1
+    local pattern=$2
+
+    # Check if the directory is provided
+    if [[ -z "$directory" ]]; then
+        echo "Warning: No directory provided. Searching in current directory."
+        directory="."
+    fi
+
+    # Check if the directory exists
+    if [[ ! -d "$directory" ]]; then
+        echo "Error: The directory '$directory' does not exist."
+        return 1
+    fi
+
+    # Check if the pattern is provided
+    if [[ -z "$pattern" ]]; then
+        echo "Warning: No search pattern provided. Listing all files."
+    fi
+
+    # Perform the search with rg and pipe the results to fzf for interactive selection
+    rg --column --line-number --no-heading --color=never --smart-case --follow --hidden -g '!{node_modules,.git}' \
+        "$pattern" "$directory" |
+    fzf --ansi --delimiter ':' --preview "bash -c 'file=\"{1}\"; line={2}; context_lines=15; \
+    start=\$((line - context_lines)); end=\$((line + context_lines)); if [ \$start -lt 1 ]; \
+    then start=1; fi; filetype=\"\${file##*.}\"; tail -n +\$start \"\$file\" | head -n \$((end - start + 1)) \
+        | bat --style=numbers,changes --color=always --highlight-line \$((context_lines + 1)) --language \"\$filetype\"'"
+}
+
 #------------------------------------------- PATHS -------------------------------------------
 
 # FHI-aims

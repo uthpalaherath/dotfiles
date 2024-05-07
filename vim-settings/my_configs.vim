@@ -205,6 +205,7 @@ nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
 let g:gitgutter_highlight_linenrs = 1
 let g:gitgutter_preview_win_floating = 0
+let g:gitgutter_diff_args = '-w'
 
 """ split screen shortcuts
 nnoremap <C-W>- :new<CR>
