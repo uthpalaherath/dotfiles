@@ -50,6 +50,7 @@ TO-DO:\\} #1}}
 Uthpala:} #1}}
 
 % Cross-referencing
+\makeatletter
 \newcommand*{\addFileDependency}[1]{
 \typeout{(#1)}
 \@addtofilelist{#1}
@@ -61,7 +62,7 @@ Uthpala:} #1}}
 \addFileDependency{#1.aux}
 }
 % Prefix of cross-referenced document
-\externaldocument[sm-]{sm}
+\myexternaldocument[sm-]{sm}
 
 % Additional sub-level
 \newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}

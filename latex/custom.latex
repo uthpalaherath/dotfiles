@@ -52,18 +52,19 @@ showkeys, dvipsnames]{revtex4-2}
 Uthpala:} #1}}
 
 % Cross-referencing
+\makeatletter
 \newcommand*{\addFileDependency}[1]{
 \typeout{(#1)}
 \@addtofilelist{#1}
 \IfFileExists{#1}{}{\typeout{No file #1.}}
 }\makeatother
-\newcommand*{\myexternaldocument}[1]{%
+\newcommand*{\myexternaldocument}[1]{
 \externaldocument{#1}
 \addFileDependency{#1.tex}
 \addFileDependency{#1.aux}
 }
 % Prefix of cross-referenced document
-\externaldocument[sm-]{sm}
+\myexternaldocument[sm-]{sm}
 
 % Syntax highlighting for listings environment
 \newcommand{\passthrough}[1]{#1}
