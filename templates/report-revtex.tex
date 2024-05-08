@@ -53,13 +53,13 @@ Uthpala:} #1}}
 \@addtofilelist{#1}
 \IfFileExists{#1}{}{\typeout{No file #1.}}
 }\makeatother
-\newcommand*{\myexternaldocument}[1]{
-\externaldocument{#1}
-\addFileDependency{#1.tex}
-\addFileDependency{#1.aux}
+\newcommand*{\myexternaldocument}[2]{
+\externaldocument[#1]{#2}
+\addFileDependency{#2.tex}
+\addFileDependency{#2.aux}
 }
 % Prefix of cross-referenced document
-\myexternaldocument[sm-]{sm}
+\myexternaldocument{sm-}{sm}
 
 % Syntax highlighting for listings environment
 \newcommand{\passthrough}[1]{#1}
