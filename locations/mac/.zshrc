@@ -279,7 +279,7 @@ export PATH="/usr/local/opt/openssl/bin:$PATH"
 export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
 
 # texlive
-export PATH="/usr/local/texlive/2024/bin/universal-darwin/:$PATH"
+export PATH="/usr/local/texlive/2022/bin/universal-darwin/:$PATH"
 
 # pandoc-templates
 export PATH="/Users/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
