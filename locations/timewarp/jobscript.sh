@@ -8,9 +8,9 @@
 
 # initialization
 source ~/.bashrc
-export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+ulimit -s unlimited
+intel
 
 # execution
 cd $WORK_DIR/
-#time mpirun -np $SLURM_NTASKS
-time srun --cpu-bind=cores -n $NUM_CORES aims.x > aims.out 2>aims.err
+srun -n $NUM_CORES aims.x > aims.out 2>aims.err
