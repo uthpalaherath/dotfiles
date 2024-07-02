@@ -13,3 +13,5 @@
    trustExitCode = true
 [mergetool]
    keepBackup = false
+[submodule]
+   recurse = true
