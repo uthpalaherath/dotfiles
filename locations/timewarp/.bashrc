@@ -38,7 +38,6 @@ export LS_OPTIONS='--color=auto'
 eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
-alias cat='pygmentize -g'
 
 #export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
 export OMP_NUM_THREADS=1
@@ -214,6 +213,14 @@ fif() {
       | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow'\
       --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
 }
+
+# colored cat
+function pygmentize_cat {
+  for arg in "$@"; do
+    pygmentize -g "${arg}" 2> /dev/null || /bin/cat "${arg}"
+  done
+}
+command -v pygmentize > /dev/null && alias cat=pygmentize_cat
 
 #------------------------------------------- PATHS -------------------------------------------
 
