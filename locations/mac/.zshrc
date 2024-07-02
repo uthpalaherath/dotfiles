@@ -289,7 +289,7 @@ export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
 # Julia
-export PATH="/Applications/Julia-1.5.app/Contents/Resources/julia/bin/:$PATH"
+export PATH="/Users/uthpala/.juliaup/bin/:$PATH"
 
 # Lobster
 export PATH="/Users/uthpala/apps/lobster-4.1.0/OSX/:$PATH"
