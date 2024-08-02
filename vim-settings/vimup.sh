@@ -10,3 +10,6 @@ git pull --rebase
 # Update built-in plugins
 printf "Updating built-in plugins...\n"
 python update_plugins.py
+
+# External plugins
+vim +PlugUpdate +qall
