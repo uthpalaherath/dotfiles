@@ -57,6 +57,7 @@ Plug 'kana/vim-textobj-user'
 Plug 'preservim/vim-textobj-sentence'
 Plug 'lervag/vimtex'
 Plug 'honza/writer.vim'
+Plug 'anufrievroman/vim-angry-reviewer'
 call plug#end()
 
 :set encoding=utf-8
@@ -716,5 +717,8 @@ augroup textobj_sentence
   autocmd!
   autocmd FileType tex call textobj#sentence#init()
 augroup END
+
+""" Angry Reviewer
+let g:AngryReviewerEnglish = 'american'
 
 " ---------- END OF LATEX SETTINGS ----------
