@@ -532,6 +532,9 @@ let g:ZFIgnoreOption_ZFDirDiff = {
             \   'common' : 1,
             \ }
 
+""" Disable quote concealing in JSON files
+let g:vim_json_conceal=0
+
 """ ---------- LATEX SETTINGS ----------
 
 " turn off line numbers for tex files
