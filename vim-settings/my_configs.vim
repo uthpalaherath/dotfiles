@@ -57,6 +57,7 @@ Plug 'kana/vim-textobj-user'
 Plug 'preservim/vim-textobj-sentence'
 Plug 'lervag/vimtex'
 Plug 'honza/writer.vim'
+Plug 'anufrievroman/vim-angry-reviewer'
 call plug#end()
 
 :set encoding=utf-8
@@ -531,6 +532,9 @@ let g:ZFIgnoreOption_ZFDirDiff = {
             \   'common' : 1,
             \ }
 
+""" Disable quote concealing in JSON files
+let g:vim_json_conceal=0
+
 """ ---------- LATEX SETTINGS ----------
 
 " turn off line numbers for tex files
@@ -716,5 +720,8 @@ augroup textobj_sentence
   autocmd!
   autocmd FileType tex call textobj#sentence#init()
 augroup END
+
+""" Angry Reviewer
+let g:AngryReviewerEnglish = 'american'
 
 " ---------- END OF LATEX SETTINGS ----------
