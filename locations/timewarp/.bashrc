@@ -91,16 +91,11 @@ alias f='vim "$(fzf)"'
 # module load git-2.37.3
 
 intel(){
-    #module unload intel-compilers-2018.4
-    #module load gcc-7.5
     module load compiler/latest
     module load mkl/latest
     module load mpi/latest
-    source /Space/globalspace/intel-2023.0/setvars.sh > /dev/null
+    source /Space/globalspace/intel-2023.0/setvars.sh --force > /dev/null
     export LD_LIBRARY_PATH="/opt/intel/lib/intel64/:$LD_LIBRARY_PATH"
-
-    # 2024
-    # source /home/ukh/intel/oneapi/setvars.sh > /dev/null
 
     # compilers
     export CC="mpiicc"
@@ -115,16 +110,28 @@ intel18(){
     source /opt/intel/bin/compilervars.sh intel64
 }
 
+intel2024(){
+    source /home/ukh/intel/oneapi/setvars.sh --force > /dev/null
+    export LD_LIBRARY_PATH="/home/ukh/intel/oneapi/2024.1/lib/:$LD_LIBRARY_PATH"
+
+    # compilers
+    export CC="mpiicc"
+    export CXX="mpiicpc"
+    export FC="mpiifort"
+    export MPICC="mpiicc"
+    export MPIFC="mpiifort"
+}
+
 gnu(){
     # module load gcc-7.5
     # module load gcc-8.2
     module load gcc-12.2.0
-    export PATH="/home/ukh/lib/openmpi-4.1.5/build/bin/:$PATH$"
-    export LD_LIBRARY_PATH="/home/ukh/lib/openmpi-4.1.5/build/lib/:$LD_LIBRARY_PATH"
+    # export PATH="/home/ukh/lib/openmpi-4.1.5/build/bin/:$PATH$"
+    # export LD_LIBRARY_PATH="/home/ukh/lib/openmpi-4.1.5/build/lib/:$LD_LIBRARY_PATH"
 
-    # export PATH="/home/ukh/lib/mpich-3.2.1/build/bin/:$PATH"
-    # export LD_LIBRARY_PATH="/home/ukh/lib/mpich-3.2.1/build/lib/:$LD_LIBRARY_PATH"
-    # export MPI_ROOT="/home/ukh/lib/mpich-3.2.1/build/"
+    export PATH="/home/ukh/lib/mpich-3.2.1/build/bin/:$PATH"
+    export LD_LIBRARY_PATH="/home/ukh/lib/mpich-3.2.1/build/lib/:$LD_LIBRARY_PATH"
+    export MPI_ROOT="/home/ukh/lib/mpich-3.2.1/build/"
 
     # compilers
     export CC="mpicc"
@@ -132,7 +139,6 @@ gnu(){
     export FC="mpif90"
     export MPICC="mpicc"
     export MPIFC="mpif90"
-
 }
 
 # default
