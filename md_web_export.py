@@ -5,39 +5,43 @@
 This script reformats markdown files to prepare them to
 be hosted in my website.
 
+Execute in directory with markdown files to be converted.
+
 Author: Uthpala Herath
 
 """
 
 import argparse
 import fileinput
+from pathlib import Path
 import os
+import shutil
 
 
 def make_web(args):
-    """Fixes image path names."""
+    """Renames image paths and copies files to destination."""
 
     file_dest_dir = args.dest + "_posts/"
+    img_dest_dir = args.dest + "/images/" + Path(args.infile).stem
     file_name = file_dest_dir + args.infile
+    source_str = "attachments/"
+    target_str = "/images/"
+
+    # Copy file to destination
+    shutil.copyfile(args.infile, file_name)
 
     # renaming the image directory path from images to /images
-    if not args.undo:
-        with fileinput.FileInput(
-            file_name,
-            inplace=True,
-        ) as file:
-            for line in file:
-                print(line.replace("images/", "/images/"), end="")
-        file.close()
+    with fileinput.FileInput(
+        file_name,
+        inplace=True,
+    ) as file:
+        for line in file:
+            print(line.replace(source_str, target_str), end="")
+    file.close()
 
-    if args.undo:
-        with fileinput.FileInput(
-            file_name,
-            inplace=True,
-        ) as file:
-            for line in file:
-                print(line.replace("/images/", "images/"), end="")
-        file.close()
+    # Copy image directory to destination
+    src_dir = source_str + Path(args.infile).stem
+    shutil.copytree(src_dir, img_dest_dir)
 
 
 if __name__ == "__main__":
@@ -51,9 +55,6 @@ if __name__ == "__main__":
         type=str,
         default="/Users/uthpala/Dropbox/git/uthpalaherath.github.io/",
         help="root directory of website",
-    )
-    parser.add_argument(
-        "-undo", help="Undo formatting image name for web hosting.", action="store_true"
     )
     args = parser.parse_args()
     make_web(args)
