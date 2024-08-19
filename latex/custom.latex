@@ -93,6 +93,10 @@ Uthpala:} #1}}
   tabsize=4
 }
 
+% tightlist bug fix
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
 \begin{document}
 \preprint{APS/123-QED}
 \titleformat{\section}{\raggedright\bfseries}{\thesection.}{1em}{}
@@ -129,7 +133,9 @@ $endif$
 Department of Mechanical Engineering and Materials Science,
 Duke University, Durham, NC 27708, USA
 }
+$if(date)$
 \date{$date$}
+$endif$
 $if(beamer)$
 $if(institute)$
 \institute{$for(institute)$$institute$$sep$ \and $endfor$}
