@@ -64,7 +64,6 @@ call plug#end()
 :set fileencoding=utf-8
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
 :set number
-:set nowrap
 
 """ Toggle line wrap
 map <F9> :set wrap!<CR>
@@ -532,8 +531,9 @@ let g:ZFIgnoreOption_ZFDirDiff = {
             \   'common' : 1,
             \ }
 
-""" Disable quote concealing in JSON files
+""" Disable concealing in files
 let g:vim_json_conceal=0
+let g:vim_markdown_conceal = 0
 
 """ ---------- LATEX SETTINGS ----------
 
