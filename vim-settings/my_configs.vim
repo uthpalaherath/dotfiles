@@ -132,7 +132,7 @@ set autoindent          " copy indent from current line when starting a new line
 set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 
 """ colors
-syntax on
+syntax enable
 filetype plugin indent on
 set t_Co=256
 "set termguicolors
@@ -558,11 +558,11 @@ let g:vimtex_view_skim_sync = 0
 " theme
 "autocmd VimEnter *.tex colorscheme peaksea
 autocmd VimEnter *.tex colorscheme iceberg
-autocmd VimEnter *.tex syntax on
+autocmd VimEnter *.tex syntax enable
 
 augroup tex_syntax
   au!
-  autocmd BufNewFile,BufRead *.tex set syntax=on
+  autocmd BufNewFile,BufRead *.tex syntax enable
 augroup END
 
 " disable gitgutter and indentlines

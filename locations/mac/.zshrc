@@ -77,14 +77,14 @@ export FC="mpif90"
 # PYTHON
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/intel/oneapi/intelpython/latest/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/Users/uthpala/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh" ]; then
-        . "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh"
+    if [ -f "/Users/uthpala/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/uthpala/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/opt/intel/oneapi/intelpython/latest/bin:$PATH"
+        export PATH="/Users/uthpala/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -229,9 +229,9 @@ export PYTHONPATH="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/:$PYTHONPATH"
 export MPLCONFIGDIR="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/"
 
 # Add Homebrew `/usr/local/bin` and User `~/bin` to the `$PATH`
-PATH=/usr/local/bin/:$PATH
-PATH=$HOME/bin:$PATH
-export PATH="/usr/local/sbin:$PATH"
+# PATH=/usr/local/bin/:$PATH
+# PATH=$HOME/bin:$PATH
+# export PATH="/usr/local/sbin:$PATH"
 
 # System library
 export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/:$DYLD_LIBRARY_PATH"
