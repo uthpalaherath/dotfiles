@@ -103,11 +103,15 @@ function virtenv_indicator {
 
 # conda environment
 py2(){
-    conda deactivate
+    for i in $(seq ${CONDA_SHLVL}); do
+        conda deactivate
+    done
     conda activate py2
 }
 py3(){
-    conda deactivate
+    for i in $(seq ${CONDA_SHLVL}); do
+        conda deactivate
+    done
     conda activate py3
 }
 #default
@@ -220,6 +224,19 @@ fif() {
   rg --files-with-matches --no-messages --smart-case --follow --hidden -g '!{node_modules,.git}' "$1" "$directory"\
       | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow'\
       --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
+}
+
+# dump db
+# Usage: dump_db <database_name>
+dump_db(){
+   mysqldump -u uthpala -puthpala1234 $1 > "$1"-`date +%F`.sql
+}
+
+# update materials database
+# Usage: update_materials <db_name> <file.sql>
+update_db(){
+   mariadb -u uthpala -puthpala1234 -Bse "DROP DATABASE IF EXISTS $1;CREATE DATABASE $1;"
+   mariadb -u uthpala -puthpala1234 $1 < $2
 }
 
 #------------------------------------------- PATHS -------------------------------------------
@@ -352,6 +369,17 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="/Users/uthpala/Library/CloudStorage/Dropbox/docs/Jobs/Scripts/:$PATH"
 export PYTHONPATH="/Users/uthpala/Library/CloudStorage/Dropbox/docs/Jobs/Scripts/:$PYTHONPATH"
 
+# Ruby
+source /usr/local/opt/chruby/share/chruby/chruby.sh
+source /usr/local/opt/chruby/share/chruby/auto.sh
+chruby ruby-3.1.3
+
+# mysql-client
+# export PATH="/usr/local/opt/mysql-client/bin:$PATH"
+# export DYLD_LIBRARY_PATH="/usr/local/opt/mysql-client/lib:$DYLD_LIBRARY_PATH"
+# export LDFLAGS="-L/usr/local/opt/mysql-client/lib"
+# export CPPFLAGS="-I/usr/local/opt/mysql-client/include"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 # WVU Connections
@@ -386,6 +414,7 @@ alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 #alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
 alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
+alias materials="ssh -Y ukh@materials.hybrid3.duke.edu"
 
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
@@ -418,7 +447,5 @@ alias createbib="ln ~/Dropbox/references-zotero.bib"
 alias cleandocker="docker image prune -a -f && docker volume prune -f"
 alias cleandockerall="docker system prune -a -f"
 
-# Ruby
-source /usr/local/opt/chruby/share/chruby/chruby.sh
-source /usr/local/opt/chruby/share/chruby/auto.sh
-chruby ruby-3.1.3
+# mariadb
+alias db="mariadb -u uthpala -p'uthpala1234'"

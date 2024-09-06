@@ -110,9 +110,39 @@ Uthpala:} #1}}
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
+% Redefine \includegraphics so that, unless explicit options are
+% given, the image width will not exceed the width or the height of the page.
+% Images get their normal width if they fit onto the page, but
+% are scaled down if they would overflow the margins.
+\makeatletter
+\def\ScaleWidthIfNeeded{%
+ \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\def\ScaleHeightIfNeeded{%
+  \ifdim\Gin@nat@height>0.9\textheight
+    0.9\textheight
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+\setkeys{Gin}{width=\ScaleWidthIfNeeded,height=\ScaleHeightIfNeeded,keepaspectratio}%
+
+% Override default figure placement To be within the flow of the text rather
+% than on it's own page.
+\makeatletter
+\def\fps@figure{H}
+\makeatother
+
 \begin{document}
 \preprint{APS/123-QED}
 \titleformat{\section}{\raggedright\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}{\raggedright\bfseries}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}{\raggedright\bfseries}{\thesubsubsection.}{1em}{}
 $if(has-frontmatter)$
 \frontmatter
 $endif$
