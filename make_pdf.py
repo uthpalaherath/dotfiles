@@ -98,7 +98,7 @@ def make_pdf(args):
     run_pdflatex(dirname, filename_noext)
 
     # cleanup
-    cleanlist = ["*.aux", "*.bbl", "*.blg", "*.log", "*.out", "*.bib"]
+    cleanlist = ["*.tex", "*.aux", "*.bbl", "*.blg", "*.log", "*.out", "*.bib"]
     for cl in cleanlist:
         for f in glob.glob(cl):
             os.remove(f)
