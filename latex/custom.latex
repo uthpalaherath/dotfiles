@@ -133,12 +133,6 @@ Uthpala:} #1}}
 \makeatother
 \setkeys{Gin}{width=\ScaleWidthIfNeeded,height=\ScaleHeightIfNeeded,keepaspectratio}%
 
-% Override default figure placement To be within the flow of the text rather
-% than on it's own page.
-\makeatletter
-\def\fps@figure{H}
-\makeatother
-
 % pandocbounded
 \makeatletter
 \newsavebox\pandoc@box
@@ -151,6 +145,9 @@ Uthpala:} #1}}
   \else\usebox{\pandoc@box}%
   \fi%
 }
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
 
 % Define a new blockquote environment with your desired style.
 % Then, redefine the quote environment to use blockquote
