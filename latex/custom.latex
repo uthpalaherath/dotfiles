@@ -161,8 +161,6 @@ Uthpala:} #1}}
     boxrule=0pt,          % No border
     boxsep=0pt,           % No inner padding
     breakable,            % Allow breaks across pages
-    before=\vspace{-0.5em}, % Space before the block
-    after=\vspace{-0.5em}  % Space after the block
 }
 \let\oldquote\quote
 \let\endoldquote\endquote
