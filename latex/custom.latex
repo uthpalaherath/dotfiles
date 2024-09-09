@@ -13,7 +13,7 @@ showkeys, dvipsnames, onecolumn]{revtex4-2}
 % line spacing
 \linespread{1.25}
 
-\usepackage{ulem}
+\usepackage[normalem]{ulem}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{graphicx}% Include figure files
