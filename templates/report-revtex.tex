@@ -45,6 +45,7 @@ onecolumn]{revtex4-2}
 \usepackage[capitalise]{cleveref}
 \captionsetup[table]{font=small}
 \captionsetup[figure]{font=small}
+\usepackage[most]{tcolorbox}
 \graphicspath{ {./figures/} }
 
 % Comments
@@ -101,6 +102,25 @@ Uthpala:} #1}}
   xleftmargin=\fboxsep,
   xrightmargin=-\fboxsep
 }
+
+% Define a new blockquote environment with your desired style.
+% Then, redefine the quote environment to use blockquote
+\newtcolorbox{blockquote}{
+    colback=light-gray,    % Background color
+    grow to right by=-1mm,
+    grow to left by=-1mm,
+    boxrule=0pt,          % No border
+    boxsep=0pt,           % No inner padding
+    breakable,            % Allow breaks across pages
+    before=\vspace{-0.5em}, % Space before the block
+    after=\vspace{-0.5em}  % Space after the block
+}
+\let\oldquote\quote
+\let\endoldquote\endquote
+\renewenvironment{quote}
+  {\begin{blockquote}}
+  {\end{blockquote}}
+
 
 %---------------------------- FRONT MATTER ------------------------------
 
