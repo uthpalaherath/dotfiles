@@ -233,5 +233,8 @@ update_db(){
 # dotfiles
 export PATH="/home/ukh/dotfiles/:$PATH"
 
-export PATH="/home/ukh/ripgrep"
-export PATH="/home/ukh/bat"
+export PATH="/home/ukh/ripgrep/:$PATH"
+export PATH="/home/ukh/bat/:$PATH"
+
+# globus
+export PATH="/home/ukh/local/globusconnectpersonal-3.2.5/:$PATH"
