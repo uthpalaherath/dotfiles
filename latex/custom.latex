@@ -13,7 +13,7 @@ showkeys, dvipsnames, onecolumn]{revtex4-2}
 % line spacing
 \linespread{1.25}
 
-\usepackage{ulem}
+\usepackage[normalem]{ulem}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{graphicx}% Include figure files
@@ -41,6 +41,7 @@ showkeys, dvipsnames, onecolumn]{revtex4-2}
 \usepackage[version=3]{mhchem}
 \usepackage{titlesec}
 \usepackage[capitalise]{cleveref}
+\usepackage[most]{tcolorbox}
 \graphicspath{ {./figures/} }
 
 % Remove the following packages if using "longtable"
@@ -110,9 +111,66 @@ Uthpala:} #1}}
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
+% Redefine \includegraphics so that, unless explicit options are
+% given, the image width will not exceed the width or the height of the page.
+% Images get their normal width if they fit onto the page, but
+% are scaled down if they would overflow the margins.
+\makeatletter
+\def\ScaleWidthIfNeeded{%
+ \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\def\ScaleHeightIfNeeded{%
+  \ifdim\Gin@nat@height>0.9\textheight
+    0.9\textheight
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+\setkeys{Gin}{width=\ScaleWidthIfNeeded,height=\ScaleHeightIfNeeded,keepaspectratio}%
+
+% pandocbounded
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+% Define a new blockquote environment with your desired style.
+% Then, redefine the quote environment to use blockquote
+\newtcolorbox{blockquote}{
+    colback=light-gray,    % Background color
+    grow to right by=-1mm,
+    grow to left by=-1mm,
+    boxrule=0pt,          % No border
+    boxsep=0pt,           % No inner padding
+    breakable,            % Allow breaks across pages
+}
+\let\oldquote\quote
+\let\endoldquote\endquote
+\renewenvironment{quote}
+  {\begin{blockquote}}
+  {\end{blockquote}}
+
+
 \begin{document}
 \preprint{APS/123-QED}
-\titleformat{\section}{\raggedright\bfseries}{\thesection.}{1em}{}
+\titleformat{\section}{\raggedright\bfseries\large}{\thesection.}{1em}{}
+\titleformat{\subsection}{\raggedright\bfseries\normalsize}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}{\raggedright\bfseries\small}{\thesubsubsection.}{1em}{}
 $if(has-frontmatter)$
 \frontmatter
 $endif$
