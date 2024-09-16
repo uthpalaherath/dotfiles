@@ -233,7 +233,7 @@ dump_db(){
 }
 
 # update materials database
-# Usage: update_materials <db_name> <file.sql>
+# Usage: update_db <db_name> <file.sql>
 update_db(){
    mariadb -u uthpala -puthpala1234 -Bse "DROP DATABASE IF EXISTS $1;CREATE DATABASE $1;"
    mariadb -u uthpala -puthpala1234 $1 < $2
