@@ -235,6 +235,7 @@ dump_db(){
 # update materials database
 # Usage: update_db <db_name> <file.sql>
 update_db(){
+   sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' $2
    mariadb -u uthpala -puthpala1234 -Bse "DROP DATABASE IF EXISTS $1;CREATE DATABASE $1;"
    mariadb -u uthpala -puthpala1234 $1 < $2
 }
@@ -379,6 +380,11 @@ chruby ruby-3.1.3
 # export DYLD_LIBRARY_PATH="/usr/local/opt/mysql-client/lib:$DYLD_LIBRARY_PATH"
 # export LDFLAGS="-L/usr/local/opt/mysql-client/lib"
 # export CPPFLAGS="-I/usr/local/opt/mysql-client/include"
+
+# atomate2
+export ATOMATE2_CONFIG_FILE="/Users/uthpala/atomate-workflows/config/atomate2.yaml"
+export JOBFLOW_CONFIG_FILE="/Users/uthpala/atomate-workflows/config/jobflow.yaml"
+export AIMS_SPECIES_DIR="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/defaults_2020/"
 
 #------------------------------------------- ALIASES -------------------------------------------
 

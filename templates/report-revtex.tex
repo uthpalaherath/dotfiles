@@ -77,10 +77,14 @@ Uthpala:} #1}}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 \definecolor{light-gray}{gray}{0.95}
+\definecolor{backcolour}{rgb}{0.98,0.98,0.95}
+
+% font for code
+\newcommand{\listingsttfamily}{\fontfamily{IBMPlexMono-TLF}\small}
 
 \lstset{ %
-  backgroundcolor=\color{light-gray},   % choose the background color
-  basicstyle=\ttfamily,        % size of fonts used for the code
+  backgroundcolor=\color{backcolour},   % choose the background color
+  basicstyle=\listingsttfamily,        % size of fonts used for the code
   breaklines=true,                 % automatic line breaking only at whitespace
   captionpos=b,                    % sets the caption-position to bottom
   commentstyle=\color{mygreen},    % comment style
@@ -100,20 +104,19 @@ Uthpala:} #1}}
   tabsize=4,
   frame=lrbt,
   xleftmargin=\fboxsep,
-  xrightmargin=-\fboxsep
+  xrightmargin=-\fboxsep,
+  aboveskip={0.9\baselineskip}
 }
 
 % Define a new blockquote environment with your desired style.
 % Then, redefine the quote environment to use blockquote
 \newtcolorbox{blockquote}{
-    colback=light-gray,    % Background color
-    grow to right by=-1mm,
-    grow to left by=-1mm,
-    boxrule=0pt,          % No border
-    boxsep=0pt,           % No inner padding
-    breakable,            % Allow breaks across pages
-}
-\let\oldquote\quote
+    colback=light-gray, % Background color
+    grow to right by=-1mm, grow to left by=-1mm,
+    boxrule=0pt, % No border
+    boxsep=0pt, % No inner padding
+    breakable, % Allow breaks across pages
+} \let\oldquote\quote
 \let\endoldquote\endquote
 \renewenvironment{quote}
   {\begin{blockquote}}
