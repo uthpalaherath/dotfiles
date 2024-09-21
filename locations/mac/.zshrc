@@ -181,11 +181,7 @@ extract () {
         echo "'$1' is not a valid file!"
     fi
 }
-# Creates directory then moves into it
-mkcdr() {
-  mkdir -p -v $1
-cd $1
-}
+
 # Creates an archive from given directory
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
@@ -212,7 +208,6 @@ umount_all(){
     umount -f /Users/uthpala/HPC/thorny/home
     umount -f /Users/uthpala/HPC/whitehall/home
     umount -f /Users/uthpala/HPC/romeronas/home
-    umount -f /Users/uthpala/HPC/timewarp/home
     umount -f /Users/uthpala/HPC/timewarp2/home
     umount -f /Users/uthpala/HPC/frontera/home
 }
@@ -414,8 +409,6 @@ alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-
 # Other ssh connections
 alias bridges2="ssh -Y uthpala@br012.bridges2.psc.edu"
 alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
-alias cori="ssh -Y uthpala@cori.nersc.gov"
-alias timewarp='ssh -Y ukh@timewarp.egr.duke.edu'
 alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 #alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
@@ -425,9 +418,7 @@ alias materials="ssh -Y ukh@materials.hybrid3.duke.edu"
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
 alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
-alias mount_timewarp="umount ~/HPC/timewarp/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp.egr.duke.edu: ~/HPC/timewarp/home"
 alias mount_timewarp2="umount ~/HPC/timewarp2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp2/home"
-alias mount_cori="umount ~/HPC/cori/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@cori.nersc.gov: ~/HPC/cori/home"
 alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
 alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
 
@@ -447,7 +438,7 @@ alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 alias ctags="`brew --prefix`/bin/ctags"
-alias createbib="ln ~/Dropbox/references-zotero.bib"
+alias createbib="ln /Users/uthpala/Dropbox/references-zotero.bib"
 
 # docker
 alias cleandocker="docker image prune -a -f && docker volume prune -f"
