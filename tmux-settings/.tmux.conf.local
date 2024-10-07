@@ -434,7 +434,8 @@ bind '"' split-window -c "#{pane_current_path}"
 bind % split-window -h -c "#{pane_current_path}"
 
 # vim cursor compatibility
-set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
+#set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
+set -ga terminal-overrides ',*:Ss=\E[%p1%d q:Se=\E[2 q'
 
 # -- tpm -----------------------------------------------------------------------
 
