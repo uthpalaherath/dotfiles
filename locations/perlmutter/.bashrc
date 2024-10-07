@@ -4,8 +4,6 @@
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
 
-module purge
-
 #set stty off
  if [[ -t 0 && $- = *i* ]]
  then
@@ -21,11 +19,7 @@ fi
 source ~/.bash_prompt
 
 # tmux
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    export TMUX_DEVICE_NAME=cori
-else
-    export TMUX_DEVICE_NAME=perlmutter
-fi
+export TMUX_DEVICE_NAME=perlmutter
 
 # Launch tmux
 if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
@@ -49,15 +43,19 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    export FC=mpiifort
-    export CC=mpiicc
-    export CXX=mpiicpc
-else
-    export FC=ftn
-    export CC=cc
-    export CXX=CC
-fi
+#FZF
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
+export FZF_CTRL_R_OPTS="
+  --preview 'echo {}' --preview-window 'hidden'
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'Press CTRL-Y to copy command into clipboard'"
+export FZF_ALT_C_OPTS="
+  --walker-skip .git,node_modules,target
+  --preview 'tree -C {}'"
+export EDITOR="vim"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -74,16 +72,10 @@ alias detach="tmux detach-client -a"
 alias cpr="rsync -ah --info=progress2"
 alias tkill="tmux kill-session"
 
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    alias scratch="cd $SCRATCH"
-    alias makejob="cp ~/dotfiles/locations/perlmutter/jobscript_cori.sh ./jobscript.sh"
-    alias interact="salloc --nodes 1 --ntasks-per-node=68 --qos interactive --time 04:00:00 --constraint knl,quad,cache --account=m3337"
-else
-    alias scratch="cd $PSCRATCH"
-    alias makejob="cp ~/dotfiles/locations/perlmutter/jobscript.sh ."
-    alias interact="salloc --nodes 1 --ntasks-per-node=128 --qos interactive --time 04:00:00 --constraint cpu --account=m3337 --cpus-per-task=2"
-    alias interact_gpu="salloc --nodes 1 --ntasks-per-node=64 --qos interactive --time 04:00:00 --constraint gpu --gpus 4 --account=m3337_g --cpus-per-task=2"
-fi
+alias scratch="cd $PSCRATCH"
+alias makejob="cp ~/dotfiles/locations/perlmutter/jobscript.sh ."
+alias interact="salloc --nodes 1 --ntasks-per-node=128 --qos interactive --time 04:00:00 --constraint cpu --account=m3337 --cpus-per-task=2"
+alias interact_gpu="salloc --nodes 1 --ntasks-per-node=64 --qos interactive --time 04:00:00 --constraint gpu --gpus 4 --account=m3337_g --cpus-per-task=2"
 
 #------------------------------------------- MODULES -------------------------------------------
 
@@ -91,41 +83,70 @@ export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
 
-if [[ "$NERSC_HOST" == "cori" ]]; then
-    # module load PrgEnv-intel/6.0.10
-    # module load craype/2.7.10
-    # module load gcc/11.2.0
-    module load gcc/10.3.0
-    # module load intel/19.1.2.254
-    # module load impi/2020.up4
+intel(){
+    #module load craype-x86-milan
+    module load PrgEnv-intel
+    #module load gpu
+    #module load xpmem
+    #module load craype-network-ucx
+    source /opt/intel/oneapi/setvars.sh > /dev/null
+    #export I_MPI_PMI_LIBRARY=/usr/lib64/slurmpmi/libpmi.so
+    #module load cudatoolkit/11.7
+}
 
-    #Intel compilers
-    source ~/intel/oneapi/setvars.sh > /dev/null
-    export I_MPI_PMI_LIBRARY=/usr/lib64/slurmpmi/libpmi.so
-
-else
+gnu(){
     module load PrgEnv-gnu
-    module load craype/2.7.16
-    module load gcc/10.3.0
-    module load cray-mpich/8.1.17
-    module load cudatoolkit/11.7
-    module load craype-accel-nvidia80
-    module load cray-libsci/21.08.1.2
+    export MKLROOT=/opt/intel/oneapi/mkl/2023.2.0
+    export LD_LIBRARY_PATH="/opt/intel/oneapi/mkl/2023.2.0/lib/intel64/:$LD_LIBRARY_PATH"
 
+    # module use /global/common/software/m3169/perlmutter/modulefiles
+    # module load openmpi
+
+    #export I_MPI_PMI_LIBRARY=/usr/lib64/slurmpmi/libpmi.so
+    #module load craype-x86-milan
+    #module load gpu
+    # module load xpmem
+    # module load gcc-native/12.3
+    # module load cudatoolkit/12.2
+    # module load craype-accel-nvidia80
+    #module load craype/2.7.30
+    #module load cray-mpich/8.1.28
+    # module load craype-network-ucx
+    #module load cray-mpich-ucx/8.1.28
+
+    #module load craype-network-ucx
+    #module load gcc/12.2.0
+    #module load cray-mpich-ucx
+    #module load cray-ucx
+    # module use /global/common/software/m3169/perlmutter/modulefiles
+    # module use openmpi
+}
+
+cray(){
+    module load PrgEnv-cray/8.3.3
     module load craype-x86-milan
-    module load cray-fftw/3.3.8.13
+    module load gpu
+    module load xpmem
+}
 
-    #Intel compilers
-    source ~/intel/oneapi/setvars.sh > /dev/null
+#default
+gnu
 
-    # CUDA
-    export CRAY_ACCEL_TARGET=nvidia80
-    export LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LIBRARY_PATH"
-    export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LD_LIBRARY_PATH"
-    export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/lib64/:$LD_LIBRARY_PATH"
-    export CPATH="${CUDATOOLKIT_HOME}/../../math_libs/include:$CPATH"
-    export CUDA_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$CUDA_PATH"
-fi
+# programs
+module load cmake/3.24.3
+# module load cray-libsci/23.09.1.1
+
+# CUDA
+export CRAY_ACCEL_TARGET=nvidia80
+export LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LIBRARY_PATH"
+export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="${CUDATOOLKIT_HOME}/lib64/:$LD_LIBRARY_PATH"
+export CPATH="${CUDATOOLKIT_HOME}/../../math_libs/include:$CPATH"
+export CUDA_PATH="${CUDATOOLKIT_HOME}/../../math_libs/lib64/:$CUDA_PATH"
+
+export FC=ftn
+export CC=cc
+export CXX=CC
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -193,80 +214,14 @@ mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 
-# Clean VASP files in current directoy and subdirectories.
-# For only current directory use cleanvasp.sh
-cleanvaspall(){
- find . \( \
-     -name "CHGCAR*" -o \
-     -name "OUTCAR*" -o \
-     -name "CHG" -o \
-     -name "DOSCAR" -o \
-     -name "EIGENVAL" -o \
-     -name "ENERGY" -o \
-     -name "IBZKPT" -o \
-     -name "OSZICAR*" -o \
-     -name "PCDAT" -o \
-     -name "REPORT" -o \
-     -name "TIMEINFO" -o \
-     -name "WAVECAR" -o \
-     -name "XDATCAR" -o \
-     -name "wannier90.wout" -o \
-     -name "wannier90.amn" -o \
-     -name "wannier90.mmn" -o \
-     -name "wannier90.eig" -o \
-     -name "wannier90.chk" -o \
-     -name "wannier90.node*" -o \
-     -name "PROCAR" -o \
-     -name "*.o[0-9]*" -o \
-     -name "vasprun.xml" -o \
-     -name "relax.dat" -o \
-     -name "CONTCAR*" \
- \) -type f $1
+# find-in-file - usage: fif <searchTerm> <directory>
+fif() {
+  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
+  if [ -z "$2" ]; then directory="./"; else directory="$2"; fi
+  rg --files-with-matches --no-messages --smart-case --follow --hidden -g '!{node_modules,.git}' "$1" "$directory"\
+      | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow'\
+      --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
 }
-
-# Check if VASP relaxation is obtained for batch jobs when relaxed with
-# Convergence.py and relax.dat is created.
-relaxed (){
- if [ "$*" == "" ]; then
-     arg="^[0-9]+$"
- else
-     arg=$1
- fi
-
- rm -f unrelaxed_list.dat
- folder_list=$(ls | grep -E $arg)
- for i in $folder_list;
-     do if [ -f $i/relax.dat ] ; then
-            echo $i
-        else
-            printf "$i\t" >> unrelaxed_list.dat
-        fi
-     done
-}
-
-# perlmutter
-#makejob(){
-# nodes=${1:-1}
-# ppn=${2:-128}
-# jobname=${3:-jobname}
-
-#echo "\
-##!/bin/bash
-##SBATCH --job-name=$jobname
-##SBATCH -N $nodes
-##SBATCH --ntasks-per-node=$ppn
-##SBATCH -t 48:00:00
-###SBATCH --mem=10GB
-###SBATCH -p RM-shared
-
-#set -x
-#source ~/.bashrc
-#ulimit -s unlimited
-
-#cd \$WORK_DIR/
-#" > jobscript.sh
-#}
-
 
 #------------------------------------------- PATHS -------------------------------------------
 
@@ -280,10 +235,10 @@ export LD_LIBRARY_PATH="~/lib/fftw-3.3.10/build/lib/:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH="~/lib/lapack-3.10.1/:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH="~/lib/libxc-5.2.3/build/lib/:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH="~/lib/scalapack-2.2.0/:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/global/homes/u/uthpala/lib/openblas/:$LD_LIBRARY_PATH"
 
 # FHI-aims
-export PATH="~/local/FHIaims/bin/:$PATH"
-export PATH="/global/homes/u/uthpala/local/Yi/FHIaims/bin/:$PATH"
+export PATH="/global/u2/u/uthpala/local/FHIaims/FHIaims_intel/bin/:$PATH"
 
 # MatSciScripts
 export PATH="~/MatSciScripts/:$PATH"
@@ -293,3 +248,10 @@ export PATH="~/dotfiles/:$PATH"
 
 # ctags
 export PATH="/global/homes/u/uthpala/local/ctags-5.8/build/bin/:$PATH"
+
+# nodejs
+export PATH="/global/homes/u/uthpala/local/node-v19.6.0/build/bin/:$PATH"
+
+# ripgrep and bat
+export PATH="/global/homes/u/uthpala/local/ripgrep/:$PATH"
+export PATH="/global/homes/u/uthpala/local/bat/:$PATH"

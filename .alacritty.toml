@@ -1,0 +1,14 @@
+[font]
+size = 15
+
+[font.normal]
+family = "Monaco"
+
+[window]
+decorations = "Full"
+decorations_theme_variant = "Dark"
+dynamic_padding = true
+padding = { x = 7, y = 0 }
+
+[cursor]
+style = { shape = "Beam", blinking = "Off"}

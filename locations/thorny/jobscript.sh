@@ -1,16 +1,17 @@
 #!/bin/bash
-#PBS -N jobname
-#PBS -q comm_small_week #comm_small_day
-#PBS -l walltime=168:00:00
-#PBS -l nodes=4:ppn=40 #,pvmem=8gb
-#PBS -m ae
-#PBS -M ukh0001@mix.wvu.edu
-#PBS -j oe
-
-NUM_CORES=$(($PBS_NUM_NODES*$PBS_NUM_PPN))
+#SBATCH --job-name=jobname # Job name
+#SBATCH --nodes=1             # Run all processes on a single node
+#SBATCH --ntasks=40
+#SBATCH --cpus-per-task=1     # Number of cores per MPI task
+#SBATCH --time=800:00:00      # Time limit hrs:min:sec
+#SBATCH --partition alromero
+#SBATCH --mail-user=ukh0001@mix.wvu.edu
+#SBATCH --mail-type=NONE      # Mail events (NONE, BEGIN, END, FAIL, ALL)
 
 source ~/.bashrc
 ulimit -s unlimited
-cd $PBS_O_WORKDIR
-time mpirun -np $NUM_CORES
+module load sched/slurm
+
+cd $WORK_DIR/
+time srun -n $NUM_CORES
 

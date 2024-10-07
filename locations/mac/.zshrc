@@ -13,8 +13,8 @@ ZSH_THEME="honukai"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions) # copydir dirhistory macos)
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+plugins=(git zsh-autosuggestions fzf) # copydir dirhistory macos)
+DISABLE_UNTRACKED_FILES_DIRTY="false"
 
 ## Plugin settings
 
@@ -23,8 +23,8 @@ bindkey '`' autosuggest-accept
 CASE_SENSITIVE="true"
 HYPHEN_INSENSITIVE="true"
 
-# FZF
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --zsh)"
 
 source $ZSH/oh-my-zsh.sh
 add-zsh-hook precmd virtenv_indicator
@@ -46,11 +46,11 @@ intel(){
     source /opt/intel/oneapi/setvars.sh  > /dev/null
 
     # Scalapack
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0_intel/:$DYLD_LIBRARY_PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/INTEL/scalapack-2.2.0/:$DYLD_LIBRARY_PATH"
 
     # OpenMPI (compiled with intel)
-    export PATH="/Users/uthpala/lib/openmpi-4.1.6_intel/build/bin/:$PATH"
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.6_intel/build/lib/:$DYLD_LIBRARY_PATH"
+    export PATH="/Users/uthpala/lib/INTEL/openmpi-5.0.3/build/bin/:$PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/INTEL/openmpi-5.0.3/build/lib/:$DYLD_LIBRARY_PATH"
     export OMPI_CC="icc"
     export OMPI_CXX="icpc"
     export OMPI_FC="ifort"
@@ -58,11 +58,11 @@ intel(){
 
 gnu(){
     # Scalapack
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/scalapack-2.2.0_gnu/:$DYLD_LIBRARY_PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/GNU/scalapack-2.2.0/:$DYLD_LIBRARY_PATH"
 
     # OpenMPI (GNU)
-    export PATH="/Users/uthpala/lib/openmpi-4.1.6_gnu/build/bin/:$PATH"
-    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/openmpi-4.1.6_gnu/build/lib/:$DYLD_LIBRARY_PATH"
+    export PATH="/Users/uthpala/lib/GNU/openmpi-5.0.3/build/bin/:$PATH"
+    export DYLD_LIBRARY_PATH="/Users/uthpala/lib/GNU/openmpi-5.0.3/build/lib/:$DYLD_LIBRARY_PATH"
     export OMPI_CC="gcc"
     export OMPI_CXX="g++"
     export OMPI_FC="gfortran"
@@ -77,14 +77,14 @@ export FC="mpif90"
 # PYTHON
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/intel/oneapi/intelpython/latest/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/Users/uthpala/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh" ]; then
-        . "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh"
+    if [ -f "/Users/uthpala/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/uthpala/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/opt/intel/oneapi/intelpython/latest/bin:$PATH"
+        export PATH="/Users/uthpala/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -103,11 +103,15 @@ function virtenv_indicator {
 
 # conda environment
 py2(){
-    conda deactivate
+    for i in $(seq ${CONDA_SHLVL}); do
+        conda deactivate
+    done
     conda activate py2
 }
 py3(){
-    conda deactivate
+    for i in $(seq ${CONDA_SHLVL}); do
+        conda deactivate
+    done
     conda activate py3
 }
 #default
@@ -121,8 +125,18 @@ tm(){
     fi
 }
 
-# itermocil
-# complete -W "$(itermocil --list)" itermocil
+#FZF
+export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
+export FZF_CTRL_R_OPTS="
+  --preview 'echo {}' --preview-window 'hidden'
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'Press CTRL-Y to copy command into clipboard'"
+export FZF_ALT_C_OPTS="
+  --walker-skip .git,node_modules,target
+  --preview 'tree -C {}'"
+export EDITOR="vim"
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -167,11 +181,7 @@ extract () {
         echo "'$1' is not a valid file!"
     fi
 }
-# Creates directory then moves into it
-mkcdr() {
-  mkdir -p -v $1
-cd $1
-}
+
 # Creates an archive from given directory
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
@@ -198,162 +208,31 @@ umount_all(){
     umount -f /Users/uthpala/HPC/thorny/home
     umount -f /Users/uthpala/HPC/whitehall/home
     umount -f /Users/uthpala/HPC/romeronas/home
-    umount -f /Users/uthpala/HPC/timewarp/home
+    umount -f /Users/uthpala/HPC/timewarp2/home
     umount -f /Users/uthpala/HPC/frontera/home
 }
 
-# Check if VASP relaxation is obtained for batch jobs when relaxed with
-# Convergence.py and relax.dat is created.
-relaxed(){
- if [[ "$*" == "" ]]; then
-     arg="^[0-9]+$"
- else
-     arg=$1
- fi
-
- rm -f unrelaxed_list.dat
- folder_list=$(ls | grep -E $arg)
- for i in $folder_list;
-     do if [[ -f "${i}/relax.dat" ]]; then
-            echo $i
-        else
-            printf "${i}\t" >> unrelaxed_list.dat
-        fi
-     done
+# find-in-file - usage: fif <searchTerm> <directory>
+fif() {
+  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
+  if [ -z "$2" ]; then directory="./"; else directory="$2"; fi
+  rg --files-with-matches --no-messages --smart-case --follow --hidden -g '!{node_modules,.git}' "$1" "$directory"\
+      | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow'\
+      --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
 }
 
-# Clean VASP files in current directoy and subdirectories.
-# For only current directory use cleanvasp.sh
-# Add -delete flag to delete.
-cleanvaspall(){
-    find . \( \
-        -name "CHGCAR*" -o \
-        -name "OUTCAR*" -o \
-        -name "CHG" -o \
-        -name "DOSCAR" -o \
-        -name "EIGENVAL" -o \
-        -name "ENERGY" -o \
-        -name "IBZKPT" -o \
-        -name "OSZICAR*" -o \
-        -name "PCDAT" -o \
-        -name "REPORT" -o \
-        -name "TIMEINFO" -o \
-        -name "WAVECAR" -o \
-        -name "XDATCAR" -o \
-        -name "wannier90.wout" -o \
-        -name "wannier90.amn" -o \
-        -name "wannier90.mmn" -o \
-        -name "wannier90.eig" -o \
-        -name "wannier90.chk" -o \
-        -name "wannier90.node*" -o \
-        -name "PROCAR" -o \
-        -name "*.o[0-9]*" -o \
-        -name "vasprun.xml" -o \
-        -name "relax.dat" -o \
-        -name "CONTCAR*" \
-    \) -type f $1
+# dump db
+# Usage: dump_db <database_name>
+dump_db(){
+   mysqldump -u uthpala -puthpala1234 $1 > "$1"-`date +%F`.sql
 }
 
-
-#---------- Create jobscripts for HPC ------------
-
-# spruce
-makejob_spruce(){
-queue=${1:-standby}
-nodes=${2:-1}
-ppn=${3:-16}
-jobname=${4:-jobname}
-
-case $queue in
-  standby) walltime=4:00:00 ;;
-  alromero) walltime=1000:00:00 ;;
-  comm_mmem_day) walltime=24:00:00 ;;
-  comm_mmem_week) walltime=168:00:00 ;;
-  debug) walltime=00:15:00 ;;
-  *) walltime=4:00:00 ;;
-esac
-
-echo "\
-#!/bin/bash
-#PBS -N $jobname
-#PBS -q $queue
-#PBS -l walltime=$walltime
-#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=6gb
-#PBS -m ae
-#PBS -M ukh0001@mix.wvu.edu
-#PBS -j oe
-
-source ~/.bashrc
-ulimit -s unlimited
-
-cd \$WORK_DIR/
-" > jobscript.sh
-}
-
-# thorny
-makejob_thorny(){
- queue=${1:-standby}
- nodes=${2:-1}
- ppn=${3:-40}
- jobname=${4:-jobname}
-
- case $queue in
-     standby) walltime=4:00:00 ;;
-     alromero) walltime=1000:00:00 ;;
-     comm_small_day) walltime=24:00:00 ;;
-     comm_small_week) walltime=168:00:00 ;;
-     debug) walltime=1:00:00 ;;
-     *) walltime=4:00:00 ;;
- esac
-
-echo "\
-#!/bin/bash
-#PBS -N $jobname
-#PBS -q $queue
-#PBS -l walltime=$walltime
-#PBS -l nodes=$nodes:ppn=$ppn #,pvmem=8gb
-#PBS -m ae
-#PBS -M ukh0001@mix.wvu.edu
-#PBS -j oe
-
-source ~/.bashrc
-ulimit -s unlimited
-
-cd \$WORK_DIR/
-" > jobscript.sh
-}
-
-# bridges2
-makejob_bridges2(){
- nodes=${1:-1}
- ppn=${2:-128}
- jobname=${3:-jobname}
-
-echo "\
-#!/bin/bash
-#SBATCH --job-name=$jobname
-#SBATCH -N $nodes
-#SBATCH --ntasks-per-node=$ppn
-#SBATCH -t 48:00:00
-##SBATCH --mem=10GB
-##SBATCH -p RM-shared
-
-set -x
-source ~/.bashrc
-ulimit -s unlimited
-
-cd \$WORK_DIR/
-" > jobscript.sh
-}
-
-# selector
-makejob(){
-    case $1 in
-        spruce) makejob_spruce $2 $3 $4 $5 ;;
-        thorny) makejob_thorny $2 $3 $4 $5 ;;
-        bridges2) makejob_bridges2 $2 $3 $4 ;;
-        *) makejob_thorny $2 $3 $4 $5 ;;
-    esac
+# update materials database
+# Usage: update_db <db_name> <file.sql>
+update_db(){
+   sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' $2
+   mariadb -u uthpala -puthpala1234 -Bse "DROP DATABASE IF EXISTS $1;CREATE DATABASE $1;"
+   mariadb -u uthpala -puthpala1234 $1 < $2
 }
 
 #------------------------------------------- PATHS -------------------------------------------
@@ -363,9 +242,9 @@ export PYTHONPATH="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/:$PYTHONPATH"
 export MPLCONFIGDIR="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/"
 
 # Add Homebrew `/usr/local/bin` and User `~/bin` to the `$PATH`
-PATH=/usr/local/bin/:$PATH
-PATH=$HOME/bin:$PATH
-export PATH="/usr/local/sbin:$PATH"
+# PATH=/usr/local/bin/:$PATH
+# PATH=$HOME/bin:$PATH
+# export PATH="/usr/local/sbin:$PATH"
 
 # System library
 export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/:$DYLD_LIBRARY_PATH"
@@ -413,7 +292,7 @@ export PATH="/usr/local/opt/openssl/bin:$PATH"
 export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
 
 # texlive
-export PATH="/usr/local/texlive/2023/bin/universal-darwin/:$PATH"
+export PATH="/usr/local/texlive/2022/bin/universal-darwin/:$PATH"
 
 # pandoc-templates
 export PATH="/Users/uthpala/Dropbox/git/pandoc-templates/scripts/:$PATH"
@@ -423,7 +302,7 @@ export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
 # Julia
-export PATH="/Applications/Julia-1.5.app/Contents/Resources/julia/bin/:$PATH"
+export PATH="/Users/uthpala/.juliaup/bin/:$PATH"
 
 # Lobster
 export PATH="/Users/uthpala/apps/lobster-4.1.0/OSX/:$PATH"
@@ -482,6 +361,26 @@ export SPECIES_DEFAULTS="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/"
 # nodejs
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
+# Scripts directory
+export PATH="/Users/uthpala/Library/CloudStorage/Dropbox/docs/Jobs/Scripts/:$PATH"
+export PYTHONPATH="/Users/uthpala/Library/CloudStorage/Dropbox/docs/Jobs/Scripts/:$PYTHONPATH"
+
+# Ruby
+source /usr/local/opt/chruby/share/chruby/chruby.sh
+source /usr/local/opt/chruby/share/chruby/auto.sh
+chruby ruby-3.1.3
+
+# mysql-client
+# export PATH="/usr/local/opt/mysql-client/bin:$PATH"
+# export DYLD_LIBRARY_PATH="/usr/local/opt/mysql-client/lib:$DYLD_LIBRARY_PATH"
+# export LDFLAGS="-L/usr/local/opt/mysql-client/lib"
+# export CPPFLAGS="-I/usr/local/opt/mysql-client/include"
+
+# atomate2
+export ATOMATE2_CONFIG_FILE="/Users/uthpala/atomate-workflows/config/atomate2.yaml"
+export JOBFLOW_CONFIG_FILE="/Users/uthpala/atomate-workflows/config/jobflow.yaml"
+export AIMS_SPECIES_DIR="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/defaults_2020/"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 # WVU Connections
@@ -501,7 +400,7 @@ alias romeronas="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@romeronas.wvu-ad.wv
 
 # Mounting HPC drives without ssh options
 alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
-alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+alias mount_thorny="umount ~/HPC/thorny/home; sshfs trcis001.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_desktop="umount ~/HPC/desktop/home; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
@@ -510,17 +409,16 @@ alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-
 # Other ssh connections
 alias bridges2="ssh -Y uthpala@br012.bridges2.psc.edu"
 alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
-alias cori="ssh -Y uthpala@cori.nersc.gov"
-alias timewarp='ssh -Y ukh@timewarp.egr.duke.edu'
+alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 #alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
 alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
+alias materials="ssh -Y ukh@materials.hybrid3.duke.edu"
 
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
 alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
-alias mount_timewarp="umount ~/HPC/timewarp/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp.egr.duke.edu: ~/HPC/timewarp/home"
-alias mount_cori="umount ~/HPC/cori/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@cori.nersc.gov: ~/HPC/cori/home"
+alias mount_timewarp2="umount ~/HPC/timewarp2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp2/home"
 alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
 alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
 
@@ -540,7 +438,11 @@ alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 alias ctags="`brew --prefix`/bin/ctags"
+alias createbib="ln /Users/uthpala/Dropbox/references-zotero.bib"
 
 # docker
 alias cleandocker="docker image prune -a -f && docker volume prune -f"
 alias cleandockerall="docker system prune -a -f"
+
+# mariadb
+alias db="mariadb -u uthpala -p'uthpala1234'"

@@ -9,46 +9,64 @@
 " in the ~/.vim_runtime directory. It is automatically linked
 " to ~/.vimrc after following the instructions.
 "
-" Plugins
-" - indentLine
-" - molokai
-" - vim-autoread
-" - vim-gitgutter
-" - vim-python-docstring
-" - coc-vim
-" - vim-signature
-" - vim-slime
-" - vim-ipython-cell
-" - vim-fugitive
-" - vim-startify
-" - vim-maximizer
-" - vim-surround
-" - nerdtree-git-plugin
-" - vim-bracketed-paste
-" - tagbar
-" - vim-easytags
-" - vimtex
-" - coc-snippets - Replaces ultisnips (Don't install when using coc-vim)
-" - thesaurus_query.vim
-" - limelight.vim
-" - vim-pencil
-" - vim-smoothie
-" - writer.vim
-" - vim-fanfingtastic
-" - vim-latexfmt
-" - vim-litecorrect
-" - vim-textobj-sentence (depends on vim-textobj-user)
-"
-" DEPRICATED
-" - YouCompleteMe
-" - vim-ycm-latex-semantic-completer (in $HOME/.vim_runtime/my_plugins/YouCompleteMe/third_party/ycmd/ycmd/completers/tex/)
-"
 " author: Uthpala Herath
-" my fork: https://github.com/uthpalaherath/vimrc
+
+""" Plugin Manager
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+call plug#begin('~/.vim_runtime/my_plugins')
+
+" Plugins list
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'whiteinge/diffconflicts'
+Plug 'zivyangll/git-blame.vim'
+Plug 'junkblocker/git-time-lapse'
+Plug 'Yggdroot/indentLine'
+Plug 'tomasr/molokai'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'preservim/tagbar'
+Plug 'djoshea/vim-autoread'
+Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'hanschen/vim-ipython-cell'
+Plug 'szw/vim-maximizer'
+Plug 'pixelneo/vim-python-docstring'
+Plug 'kshenoy/vim-signature'
+Plug 'jpalardy/vim-slime'
+Plug 'psliwka/vim-smoothie'
+Plug 'ZSaberLv0/ZFVimDirDiff'
+Plug 'ZSaberLv0/ZFVimJob'
+Plug 'ZSaberLv0/ZFVimIgnore'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+"Plug 'mhinz/vim-startify'
+
+" Latex plugins
+Plug 'cocopon/iceberg.vim'
+Plug 'junegunn/limelight.vim'
+Plug 'Ron89/thesaurus_query.vim'
+Plug 'dahu/vim-fanfingtastic'
+Plug 'engeljh/vim-latexfmt'
+Plug 'preservim/vim-litecorrect'
+Plug 'preservim/vim-pencil'
+Plug 'kana/vim-textobj-user'
+Plug 'preservim/vim-textobj-sentence'
+Plug 'lervag/vimtex'
+Plug 'honza/writer.vim'
+Plug 'anufrievroman/vim-angry-reviewer'
+call plug#end()
 
 :set encoding=utf-8
 :set fileencoding=utf-8
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
+:set number
+
+""" Toggle line wrap
+map <F9> :set wrap!<CR>
 
 """ change current working directory to file dir
 autocmd BufEnter * silent! lcd %:p:h
@@ -76,7 +94,7 @@ au VimEnter * call InsertIfEmpty()
 """ indentLine
 let g:indentLine_char = '┊'
 
-""" ale
+""" ALE
 let g:ale_virtualtext_cursor = 0
 let g:ale_disable_lsp = 1
 let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale']}
@@ -99,47 +117,13 @@ autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff g
 " disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
 
-function! LinterStatus() abort
-    let l:counts = ale#statusline#Count(bufnr(''))
-    let l:all_errors = l:counts.error + l:counts.style_error
-    let l:all_non_errors = l:counts.total - l:all_errors
-    return l:counts.total == 0 ? 'OK' : printf(
-        \   '%d⨉ %d⚠ ',
-        \   all_non_errors,
-        \   all_errors
-        \)
-endfunction
-set statusline+=%=
-set statusline+=\ %{LinterStatus()}
-
-""" Setting numbering
-function! NumControl()
-    :set number relativenumber
-    :augroup numbertoggle
-    :  autocmd!
-    :  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-    :  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-    :augroup END
-
-    " turn off all numbers for tex files
-    if &ft == "tex"
-        :set nonu nornu
-        :augroup numbertoggle
-        :  autocmd!
-        :  autocmd BufEnter,FocusGained,InsertLeave * set norelativenumber
-        :  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-        :augroup END
-    endif
-endfunction
-autocmd VimEnter * call NumControl()
-
-"""" toggle line numbers, indentLines and gitgutter
+""" toggle line numbers, indentLines and gitgutter
 noremap <silent> <F3> :set invnumber invrelativenumber \| IndentLinesToggle \| :GitGutterToggle <CR>
 
-""""" Remapping keys
+""" Remapping keys
 :imap jk <ESC>`^
 
-"""" Tab settings
+""" Tab settings
 set tabstop=4           """ width that a <TAB> character displays as
 set expandtab           " convert <TAB> key-presses to spaces
 set shiftwidth=4        " number of spaces to use for each step of (auto)indent
@@ -147,44 +131,47 @@ set softtabstop=4       " backspace after pressing <TAB> will remove up to this 
 set autoindent          " copy indent from current line when starting a new line
 set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 
-""" NERDtree configuration
-let NERDTreeMinimalUI = 1
-let NERDTreeDirArrows = 1
-let NERDTreeQuitOnOpen = 1
-let g:NERDTreeGitStatusConcealBrackets = 0 " default: 0
-let g:NERDTreeGitStatusShowClean = 0 " default: 0
-let NERDTreeNaturalSort = 1
-
-function! StartUp()
-    if 0 == argc()
-        NERDTree
-    end
-endfunction
-autocmd VimEnter * call StartUp()
-au VimEnter * wincmd h
-:let g:NERDTreeShowLineNumbers=0
-:autocmd BufEnter NERD_* setlocal nornu
-let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
-
-" set autochdir
-" let NERDTreeChDirMode=2
-" nnoremap <leader>nn :NERDTree .<CR>
-
 """ colors
+syntax enable
 filetype plugin indent on
 set t_Co=256
-syntax on
 "set termguicolors
 colorscheme molokai
 "highlight Normal ctermbg=NONE
 highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
-set re=0
+
+" colors for vimdiff
+if &diff
+    "syntax off
+    colorscheme gruvbox
+    let g:gruvbox_contrast = "soft"
+endif
 
 " Use new regular expression engine
 set re=0
 set redrawtime=10000
+
+""" NERDtree configuration
+let NERDTreeShowLineNumbers = 0
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+let NERDTreeQuitOnOpen = 1
+let NERDTreeGitStatusConcealBrackets = 0 " default: 0
+let NERDTreeGitStatusShowClean = 0 " default: 0
+let NERDTreeNaturalSort = 1
+
+" function! StartUp()
+"     if 0 == argc()
+"         NERDTree
+"     end
+" endfunction
+" autocmd VimEnter * call StartUp()
+" autocmd VimEnter * wincmd h
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+hi Directory guifg=#FF0000 ctermfg=blue
+let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 
 """ copy to buffer (Only works on Mac)
 " map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
@@ -216,6 +203,9 @@ highlight GitGutterDelete ctermfg=1 guifg=#800000
 highlight GitGutterChangeDelete ctermfg=4 guifg=#000080
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
+let g:gitgutter_highlight_linenrs = 1
+let g:gitgutter_preview_win_floating = 0
+let g:gitgutter_diff_args = '-w'
 
 """ split screen shortcuts
 nnoremap <C-W>- :new<CR>
@@ -223,11 +213,6 @@ nnoremap <C-W>\ :vnew<CR>
 
 """ visual marks
 nnoremap <leader>m :SignatureRefresh<CR>
-
-""" run python scripts within vim with F9
-"autocmd Filetype python nnoremap <buffer> <F5> :w<CR>:vert ter python3 "%"<CR>
-autocmd FileType python map <buffer> <F9> :w<CR>:exec '!/Users/uthpala/.conda/envs/py3/bin/python' shellescape(@%, 1)<CR>
-autocmd FileType python imap <buffer> <F9> <esc>:w<CR>:exec '!/Users/uthpala/.conda/envs/py3/bin/python' shellescape(@%, 1)<CR>
 
 """ changesPlugin
 let g:changes_use_icons=0
@@ -256,8 +241,8 @@ let g:slime_python_ipython = 1
 let g:slime_dont_ask_default = 1
 
 " map <Leader>s to start IPython
-nnoremap <Leader>S :vert term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
-nnoremap <Leader>s :term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
+nnoremap <Leader>S :vert term <CR> py3 <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
+nnoremap <Leader>s :term <CR> py3 <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
 
 " map <Leader>r to run script
 nnoremap <Leader>r :IPythonCellRun<CR>
@@ -293,7 +278,7 @@ xmap <Leader>h <Plug>SlimeRegionSend
 nnoremap <Leader>qq :IPythonCellRestart<CR>
 
 " map <Leader> q to reset variables
-nnoremap <Leader>q :SlimeSend1 %reset -f<CR>
+" nnoremap <Leader>q :SlimeSend1 %reset -f<CR>
 
 " map <Leader>d to start debug mode
 "nnoremap <Leader>d :SlimeSend1 %debug<CR>
@@ -305,21 +290,18 @@ nnoremap <Leader>q :SlimeSend1 %reset -f<CR>
 tnoremap <c-b> <c-\><c-n>
 
 """ Startify
-let g:startify_session_persistence = 1
-let g:startify_lists = [
-      \ { 'type': 'sessions',  'header': ['   Sessions']       },
-      \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
-      \ ]
-let g:startify_bookmarks = [ '~/.vim_runtime/my_configs.vim' ]
+" let g:startify_session_persistence = 1
+" let g:startify_lists = [
+"       \ { 'type': 'sessions',  'header': ['   Sessions']       },
+"       \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+"       \ ]
+" let g:startify_bookmarks = [ '~/.vim_runtime/my_configs.vim' ]
 
 """ vim-maximizer
 let g:maximizer_default_mapping_key = '<C-W>z'
 nnoremap <silent><C-W>z :MaximizerToggle<CR>
 vnoremap <silent><C-W>z :MaximizerToggle<CR>gv
 inoremap <silent><C-W>z <C-o>:MaximizerToggle<CR>
-
-""" snip-mate
-let g:snipMate = { 'snippet_version' : 1 }
 
 """ inner slashes
 onoremap <silent> i/ :<C-U>normal! T/vt/<CR>
@@ -361,6 +343,7 @@ set tags+=tags;/
 
 """ tagbar
 nmap <F8> :TagbarToggle<CR>
+let g:tagbar_sort = 0
 
 " Open the definition in a new tab
 :nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
@@ -373,13 +356,31 @@ set diffopt+=iwhiteall,filler
 set diffexpr=""
 
 """ coc-vim
-" coc-settings.json
-" {
-"   diagnostic.displayByAle: true,
-"   coc.preferences.snippets.enable: true,
-"   suggest.snippetIndicator: "",
-"   suggest.noselect: true,
-" }
+" ~/.vim/coc-settings.json
+"
+"{
+"  "diagnostic.displayByAle": true,
+"  "coc.preferences.snippets.enable": true,
+"  "suggest.snippetIndicator": "",
+"  "suggest.noselect": true,
+
+"  "languageserver": {
+"     "fortran": {
+"       "command": "fortls",
+"       "filetypes": ["fortran"],
+"       "rootPatterns": [".fortls", ".git/"]
+"      }
+"    }
+"}
+
+" Install extensions
+let g:coc_global_extensions = ['coc-snippets', 'coc-clangd', 'coc-python']
+
+" coc-snippets
+" Snippets are stored in ~/.config/coc/ultisnips
+imap <C-l> <Plug>(coc-snippets-expand-jump)
+let g:coc_snippet_prev = '<c-k>'
+vmap <C-j> <Plug>(coc-snippets-select)
 
 " Customize colors
 :highlight CocFloating ctermbg=238 guibg=#444444
@@ -398,11 +399,11 @@ set updatetime=300
 " diagnostics appear/become resolved.
 set signcolumn=yes
 
-" Use tab for trigger completion with characters ahead and navigate.
+" Use tab for trigger completion with characters ahead and navigate
 " NOTE: There's always complete item selected by default, you may want to enable
-" no select by `"suggest.noselect": true` in your configuration file.
+" no select by `"suggest.noselect": true` in your configuration file
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
+" other plugin before putting this into your config
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
@@ -410,7 +411,7 @@ inoremap <silent><expr> <TAB>
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice.
+" <C-g>u breaks current undo, please make your own choice
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
@@ -419,7 +420,7 @@ function! CheckBackspace() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" Use <c-space> to trigger completion.
+" Use <c-space> to trigger completion
 if has('nvim')
   inoremap <silent><expr> <c-space> coc#refresh()
 else
@@ -460,7 +461,10 @@ autocmd VimEnter * set shortmess-=S
 " --vimgrep -> Needed to parse the rg response properly for ack.vim
 " --type-not sql -> Avoid huge sql file dumps as it slows down the search
 " --smart-case -> Search case insensitive if all lowercase pattern, Search case sensitively otherwise
-let g:ackprg = 'rg --vimgrep --type-not sql --smart-case'
+" --follow -> Follow symlinks
+" --hidden -> Search hidden files
+let g:ackprg = 'rg --vimgrep --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}"'
+let g:repprg = 'rg --vimgrep --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}"'
 
 " Auto close the Quickfix list after pressing '<enter>' on a list item
 let g:ack_autoclose = 0
@@ -471,22 +475,71 @@ let g:ack_use_cword_for_empty_search = 1
 " Don't jump to first match
 cnoreabbrev Ack Ack!
 
-""" show function name
-" function! ShowFuncName()
-"     let cursor_pos = getpos('.')
-"     echohl ModeMsg
-"     normal! [[k
-"     echo getline('.')
-"     echohl None
-"     call setpos('.', cursor_pos)
-" endfunction
-function! SubName() abort
-    let prev_sub_line_num = search('subroutine ', 'bcnW')
-    return matchstr(getline(prev_sub_line_num), 'subroutine \zs\w\+')
-endfunction
-set stl+=%{SubName()}
+""" FZF
+let $FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}"'
+let g:ctrlp_map = ''
+nnoremap <silent> <C-f> :Files<CR>
+nnoremap <silent> <Leader>f :RgBuf<CR>
 
- """ ---------- LATEX SETTINGS ----------
+" Rg without file names in search results
+command! -bang -nargs=* RgBuf call
+  \ fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden -g '!{node_modules,.git}' "
+  \ .shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 3..'}), <bang>0)
+
+" Rg with arguments allowed
+command! -bang -nargs=* Rg call HandleRgCommand(<q-args>, <bang>0)
+function! HandleRgCommand(args, bang)
+    if a:args == ''
+        echo "USAGE: Rg PATTERN [OPTIONS] [PATH]"
+    else
+        call fzf#vim#grep("rg --line-number --no-heading --color=always --smart-case --follow --hidden -g '!{node_modules,.git}' "
+        \ . a:args, 1, fzf#vim#with_preview({'options': '--delimiter : --nth 3..'}), a:bang)
+    endif
+endfunction
+
+" Rg word under cursor
+nnoremap <silent> <leader>* :RgBuf <C-R><C-W><CR>
+
+" Search only within current open buffer
+command! -bang -nargs=* BLines
+    \ call fzf#vim#grep(
+    \   'rg --with-filename --line-number --no-heading --smart-case --color=always . '.fnameescape(expand('%:p')), 1,
+    \   fzf#vim#with_preview({'options': '--layout reverse --keep-right --delimiter : --nth 3.. --preview "bat -p --color always {}"'}, 'right:60%' ))
+" nnoremap <leader>f :BLines<Cr>
+
+" Command history
+nnoremap <silent> <leader>q :call fzf#vim#command_history({'sink': 'e', 'window': 'botright 20new', 'options': '--no-preview'})<CR>
+
+""" github-copilot
+"let g:copilot_assume_mapped = v:true
+imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
+let g:copilot_no_tab_map = v:true
+
+""" git-blame
+nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
+
+""" git-time-lapse
+" :GitTimeLapse
+" nmap <Leader>gt <Plug>(git-time-lapse)
+
+""" ZRDirDiff
+let g:ZFDirDiff_ignoreEmptyDir = 1
+let g:ZFDirDiff_ignoreSpace = 1
+let g:ZFIgnoreOption_ZFDirDiff = {
+            \   'bin' : 1,
+            \   'media' : 1,
+            \   'common' : 1,
+            \ }
+
+""" Disable concealing in files
+let g:vim_json_conceal=0
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal_code_blocks = 0
+
+""" ---------- LATEX SETTINGS ----------
+
+" turn off line numbers for tex files
+autocmd filetype tex setlocal nonumber norelativenumber
 
 let g:vimtex_compiler_latexmk = {
         \ 'executable' : 'latexmk',
@@ -506,11 +559,11 @@ let g:vimtex_view_skim_sync = 0
 " theme
 "autocmd VimEnter *.tex colorscheme peaksea
 autocmd VimEnter *.tex colorscheme iceberg
-autocmd VimEnter *.tex syntax on
+autocmd VimEnter *.tex syntax enable
 
 augroup tex_syntax
   au!
-  autocmd BufNewFile,BufRead *.tex   set syntax=on
+  autocmd BufNewFile,BufRead *.tex syntax enable
 augroup END
 
 " disable gitgutter and indentlines
@@ -521,14 +574,10 @@ au VimEnter *.tex :IndentLinesToggle
 augroup vimtex_config
     au!
     au User VimtexEventQuit call vimtex#compiler#clean(0)
+    "au User VimtexEventQuit call vimtex#latexmk#clean(0)
     au FileType tex nmap <buffer><silent> <leader>t <plug>(vimtex-toc-open)
     au FileType tex nmap <buffer><silent> <leader>v <plug>(vimtex-view)
 augroup END
-
-""" coc-snippets
-imap <C-l> <Plug>(coc-snippets-expand-jump)
-let g:coc_snippet_prev = '<c-k>'
-vmap <C-j> <Plug>(coc-snippets-select)
 
 " disable auto renaming items to bullets
 let g:vimtex_syntax_conceal_disable = 1
@@ -666,12 +715,14 @@ augroup litecorrect
   autocmd FileType tex call litecorrect#init()
 augroup END
 
-
 """ vim-textobj-sentence
 set nocompatible
 augroup textobj_sentence
   autocmd!
   autocmd FileType tex call textobj#sentence#init()
 augroup END
+
+""" Angry Reviewer
+let g:AngryReviewerEnglish = 'american'
 
 " ---------- END OF LATEX SETTINGS ----------

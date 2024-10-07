@@ -3,8 +3,6 @@
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
 
-# module purge
-
 #set stty off
  if [[ -t 0 && $- = *i* ]]
  then
@@ -20,11 +18,9 @@ fi
 source ~/.bash_prompt
 
 # tmux
-#export PATH="/jet/home/uthpala/local/bin/:$PATH"
 export TMUX_DEVICE_NAME=timewarp
 if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
 	tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
-    #tmux
 fi
 
 # Memory
@@ -43,14 +39,30 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
-export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
+#export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
-export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+#export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
+export I_MPI_PMI_LIBRARY=/usr/lib/x86_64-linux-gnu/libpmi.so.0
 # export SLURM_CPU_BIND="cores"
 # unset I_MPI_PMI_LIBRARY
 # export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
+export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH
+
+#FZF
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
+export FZF_CTRL_R_OPTS="
+  --preview 'echo {}' --preview-window 'hidden'
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'Press CTRL-Y to copy command into clipboard'"
+export FZF_ALT_C_OPTS="
+  --walker-skip .git,node_modules,target
+  --preview 'tree -C {}'"
+export EDITOR="vim"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -71,11 +83,12 @@ alias cpr="rsync -ah --info=progress2"
 alias tkill="tmux kill-session"
 alias cleandocker="docker image prune -a -f && docker volume prune -f"
 alias cleandockerall="docker system prune -a -f"
+alias f='vim "$(fzf)"'
 
 #------------------------------------------- MODULES -------------------------------------------
 
-module load cmake-3.14.4
-module load git-2.37.3
+# module load cmake-3.14.4
+# module load git-2.37.3
 
 intel(){
     #module unload intel-compilers-2018.4
@@ -85,6 +98,9 @@ intel(){
     module load mpi/latest
     source /Space/globalspace/intel-2023.0/setvars.sh > /dev/null
     export LD_LIBRARY_PATH="/opt/intel/lib/intel64/:$LD_LIBRARY_PATH"
+
+    # 2024
+    # source /home/ukh/intel/oneapi/setvars.sh > /dev/null
 
     # compilers
     export CC="mpiicc"
@@ -143,14 +159,10 @@ unset __conda_setup
 py2(){
 conda deactivate
 conda activate py2
-# module unload anaconda3/2020.11
-# module load anaconda2/2019.10
 }
 py3(){
 conda deactivate
 conda activate py3
-# module unload anaconda2/2019.10
-# module load anaconda3/2020.11
 }
 #default
 py3
@@ -188,88 +200,29 @@ mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 
-# Clean VASP files in current directoy and subdirectories.
-# For only current directory use cleanvasp.sh
-cleanvaspall(){
- find . \( \
-     -name "CHGCAR*" -o \
-     -name "OUTCAR*" -o \
-     -name "CHG" -o \
-     -name "DOSCAR" -o \
-     -name "EIGENVAL" -o \
-     -name "ENERGY" -o \
-     -name "IBZKPT" -o \
-     -name "OSZICAR*" -o \
-     -name "PCDAT" -o \
-     -name "REPORT" -o \
-     -name "TIMEINFO" -o \
-     -name "WAVECAR" -o \
-     -name "XDATCAR" -o \
-     -name "wannier90.wout" -o \
-     -name "wannier90.amn" -o \
-     -name "wannier90.mmn" -o \
-     -name "wannier90.eig" -o \
-     -name "wannier90.chk" -o \
-     -name "wannier90.node*" -o \
-     -name "PROCAR" -o \
-     -name "*.o[0-9]*" -o \
-     -name "vasprun.xml" -o \
-     -name "relax.dat" -o \
-     -name "CONTCAR*" \
- \) -type f $1
-}
-
-# Check if VASP relaxation is obtained for batch jobs when relaxed with
-# Convergence.py and relax.dat is created.
-relaxed (){
- if [ "$*" == "" ]; then
-     arg="^[0-9]+$"
- else
-     arg=$1
- fi
-
- rm -f unrelaxed_list.dat
- folder_list=$(ls | grep -E $arg)
- for i in $folder_list;
-     do if [ -f $i/relax.dat ] ; then
-            echo $i
-        else
-            printf "$i\t" >> unrelaxed_list.dat
-        fi
-     done
-}
-
-# timewarp
-#makejob(){
-# nodes=${1:-1}
-# ppn=${2:-128}
-# jobname=${3:-jobname}
-
-#echo "\
-##!/bin/bash
-##SBATCH --job-name=$jobname
-##SBATCH -N $nodes
-##SBATCH --ntasks-per-node=$ppn
-##SBATCH -t 48:00:00
-###SBATCH --mem=10GB
-###SBATCH -p RM-shared
-
-#set -x
-#source ~/.bashrc
-#ulimit -s unlimited
-
-#cd \$WORK_DIR/
-#" > jobscript.sh
-#}
-
+# Get job info from job-id
 jobinfo(){
     scontrol show jobid -dd $1
 }
 
-#------------------------------------------- PATHS -------------------------------------------
+# find-in-file - usage: fif <searchTerm> <directory>
+fif() {
+  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
+  if [ -z "$2" ]; then directory="./"; else directory="$2"; fi
+  rg --files-with-matches --no-messages --smart-case --follow --hidden -g '!{node_modules,.git}' "$1" "$directory"\
+      | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow'\
+      --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
+}
 
-# tmux
-export PATH="/home/ukh/local/bin/:$PATH"
+# colored cat
+# function pygmentize_cat {
+#   for arg in "$@"; do
+#     pygmentize -g "${arg}" 2> /dev/null || /bin/cat "${arg}"
+#   done
+# }
+# command -v pygmentize > /dev/null && alias cat=pygmentize_cat
+
+#------------------------------------------- PATHS -------------------------------------------
 
 # FHI-aims
 export PATH="/home/ukh/local/FHIaims/bin/:$PATH"
@@ -287,38 +240,19 @@ export LD_LIBRARY_PATH="/jet/home/uthpala/lib/gsl-2.6/build/lib/:$LD_LIBRARY_PAT
 # ctags
 export PATH="/home/ukh/local/ctags-5.8/build/bin/:$PATH"
 
-# vim
-export PATH="/home/ukh/local/vim/build/bin/:$PATH"
-
-# curl
-export PATH="/home/ukh/local/curl-7.85.0/build/bin/:$PATH"
-export LD_LIBRARY_PATH="/home/ukh/local/curl-7.85.0/build/lib/:$LD_LIBRARY_PATH"
-export PKG_CONFIG_PATH="/home/ukh/local/curl-7.85.0/build/pkgconfig:$PKG_CONFIG_PATH"
-export MANPATH="/home/ukh/local/curl-7.85.0/build/share/man:$MANPATH"
-
-# python library
-# export PATH="/home/ukh/local/Python-3.9.9/build/bin:$PATH"
-# export LD_LIBRARY_PATH="/home/ukh/local/Python-3.9.9/build/lib:$LD_LIBRARY_PATH"
-
 # go
 export PATH="/home/ukh/local/go/bin/:$PATH"
 
-# clang
-export PATH="/home/ukh/local/llvm-project/build/bin:$PATH"
-export LD_LIBRARY_PATH="/home/ukh/local/llvm-project/build/lib:$LD_LIBRARY_PATH"
-
 # node
-export PATH="/home/ukh/local/node-v16.10.0-linux-x64/bin/:$PATH"
+export PATH="/home/ukh/local/node-v21.7.3-linux-x64/bin/:$PATH"
+export LD_LIBRARY_PATH="/home/ukh/local/node-v21.7.3-linux-x64/lib/:$LD_LIBRARY_PATH"
 
 # libtool
 export PATH="/home/ukh/local/libtool-2.4.6/build/bin/:$PATH"
 export LD_LIBRARY_PATH="/home/ukh/local/libtool-2.4.6/build/lib:$LD_LIBRARY_PATH"
 
-# nvim
-export PATH="/home/ukh/local/neovim/bin/:$PATH"
-
-# abacus
-export PATH="/home/ukh/local/abacus/build/bin/:$PATH"
-
 # globus
 export PATH="/home/ukh/local/globusconnectpersonal-3.2.0/:$PATH"
+
+# scalapack
+export LD_LIBRARY_PATH="/home/ukh/lib/scalapack-2.2.0/:$LD_LIBRARY_PATH"
