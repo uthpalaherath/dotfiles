@@ -6,14 +6,14 @@ prb, showkeys, dvipsnames,
 onecolumn]{revtex4-2}
 
 % font
-% \usepackage[T1]{fontenc}
-% \usepackage{lmodern}
-% \renewcommand{\rmdefault}{lmss}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\renewcommand{\rmdefault}{lmss}
 
 % line spacing
-% \linespread{1.25}
+\linespread{1.25}
 
-\usepackage{ulem}
+\usepackage[normalem]{ulem}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{graphicx}% Include figure files
@@ -31,7 +31,6 @@ onecolumn]{revtex4-2}
 \usepackage{verbatim}
 \usepackage{verbatimbox}
 \usepackage{soul}
-\usepackage{subcaption}
 \usepackage{fancyvrb}
 \usepackage{braket}
 \usepackage{wrapfig}
@@ -40,13 +39,17 @@ onecolumn]{revtex4-2}
 \usepackage{multirow}
 \usepackage{tabularx}
 \usepackage[version=3]{mhchem}
-\usepackage{caption}
 \usepackage{titlesec}
 \usepackage[capitalise]{cleveref}
-\captionsetup[table]{font=small}
-\captionsetup[figure]{font=small}
 \usepackage[most]{tcolorbox}
 \graphicspath{ {./figures/} }
+
+% Remove the following packages if using "longtable"
+\usepackage{caption}
+\usepackage{subcaption}
+\captionsetup[table]{font=small}
+\captionsetup[figure]{font=small}
+% \usepackage{longtable}
 
 % Comments
 \setlength{\marginparwidth}{2cm}
@@ -112,11 +115,13 @@ Uthpala:} #1}}
 % Then, redefine the quote environment to use blockquote
 \newtcolorbox{blockquote}{
     colback=light-gray, % Background color
-    grow to right by=-1mm, grow to left by=-1mm,
+    grow to right by=-1mm,
+    grow to left by=-1mm,
     boxrule=0pt, % No border
     boxsep=0pt, % No inner padding
     breakable, % Allow breaks across pages
-} \let\oldquote\quote
+}
+\let\oldquote\quote
 \let\endoldquote\endquote
 \renewenvironment{quote}
   {\begin{blockquote}}

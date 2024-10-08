@@ -230,7 +230,7 @@ dump_db(){
 # update materials database
 # Usage: update_db <db_name> <file.sql>
 update_db(){
-   sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' $2
+   #sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' $2
    mariadb -u uthpala -puthpala1234 -Bse "DROP DATABASE IF EXISTS $1;CREATE DATABASE $1;"
    mariadb -u uthpala -puthpala1234 $1 < $2
 }
@@ -408,7 +408,8 @@ alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-
 
 # Other ssh connections
 alias bridges2="ssh -Y uthpala@br012.bridges2.psc.edu"
-alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
+# alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
+alias stampede2="ssh -Y uthpala@stampede2.tacc.utexas.edu"
 alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 #alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
@@ -446,3 +447,6 @@ alias cleandockerall="docker system prune -a -f"
 
 # mariadb
 alias db="mariadb -u uthpala -p'uthpala1234'"
+
+# delete all .DS_Store files
+alias cleands="find . -name ".DS_Store" -type f -delete"

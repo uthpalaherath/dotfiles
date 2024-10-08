@@ -64,6 +64,7 @@ call plug#end()
 :set fileencoding=utf-8
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
 :set number
+au FileType javascript setl nofen
 
 """ Toggle line wrap
 map <F9> :set wrap!<CR>
