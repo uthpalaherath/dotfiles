@@ -383,6 +383,9 @@ export AIMS_SPECIES_DIR="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/de
 
 #------------------------------------------- ALIASES -------------------------------------------
 
+# sudo alias
+alias sudo='sudo '
+
 # WVU Connections
 # logging through ssh.wvu.edu
 
@@ -450,3 +453,6 @@ alias db="mariadb -u uthpala -p'uthpala1234'"
 
 # delete all .DS_Store files
 alias cleands="find . -name ".DS_Store" -type f -delete"
+
+# cleanup cache
+alias cleanup="rm -rf ~/Library/Caches/ ~/Library/Logs /Library/Caches/ /System/Library/Caches/ /Library/Logs/"
