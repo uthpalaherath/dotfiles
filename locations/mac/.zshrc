@@ -77,14 +77,14 @@ export FC="mpif90"
 # PYTHON
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/intel/oneapi/intelpython/latest/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/Users/uthpala/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh" ]; then
-        . "/opt/intel/oneapi/intelpython/latest/etc/profile.d/conda.sh"
+    if [ -f "/Users/uthpala/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/uthpala/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/opt/intel/oneapi/intelpython/latest/bin:$PATH"
+        export PATH="/Users/uthpala/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -103,11 +103,15 @@ function virtenv_indicator {
 
 # conda environment
 py2(){
-    conda deactivate
+    for i in $(seq ${CONDA_SHLVL}); do
+        conda deactivate
+    done
     conda activate py2
 }
 py3(){
-    conda deactivate
+    for i in $(seq ${CONDA_SHLVL}); do
+        conda deactivate
+    done
     conda activate py3
 }
 #default
@@ -177,11 +181,7 @@ extract () {
         echo "'$1' is not a valid file!"
     fi
 }
-# Creates directory then moves into it
-mkcdr() {
-  mkdir -p -v $1
-cd $1
-}
+
 # Creates an archive from given directory
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
@@ -208,7 +208,6 @@ umount_all(){
     umount -f /Users/uthpala/HPC/thorny/home
     umount -f /Users/uthpala/HPC/whitehall/home
     umount -f /Users/uthpala/HPC/romeronas/home
-    umount -f /Users/uthpala/HPC/timewarp/home
     umount -f /Users/uthpala/HPC/timewarp2/home
     umount -f /Users/uthpala/HPC/frontera/home
 }
@@ -222,6 +221,20 @@ fif() {
       --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
 }
 
+# dump db
+# Usage: dump_db <database_name>
+dump_db(){
+   mysqldump -u uthpala -puthpala1234 $1 > "$1"-`date +%F`.sql
+}
+
+# update materials database
+# Usage: update_db <db_name> <file.sql>
+update_db(){
+   #sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' $2
+   mariadb -u uthpala -puthpala1234 -Bse "DROP DATABASE IF EXISTS $1;CREATE DATABASE $1;"
+   mariadb -u uthpala -puthpala1234 $1 < $2
+}
+
 #------------------------------------------- PATHS -------------------------------------------
 
 # Matplotlib
@@ -229,9 +242,9 @@ export PYTHONPATH="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/:$PYTHONPATH"
 export MPLCONFIGDIR="/Users/uthpala/Dropbox/git/dotfiles/matplotlib/"
 
 # Add Homebrew `/usr/local/bin` and User `~/bin` to the `$PATH`
-PATH=/usr/local/bin/:$PATH
-PATH=$HOME/bin:$PATH
-export PATH="/usr/local/sbin:$PATH"
+# PATH=/usr/local/bin/:$PATH
+# PATH=$HOME/bin:$PATH
+# export PATH="/usr/local/sbin:$PATH"
 
 # System library
 export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/:$DYLD_LIBRARY_PATH"
@@ -352,7 +365,26 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="/Users/uthpala/Library/CloudStorage/Dropbox/docs/Jobs/Scripts/:$PATH"
 export PYTHONPATH="/Users/uthpala/Library/CloudStorage/Dropbox/docs/Jobs/Scripts/:$PYTHONPATH"
 
+# Ruby
+source /usr/local/opt/chruby/share/chruby/chruby.sh
+source /usr/local/opt/chruby/share/chruby/auto.sh
+chruby ruby-3.1.3
+
+# mysql-client
+# export PATH="/usr/local/opt/mysql-client/bin:$PATH"
+# export DYLD_LIBRARY_PATH="/usr/local/opt/mysql-client/lib:$DYLD_LIBRARY_PATH"
+# export LDFLAGS="-L/usr/local/opt/mysql-client/lib"
+# export CPPFLAGS="-I/usr/local/opt/mysql-client/include"
+
+# atomate2
+export ATOMATE2_CONFIG_FILE="/Users/uthpala/atomate-workflows/config/atomate2.yaml"
+export JOBFLOW_CONFIG_FILE="/Users/uthpala/atomate-workflows/config/jobflow.yaml"
+export AIMS_SPECIES_DIR="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/defaults_2020/"
+
 #------------------------------------------- ALIASES -------------------------------------------
+
+# sudo alias
+alias sudo='sudo '
 
 # WVU Connections
 # logging through ssh.wvu.edu
@@ -371,7 +403,7 @@ alias romeronas="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@romeronas.wvu-ad.wv
 
 # Mounting HPC drives without ssh options
 alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
-alias mount_thorny="umount ~/HPC/thorny/home; sshfs ukh0001@tf.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
+alias mount_thorny="umount ~/HPC/thorny/home; sshfs trcis001.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_desktop="umount ~/HPC/desktop/home; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
@@ -379,20 +411,18 @@ alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-
 
 # Other ssh connections
 alias bridges2="ssh -Y uthpala@br012.bridges2.psc.edu"
-alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
-alias cori="ssh -Y uthpala@cori.nersc.gov"
-alias timewarp='ssh -Y ukh@timewarp.egr.duke.edu'
+# alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
+alias stampede2="ssh -Y uthpala@stampede2.tacc.utexas.edu"
 alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 #alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
 alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
+alias materials="ssh -Y ukh@materials.hybrid3.duke.edu"
 
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
 alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
-alias mount_timewarp="umount ~/HPC/timewarp/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp.egr.duke.edu: ~/HPC/timewarp/home"
 alias mount_timewarp2="umount ~/HPC/timewarp2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp2/home"
-alias mount_cori="umount ~/HPC/cori/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@cori.nersc.gov: ~/HPC/cori/home"
 alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
 alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
 
@@ -412,8 +442,17 @@ alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 alias ctags="`brew --prefix`/bin/ctags"
-alias createbib="ln ~/Dropbox/references-zotero.bib"
+alias createbib="ln /Users/uthpala/Dropbox/references-zotero.bib"
 
 # docker
 alias cleandocker="docker image prune -a -f && docker volume prune -f"
 alias cleandockerall="docker system prune -a -f"
+
+# mariadb
+alias db="mariadb -u uthpala -p'uthpala1234'"
+
+# delete all .DS_Store files
+alias cleands="find . -name ".DS_Store" -type f -delete"
+
+# cleanup cache
+alias cleanup="rm -rf ~/Library/Caches/ ~/Library/Logs /Library/Caches/ /System/Library/Caches/ /Library/Logs/"

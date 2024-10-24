@@ -20,7 +20,7 @@ fi
 source ~/.bash_prompt
 
 # tmux
-#export PATH="/jet/home/uthpala/local/bin/:$PATH"
+export PATH="/jet/home/uthpala/local/bin/:$PATH"
 export TMUX_DEVICE_NAME=bridges2
 if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
 	tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
@@ -40,6 +40,7 @@ WORK_DIR=$SLURM_SUBMIT_DIR
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias scratch="cd /ocean/projects/phy150003p/uthpala"
+alias scratch2="cd /ocean/projects/che240001p/uthpala"
 #alias q="squeue -u uthpala"
 alias q='squeue -u uthpala --format="%.18i %.9P %30j %.8u %.2t %.10M %.6D %R"'
 alias sac="sacct --format="JobID,JobName%30,State,User""
@@ -59,14 +60,15 @@ alias cpr="rsync -ah --info=progress2"
 #------------------------------------------- MODULES -------------------------------------------
 
 #Intel compilers
-# source /ocean/projects/phy150003p/uthpala/intel/oneapi/setvars.sh > /dev/null
 module load intel/2021.3.0
 module load intelmpi/2021.3.0-intel2021.3.0
+source /jet/packages/intel/oneapi/setvars.sh
 
 # module load gcc/10.2.0
 # module load intel/20.4
 # module load hdf5/1.12.0-intel20.4
 module load parallel-netcdf/1.12.1
+module load allocations
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 

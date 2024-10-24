@@ -3,9 +3,17 @@ reprint,
 %preprint,
 amsmath,amssymb, aps,
 prb,
-showkeys, dvipsnames]{revtex4-2}
+showkeys, dvipsnames, onecolumn]{revtex4-2}
 
-\usepackage{ulem}
+% font
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\renewcommand{\rmdefault}{lmss}
+
+% line spacing
+\linespread{1.25}
+
+\usepackage[normalem]{ulem}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{graphicx}% Include figure files
@@ -33,6 +41,7 @@ showkeys, dvipsnames]{revtex4-2}
 \usepackage[version=3]{mhchem}
 \usepackage{titlesec}
 \usepackage[capitalise]{cleveref}
+\usepackage[most]{tcolorbox}
 \graphicspath{ {./figures/} }
 
 % Remove the following packages if using "longtable"
@@ -71,10 +80,15 @@ Uthpala:} #1}}
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{light-gray}{gray}{0.95}
+\definecolor{backcolour}{rgb}{0.98,0.98,0.95}
+
+% font for code
+\newcommand{\listingsttfamily}{\fontfamily{IBMPlexMono-TLF}\small}
 
 \lstset{ %
-  backgroundcolor=\color{white},   % choose the background color
-  basicstyle=\footnotesize,        % size of fonts used for the code
+  backgroundcolor=\color{backcolour},   % choose the background color
+  basicstyle=\listingsttfamily,        % size of fonts used for the code
   breaklines=true,                 % automatic line breaking only at whitespace
   captionpos=b,                    % sets the caption-position to bottom
   commentstyle=\color{mygreen},    % comment style
@@ -85,17 +99,88 @@ Uthpala:} #1}}
   breaklines=true,
   captionpos=b,
   keepspaces=true,
+  upquote=false,
   %numbers=left,
   numbersep=5pt,
   showspaces=false,
   showstringspaces=false,
   showtabs=false,
-  tabsize=4
+  tabsize=4,
+  frame=lrbt,
+  xleftmargin=\fboxsep,
+  xrightmargin=-\fboxsep,
+  aboveskip={0.9\baselineskip}
 }
+
+% tightlist bug fix
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% Redefine \includegraphics so that, unless explicit options are
+% given, the image width will not exceed the width or the height of the page.
+% Images get their normal width if they fit onto the page, but
+% are scaled down if they would overflow the margins.
+\makeatletter
+\def\ScaleWidthIfNeeded{%
+ \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\def\ScaleHeightIfNeeded{%
+  \ifdim\Gin@nat@height>0.9\textheight
+    0.9\textheight
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+\setkeys{Gin}{width=\ScaleWidthIfNeeded,height=\ScaleHeightIfNeeded,keepaspectratio}%
+
+% pandocbounded
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+% Define a new blockquote environment with your desired style.
+% Then, redefine the quote environment to use blockquote
+\newtcolorbox{blockquote}{
+    colback=light-gray,    % Background color
+    grow to right by=-1mm,
+    grow to left by=-1mm,
+    boxrule=0pt,          % No border
+    boxsep=0pt,           % No inner padding
+    breakable,            % Allow breaks across pages
+}
+\let\oldquote\quote
+\let\endoldquote\endquote
+\renewenvironment{quote}
+  {\begin{blockquote}}
+  {\end{blockquote}}
+
 
 \begin{document}
 \preprint{APS/123-QED}
-\titleformat{\section}{\raggedright\bfseries}{\thesection.}{1em}{}
+\titleformat{\section}{\raggedright\bfseries\large}{\thesection.}{1em}{}
+\titleformat{\subsection}{\raggedright\bfseries\normalsize}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}{\raggedright\bfseries\small}{\thesubsubsection.}{1em}{}
+
+% Paragraph formatting: no indentation and slightly larger space between paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}  % Adjust the space to your liking
+
 $if(has-frontmatter)$
 \frontmatter
 $endif$
@@ -129,7 +214,9 @@ $endif$
 Department of Mechanical Engineering and Materials Science,
 Duke University, Durham, NC 27708, USA
 }
+$if(date)$
 \date{$date$}
+$endif$
 $if(beamer)$
 $if(institute)$
 \institute{$for(institute)$$institute$$sep$ \and $endfor$}
@@ -188,10 +275,8 @@ $if(has-frontmatter)$
 \mainmatter
 $endif$
 
-\onecolumngrid
 %---------------------------- BODY ------------------------------
 \vspace{-0.5cm}
-
 $body$
 
 % \begin{acknowledgments}

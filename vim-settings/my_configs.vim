@@ -64,7 +64,7 @@ call plug#end()
 :set fileencoding=utf-8
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
 :set number
-:set nowrap
+au FileType javascript setl nofen
 
 """ Toggle line wrap
 map <F9> :set wrap!<CR>
@@ -133,7 +133,7 @@ set autoindent          " copy indent from current line when starting a new line
 set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 
 """ colors
-syntax on
+syntax enable
 filetype plugin indent on
 set t_Co=256
 "set termguicolors
@@ -532,8 +532,10 @@ let g:ZFIgnoreOption_ZFDirDiff = {
             \   'common' : 1,
             \ }
 
-""" Disable quote concealing in JSON files
+""" Disable concealing in files
 let g:vim_json_conceal=0
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal_code_blocks = 0
 
 """ ---------- LATEX SETTINGS ----------
 
@@ -558,11 +560,11 @@ let g:vimtex_view_skim_sync = 0
 " theme
 "autocmd VimEnter *.tex colorscheme peaksea
 autocmd VimEnter *.tex colorscheme iceberg
-autocmd VimEnter *.tex syntax on
+autocmd VimEnter *.tex syntax enable
 
 augroup tex_syntax
   au!
-  autocmd BufNewFile,BufRead *.tex set syntax=on
+  autocmd BufNewFile,BufRead *.tex syntax enable
 augroup END
 
 " disable gitgutter and indentlines
