@@ -4,10 +4,10 @@
 #------------------------------------------- INITIALIZATION -------------------------------------------
 
 #set stty off
- if [[ -t 0 && $- = *i* ]]
- then
+if [[ -t 0 && $- = *i* ]]
+then
    stty -ixon
- fi
+fi
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -91,18 +91,21 @@ alias f='vim "$(fzf)"'
 # module load git-2.37.3
 
 intel(){
-    module load compiler/latest
-    module load mkl/latest
-    module load mpi/latest
-    source /Space/globalspace/intel-2023.0/setvars.sh --force > /dev/null
-    export LD_LIBRARY_PATH="/opt/intel/lib/intel64/:$LD_LIBRARY_PATH"
+    if command -v module &> /dev/null
+    then
+        module load compiler/latest
+        module load mkl/latest
+        module load mpi/latest
+        source /Space/globalspace/intel-2023.0/setvars.sh --force > /dev/null
+        export LD_LIBRARY_PATH="/opt/intel/lib/intel64/:$LD_LIBRARY_PATH"
 
-    # compilers
-    export CC="mpiicc"
-    export CXX="mpiicpc"
-    export FC="mpiifort"
-    export MPICC="mpiicc"
-    export MPIFC="mpiifort"
+        # compilers
+        export CC="mpiicc"
+        export CXX="mpiicpc"
+        export FC="mpiifort"
+        export MPICC="mpiicc"
+        export MPIFC="mpiifort"
+    fi
 }
 
 intel18(){
@@ -161,14 +164,17 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-
 py2(){
-conda deactivate
-conda activate py2
+    for i in $(seq ${CONDA_SHLVL}); do
+        conda deactivate
+    done
+    conda activate py2
 }
 py3(){
-conda deactivate
-conda activate py3
+    for i in $(seq ${CONDA_SHLVL}); do
+        conda deactivate
+    done
+    conda activate py3
 }
 #default
 py3
@@ -262,3 +268,7 @@ export PATH="/home/ukh/local/globusconnectpersonal-3.2.0/:$PATH"
 
 # scalapack
 export LD_LIBRARY_PATH="/home/ukh/lib/scalapack-2.2.0/:$LD_LIBRARY_PATH"
+
+# atomate2
+export ATOMATE2_CONFIG_FILE="/home/ukh/.config/atomate2/atomate2.yaml"
+export AIMS_SPECIES_DIR="/home/ukh/local/FHIaims/species_defaults/defaults_2020/"
