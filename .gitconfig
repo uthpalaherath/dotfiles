@@ -1,9 +1,17 @@
 [user]
    name = Uthpala Herath
    email = uthpala.herath@duke.edu
+
 [diff]
    tool = vimdiff
    prompt = false
+
+[alias]
+dirdiff = difftool --ignore-submodules --dir-diff --symlinks --tool=myvimdirdiff
+
+[difftool "myvimdirdiff"]
+cmd = vim -f '+next' '+execute \"ZFDirDiff\"  argv(0) argv(1)' $LOCAL $REMOTE
+
 [merge]
    tool = diffconflicts
    prompt = false
@@ -13,5 +21,9 @@
    trustExitCode = true
 [mergetool]
    keepBackup = false
+
 [submodule]
-   recurse = true
+	recurse = true
+[oh-my-zsh]
+    hide-status = 1
+    hide-dirty = 1

@@ -23,7 +23,7 @@ if test "0" = "1" \
     || test "x-$PATH_B" = "x-" \
     ; then
     echo "usage:"
-    echo "  sh ZFDirDiff.sh PATH_A PATH_B"
+    echo "dirdiff.sh PATH_A PATH_B"
     exit 1
 fi
 
