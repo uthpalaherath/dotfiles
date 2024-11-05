@@ -8,9 +8,8 @@
 
 [alias]
 dirdiff = difftool --ignore-submodules --dir-diff --symlinks --tool=myvimdirdiff
-
 [difftool "myvimdirdiff"]
-cmd = vim -f '+next' '+execute \"ZFDirDiff\"  argv(0) argv(1)' $LOCAL $REMOTE
+cmd = vim -f '+let g:gruvbox_contrast=\"soft\"' '+colorscheme gruvbox' '+next' '+execute \"ZFDirDiff\"  argv(0) argv(1)' $LOCAL $REMOTE
 
 [merge]
    tool = diffconflicts
