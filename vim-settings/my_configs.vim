@@ -136,19 +136,76 @@ set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 syntax enable
 filetype plugin indent on
 set t_Co=256
-"set termguicolors
 colorscheme molokai
-"highlight Normal ctermbg=NONE
 highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
 
-" colors for vimdiff
+" Define function to restore settings
+function! s:RestoreDefaultSettings()
+    " Re-enable syntax highlighting
+    syntax enable
+
+    " Reapply custom highlight settings
+    highlight clear SignColumn
+    highlight LineNr ctermbg=235
+    highlight LineNr ctermfg=241
+
+    " Reapply GitGutter highlight settings
+    highlight GitGutterAdd           ctermfg=2   guifg=#008000
+    highlight GitGutterChange        ctermfg=3   guifg=#808000
+    highlight GitGutterDelete        ctermfg=1   guifg=#800000
+    highlight GitGutterChangeDelete  ctermfg=4   guifg=#000080
+
+    " Reapply gitgutter settings
+    let g:gitgutter_override_sign_column_highlight = 0
+    let g:gitgutter_highlight_linenrs = 1
+    let g:gitgutter_preview_win_floating = 0
+    let g:gitgutter_diff_args = '-w'
+
+    " Reset the indentLine plugin
+    if exists(':IndentLinesReset')
+        execute 'IndentLinesReset'
+    else
+        execute 'IndentLinesToggle'
+        execute 'IndentLinesToggle'
+    endif
+
+    " Reapply indentLine settings
+    let g:indentLine_char = '┊'
+
+    " Restore line number settings
+    set number
+    set relativenumber
+endfunction
+
+" Function to update colorscheme based on 'diff' option
+function! s:UpdateDiffColors()
+    if &diff
+        let g:gruvbox_contrast_dark = "soft"
+        colorscheme gruvbox
+    else
+        colorscheme molokai
+        call s:RestoreDefaultSettings()
+    endif
+endfunction
+
+" Apply gruvbox colorscheme if Vim starts in diff mode
 if &diff
-    "syntax off
-    colorscheme gruvbox
-    let g:gruvbox_contrast = "soft"
+    call s:UpdateDiffColors()
 endif
+
+" Autocommand group for handling 'diff' option changes
+augroup MyDiffColors
+    autocmd!
+    autocmd OptionSet diff call s:UpdateDiffColors()
+augroup END
+
+" Autocommand for reapplying settings when molokai is loaded
+augroup MyColorscheme
+    autocmd!
+    autocmd ColorScheme molokai call s:RestoreDefaultSettings()
+augroup END
 
 " Use new regular expression engine
 set re=0
