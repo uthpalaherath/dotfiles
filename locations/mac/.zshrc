@@ -357,6 +357,7 @@ export PATH=$HOME/tsase/bin:$PATH
 export PATH="/Users/uthpala/apps/FHIaims/FHIaims/bin/:$PATH"
 export PATH="/Users/uthpala/apps/FHIaims/FHIaims/utilities/:$PATH"
 export SPECIES_DEFAULTS="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/"
+export AIMS_SPECIES_DEFAULTS="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/"
 
 # nodejs
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
@@ -380,6 +381,10 @@ chruby ruby-3.1.3
 export ATOMATE2_CONFIG_FILE="/Users/uthpala/atomate-workflows/config/atomate2.yaml"
 export JOBFLOW_CONFIG_FILE="/Users/uthpala/atomate-workflows/config/jobflow.yaml"
 export AIMS_SPECIES_DIR="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/defaults_2020/"
+
+# mushroom
+export PATH="/Users/uthpala/apps/mushroom/scripts/:$PATH"
+export PYTHONPATH="/Users/uthpala/apps/mushroom/:$PYTHONPATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -418,6 +423,7 @@ alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 #alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
 alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
 alias materials="ssh -Y ukh@materials.hybrid3.duke.edu"
+alias dcc="ssh -Y ukh@dcc-login.oit.duke.edu"
 
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
