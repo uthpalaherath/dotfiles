@@ -173,9 +173,16 @@ Uthpala:} #1}}
 
 \begin{document}
 \preprint{APS/123-QED}
+
+% Title alignment
 \titleformat{\section}{\raggedright\bfseries\large}{\thesection.}{1em}{}
 \titleformat{\subsection}{\raggedright\bfseries\normalsize}{\thesubsection.}{1em}{}
 \titleformat{\subsubsection}{\raggedright\bfseries\small}{\thesubsubsection.}{1em}{}
+
+% Title spacing
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 
 % Paragraph formatting: no indentation and slightly larger space between paragraphs
 \setlength{\parindent}{0pt}
