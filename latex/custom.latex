@@ -58,8 +58,7 @@ showkeys, dvipsnames, onecolumn]{revtex4-2}
 \newcommand{\TODO} [1]
 {\todo[inline,backgroundcolor=lime,size=\small ,bordercolor=gray]{#1}}
 \newcommand{\uthpala} [1]
-{\todo[inline,backgroundcolor=yellow,size=\small ,bordercolor=gray]{{\bf
-Uthpala:} #1}}
+{\todo[inline,backgroundcolor=yellow,size=\small ,bordercolor=gray]{{\bfseries Uthpala:} #1}}
 
 % Cross-referencing
 \makeatletter
