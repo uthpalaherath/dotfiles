@@ -424,6 +424,7 @@ alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
 alias materials="ssh -Y ukh@materials.hybrid3.duke.edu"
 alias dcc="ssh -Y ukh@dcc-login.oit.duke.edu"
+# alias dcc="ssh -Y ukh@dcc-login-01.oit.duke.edu"
 
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
