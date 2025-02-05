@@ -3,7 +3,7 @@
 # A script containing functions to parse Slurm job statistics.
 # Provides a useful summary of seff, sstat, and sacct.
 #
-# Usage: jobstats.sh <job_id>
+# Usage: jobstats.sh <job_id> [n_steps_for_sacct (optional)]
 #
 # Authors: Uthpala Herath and ChatGPT
 
@@ -75,56 +75,54 @@ to_mb_or_gb() {
 #    - sstat summary (JobID,JobName,MaxRSS,MaxDiskWrite) in MB/GB, plus "Total MaxRSS"
 #    - sacct summary (JobID,JobName,MaxRSS,MaxDiskWrite) in MB/GB, plus "Total MaxRSS"
 ################################################################################
+
 jobstats() {
     local jobid="$1"
+    local maxSteps="$2"   # optional second argument
+
     if [[ -z "$jobid" ]]; then
-        echo "Usage: jobstats <job_id>"
+        echo "Usage: jobstats.sh <job_id> [<n_steps>]"
         return 1
     fi
 
-    # 1) Capture the output of seff so we can parse number of nodes from it.
+    # (A) seff output
     local seff_output
     seff_output="$(seff "$jobid" 2>&1)"
-
     echo "=== [1/3] seff summary ==="
     echo "$seff_output"
     echo
 
-    # 2) Parse "Nodes: X" from the seff output (if found).
+    # Parse "Nodes: X" from seff, if present
     local numNodes
     numNodes="$(echo "$seff_output" | sed -n 's/^Nodes:\s*\([0-9]\+\).*/\1/p')"
-    [[ -z "$numNodes" ]] && numNodes=1  # fallback if parsing fails
+    [[ -z "$numNodes" ]] && numNodes=1
 
-    # 3) sstat summary
+    # (B) sstat summary
     echo "=== [2/3] sstat summary (LIVE) ==="
-    # Now we ask for JobID%30,JobName%30,MaxRSS,MaxDiskWrite
     local sstat_out
-    sstat_out="$(sstat --noheader \
-                       --format=JobID%30,MaxRSS,MaxDiskWrite \
-                       -j "${jobid}" 2>/dev/null)"
+    sstat_out="$(
+        sstat --noheader --format=JobID%30,MaxRSS,MaxDiskWrite \
+              -j "${jobid}" 2>/dev/null
+    )"
 
     if [[ -z "$sstat_out" ]]; then
-        echo "Job ${1} is not running. Check sacct summary."
+        echo "Job ${jobid} is not running. Check sacct summary."
     else
         echo "JobID           | MaxRSS/node | Total MaxRSS | MaxDiskWrite"
         echo "----------------|------------ | ------------ | ------------"
         while IFS= read -r line; do
-            # Example line might be:
-            # 25603770.0               myStepName                   11521316K 186.30M
-            IFS=' ' read -r stepJobID stepJobName rawRss rawDisk <<< "$line"
+            [[ -z "$line" ]] && continue
+            IFS=' ' read -r stepJobID rawRss rawDisk <<< "$line"
             [[ -z "$stepJobID" ]] && continue
 
-            # Convert memory/disk usage to bytes
             local rssBytes diskBytes
             rssBytes="$(to_bytes "$rawRss")"
             diskBytes="$(to_bytes "$rawDisk")"
 
-            # Convert to MB/GB
             local rssHuman diskHuman
             rssHuman="$(to_mb_or_gb "$rssBytes")"
             diskHuman="$(to_mb_or_gb "$diskBytes")"
 
-            # total RSS across all nodes
             local totalRSSBytes=$(( rssBytes * numNodes ))
             local totalRSSHuman
             totalRSSHuman="$(to_mb_or_gb "$totalRSSBytes")"
@@ -135,24 +133,36 @@ jobstats() {
     fi
     echo
 
-    # 4) sacct summary
+    # (C) sacct summary
     echo "=== [3/3] sacct summary ==="
     local sacct_out
-    sacct_out="$(sacct --noheader \
-                       --format=JobID%30,JobName%25,MaxRSS,MaxDiskWrite \
-                       -j "${jobid}" 2>/dev/null)"
+    sacct_out="$(
+        sacct --noheader \
+              --format=JobID%30,JobName%25,MaxRSS,MaxDiskWrite \
+              -j "${jobid}" 2>/dev/null
+    )"
 
     if [[ -z "$sacct_out" ]]; then
         echo "No sacct info found."
     else
+        # Convert sacct_out into an array so we can optionally truncate
+        mapfile -t sacct_lines <<< "$sacct_out"
+
+        # If maxSteps is given and numeric, we tail only last N lines
+        if [[ -n "$maxSteps" && "$maxSteps" =~ ^[0-9]+$ ]]; then
+            if (( maxSteps < ${#sacct_lines[@]} )); then
+                # Truncate to last N lines
+                sacct_lines=("${sacct_lines[@]: -$maxSteps}")
+            fi
+        fi
+
         echo "JobID           | JobName                    | MaxRSS/node | Total MaxRSS | MaxDiskWrite"
         echo "----------------|----------------------------|-------------|--------------|-------------"
-        while IFS= read -r line; do
+        for line in "${sacct_lines[@]}"; do
             [[ -z "$line" ]] && continue
             IFS=' ' read -r cJobID cJobName cMaxRSS cMaxDiskWrite <<< "$line"
             [[ -z "$cJobID" ]] && continue
 
-            # Convert memory & disk usage to bytes
             local rssBytes diskBytes
             rssBytes="$(to_bytes "$cMaxRSS")"
             diskBytes="$(to_bytes "$cMaxDiskWrite")"
@@ -161,14 +171,13 @@ jobstats() {
             rssHuman="$(to_mb_or_gb "$rssBytes")"
             diskHuman="$(to_mb_or_gb "$diskBytes")"
 
-            # total RSS
             local totalRSSBytes=$(( rssBytes * numNodes ))
             local totalRSSHuman
             totalRSSHuman="$(to_mb_or_gb "$totalRSSBytes")"
 
             printf "%-15s | %-26s | %-11s | %-12s | %s\n" \
                 "$cJobID" "$cJobName" "$rssHuman" "$totalRSSHuman" "$diskHuman"
-        done <<< "$sacct_out"
+        done
     fi
 }
 
