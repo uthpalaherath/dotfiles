@@ -424,6 +424,7 @@ alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
 alias materials="ssh -Y ukh@materials.hybrid3.duke.edu"
 alias dcc="ssh -Y ukh@dcc-login.oit.duke.edu"
+# alias dcc="ssh -Y ukh@dcc-login-01.oit.duke.edu"
 
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
@@ -431,6 +432,7 @@ alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_p
 alias mount_timewarp2="umount ~/HPC/timewarp2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp2/home"
 alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
 alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
+alias mount_dcc="umount ~/HPC/dcc/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@dcc-login.oit.duke.edu: ~/HPC/dcc/home"
 
 # git repos
 alias dotrebase='cd /Users/uthpala/dotfiles && git pull --rebase || true && cd -'
