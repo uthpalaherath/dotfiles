@@ -72,8 +72,8 @@ to_mb_or_gb() {
 # 3) The main "jobstats" function:
 #    - Parse "Nodes: X" from seff output
 #    - seff summary
-#    - sstat summary (MaxRSS, MaxDiskWrite) in MB/GB, plus "Total MaxRSS"
-#    - sacct summary (JobID, MaxRSS, MaxDiskWrite) in MB/GB, plus "Total MaxRSS"
+#    - sstat summary (JobID,JobName,MaxRSS,MaxDiskWrite) in MB/GB, plus "Total MaxRSS"
+#    - sacct summary (JobID,JobName,MaxRSS,MaxDiskWrite) in MB/GB, plus "Total MaxRSS"
 ################################################################################
 jobstats() {
     local jobid="$1"
@@ -96,20 +96,25 @@ jobstats() {
     [[ -z "$numNodes" ]] && numNodes=1  # fallback if parsing fails
 
     # 3) sstat summary
-    echo "=== [2/3] sstat summary ==="
+    echo "=== [2/3] sstat summary (LIVE) ==="
+    # Now we ask for JobID%30,JobName%30,MaxRSS,MaxDiskWrite
     local sstat_out
-    sstat_out="$(sstat --noheader --format=JobID%30,MaxRSS,MaxDiskWrite -j "${jobid}" 2>/dev/null)"
+    sstat_out="$(sstat --noheader \
+                       --format=JobID%30,MaxRSS,MaxDiskWrite \
+                       -j "${jobid}" 2>/dev/null)"
 
     if [[ -z "$sstat_out" ]]; then
-        echo "No sstat info found (job may be completed, so sstat is empty)."
+        echo "Job ${1} is not running. Check sacct summary."
     else
-        echo "STEP            | MaxRSS/node   | MaxRSS     | MaxDiskWrite"
-        echo "----------------|---------------|------------|-------------"
+        echo "JobID           | MaxRSS/node | Total MaxRSS | MaxDiskWrite"
+        echo "----------------|------------ | ------------ | ------------"
         while IFS= read -r line; do
-            # Example line: "25603770.0   11521316K   186.30M"
-            IFS=' ' read -r stepJobID rawRss rawDisk <<< "$line"
+            # Example line might be:
+            # 25603770.0               myStepName                   11521316K 186.30M
+            IFS=' ' read -r stepJobID stepJobName rawRss rawDisk <<< "$line"
+            [[ -z "$stepJobID" ]] && continue
 
-            # Convert each to bytes
+            # Convert memory/disk usage to bytes
             local rssBytes diskBytes
             rssBytes="$(to_bytes "$rawRss")"
             diskBytes="$(to_bytes "$rawDisk")"
@@ -119,12 +124,12 @@ jobstats() {
             rssHuman="$(to_mb_or_gb "$rssBytes")"
             diskHuman="$(to_mb_or_gb "$diskBytes")"
 
-            # Compute total RSS = rssBytes * numNodes
+            # total RSS across all nodes
             local totalRSSBytes=$(( rssBytes * numNodes ))
             local totalRSSHuman
             totalRSSHuman="$(to_mb_or_gb "$totalRSSBytes")"
 
-            printf "%-15s | %-13s | %-10s | %s\n" \
+            printf "%-15s | %-11s | %-12s | %s\n" \
                 "$stepJobID" "$rssHuman" "$totalRSSHuman" "$diskHuman"
         done <<< "$sstat_out"
     fi
@@ -133,16 +138,18 @@ jobstats() {
     # 4) sacct summary
     echo "=== [3/3] sacct summary ==="
     local sacct_out
-    sacct_out="$(sacct --noheader --format=JobID%30,MaxRSS,MaxDiskWrite -j "${jobid}" 2>/dev/null)"
+    sacct_out="$(sacct --noheader \
+                       --format=JobID%30,JobName%25,MaxRSS,MaxDiskWrite \
+                       -j "${jobid}" 2>/dev/null)"
 
     if [[ -z "$sacct_out" ]]; then
         echo "No sacct info found."
     else
-        echo "JobID           | MaxRSS/node   | MaxRSS     | MaxDiskWrite"
-        echo "----------------|---------------|------------|-------------"
+        echo "JobID           | JobName                    | MaxRSS/node | Total MaxRSS | MaxDiskWrite"
+        echo "----------------|----------------------------|-------------|--------------|-------------"
         while IFS= read -r line; do
             [[ -z "$line" ]] && continue
-            IFS=' ' read -r cJobID cMaxRSS cMaxDiskWrite <<< "$line"
+            IFS=' ' read -r cJobID cJobName cMaxRSS cMaxDiskWrite <<< "$line"
             [[ -z "$cJobID" ]] && continue
 
             # Convert memory & disk usage to bytes
@@ -154,13 +161,13 @@ jobstats() {
             rssHuman="$(to_mb_or_gb "$rssBytes")"
             diskHuman="$(to_mb_or_gb "$diskBytes")"
 
-            # Compute total RSS
+            # total RSS
             local totalRSSBytes=$(( rssBytes * numNodes ))
             local totalRSSHuman
             totalRSSHuman="$(to_mb_or_gb "$totalRSSBytes")"
 
-            printf "%-15s | %-13s | %-10s | %s\n" \
-                "$cJobID" "$rssHuman" "$totalRSSHuman" "$diskHuman"
+            printf "%-15s | %-26s | %-11s | %-12s | %s\n" \
+                "$cJobID" "$cJobName" "$rssHuman" "$totalRSSHuman" "$diskHuman"
         done <<< "$sacct_out"
     fi
 }
