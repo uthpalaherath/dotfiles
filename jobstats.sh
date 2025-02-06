@@ -7,10 +7,8 @@
 #
 # Authors: Uthpala Herath and ChatGPT
 
-################################################################################
-# 1) A function to parse Slurm strings like "7721840K", "5.73M", "186.30M", etc.
-#    into a byte count. Now handles decimal numbers plus an optional K/M/G suffix.
-################################################################################
+# A function to parse Slurm strings like "7721840K", "5.73M", "186.30M", etc.
+# into a byte count. Also handles decimal numbers plus an optional K/M/G suffix.
 to_bytes() {
     local val="$1"
     # If empty or not recognized, return 0.
@@ -53,9 +51,7 @@ to_bytes() {
     fi
 }
 
-################################################################################
-# 2) Convert bytes to human-readable MB or GB (switch at 1GB).
-################################################################################
+# Convert bytes to human-readable MB or GB (switch at 1GB).
 to_mb_or_gb() {
     local bytes="$1"
     local oneGB=$((1024*1024*1024))
@@ -68,14 +64,11 @@ to_mb_or_gb() {
     fi
 }
 
-################################################################################
-# 3) The main "jobstats" function:
+# The main function:
 #    - Parse "Nodes: X" from seff output
 #    - seff summary
 #    - sstat summary (JobID,JobName,MaxRSS,MaxDiskWrite) in MB/GB, plus "Total MaxRSS"
 #    - sacct summary (JobID,JobName,MaxRSS,MaxDiskWrite) in MB/GB, plus "Total MaxRSS"
-################################################################################
-
 jobstats() {
     local jobid="$1"
     local maxSteps="$2"   # optional second argument
@@ -181,5 +174,5 @@ jobstats() {
     fi
 }
 
-# Actually call the function with any arguments passed to the script
+# Call the function with any arguments passed to the script
 jobstats "$@"
