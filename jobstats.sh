@@ -101,7 +101,7 @@ jobstats() {
     if [[ -z "$sstat_out" ]]; then
         echo "Job ${jobid} is not running. Check sacct summary."
     else
-        echo "JobID           | MaxRSS/node | Total MaxRSS | MaxDiskWrite"
+        echo "JobID step      | MaxRSS/node | Total MaxRSS | MaxDiskWrite"
         echo "----------------|------------ | ------------ | ------------"
         while IFS= read -r line; do
             [[ -z "$line" ]] && continue
@@ -149,7 +149,7 @@ jobstats() {
             fi
         fi
 
-        echo "JobID           | JobName                    | MaxRSS/node | Total MaxRSS | MaxDiskWrite"
+        echo "JobID step      | JobName                    | MaxRSS/node | Total MaxRSS | MaxDiskWrite"
         echo "----------------|----------------------------|-------------|--------------|-------------"
         for line in "${sacct_lines[@]}"; do
             [[ -z "$line" ]] && continue
