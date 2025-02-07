@@ -127,7 +127,7 @@ jobstats() {
     echo
 
     # (C) sacct summary
-    echo "=== [3/3] sacct summary (WARNING: Inactive until job completion!) ==="
+    echo "=== [3/3] sacct summary (WARNING: Inactive until job step completion!) ==="
     local sacct_out
     sacct_out="$(
         sacct --noheader \
