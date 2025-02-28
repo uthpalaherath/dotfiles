@@ -13,6 +13,7 @@ Author: Uthpala Herath
 
 from pathlib import Path
 import os
+import shutil
 import sys
 import subprocess
 import glob
@@ -51,8 +52,8 @@ def make_pdf(args):
     dirname = os.path.dirname(infile)
     filename_noext = Path(os.path.basename(infile)).stem
 
-    bibfile = "/Users/uthpala/Dropbox/references-zotero.bib"
-    template = "/Users/uthpala/.pandoc/templates/custom.latex"
+    bibfile = "/Users/uthpala/Dropbox/references-zotero.bib, references.bib"
+    template = "/Users/uthpala/Dropbox/git/dotfiles/latex/custom.latex"
 
     # Constructing the pandoc command with filters and options
     try:
@@ -63,9 +64,10 @@ def make_pdf(args):
             "--number-sections",
             "--filter=/Users/uthpala/miniconda3/envs/py3/bin/pandoc-xnos",
             "--filter=pandoc-crossref",
-            "-M cref=True",
-            "-M xnos-cleveref=True",
-            "-M xnos-capitalise=True",
+            "-M cref=true",
+            "-M xnos-cleveref=true",
+            "-M xnos-capitalise=true",
+            "-M codeBlockCaptions=true",
             "--listings",
             "--natbib",
             "--bibliography=" + bibfile,
@@ -99,9 +101,13 @@ def make_pdf(args):
 
     # cleanup
     cleanlist = ["*.tex", "*.aux", "*.bbl", "*.blg", "*.log", "*.out", "*.bib"]
+    if os.path.exists("references.bib"):
+        shutil.move("references.bib", "references.tmp")
     for cl in cleanlist:
         for f in glob.glob(cl):
             os.remove(f)
+    if os.path.exists("references.tmp"):
+        shutil.move("references.tmp", "references.bib")
 
     return
 
