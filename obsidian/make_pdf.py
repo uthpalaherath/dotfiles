@@ -62,7 +62,8 @@ def make_pdf(args):
         command = [
             "pandoc",
             "--number-sections",
-            "--filter=/Users/uthpala/miniconda3/envs/py3/bin/pandoc-xnos",
+            "--filter=pandoc-xnos",
+            "--filter=pandoc-eqnos",
             "--filter=pandoc-crossref",
             "-M cref=true",
             "-M xnos-cleveref=true",
