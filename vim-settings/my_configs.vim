@@ -667,7 +667,7 @@ au VimEnter *.tex :IndentLinesToggle
 " clean files on exit and key mapping
 augroup vimtex_config
     au!
-    au User VimtexEventQuit if &filetype ==# 'tex' | call vimtex#compiler#clean(0) | endif
+    au User VimtexEventQuit call vimtex#compiler#clean(0)
     "au User VimtexEventQuit call vimtex#latexmk#clean(0)
     au FileType tex nmap <buffer><silent> <leader>t <plug>(vimtex-toc-open)
     au FileType tex nmap <buffer><silent> <leader>v <plug>(vimtex-view)
