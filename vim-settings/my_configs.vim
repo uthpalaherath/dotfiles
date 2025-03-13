@@ -253,6 +253,29 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 hi Directory guifg=#FF0000 ctermfg=blue
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
 
+" Reveal current file
+function! IsNERDTreeOpen()
+  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+endfunction
+
+" Create a function that ensures NERDTree is open and highlights the current file
+function! HighlightInNERDTree() abort
+  " If NERDTree isn't open, open it
+  if !IsNERDTreeOpen()
+    NERDTree
+  endif
+
+  " Highlight the current file iff it's modifiable, non-empty, and we're not in diff mode
+  if &modifiable && strlen(expand('%')) > 0 && !&diff
+    NERDTreeFind
+    " Return to original window
+    wincmd p
+  endif
+endfunction
+
+" Map <leader>n to call the highlight function
+nnoremap <leader>n :call HighlightInNERDTree()<CR>
+
 """ copy to buffer (Only works on Mac)
 " map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
 
