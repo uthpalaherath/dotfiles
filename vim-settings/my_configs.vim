@@ -141,6 +141,15 @@ highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
 
+""" ZRDirDiff settings
+let g:ZFDirDiff_ignoreEmptyDir = 1
+let g:ZFDirDiff_ignoreSpace = 1
+let g:ZFIgnoreOption_ZFDirDiff = {
+            \   'bin' : 1,
+            \   'media' : 1,
+            \   'common' : 1,
+            \ }
+
 " Define function to restore settings
 function! s:RestoreDefaultSettings()
     " Re-enable syntax highlighting
@@ -162,6 +171,15 @@ function! s:RestoreDefaultSettings()
     let g:gitgutter_highlight_linenrs = 1
     let g:gitgutter_preview_win_floating = 0
     let g:gitgutter_diff_args = '-w'
+
+    " Reset ALE settings
+    let g:ale_change_sign_column_color = 0
+    highlight ALEErrorSign ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
+    highlight ALEWarningSign ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
+    highlight ALEInfoSign   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
+    highlight ALEError ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
+    highlight ALEWarning ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
+    highlight ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
 
     " Reset the indentLine plugin
     if exists(':IndentLinesReset')
@@ -206,6 +224,7 @@ augroup MyColorscheme
     autocmd!
     autocmd ColorScheme molokai call s:RestoreDefaultSettings()
 augroup END
+" ---------- End of ZRDirDiff settings ----------
 
 " Use new regular expression engine
 set re=0
@@ -579,15 +598,6 @@ nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
 """ git-time-lapse
 " :GitTimeLapse
 " nmap <Leader>gt <Plug>(git-time-lapse)
-
-""" ZRDirDiff
-let g:ZFDirDiff_ignoreEmptyDir = 1
-let g:ZFDirDiff_ignoreSpace = 1
-let g:ZFIgnoreOption_ZFDirDiff = {
-            \   'bin' : 1,
-            \   'media' : 1,
-            \   'common' : 1,
-            \ }
 
 """ Disable concealing in files
 let g:vim_json_conceal=0
