@@ -181,6 +181,9 @@ function! s:RestoreDefaultSettings()
     highlight ALEWarning ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
     highlight ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
 
+    " Reset nerdtree colors
+    highlight Directory guifg=#FF0000 ctermfg=blue
+
     " Reset the indentLine plugin
     if exists(':IndentLinesReset')
         execute 'IndentLinesReset'
