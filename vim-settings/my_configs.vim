@@ -635,6 +635,11 @@ let g:vim_markdown_conceal_code_blocks = 0
 " turn off line numbers for tex files
 autocmd filetype tex setlocal nonumber norelativenumber
 
+" Only enable vimtex if latexmk is installed
+if !executable('latexmk')
+  let g:vimtex_compiler_enabled = 0
+endif
+
 let g:vimtex_compiler_latexmk = {
         \ 'executable' : 'latexmk',
         \ 'options' : [
