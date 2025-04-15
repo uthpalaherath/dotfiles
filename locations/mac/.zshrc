@@ -274,12 +274,6 @@ export PATH="/Users/uthpala/nbopen/nbopen/:$PATH"
 # p4vasp
 export PATH="/Users/uthpala/apps/p4vasp/bin/:$PATH"
 
-# dotfiles
-export PATH="/Users/uthpala/Dropbox/git/dotfiles/:$PATH"
-
-# MatSciScripts
-export PATH="/Users/uthpala/Dropbox/git/MatSciScripts/:$PATH"
-
 # sod
 export PATH="/Users/uthpala/apps/sod/bin/:$PATH"
 
@@ -386,6 +380,12 @@ export AIMS_SPECIES_DIR="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/de
 export PATH="/Users/uthpala/apps/mushroom/scripts/:$PATH"
 export PYTHONPATH="/Users/uthpala/apps/mushroom/:$PYTHONPATH"
 
+# dotfiles
+export PATH="/Users/uthpala/Dropbox/git/dotfiles/:$PATH"
+
+# MatSciScripts
+export PATH="/Users/uthpala/Dropbox/git/MatSciScripts/:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 # sudo alias
@@ -420,9 +420,10 @@ alias bridges2="ssh -Y uthpala@br012.bridges2.psc.edu"
 alias stampede2="ssh -Y uthpala@stampede2.tacc.utexas.edu"
 alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
-#alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
-alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
+alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
+#alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
 alias materials="ssh -Y ukh@materials.hybrid3.duke.edu"
+alias muchasdb="ssh -Y ukh@vwb3-web-03.egr.duke.edu"
 # alias dcc="ssh -Y ukh@dcc-login.oit.duke.edu"
 alias dcc="ssh -Y ukh@dcc-login-01.oit.duke.edu"
 
@@ -433,6 +434,7 @@ alias mount_timewarp2="umount ~/HPC/timewarp2/home; sshfs -o allow_other,defer_p
 alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
 alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
 alias mount_dcc="umount ~/HPC/dcc/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@dcc-login.oit.duke.edu: ~/HPC/dcc/home"
+alias mount_muchasdb="umount ~/HPC/muchasdb/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@vwb3-web-03.egr.duke.edu: ~/HPC/muchasdb/home"
 
 # git repos
 alias dotrebase='cd /Users/uthpala/dotfiles && git pull --rebase || true && cd -'
