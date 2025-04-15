@@ -6,14 +6,14 @@ prb, showkeys, dvipsnames,
 onecolumn]{revtex4-2}
 
 % font
-% \usepackage[T1]{fontenc}
-% \usepackage{lmodern}
-% \renewcommand{\rmdefault}{lmss}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\renewcommand{\rmdefault}{lmss}
 
 % line spacing
-% \linespread{1.25}
+\linespread{1.25}
 
-\usepackage{ulem}
+\usepackage[normalem]{ulem}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{graphicx}% Include figure files
@@ -31,7 +31,6 @@ onecolumn]{revtex4-2}
 \usepackage{verbatim}
 \usepackage{verbatimbox}
 \usepackage{soul}
-\usepackage{subcaption}
 \usepackage{fancyvrb}
 \usepackage{braket}
 \usepackage{wrapfig}
@@ -40,21 +39,26 @@ onecolumn]{revtex4-2}
 \usepackage{multirow}
 \usepackage{tabularx}
 \usepackage[version=3]{mhchem}
-\usepackage{caption}
 \usepackage{titlesec}
 \usepackage[capitalise]{cleveref}
+\usepackage[most]{tcolorbox}
+\usepackage{upquote}
+\graphicspath{ {./figures/} }
+
+% Remove the following packages if using "longtable"
+\usepackage{caption}
+\usepackage{subcaption}
 \captionsetup[table]{font=small}
 \captionsetup[figure]{font=small}
-\usepackage[most]{tcolorbox}
-\graphicspath{ {./figures/} }
+% \usepackage{longtable}
 
 % Comments
 \setlength{\marginparwidth}{2cm}
 \newcommand{\TODO} [1]
 {\todo[inline,backgroundcolor=lime,size=\small ,bordercolor=gray]{#1}}
 \newcommand{\uthpala} [1]
-{\todo[inline,backgroundcolor=yellow,size=\small ,bordercolor=gray]{{\bf
-Uthpala:} #1}}
+{\todo[inline,backgroundcolor=yellow,size=\small
+,bordercolor=gray]{{\bfseries Uthpala:} #1}}
 
 % Cross-referencing
 \makeatletter
@@ -77,21 +81,26 @@ Uthpala:} #1}}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 \definecolor{light-gray}{gray}{0.95}
+\definecolor{backcolour}{rgb}{0.98,0.98,0.95}
+
+% font for code
+\newcommand{\listingsttfamily}{\fontfamily{IBMPlexMono-TLF}\small}
 
 \lstset{ %
-  backgroundcolor=\color{light-gray},   % choose the background color
-  basicstyle=\ttfamily,        % size of fonts used for the code
+  backgroundcolor=\color{backcolour},   % choose the background color
+  basicstyle=\listingsttfamily,        % size of fonts used for the code
   breaklines=true,                 % automatic line breaking only at whitespace
+  breakindent=0pt,
+  breakautoindent=false,
+  columns=fullflexible,
   captionpos=b,                    % sets the caption-position to bottom
   commentstyle=\color{mygreen},    % comment style
   escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
   keywordstyle=\color{blue},       % keyword style
   stringstyle=\color{mymauve},     % string literal style
-  breakatwhitespace=false,
-  breaklines=true,
   captionpos=b,
   keepspaces=true,
-  upquote=false,
+  upquote=true,
   %numbers=left,
   numbersep=5pt,
   showspaces=false,
@@ -100,18 +109,20 @@ Uthpala:} #1}}
   tabsize=4,
   frame=lrbt,
   xleftmargin=\fboxsep,
-  xrightmargin=-\fboxsep
+  xrightmargin=-\fboxsep,
+  aboveskip={0.9\baselineskip},
+  literate={-}{{-}}1             % force ASCII hyphens for correct copying
 }
 
 % Define a new blockquote environment with your desired style.
 % Then, redefine the quote environment to use blockquote
 \newtcolorbox{blockquote}{
-    colback=light-gray,    % Background color
+    colback=light-gray, % Background color
     grow to right by=-1mm,
     grow to left by=-1mm,
-    boxrule=0pt,          % No border
-    boxsep=0pt,           % No inner padding
-    breakable,            % Allow breaks across pages
+    boxrule=0pt, % No border
+    boxsep=0pt, % No inner padding
+    breakable, % Allow breaks across pages
 }
 \let\oldquote\quote
 \let\endoldquote\endquote
@@ -124,9 +135,20 @@ Uthpala:} #1}}
 
 \begin{document}
 \preprint{APS/123-QED}
+
+% Title alignment
 \titleformat{\section}{\raggedright\bfseries\large}{\thesection.}{1em}{}
 \titleformat{\subsection}{\raggedright\bfseries\normalsize}{\thesubsection.}{1em}{}
 \titleformat{\subsubsection}{\raggedright\bfseries\small}{\thesubsubsection.}{1em}{}
+
+% Title spacing
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+% Paragraph formatting: no indentation and slightly larger space between paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}  % Adjust the space to your liking
 
 \title{Report}
 

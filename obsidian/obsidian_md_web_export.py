@@ -26,7 +26,7 @@ def make_web(args):
 
     # Set directory names (relative to webroot)
     posts = "_posts"
-    images = "images"
+    images = "assets/media"
 
     # Source of the image directory (relative to Markdown file)
     source_str = "attachments"

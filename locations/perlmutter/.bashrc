@@ -60,10 +60,12 @@ export EDITOR="vim"
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u uthpala --format="%.18i %.9P %50j %.8u %.2t %.10M %.6D %R"'
-alias sac="sacct --format="JobID,JobName%30,State,User""
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from perlmutter" && git push && cd -'
 alias dotpull='cd ~/dotfiles && git pull || true && cd -'
+#alias sac="sacct --format="JobID,JobName%-30,State,User""
+#alias sac="sacct -S $(date +%Y-%m-01) -E now -X --format="JobID,JobName%-30,State,WorkDir%-150""
+alias sac="sacct -X --format="JobID,JobName%-30,State,WorkDir%-150""
 
 alias makeINCAR="cp ~/MatSciScripts/INCAR ."
 alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
@@ -86,18 +88,19 @@ export MKL_DYNAMIC=FALSE
 intel(){
     #module load craype-x86-milan
     module load PrgEnv-intel
+    module load intel/2023.2.0
     #module load gpu
     #module load xpmem
     #module load craype-network-ucx
-    source /opt/intel/oneapi/setvars.sh > /dev/null
+    # source /opt/intel/oneapi/setvars.sh > /dev/null
     #export I_MPI_PMI_LIBRARY=/usr/lib64/slurmpmi/libpmi.so
     #module load cudatoolkit/11.7
 }
 
 gnu(){
     module load PrgEnv-gnu
-    export MKLROOT=/opt/intel/oneapi/mkl/2023.2.0
-    export LD_LIBRARY_PATH="/opt/intel/oneapi/mkl/2023.2.0/lib/intel64/:$LD_LIBRARY_PATH"
+    # export MKLROOT=/opt/intel/oneapi/mkl/2023.2.0
+    # export LD_LIBRARY_PATH="/opt/intel/oneapi/mkl/2023.2.0/lib/intel64/:$LD_LIBRARY_PATH"
 
     # module use /global/common/software/m3169/perlmutter/modulefiles
     # module load openmpi
@@ -110,7 +113,6 @@ gnu(){
     # module load cudatoolkit/12.2
     # module load craype-accel-nvidia80
     #module load craype/2.7.30
-    #module load cray-mpich/8.1.28
     # module load craype-network-ucx
     #module load cray-mpich-ucx/8.1.28
 
@@ -123,14 +125,14 @@ gnu(){
 }
 
 cray(){
-    module load PrgEnv-cray/8.3.3
-    module load craype-x86-milan
-    module load gpu
-    module load xpmem
+    module load PrgEnv-cray
+    # module load craype-x86-milan
+    # module load gpu
+    # module load xpmem
 }
 
 #default
-gnu
+#gnu
 
 # programs
 module load cmake/3.24.3

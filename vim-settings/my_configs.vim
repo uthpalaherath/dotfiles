@@ -64,6 +64,7 @@ call plug#end()
 :set fileencoding=utf-8
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
 :set number
+au FileType javascript setl nofen
 
 """ Toggle line wrap
 map <F9> :set wrap!<CR>
@@ -135,19 +136,98 @@ set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 syntax enable
 filetype plugin indent on
 set t_Co=256
-"set termguicolors
 colorscheme molokai
-"highlight Normal ctermbg=NONE
 highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
 
-" colors for vimdiff
+""" ZRDirDiff settings
+let g:ZFDirDiff_ignoreEmptyDir = 1
+let g:ZFDirDiff_ignoreSpace = 1
+let g:ZFIgnoreOption_ZFDirDiff = {
+            \   'bin' : 1,
+            \   'media' : 1,
+            \   'common' : 1,
+            \ }
+
+" Define function to restore settings
+function! s:RestoreDefaultSettings()
+    " Re-enable syntax highlighting
+    syntax enable
+
+    " Reapply custom highlight settings
+    highlight clear SignColumn
+    highlight LineNr ctermbg=235
+    highlight LineNr ctermfg=241
+
+    " Reapply GitGutter highlight settings
+    highlight GitGutterAdd           ctermfg=2   guifg=#008000
+    highlight GitGutterChange        ctermfg=3   guifg=#808000
+    highlight GitGutterDelete        ctermfg=1   guifg=#800000
+    highlight GitGutterChangeDelete  ctermfg=4   guifg=#000080
+
+    " Reapply gitgutter settings
+    let g:gitgutter_override_sign_column_highlight = 0
+    let g:gitgutter_highlight_linenrs = 1
+    let g:gitgutter_preview_win_floating = 0
+    let g:gitgutter_diff_args = '-w'
+
+    " Reset ALE settings
+    let g:ale_change_sign_column_color = 0
+    highlight ALEErrorSign ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
+    highlight ALEWarningSign ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
+    highlight ALEInfoSign   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
+    highlight ALEError ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
+    highlight ALEWarning ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
+    highlight ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
+
+    " Reset nerdtree colors
+    highlight Directory guifg=#FF0000 ctermfg=blue
+
+    " Reset the indentLine plugin
+    if exists(':IndentLinesReset')
+        execute 'IndentLinesReset'
+    else
+        execute 'IndentLinesToggle'
+        execute 'IndentLinesToggle'
+    endif
+
+    " Reapply indentLine settings
+    let g:indentLine_char = '┊'
+
+    " Restore line number settings
+    set number
+    set relativenumber
+endfunction
+
+" Function to update colorscheme based on 'diff' option
+function! s:UpdateDiffColors()
+    if &diff
+        let g:gruvbox_contrast_dark = "soft"
+        colorscheme gruvbox
+    else
+        colorscheme molokai
+        call s:RestoreDefaultSettings()
+    endif
+endfunction
+
+" Apply gruvbox colorscheme if Vim starts in diff mode
 if &diff
-    "syntax off
-    colorscheme gruvbox
-    let g:gruvbox_contrast = "soft"
+    call s:UpdateDiffColors()
 endif
+
+" Autocommand group for handling 'diff' option changes
+augroup MyDiffColors
+    autocmd!
+    autocmd OptionSet diff call s:UpdateDiffColors()
+augroup END
+
+" Autocommand for reapplying settings when molokai is loaded
+augroup MyColorscheme
+    autocmd!
+    autocmd ColorScheme molokai call s:RestoreDefaultSettings()
+augroup END
+" ---------- End of ZRDirDiff settings ----------
 
 " Use new regular expression engine
 set re=0
@@ -172,6 +252,29 @@ let NERDTreeNaturalSort = 1
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 hi Directory guifg=#FF0000 ctermfg=blue
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
+
+" Reveal current file
+function! IsNERDTreeOpen()
+  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+endfunction
+
+" Create a function that ensures NERDTree is open and highlights the current file
+function! HighlightInNERDTree() abort
+  " If NERDTree isn't open, open it
+  if !IsNERDTreeOpen()
+    NERDTree
+  endif
+
+  " Highlight the current file iff it's modifiable, non-empty, and we're not in diff mode
+  if &modifiable && strlen(expand('%')) > 0 && !&diff
+    NERDTreeFind
+    " Return to original window
+    wincmd p
+  endif
+endfunction
+
+" Map <leader>n to call the highlight function
+nnoremap <leader>n :call HighlightInNERDTree()<CR>
 
 """ copy to buffer (Only works on Mac)
 " map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
@@ -522,23 +625,20 @@ nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
 " :GitTimeLapse
 " nmap <Leader>gt <Plug>(git-time-lapse)
 
-""" ZRDirDiff
-let g:ZFDirDiff_ignoreEmptyDir = 1
-let g:ZFDirDiff_ignoreSpace = 1
-let g:ZFIgnoreOption_ZFDirDiff = {
-            \   'bin' : 1,
-            \   'media' : 1,
-            \   'common' : 1,
-            \ }
-
 """ Disable concealing in files
 let g:vim_json_conceal=0
 let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal_code_blocks = 0
 
 """ ---------- LATEX SETTINGS ----------
 
 " turn off line numbers for tex files
 autocmd filetype tex setlocal nonumber norelativenumber
+
+" Only enable vimtex if latexmk is installed
+if !executable('latexmk')
+  let g:vimtex_compiler_enabled = 0
+endif
 
 let g:vimtex_compiler_latexmk = {
         \ 'executable' : 'latexmk',

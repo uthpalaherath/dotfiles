@@ -1,5 +1,5 @@
-# This is a copy of some smart guy's .bash_prompt to make it colorful. Kudos to those who 
-# made and modified it. 
+# This is a copy of some smart guy's .bash_prompt to make it colorful. Kudos to those who
+# made and modified it.
 # - Uthpala Herath
 #
 # @gf3's Sexy Bash Prompt, inspired by “Extravagant Zsh Prompt”
@@ -13,7 +13,7 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
 fi
 
 if tput setaf 1 &> /dev/null; then
-  tput sgr0
+  tput sgr0 >/dev/null  # Redirect output to prevent escape sequences
   if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
     # Changed these colors to fit Solarized theme
     MAGENTA=$(tput setaf 125)
@@ -48,13 +48,16 @@ export WHITE
 export BOLD
 export RESET
 
-function parse_git_dirty() {
-  [[ $(git status 2> /dev/null | tail -n1) != *"working directory clean"* ]] && echo "*"
-}
+# Only define functions and prompt if running interactively
+if [[ $- == *i* ]]; then
+  function parse_git_dirty() {
+    [[ $(git status 2> /dev/null | tail -n1) != *"working directory clean"* ]] && echo "*"
+  }
 
-function parse_git_branch() {
-  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
-}
+  function parse_git_branch() {
+    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
+  }
 
-export PS1="\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\w\[$WHITE\]\$([[ -n \$(git branch 2> /dev/null) ]] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\n\$ \[$RESET\]"
-export PS2="\[$ORANGE\]→ \[$RESET\]"
+  export PS1="\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\w\[$WHITE\]\$([[ -n \$(git branch 2> /dev/null) ]] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\n\$ \[$RESET\]"
+  export PS2="\[$ORANGE\]→ \[$RESET\]"
+fi

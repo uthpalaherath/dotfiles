@@ -23,7 +23,7 @@ if test "0" = "1" \
     || test "x-$PATH_B" = "x-" \
     ; then
     echo "usage:"
-    echo "  sh ZFDirDiff.sh PATH_A PATH_B"
+    echo "dirdiff.sh PATH_A PATH_B"
     exit 1
 fi
 
@@ -31,4 +31,4 @@ if test "x-$ZFDIRDIFF_VIM" = "x-"; then
     ZFDIRDIFF_VIM=vim
 fi
 
-"$ZFDIRDIFF_VIM" -c "call ZFDirDiff(\"$PATH_A\", \"$PATH_B\")"
+"$ZFDIRDIFF_VIM" -c "call ZFDirDiff(\"$PATH_A\", \"$PATH_B\")" +'colorscheme gruvbox' +'let g:gruvbox_contrast_dark = "soft"'

@@ -181,11 +181,7 @@ extract () {
         echo "'$1' is not a valid file!"
     fi
 }
-# Creates directory then moves into it
-mkcdr() {
-  mkdir -p -v $1
-cd $1
-}
+
 # Creates an archive from given directory
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
@@ -212,7 +208,6 @@ umount_all(){
     umount -f /Users/uthpala/HPC/thorny/home
     umount -f /Users/uthpala/HPC/whitehall/home
     umount -f /Users/uthpala/HPC/romeronas/home
-    umount -f /Users/uthpala/HPC/timewarp/home
     umount -f /Users/uthpala/HPC/timewarp2/home
     umount -f /Users/uthpala/HPC/frontera/home
 }
@@ -233,8 +228,9 @@ dump_db(){
 }
 
 # update materials database
-# Usage: update_materials <db_name> <file.sql>
+# Usage: update_db <db_name> <file.sql>
 update_db(){
+   #sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' $2
    mariadb -u uthpala -puthpala1234 -Bse "DROP DATABASE IF EXISTS $1;CREATE DATABASE $1;"
    mariadb -u uthpala -puthpala1234 $1 < $2
 }
@@ -277,12 +273,6 @@ export PATH="/Users/uthpala/nbopen/nbopen/:$PATH"
 
 # p4vasp
 export PATH="/Users/uthpala/apps/p4vasp/bin/:$PATH"
-
-# dotfiles
-export PATH="/Users/uthpala/Dropbox/git/dotfiles/:$PATH"
-
-# MatSciScripts
-export PATH="/Users/uthpala/Dropbox/git/MatSciScripts/:$PATH"
 
 # sod
 export PATH="/Users/uthpala/apps/sod/bin/:$PATH"
@@ -361,6 +351,7 @@ export PATH=$HOME/tsase/bin:$PATH
 export PATH="/Users/uthpala/apps/FHIaims/FHIaims/bin/:$PATH"
 export PATH="/Users/uthpala/apps/FHIaims/FHIaims/utilities/:$PATH"
 export SPECIES_DEFAULTS="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/"
+export AIMS_SPECIES_DEFAULTS="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/"
 
 # nodejs
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
@@ -380,7 +371,25 @@ chruby ruby-3.1.3
 # export LDFLAGS="-L/usr/local/opt/mysql-client/lib"
 # export CPPFLAGS="-I/usr/local/opt/mysql-client/include"
 
+# atomate2
+export ATOMATE2_CONFIG_FILE="/Users/uthpala/atomate-workflows/config/atomate2.yaml"
+export JOBFLOW_CONFIG_FILE="/Users/uthpala/atomate-workflows/config/jobflow.yaml"
+export AIMS_SPECIES_DIR="/Users/uthpala/apps/FHIaims/FHIaims/species_defaults/defaults_2020/"
+
+# mushroom
+export PATH="/Users/uthpala/apps/mushroom/scripts/:$PATH"
+export PYTHONPATH="/Users/uthpala/apps/mushroom/:$PYTHONPATH"
+
+# dotfiles
+export PATH="/Users/uthpala/Dropbox/git/dotfiles/:$PATH"
+
+# MatSciScripts
+export PATH="/Users/uthpala/Dropbox/git/MatSciScripts/:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
+
+# sudo alias
+alias sudo='sudo '
 
 # WVU Connections
 # logging through ssh.wvu.edu
@@ -407,23 +416,25 @@ alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-
 
 # Other ssh connections
 alias bridges2="ssh -Y uthpala@br012.bridges2.psc.edu"
-alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
-alias cori="ssh -Y uthpala@cori.nersc.gov"
-alias timewarp='ssh -Y ukh@timewarp.egr.duke.edu'
+# alias stampede2="ssh -Y uthpala@login1.stampede2.tacc.utexas.edu"
+alias stampede2="ssh -Y uthpala@stampede2.tacc.utexas.edu"
 alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
-#alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
-alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
+alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
+#alias frontera="ssh -Y uthpala@login1.frontera.tacc.utexas.edu"
 alias materials="ssh -Y ukh@materials.hybrid3.duke.edu"
+alias muchasdb="ssh -Y ukh@vwb3-web-03.egr.duke.edu"
+# alias dcc="ssh -Y ukh@dcc-login.oit.duke.edu"
+alias dcc="ssh -Y ukh@dcc-login-01.oit.duke.edu"
 
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
 alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
-alias mount_timewarp="umount ~/HPC/timewarp/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp.egr.duke.edu: ~/HPC/timewarp/home"
 alias mount_timewarp2="umount ~/HPC/timewarp2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp2/home"
-alias mount_cori="umount ~/HPC/cori/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@cori.nersc.gov: ~/HPC/cori/home"
 alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
 alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
+alias mount_dcc="umount ~/HPC/dcc/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@dcc-login.oit.duke.edu: ~/HPC/dcc/home"
+alias mount_muchasdb="umount ~/HPC/muchasdb/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@vwb3-web-03.egr.duke.edu: ~/HPC/muchasdb/home"
 
 # git repos
 alias dotrebase='cd /Users/uthpala/dotfiles && git pull --rebase || true && cd -'
@@ -441,7 +452,7 @@ alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
 alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 alias ctags="`brew --prefix`/bin/ctags"
-alias createbib="ln ~/Dropbox/references-zotero.bib"
+alias createbib="ln /Users/uthpala/Dropbox/references-zotero.bib"
 
 # docker
 alias cleandocker="docker image prune -a -f && docker volume prune -f"
@@ -449,3 +460,9 @@ alias cleandockerall="docker system prune -a -f"
 
 # mariadb
 alias db="mariadb -u uthpala -p'uthpala1234'"
+
+# delete all .DS_Store files
+alias cleands="find . -name ".DS_Store" -type f -delete"
+
+# cleanup cache
+alias cleanup="rm -rf ~/Library/Caches/ ~/Library/Logs /Library/Caches/ /System/Library/Caches/ /Library/Logs/"
