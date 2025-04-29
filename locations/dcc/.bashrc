@@ -73,12 +73,16 @@ export EDITOR="vim"
 # Modules
 export MODULEPATH="/hpc/group/coursess25/ME511/modulefiles/:$MODULEPATH"
 export MODULEPATH="/hpc/group/coursess25/ME511/intel/oneapi/modulefiles/:$MODULEPATH"
+# export MODULEPATH="/hpc/group/blumlab/modulefiles/:$MODULEPATH"
+# export MODULEPATH="/hpc/group/blumlab/intel/oneapi/modulefiles/:$MODULEPATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
-alias sac="sacct --format="JobID,JobName%30,State,User""
 alias interact="salloc --nodes 1 --ntasks-per-node=20 --qos interactive --time 04:00:00"
+#alias sac="sacct --format="JobID,JobName%-30,State,User""
+#alias sac="sacct -S $(date +%Y-%m-01) -E now -X --format="JobID,JobName%-30,State,WorkDir%-150""
+alias sac="sacct -X --format="JobID,JobName%-30,State,nodelist%-30,WorkDir%-150""
 
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from timewarp" && git push && cd -'
@@ -220,8 +224,8 @@ export LD_LIBRARY_PATH="/hpc/home/ukh/libs/lapack-3.12.1/:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH="/hpc/home/ukh/libs/scalapack-2.2.2/:$LD_LIBRARY_PATH"
 
 # FHI-aims
-export PATH="/hpc/home/ukh/local/FHIaims/FHIaims-intel/bin/:$PATH"
-export PATH="/hpc/home/ukh/local/FHIaims/FHIaims-intel/utilities/:$PATH"
+# export PATH="/hpc/home/ukh/local/FHIaims/FHIaims-intel/bin/:$PATH"
+# export PATH="/hpc/home/ukh/local/FHIaims/FHIaims-intel/utilities/:$PATH"
 
 # NVM
 export NVM_DIR="$HOME/.nvm"

@@ -476,6 +476,9 @@ set diffexpr=""
 "    }
 "}
 
+" disable warning
+let g:coc_disable_startup_warning = 1
+
 " Install extensions
 let g:coc_global_extensions = ['coc-snippets', 'coc-clangd', 'coc-python']
 
