@@ -227,6 +227,13 @@ augroup MyColorscheme
     autocmd!
     autocmd ColorScheme molokai call s:RestoreDefaultSettings()
 augroup END
+
+" Settings for the dirdff.sh script
+augroup ZFDirDiffGruvbox
+  autocmd!
+  autocmd TabEnter * if exists('g:ZFDirDiff_tabOpened') | let g:gruvbox_contrast_dark = "soft" | colorscheme gruvbox | endif
+augroup END
+
 " ---------- End of ZRDirDiff settings ----------
 
 " Use new regular expression engine

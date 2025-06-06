@@ -186,6 +186,9 @@ showkeys, dvipsnames, onecolumn]{revtex4-2}
 \titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 \titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 
+% Section numbering in Roman numerals
+\renewcommand{\thesection}{\Roman{section}}
+
 % Paragraph formatting: no indentation and slightly larger space between paragraphs
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}  % Adjust the space to your liking

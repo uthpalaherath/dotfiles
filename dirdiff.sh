@@ -31,4 +31,4 @@ if test "x-$ZFDIRDIFF_VIM" = "x-"; then
     ZFDIRDIFF_VIM=vim
 fi
 
-"$ZFDIRDIFF_VIM" -c "call ZFDirDiff(\"$PATH_A\", \"$PATH_B\")" +'colorscheme gruvbox' +'let g:gruvbox_contrast_dark = "soft"'
+"$ZFDIRDIFF_VIM" -c 'let g:ZFDirDiff_tabOpened = 1 | call ZFDirDiff("'"$PATH_A"'", "'"$PATH_B"'")'
