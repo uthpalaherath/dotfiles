@@ -1,0 +1,25 @@
+/* Adjust the embedded PDF container */
+div.internal-embed[src$=".pdf"] {
+    width: 50%; /* Set the container width to 50% */
+    overflow: auto; /* Enable scrollbars when content overflows */
+    margin: 0 auto; /* Center the container */
+    display: block;
+    height: auto;
+}
+
+/* Adjust the PDF viewer container */
+div.internal-embed[src$=".pdf"] .pdf-viewer-container {
+    width: 50%; /* Fill the outer container */
+    height: auto;
+    margin: 0;
+    overflow: auto; /* Allow content to overflow */
+}
+
+/* Ensure the PDF content fills the viewer container */
+div.internal-embed[src$=".pdf"] .pdf-viewer-container embed,
+div.internal-embed[src$=".pdf"] .pdf-viewer-container iframe,
+div.internal-embed[src$=".pdf"] .pdf-viewer-container object {
+    width: 100%; /* Fill the viewer container */
+    height: auto;
+    display: block;
+}

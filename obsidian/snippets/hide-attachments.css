@@ -1,0 +1,8 @@
+/* Hide any folder named attachments-<anything> anywhere in the vault */
+.nav-folder-title[data-path^="attachments-"],
+.nav-folder-title[data-path*="/attachments-"],
+/* Hide its children container too, so nothing dangles */
+.nav-folder-title[data-path^="attachments-"] + .nav-folder-children,
+.nav-folder-title[data-path*="/attachments-"] + .nav-folder-children {
+  display: none !important;
+}
