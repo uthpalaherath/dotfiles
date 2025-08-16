@@ -1,0 +1,1 @@
+Lua filters borrowed from https://github.com/zcysxy/obsidian-pandoc-filters.

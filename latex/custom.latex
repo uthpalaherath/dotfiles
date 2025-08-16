@@ -45,6 +45,10 @@ showkeys, dvipsnames, onecolumn]{revtex4-2}
 \usepackage{upquote}
 \graphicspath{ {./figures/} }
 
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
 % Remove the following packages if using "longtable"
 % \usepackage{caption}
 % \usepackage{subcaption}
