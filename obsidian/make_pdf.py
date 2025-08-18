@@ -191,12 +191,18 @@ def make_pdf(argv):
 
     # --- Cleanup ---
     try:
-        stash_path = None
-        local_refs = workdir / "references.bib"
-        if local_refs.exists():
-            stash_path = workdir / "references.tmp"
-            shutil.move(str(local_refs), str(stash_path))
+        # Remove system generated .bib (basename.bib)
+        for bib in workdir.glob("*.bib"):
+            try:
+                txt = bib.read_text(errors="ignore")
+                lines = [ln.strip() for ln in txt.splitlines() if ln.strip()]
+                if lines and all(ln.startswith("@CONTROL") for ln in lines):
+                    bib.unlink()
+                    print(f"Removed transient control bib: {bib.name}")
+            except Exception:
+                pass
 
+        # Remove typical LaTeX/Pandoc build artifacts
         for pattern in [
             "*.aux",
             "*.bbl",
@@ -215,9 +221,6 @@ def make_pdf(argv):
                     f.unlink()
                 except Exception:
                     pass
-
-        if stash_path and stash_path.exists():
-            shutil.move(str(stash_path), str(local_refs))
 
     except Exception as e:
         print(f"[WARN] Cleanup encountered an issue: {e}")
