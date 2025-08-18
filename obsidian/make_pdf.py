@@ -26,11 +26,8 @@ OBSIDIAN_FILTERS_ROOT = Path("/Users/uthpala/Dropbox/git/dotfiles/obsidian/filte
 # LaTeX template (preamble included)
 LATEX_TEMPLATE = Path("/Users/uthpala/Dropbox/git/dotfiles/latex/custom.latex")
 
-# Bibliographies
-BIB_FILES = [
-    "/Users/uthpala/Dropbox/references-zotero.bib",
-    "references.bib",
-]
+# Primary Zotero bibliography
+MAIN_BIB = Path("/Users/uthpala/Dropbox/references-zotero.bib")
 
 # If True: use citeproc (no bibtex). If False: use natbib + bibtex multi-pass.
 USE_CITEPROC = False
@@ -117,8 +114,24 @@ def make_pdf(argv):
         "toccolor=gray",
     ]
 
-    # Bibliographies
-    for bf in BIB_FILES:
+    # ---- Collect bibliography files ----
+    # Always include MAIN_BIB, plus any *.bib in the working directory.
+    bib_files = [str(MAIN_BIB)]
+
+    local_bibs = sorted(p for p in workdir.glob("*.bib") if p.is_file())
+
+    main_bib_resolved = MAIN_BIB.resolve()
+    for bf in local_bibs:
+        try:
+            if bf.resolve() != main_bib_resolved:
+                # Use a clean relative path (or just filename) for local bibs
+                bib_files.append(bf.name)  # equivalent to os.path.relpath(bf, workdir)
+        except FileNotFoundError:
+            # Skip broken symlinks gracefully
+            continue
+
+    # Add bibliographies to pandoc command
+    for bf in bib_files:
         pandoc_cmd.extend(["--bibliography", bf])
 
     # Add Lua filters
