@@ -38,9 +38,11 @@ ys_hg_prompt_info() {
 	fi
 }
 
+# print a blank line before every prompt
+precmd() { print }
+
 # Prompt format: \n # USER at MACHINE in DIRECTORY on git:BRANCH STATE [TIME] \n $
-PROMPT="
-%(1V.(%1v) .)%{$terminfo[bold]$fg[blue]%}#%{$reset_color%} \
+PROMPT="%(1V.(%1v) .)%{$terminfo[bold]$fg[blue]%}#%{$reset_color%} \
 %{$fg[cyan]%}%n \
 %{$fg[white]%}at \
 %{$fg[green]%}$(box_name) \

@@ -30,11 +30,11 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'preservim/tagbar'
 Plug 'djoshea/vim-autoread'
 Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'hanschen/vim-ipython-cell'
 Plug 'szw/vim-maximizer'
+Plug 'jpalardy/vim-slime', { 'for': 'python' }
+Plug 'hanschen/vim-ipython-cell', { 'for': 'python' }
 Plug 'pixelneo/vim-python-docstring'
 Plug 'kshenoy/vim-signature'
-Plug 'jpalardy/vim-slime'
 Plug 'psliwka/vim-smoothie'
 Plug 'ZSaberLv0/ZFVimDirDiff'
 Plug 'ZSaberLv0/ZFVimJob'
