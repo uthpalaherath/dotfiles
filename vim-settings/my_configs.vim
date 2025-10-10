@@ -43,6 +43,7 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'adah1972/vim-copy-as-rtf'
 "Plug 'mhinz/vim-startify'
 
 " Latex plugins

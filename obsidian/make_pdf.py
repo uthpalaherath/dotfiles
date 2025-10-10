@@ -21,13 +21,13 @@ import subprocess
 # =========================
 
 # Location of Lua filters
-OBSIDIAN_FILTERS_ROOT = Path("/Users/uthpala/Dropbox/git/dotfiles/obsidian/filters")
+OBSIDIAN_FILTERS_ROOT = Path("/Users/ukh/Library/CloudStorage/Dropbox/git/dotfiles/obsidian/filters")
 
 # LaTeX template (preamble included)
-LATEX_TEMPLATE = Path("/Users/uthpala/Dropbox/git/dotfiles/latex/custom.latex")
+LATEX_TEMPLATE = Path("/Users/ukh/Library/CloudStorage/Dropbox/git/dotfiles/latex/custom.latex")
 
 # Primary Zotero bibliography
-MAIN_BIB = Path("/Users/uthpala/Dropbox/references-zotero.bib")
+MAIN_BIB = Path("/Users/ukh/Library/CloudStorage/Dropbox/references-zotero.bib")
 
 # If True: use citeproc (no bibtex). If False: use natbib + bibtex multi-pass.
 USE_CITEPROC = False
