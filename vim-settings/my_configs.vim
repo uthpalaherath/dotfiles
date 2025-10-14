@@ -137,7 +137,9 @@ set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 syntax enable
 filetype plugin indent on
 set t_Co=256
-colorscheme molokai
+"colorscheme molokai
+let g:gruvbox_contrast_dark = "medium"
+colorscheme gruvbox
 highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
@@ -202,37 +204,37 @@ function! s:RestoreDefaultSettings()
 endfunction
 
 " Function to update colorscheme based on 'diff' option
-function! s:UpdateDiffColors()
-    if &diff
-        let g:gruvbox_contrast_dark = "soft"
-        colorscheme gruvbox
-    else
-        colorscheme molokai
-        call s:RestoreDefaultSettings()
-    endif
-endfunction
+" function! s:UpdateDiffColors()
+"     if &diff
+"         let g:gruvbox_contrast_dark = "soft"
+"         colorscheme gruvbox
+"     else
+"         colorscheme molokai
+"         call s:RestoreDefaultSettings()
+"     endif
+" endfunction
 
 " Apply gruvbox colorscheme if Vim starts in diff mode
-if &diff
-    call s:UpdateDiffColors()
-endif
+" if &diff
+"     call s:UpdateDiffColors()
+" endif
 
 " Autocommand group for handling 'diff' option changes
-augroup MyDiffColors
-    autocmd!
-    autocmd OptionSet diff call s:UpdateDiffColors()
-augroup END
+" augroup MyDiffColors
+"     autocmd!
+"     autocmd OptionSet diff call s:UpdateDiffColors()
+" augroup END
 
 " Autocommand for reapplying settings when molokai is loaded
-augroup MyColorscheme
-    autocmd!
-    autocmd ColorScheme molokai call s:RestoreDefaultSettings()
-augroup END
+" augroup MyColorscheme
+"     autocmd!
+"     autocmd ColorScheme molokai call s:RestoreDefaultSettings()
+" augroup END
 
 " Settings for the dirdff.sh script
 augroup ZFDirDiffGruvbox
   autocmd!
-  autocmd TabEnter * if exists('g:ZFDirDiff_tabOpened') | let g:gruvbox_contrast_dark = "soft" | colorscheme gruvbox | endif
+  autocmd TabEnter * if exists('g:ZFDirDiff_tabOpened') | let g:gruvbox_contrast_dark = "medium" | colorscheme gruvbox | endif
 augroup END
 
 " ---------- End of ZRDirDiff settings ----------
