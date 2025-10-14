@@ -643,6 +643,9 @@ let g:vim_json_conceal=0
 let g:vim_markdown_conceal = 0
 let g:vim_markdown_conceal_code_blocks = 0
 
+""" vim-copy-as-rtf
+let g:copy_as_rtf_silence_on_errors = 1
+
 """ ---------- LATEX SETTINGS ----------
 
 " turn off line numbers for tex files
