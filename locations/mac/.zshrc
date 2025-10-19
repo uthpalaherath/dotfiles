@@ -219,8 +219,8 @@ alias stampede2="ssh -Y uthpala@stampede2.tacc.utexas.edu"
 alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
-alias materials="ssh -Y ukh@materials.hybrid3.duke.edu"
-alias muchasdb="ssh -Y ukh@vwb3-web-03.egr.duke.edu"
+alias hybrid3="ssh -Y ukh@vwb3-web-06.egr.duke.edu" #alias: materials.hybrid3.duke.edu
+alias muchasdb="ssh -Y ukh@vwb3-web-04.egr.duke.edu" #alias: materials.hybrid3.duke.edu
 alias dcc="ssh -Y ukh@dcc-login.oit.duke.edu"
 alias ncshare="ssh -Y uherathmudiyanselage1@login.ncshare.org"
 
