@@ -222,13 +222,18 @@ $endif$
 \subtitle{$subtitle$}
 $endif$
 
-\author{$for(author)$$author$$sep$ \and $endfor$}
+$if(author)$
+  \author{$for(author)$$author$$sep$ \and $endfor$}
+$else$
+  \author{Uthpala Herath}
+$endif$
 \email{uthpala.herath@duke.edu}
 % \altaffiliation[Also at]{
 % }
 \affiliation{
-Department of Mechanical Engineering and Materials Science,
-Duke University, Durham, NC 27708, USA
+Research Computing \& Support Services\\
+Duke Office of Information Technology\\
+Duke University, Durham, NC 27701, USA\\
 }
 $if(date)$
 \date{$date$}

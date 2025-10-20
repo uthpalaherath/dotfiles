@@ -15,6 +15,7 @@ import os
 import shutil
 import sys
 import subprocess
+import re
 
 # =========================
 # ---- USER SETTINGS ------
@@ -75,7 +76,13 @@ def make_pdf(argv):
         sys.exit(1)
 
     workdir = infile.parent
-    basename = infile.stem
+
+    raw_basename = infile.stem
+
+    # replace whitespace with underscore, drop any other non-word / non - characters
+    basename = re.sub(r"[^\w\-]", "_", raw_basename).strip("_")
+    if not basename:
+        basename = "pandoc_output"
 
     # Lua filters
     lua_filters_ordered = [
@@ -97,7 +104,7 @@ def make_pdf(argv):
         "--number-sections",
         "-f",
         "markdown+tex_math_single_backslash+wikilinks_title_after_pipe+mark+autolink_bare_uris+pipe_tables",
-        "--listings",
+        "--syntax-highlighting=idiomatic",
         "-s",
         str(infile),
         "-o",
