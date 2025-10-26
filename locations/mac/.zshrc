@@ -13,7 +13,7 @@ ZSH_THEME="honukai"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions fzf) # copydir dirhistory macos)
+plugins=(git zsh-autosuggestions fzf zsh-syntax-highlighting) # copydir dirhistory macos)
 DISABLE_UNTRACKED_FILES_DIRTY="false"
 
 ## Plugin settings
@@ -87,6 +87,7 @@ tm(){
         tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
     fi
 }
+#tm
 
 #FZF
 export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
@@ -104,6 +105,15 @@ export EDITOR="vim"
 # Perl warning fix
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
+
+# history setup
+HISTFILE=$HOME/.zhistory
+SAVEHIST=1000
+HISTSIZE=999
+setopt share_history
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_verify
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -263,3 +273,7 @@ alias cleands="find . -name ".DS_Store" -type f -delete"
 
 # cleanup cache
 alias cleanup="rm -rf ~/Library/Caches/ ~/Library/Logs /Library/Caches/ /System/Library/Caches/ /Library/Logs/"
+#source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# box folder
+alias box="cd /Users/ukh/Library/CloudStorage/Box-Box"
