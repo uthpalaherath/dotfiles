@@ -172,14 +172,14 @@ update_db(){
 #------------------------------------------- PATHS -------------------------------------------
 
 # dotfiles
-export PATH="/Users/uthpala/Dropbox/git/dotfiles/:$PATH"
+export PATH="/Users/ukh/git/dotfiles/:$PATH"
 
 # MatSciScripts
-export PATH="/Users/uthpala/Dropbox/git/MatSciScripts/:$PATH"
+export PATH="/Users/ukh/git/MatSciScripts/:$PATH"
 
 # Matplotlib
-export PYTHONPATH="/Users/ukh/Dropbox/git/dotfiles/matplotlib/:$PYTHONPATH"
-export MPLCONFIGDIR="/Users/ukh/Dropbox/git/dotfiles/matplotlib/"
+export PYTHONPATH="/Users/ukh/git/dotfiles/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/Users/ukh/git/dotfiles/matplotlib/"
 
 # System library
 export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/:$DYLD_LIBRARY_PATH"
@@ -249,9 +249,9 @@ alias dotpush='cd /Users/ukh/dotfiles && git add . && git commit -m "Update from
 alias dotpull='cd /Users/ukh/dotfiles && git pull || true && cd -'
 
 # Generate files
-alias makeINCAR="cp /Users/ukh/Dropbox/git/MatSciScripts/INCAR ."
-alias makeKPOINTS="cp /Users/ukh/Dropbox/git/MatSciScripts/KPOINTS ."
-alias makereport="cp /Users/ukh/Dropbox/git/dotfiles/templates/report.tex ."
+alias makeINCAR="cp /Users/ukh/git/MatSciScripts/INCAR ."
+alias makeKPOINTS="cp /Users/ukh/git/MatSciScripts/KPOINTS ."
+alias makereport="cp /Users/ukh/git/dotfiles/templates/report.tex ."
 
 # Other system aliases
 alias cleantmux='tmux kill-session -a'
