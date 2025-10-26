@@ -38,7 +38,7 @@ def make_web(args):
     """Renames image paths and copies files to destination."""
 
     # Set the root directory of the website
-    webroot = "/Users/uthpala/Dropbox/git/uthpalaherath.github.io"
+    webroot = "/Users/ukh/git/uthpalaherath.github.io"
 
     # Set directory names (relative to webroot)
     posts = "_posts"
