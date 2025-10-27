@@ -1,5 +1,6 @@
 # This is a copy of some smart guy's .bash_prompt to make it colorful. Kudos to those who
-# made and modified it.
+# made and modified it. Also, thanks to ChatGPT for the help with making the git symbols
+# change color.
 # - Uthpala Herath
 #
 # @gf3's Sexy Bash Prompt, inspired by “Extravagant Zsh Prompt”
@@ -19,13 +20,16 @@ if tput setaf 1 &> /dev/null; then
     MAGENTA=$(tput setaf 125)
     ORANGE=$(tput setaf 166)
     GREEN=$(tput setaf 64)
+    RED=$(tput setaf 160)
     PURPLE=$(tput setaf 61)
     WHITE=$(tput setaf 244)
   else
+    # Fallback 16-color
     MAGENTA=$(tput setaf 5)
-    ORANGE=$(tput setaf 4)
+    ORANGE=$(tput setaf 3)
     GREEN=$(tput setaf 2)
-    PURPLE=$(tput setaf 1)
+    RED=$(tput setaf 1)
+    PURPLE=$(tput setaf 4)
     WHITE=$(tput setaf 7)
   fi
   BOLD=$(tput bold)
@@ -34,35 +38,86 @@ else
   MAGENTA="\033[1;31m"
   ORANGE="\033[1;33m"
   GREEN="\033[1;32m"
+  RED="\033[1;31m"
   PURPLE="\033[1;35m"
   WHITE="\033[1;37m"
   BOLD=""
   RESET="\033[m"
 fi
 
-export MAGENTA ORANGE GREEN PURPLE WHITE BOLD RESET
+# Build PS1-safe wrapped versions of colors
+PURPLE_PS="\\[${PURPLE}\\]"
+RED_PS="\\[${RED}\\]"
+GREEN_PS="\\[${GREEN}\\]"
+WHITE_PS="\\[${WHITE}\\]"
+BOLD_PS="\\[${BOLD}\\]"
+MAGENTA_PS="\\[${MAGENTA}\\]"
+ORANGE_PS="\\[${ORANGE}\\]"
+RESET_PS="\\[${RESET}\\]"
 
-# Only define prompt for interactive shells
+export MAGENTA ORANGE GREEN RED PURPLE WHITE BOLD RESET
+export PURPLE_PS RED_PS GREEN_PS WHITE_PS BOLD_PS MAGENTA_PS ORANGE_PS RESET_PS
+
+# ---------- Only for interactive shells ----------
 if [[ $- == *i* ]]; then
-  parse_git_dirty() {
-    git rev-parse --git-dir >/dev/null 2>&1 || return
-    if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
-      echo "*"
+
+  PS1_GITDIRTY_CACHE_AGE=${PS1_GITDIRTY_CACHE_AGE:-2}
+
+  _file_mtime() {
+    if stat -c %Y "$1" >/dev/null 2>&1; then
+      stat -c %Y "$1" 2>/dev/null || echo 0
+    else
+      stat -f %m "$1" 2>/dev/null || echo 0
     fi
   }
 
-  parse_git_branch() {
+  parse_git_dirty_status() {
+    git rev-parse --git-dir >/dev/null 2>&1 || { echo "none"; return; }
+    local gitdir cachefile now cache_mtime age
+    gitdir=$(git rev-parse --git-dir 2>/dev/null) || { echo "none"; return; }
+    cachefile="${gitdir%/}/.gitprompt_dirtyflag"
+    now=$(date +%s)
+    if [[ -f "$cachefile" ]]; then
+      cache_mtime=$(_file_mtime "$cachefile")
+      age=$(( now - cache_mtime ))
+    else
+      age=$(( PS1_GITDIRTY_CACHE_AGE + 1 ))
+    fi
+    if (( age < PS1_GITDIRTY_CACHE_AGE )); then
+      cat "$cachefile"
+      return
+    fi
+    if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+      echo "dirty" > "${cachefile}.tmp" && mv "${cachefile}.tmp" "$cachefile"
+      echo "dirty"
+    else
+      echo "clean" > "${cachefile}.tmp" && mv "${cachefile}.tmp" "$cachefile"
+      echo "clean"
+    fi
+  }
+
+  parse_git_branch_name() {
     git rev-parse --git-dir >/dev/null 2>&1 || return
-    branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null \
-             || git describe --tags --always 2>/dev/null)
-    [[ -n "$branch" ]] && printf "%s%s" "$branch" "$(parse_git_dirty)"
+    git symbolic-ref --quiet --short HEAD 2>/dev/null || git describe --tags --always 2>/dev/null
   }
 
   git_on() {
-    git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo " on "
+    git rev-parse --is-inside-work-tree >/dev/null 2>&1 && printf " on "
   }
 
-  export PS1="\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\w\[$WHITE\]\$([ -n \"\$(git rev-parse --is-inside-work-tree 2>/dev/null)\" ] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\n\$ \[$RESET\]"
-  export PS2="\[$ORANGE\]→ \[$RESET\]"
+  # Build PS1 using the pre-wrapped color variables. parse_* functions return printable text only.
+  export PS1="${BOLD_PS}${MAGENTA_PS}\\u ${WHITE_PS}at ${ORANGE_PS}\\h ${WHITE_PS}in ${GREEN_PS}\\w${WHITE_PS}\$( \
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then \
+      branch=\$(parse_git_branch_name); \
+      status=\$(parse_git_dirty_status); \
+      if [[ \"\$status\" == \"dirty\" ]]; then \
+        printf '%s%s%s %s%s' \"\$(git_on)\" \"${PURPLE_PS}\" \"\$branch\" \"${RED_PS}\" '✖︎' ; \
+      elif [[ \"\$status\" == \"clean\" ]]; then \
+        printf '%s%s%s %s%s' \"\$(git_on)\" \"${PURPLE_PS}\" \"\$branch\" \"${GREEN_PS}\" '●' ; \
+      fi; \
+    fi \
+  )${WHITE_PS}\n\\$ ${RESET_PS}"
+
+  export PS2="${ORANGE_PS}→ ${RESET_PS}"
   PROMPT_COMMAND='echo'
 fi
