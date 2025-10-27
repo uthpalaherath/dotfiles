@@ -42,7 +42,8 @@ ys_hg_prompt_info() {
 precmd() { print }
 
 # Prompt format: \n # USER at MACHINE in DIRECTORY on git:BRANCH STATE [TIME] \n $
-PROMPT="%(1V.(%1v) .)%{$terminfo[bold]$fg[blue]%}#%{$reset_color%} \
+# PROMPT="%(1V.(%1v) .)%{$terminfo[bold]$fg[blue]%}#%{$reset_color%} \
+PROMPT="%(1V.(%1v) .)%{$terminfo[bold]$fg[blue]%}%{$reset_color%}\
 %{$fg[cyan]%}%n \
 %{$fg[white]%}at \
 %{$fg[green]%}$(box_name) \
@@ -51,7 +52,8 @@ PROMPT="%(1V.(%1v) .)%{$terminfo[bold]$fg[blue]%}#%{$reset_color%} \
 ${hg_info}\
 ${git_info} \
 %[%*]
-%{$terminfo[bold]$fg[red]%}→ %{$reset_color%}"
+%{$terminfo[bold]$fg[red]%}$ %{$reset_color%}"
+#%{$terminfo[bold]$fg[red]%}→ %{$reset_color%}"
 
 if [[ "$USER" == "root" ]]; then
 PROMPT="
