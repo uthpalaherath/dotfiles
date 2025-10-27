@@ -13,7 +13,7 @@ ZSH_THEME="honukai"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions fzf zsh-syntax-highlighting) # copydir dirhistory macos)
+plugins=(git zsh-autosuggestions fzf zsh-syntax-highlighting web-search) # copydir dirhistory macos)
 DISABLE_UNTRACKED_FILES_DIRTY="false"
 
 # zsh-autosuggestions
