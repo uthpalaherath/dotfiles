@@ -3,6 +3,12 @@
   "coc.preferences.snippets.enable": true,
   "suggest.snippetIndicator": "",
   "suggest.noselect": true,
+  "snippets.ultisnips.pythonPrompt": false,
+
+  "pyright.inlayHints.functionReturnTypes": false,
+  "pyright.inlayHints.variableTypes": false,
+  "pyright.inlayHints.parameterTypes": false,
+  "python.linting.flake8Enabled":true,
 
   "languageserver": {
      "fortran": {
