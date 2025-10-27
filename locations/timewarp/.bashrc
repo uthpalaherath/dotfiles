@@ -114,16 +114,29 @@ intel18(){
 }
 
 intel2024(){
-    source /home/ukh/intel/oneapi/setvars.sh --force > /dev/null
-    export LD_LIBRARY_PATH="/home/ukh/intel/oneapi/2024.1/lib/:$LD_LIBRARY_PATH"
+    source /home/ukh/intel/intel-2024/oneapi/setvars.sh --force > /dev/null
+    export LD_LIBRARY_PATH="/home/ukh/intel/intel-2024/oneapi/2024.1/lib/:$LD_LIBRARY_PATH"
 
     # compilers
-    export CC="mpiicc"
-    export CXX="mpiicpc"
-    export FC="mpiifort"
-    export MPICC="mpiicc"
-    export MPIFC="mpiifort"
+    export CC="mpiicx"
+    export CXX="mpiicpx"
+    export FC="mpiifx"
+    export MPICC="mpiicx"
+    export MPIFC="mpiifx"
 }
+
+intel2025(){
+    source /home/ukh/intel/intel-2025/oneapi/setvars.sh --force > /dev/null
+    export LD_LIBRARY_PATH="/home/ukh/intel/oneapi/2025.0/lib/:$LD_LIBRARY_PATH"
+
+    # compilers
+    export CC="mpiicx"
+    export CXX="mpiicpx"
+    export FC="mpiifx"
+    export MPICC="mpiicx"
+    export MPIFC="mpiifx"
+}
+
 
 gnu(){
     # module load gcc-7.5
@@ -202,11 +215,7 @@ else
 echo "'$1' is not a valid file!"
 fi
 }
-# Creates directory then moves into it
-mkcdr() {
-  mkdir -p -v $1
-cd $1
-}
+
 # Creates an archive from given directory
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
