@@ -6,6 +6,7 @@
 # Shamelessly copied from https://github.com/gf3/dotfiles
 # Screenshot: http://i.imgur.com/s0Blh.png
 
+# Color setup
 if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
   export TERM=gnome-256color
 elif infocmp xterm-256color >/dev/null 2>&1; then
@@ -13,9 +14,8 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
 fi
 
 if tput setaf 1 &> /dev/null; then
-  tput sgr0 >/dev/null  # Redirect output to prevent escape sequences
+  tput sgr0 >/dev/null
   if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
-    # Changed these colors to fit Solarized theme
     MAGENTA=$(tput setaf 125)
     ORANGE=$(tput setaf 166)
     GREEN=$(tput setaf 64)
@@ -40,25 +40,29 @@ else
   RESET="\033[m"
 fi
 
-export MAGENTA
-export ORANGE
-export GREEN
-export PURPLE
-export WHITE
-export BOLD
-export RESET
+export MAGENTA ORANGE GREEN PURPLE WHITE BOLD RESET
 
-# Only define functions and prompt if running interactively
+# Only define prompt for interactive shells
 if [[ $- == *i* ]]; then
-  function parse_git_dirty() {
-    [[ $(git status 2> /dev/null | tail -n1) != *"working directory clean"* ]] && echo "*"
+  parse_git_dirty() {
+    git rev-parse --git-dir >/dev/null 2>&1 || return
+    if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+      echo "*"
+    fi
   }
 
-  function parse_git_branch() {
-    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
+  parse_git_branch() {
+    git rev-parse --git-dir >/dev/null 2>&1 || return
+    branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null \
+             || git describe --tags --always 2>/dev/null)
+    [[ -n "$branch" ]] && printf "%s%s" "$branch" "$(parse_git_dirty)"
   }
 
-  export PS1="\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\w\[$WHITE\]\$([[ -n \$(git branch 2> /dev/null) ]] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\n\$ \[$RESET\]"
+  git_on() {
+    git rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo " on "
+  }
+
+  export PS1="\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\w\[$WHITE\]\$([ -n \"\$(git rev-parse --is-inside-work-tree 2>/dev/null)\" ] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\n\$ \[$RESET\]"
   export PS2="\[$ORANGE\]→ \[$RESET\]"
   PROMPT_COMMAND='echo'
 fi
