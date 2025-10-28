@@ -1,7 +1,0 @@
-#!/usr/bin/env bash 
-# Just a script to do a lazy push in a repository.
-# -Uthpala Herath
-
-git add .
-git commit -m "Quick update"
-git push
