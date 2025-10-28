@@ -100,22 +100,25 @@ alias globus="globusconnectpersonal -start -restrict-paths /hpc/home/ukh,/work/u
 
 #------------------------------------------- MODULES -------------------------------------------
 
-module load cmake/3.28.3 > /dev/null
+if command -v module >/dev/null 2>&1; then
 
-# Compiler
-intel(){
-    module load compiler/latest > /dev/null
-    module load mkl/latest > /dev/null
-    module load mpi/latest > /dev/null
-}
+    module load cmake/3.28.3 > /dev/null
 
-gnu(){
-    module load OpenMPI/4.1.6 > /dev/null
-    # module load MPICH/3.2.1 > /dev/null
-    # module load OpenBLAS/3.23 > /dev/null
-}
-# default
-intel
+    # Compiler
+    intel(){
+        module load compiler/latest > /dev/null
+        module load mkl/latest > /dev/null
+        module load mpi/latest > /dev/null
+    }
+
+    gnu(){
+        module load OpenMPI/4.1.6 > /dev/null
+        # module load MPICH/3.2.1 > /dev/null
+        # module load OpenBLAS/3.23 > /dev/null
+    }
+    # default
+    intel
+fi
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
