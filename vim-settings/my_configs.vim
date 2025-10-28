@@ -44,6 +44,8 @@ Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'uthpalaherath/vim-copy-as-rtf'
+Plug 'godlygeek/tabular'
+Plug 'preservim/vim-markdown'
 "Plug 'adah1972/vim-copy-as-rtf'
 "Plug 'tenderlove/vim-to-rtf'
 "Plug 'mhinz/vim-startify'
@@ -67,7 +69,7 @@ call plug#end()
 :set fileencoding=utf-8
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
 :set number
-au FileType javascript setl nofen
+autocmd FileType javascript setlocal nofoldenable
 
 """ Toggle line wrap
 map <F9> :set wrap!<CR>
@@ -81,22 +83,16 @@ autocmd BufEnter * silent! lcd %:p:h
 
 " start in insert mode only if file is empty
 "autocmd BufNewFile * startinsert
-function InsertIfEmpty()
-    if @% == ""
-        " No filename for current buffer
-        startinsert
-    elseif filereadable(@%) == 0
-        " File doesn't exist yet
-        startinsert
-    elseif line('$') == 1 && col('$') == 1
-        " File is empty
-        startinsert
-    endif
+function! InsertIfEmpty()
+  if expand('%') ==# "" || filereadable(expand('%')) == 0 || (line('$') == 1 && col('$') == 1)
+    startinsert
+  endif
 endfunction
 au VimEnter * call InsertIfEmpty()
 
 """ indentLine
 let g:indentLine_char = '┊'
+let g:indentLine_fileTypeExclude = ['markdown']
 
 """ ALE
 let g:ale_virtualtext_cursor = 0
@@ -136,12 +132,24 @@ set autoindent          " copy indent from current line when starting a new line
 set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 
 """ colors
-syntax enable
 filetype plugin indent on
-set t_Co=256
-"colorscheme molokai
+syntax enable
+" prefer truecolor in tmux/screen or when you explicitly export COLORTERM=truecolor
+if has('termguicolors')
+  if $COLORTERM =~# 'truecolor' || $TERM =~# '.*screen.*' || exists('$TMUX')
+    set termguicolors
+  else
+    set notermguicolors
+    let &t_Co = 256
+  endif
+endif
+let g:gruvbox_italic = 1
+let g:gruvbox_use_italic = 1
 let g:gruvbox_contrast_dark = "medium"
 colorscheme gruvbox
+let &t_ZH = "\e[3m"
+let &t_ZR = "\e[23m"
+
 highlight clear SignColumn
 highlight LineNr ctermbg=235
 highlight LineNr ctermfg=241
@@ -350,7 +358,7 @@ let &t_EI = "\e[2 q"
 " Disable all blinking:
 :set guicursor+=a:blinkon0
 " reset cursor when vim exits
-autocmd VimLeave * silent !echo -ne "\e[6 q""]"
+autocmd VimLeave * silent !printf '\e[6 q'
 
 """ resume cursor location, except for github commits
 augroup vimStartup
@@ -567,11 +575,15 @@ nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
 
 """ Disable concealing in files
 let g:vim_json_conceal=0
-let g:vim_markdown_conceal = 0
-let g:vim_markdown_conceal_code_blocks = 0
 
 """ vim-copy-as-rtf
 let g:copy_as_rtf_silence_on_errors = 1
+
+""" vim-markdown
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_conceal = 1
+set conceallevel=2
+let g:vim_markdown_conceal_code_blocks = 0
 
 """ ---------- LATEX SETTINGS ----------
 

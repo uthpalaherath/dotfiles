@@ -1,21 +1,20 @@
 " theme
-"syntax enable
-set guifont=Monaco:h15
-colorscheme molokai
-set background=dark
+let g:gruvbox_contrast_dark = "medium"
+colorscheme gruvbox
 set transparency=0
 autocmd VimEnter *.tex WriterToggle
 
-" " cursor options
-" function! SetCursor()
-"     highlight Cursor guifg=white guibg=steelblue
-"     highlight iCursor guifg=white guibg=lightgray
-"     set guicursor=n-v-c:block-Cursor
-"     set guicursor+=i:ver100-iCursor
-"     set guicursor+=n-v-c:blinkon0
-"     set guicursor+=i:blinkwait1000
-" endfunction
-" autocmd VimEnter * call SetCursor()
+" Default GUI font for everything else
+set guifont=Monaco:h15
+
+" Use Menlo only for Markdown buffers
+augroup MarkdownFont
+  autocmd!
+  autocmd FileType markdown set guifont=Menlo:h15
+augroup END
+
+" coc.vim
+let g:coc_node_path = '/Users/ukh/.nvm/versions/node/v22.20.0/bin/node'
 
 " gitgutter colors
 highlight clear SignColumn
