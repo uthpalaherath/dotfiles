@@ -166,6 +166,16 @@ update_db(){
    mariadb -u uthpala -puthpala1234 $1 < $2
 }
 
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    echo -e -n "\x1b[6 q" # Change cursor to steady bar
+    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        builtin cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
+}
+
 #------------------------------------------- PATHS -------------------------------------------
 
 # dotfiles
