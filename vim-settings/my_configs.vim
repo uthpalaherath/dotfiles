@@ -46,13 +46,13 @@ Plug 'junegunn/fzf.vim'
 Plug 'uthpalaherath/vim-copy-as-rtf'
 Plug 'godlygeek/tabular'
 Plug 'preservim/vim-markdown'
+Plug 'github/copilot.vim'
 "Plug 'adah1972/vim-copy-as-rtf'
 "Plug 'tenderlove/vim-to-rtf'
 "Plug 'mhinz/vim-startify'
 
 " Latex plugins
 Plug 'cocopon/iceberg.vim'
-Plug 'junegunn/limelight.vim'
 Plug 'Ron89/thesaurus_query.vim'
 Plug 'dahu/vim-fanfingtastic'
 Plug 'engeljh/vim-latexfmt'
@@ -61,34 +61,34 @@ Plug 'preservim/vim-pencil'
 Plug 'kana/vim-textobj-user'
 Plug 'preservim/vim-textobj-sentence'
 Plug 'lervag/vimtex'
-Plug 'honza/writer.vim'
-Plug 'anufrievroman/vim-angry-reviewer'
 call plug#end()
 
 :set encoding=utf-8
 :set fileencoding=utf-8
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
 :set number
+
+" Do not fold
 autocmd FileType javascript setlocal nofoldenable
 
 """ Toggle line wrap
 map <F9> :set wrap!<CR>
 
-""" change current working directory to file dir
+""" Change current working directory to file dir
 autocmd BufEnter * silent! lcd %:p:h
 
-""" vim settings
+""" Vim splits
 :set splitright
 :set splitbelow
 
-" start in insert mode only if file is empty
+" Start in insert mode only if file is empty
 "autocmd BufNewFile * startinsert
-function! InsertIfEmpty()
-  if expand('%') ==# "" || filereadable(expand('%')) == 0 || (line('$') == 1 && col('$') == 1)
-    startinsert
-  endif
-endfunction
-au VimEnter * call InsertIfEmpty()
+" function! InsertIfEmpty()
+"   if expand('%') ==# "" || filereadable(expand('%')) == 0 || (line('$') == 1 && col('$') == 1)
+"     startinsert
+"   endif
+" endfunction
+" au VimEnter * call InsertIfEmpty()
 
 """ indentLine
 let g:indentLine_char = '┊'
@@ -98,7 +98,7 @@ let g:indentLine_fileTypeExclude = ['markdown']
 let g:ale_virtualtext_cursor = 0
 let g:ale_disable_lsp = 1
 let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['proselint', 'writegood', 'vale']}
-let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black']}
+let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black'], 'markdown':['prettier']}
 let g:ale_fix_on_save = 1
 let g:ale_lint_on_enter = 0 """ Don't lint when opening a file
 let g:ale_sign_error = '•'
@@ -111,13 +111,10 @@ autocmd VimEnter * :highlight! ALEError ctermfg=9 ctermbg=NONE guifg=#ff0000 gui
 autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
 autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
 
-" flake8 file
-"let g:syntastic_python_flake8_config_file='~/dotfiles/vim-settings/.flake8'
-
-" disable ALE for tex files
+" Disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
 
-""" toggle line numbers, indentLines and gitgutter
+""" Toggle line numbers, indentLines and gitgutter
 noremap <silent> <F3> :set invnumber invrelativenumber \| IndentLinesToggle \| :GitGutterToggle <CR>
 
 """ Remapping keys
@@ -131,7 +128,7 @@ set softtabstop=4       " backspace after pressing <TAB> will remove up to this 
 set autoindent          " copy indent from current line when starting a new line
 set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 
-""" colors
+""" Colors
 filetype plugin indent on
 syntax enable
 " prefer truecolor in tmux/screen or when you explicitly export COLORTERM=truecolor
@@ -210,20 +207,20 @@ endfunction
 " Map <leader>n to call the highlight function
 nnoremap <leader>n :call HighlightInNERDTree()<CR>
 
-""" copy to buffer (Only works on Mac)
+""" Copy to buffer (Only works on Mac)
 " map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
 
-""" yank/paste to/from the OS clipboard
+""" Yank/paste to/from the OS clipboard
 noremap <silent> <leader>y "+y
 noremap <silent> <leader>Y "+Y
 noremap <silent> <leader>p "+p
 noremap <silent> <leader>P "+P
 
-""" paste without yanking replaced text in visual mode
+""" Paste without yanking replaced text in visual mode
 vnoremap <silent> p "_dP
 vnoremap <silent> P "_dp
 
-""" multi-platform clipboard
+""" Multi-platform clipboard
 "set clipboard^=unnamed,unnamedplus
 "set clipboard=unnamedplus
 
@@ -244,15 +241,12 @@ let g:gitgutter_highlight_linenrs = 1
 let g:gitgutter_preview_win_floating = 0
 let g:gitgutter_diff_args = '-w'
 
-""" split screen shortcuts
+""" Split screen shortcuts
 nnoremap <C-W>- :new<CR>
 nnoremap <C-W>\ :vnew<CR>
 
-""" visual marks
+""" Visual marks
 nnoremap <leader>m :SignatureRefresh<CR>
-
-""" changesPlugin
-let g:changes_use_icons=0
 
 """ Fortran
 ":let b:fortran_fixed_source=0
@@ -340,18 +334,18 @@ nnoremap <silent><C-W>z :MaximizerToggle<CR>
 vnoremap <silent><C-W>z :MaximizerToggle<CR>gv
 inoremap <silent><C-W>z <C-o>:MaximizerToggle<CR>
 
-""" inner slashes
+""" Inner slashes
 onoremap <silent> i/ :<C-U>normal! T/vt/<CR>
 onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
 
-""" delete buffer when navigating back
+""" Delete buffer when navigating back
 "map <silent> <C-o> :bdelete<CR>
 
-""" cursor options
+""" Cursor options
 :autocmd InsertEnter * set cul
 :autocmd InsertLeave * set nocul
 
-" cursor style
+" Cursor style
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
 
@@ -360,7 +354,7 @@ let &t_EI = "\e[2 q"
 " reset cursor when vim exits
 autocmd VimLeave * silent !printf '\e[6 q'
 
-""" resume cursor location, except for github commits
+""" Resume cursor location, except for github commits
 augroup vimStartup
 au!
 autocmd BufReadPost *
@@ -369,7 +363,7 @@ autocmd BufReadPost *
   \ | endif
 augroup END
 
-""" auto-pair modifications
+""" Auto-pair modifications
 let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '```':'```', '"""':'"""', "'''":"'''", "`":"`",'$':'$'}
 
 """ ctags
@@ -410,7 +404,7 @@ set diffexpr=""
 "    }
 "}
 
-" disable warning
+" Disable warning
 let g:coc_disable_startup_warning = 1
 
 " Install extensions
@@ -582,12 +576,49 @@ let g:copy_as_rtf_silence_on_errors = 1
 """ vim-markdown
 let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_conceal = 1
-set conceallevel=2
 let g:vim_markdown_conceal_code_blocks = 0
+let g:vim_markdown_no_default_key_mappings = 0
+let g:vim_markdown_toc_autofit = 1
+let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_fenced_languages = ['php', 'py=python', 'js=javascript', 'bash=sh', 'viml=vim']
+let g:vim_markdown_toml_frontmatter = 1
+let g:vim_markdown_json_frontmatter = 1
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_strikethrough = 1
+autocmd FileType markdown setlocal conceallevel=2
+
+""" Apply selected LaTeX settings also to Markdown
+augroup markdown_like_latex
+  autocmd!
+
+  " Turn off line numbers
+  autocmd FileType markdown setlocal nonumber norelativenumber
+
+  " Enable spell checking for markdown
+  autocmd FileType markdown setlocal spell
+
+  " Enable litecorrect
+  autocmd FileType markdown call litecorrect#init()
+
+  " Enable vim-pencil behavior for markdown
+  let g:pencil#wrapModeDefault = 'soft'
+  autocmd FileType markdown call pencil#init()
+
+  " Enable vim-textobj-sentence for markdown
+  autocmd FileType markdown call textobj#sentence#init()
+
+  " Hugo Markdown files fix
+  autocmd FileType markdown setlocal nomodeline
+
+  " Disable gitgutter
+  autocmd FileType markdown silent! GitGutterDisable
+
+augroup END
 
 """ ---------- LATEX SETTINGS ----------
 
-" turn off line numbers for tex files
+" Turn off line numbers for tex files
 autocmd filetype tex setlocal nonumber norelativenumber
 
 " Only enable vimtex if latexmk is installed
@@ -610,8 +641,7 @@ let g:vimtex_view_method = 'skim'
 let g:vimtex_view_skim_reading_bar = 0
 let g:vimtex_view_skim_sync = 0
 
-" theme
-"autocmd VimEnter *.tex colorscheme peaksea
+" Theme
 autocmd VimEnter *.tex colorscheme iceberg
 autocmd VimEnter *.tex syntax enable
 
@@ -620,11 +650,11 @@ augroup tex_syntax
   autocmd BufNewFile,BufRead *.tex syntax enable
 augroup END
 
-" disable gitgutter and indentlines
+" Disable gitgutter and indentlines
 au VimEnter *.tex :GitGutterToggle
 au VimEnter *.tex :IndentLinesToggle
 
-" clean files on exit and key mapping
+" Clean files on exit and key mapping
 augroup vimtex_config
     au!
     au User VimtexEventQuit call vimtex#compiler#clean(0)
@@ -633,7 +663,7 @@ augroup vimtex_config
     au FileType tex nmap <buffer><silent> <leader>v <plug>(vimtex-view)
 augroup END
 
-" disable auto renaming items to bullets
+" Disable auto renaming items to bullets
 let g:vimtex_syntax_conceal_disable = 1
 " set conceallevel=0
 " set conceallevel=2
@@ -663,7 +693,7 @@ let g:vimtex_toc_config = {
       \ 'fold_enable' : 0,
       \ 'refresh_always' : 0,
       \}
-" refresh toc
+" Refresh toc
 augroup VimTeX
   autocmd!
   autocmd BufWritePost *.tex call vimtex#toc#refresh()
@@ -672,7 +702,7 @@ augroup END
 let g:tex_flavor='latex'
 let g:vimtex_fold_enabled = 0
 
-" quick-fix window toggle
+" Quick-fix window toggle
 " https://learnvimscriptthehardway.stevelosh.com/chapters/38.html
 let g:vimtex_quickfix_enabled = 1
 let g:vimtex_quickfix_open_on_warning = 0
@@ -689,12 +719,6 @@ let g:vimtex_quickfix_ignore_filters = [
   \'Package biblatex Warning',
   \]
 
-""" thesaurus
-let g:tq_openoffice_en_file="/Users/uthpala/.vim_runtime/thesaurus/MyThes-1.0/th_en_US_new"
-let g:tq_mthesaur_file="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
-let g:tq_enabled_backends=["openoffice_en", "mthesaur_txt", "datamuse_com",]
-"set thesaurus+="/Users/uthpala/.vim_runtime/thesaurus/mthesaur.txt"
-
 """ Turn on spell checking for .tex files
 augroup texSpell
     autocmd!
@@ -708,13 +732,6 @@ augroup pencil
   autocmd!
   autocmd FileType tex call pencil#init()
 augroup END
-
-""" limelight
-"autocmd VimEnter *.tex Limelight
-autocmd! User GoyoEnter Limelight
-autocmd! User GoyoLeave Limelight!
-noremap <silent> <F6> :Limelight!!<CR>
-"let g:limelight_paragraph_span = 1
 
 """ vim-latexfmt
 let g:latexfmt_no_join_any = [
@@ -775,8 +792,5 @@ augroup textobj_sentence
   autocmd!
   autocmd FileType tex call textobj#sentence#init()
 augroup END
-
-""" Angry Reviewer
-let g:AngryReviewerEnglish = 'american'
 
 " ---------- END OF LATEX SETTINGS ----------
