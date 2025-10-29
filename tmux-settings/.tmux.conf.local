@@ -463,6 +463,11 @@ set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
 # focus events for vim line numbering
 set-option -g focus-events on
 
+# disable sound bell
+set -g bell-action none
+# disable visual bell
+set -g visual-bell off
+
 # -- tpm -----------------------------------------------------------------------
 
 # while I don't use tpm myself, many people requested official support so here
