@@ -166,13 +166,13 @@ update_db(){
    mariadb -u uthpala -puthpala1234 $1 < $2
 }
 
+# yazi cd to directory and return default cursor
 function y() {
-    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
     yazi "$@" --cwd-file="$tmp"
-    echo -e -n "\x1b[6 q" # Change cursor to steady bar
-    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        builtin cd -- "$cwd"
-    fi
+    IFS= read -r -d '' cwd < "$tmp" || true
+    echo -e -n "\x1b[6 q"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
     rm -f -- "$tmp"
 }
 
