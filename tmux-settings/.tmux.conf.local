@@ -427,9 +427,9 @@ bind m run "cut -c3- '#{TMUX_CONF}' | sh -s _toggle_mouse" \; display 'mouse #{?
 unbind -
 unbind _
 # split current window horizontally
-bind - split-window -v
+bind -  if-shell -F '#{window_zoomed_flag}' 'resize-pane -Z' 'split-window -v'
 # split current window vertically
-bind \\ split-window -h
+bind \\ if-shell -F '#{window_zoomed_flag}' 'resize-pane -Z' 'split-window -h'
 
 # move status line to top
 #set -g status-position top
