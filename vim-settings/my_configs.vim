@@ -131,15 +131,25 @@ set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 """ Colors
 filetype plugin indent on
 syntax enable
-" prefer truecolor in tmux/screen or when you explicitly export COLORTERM=truecolor
+
+" Color check and apply
 if has('termguicolors')
-  if $COLORTERM =~# 'truecolor' || $TERM =~# '.*screen.*' || exists('$TMUX')
+  let s_has_colorterm = (exists('$COLORTERM') && $COLORTERM =~? 'truecolor')
+  let s_has_tc = 0
+  if executable('infocmp')
+    let s_info = system('infocmp ' . shellescape($TERM) . ' 2>/dev/null')
+    if v:shell_error == 0 && s_info =~# 'Tc'
+      let s_has_tc = 1
+    endif
+  endif
+  if s_has_colorterm || s_has_tc
     set termguicolors
   else
     set notermguicolors
     let &t_Co = 256
   endif
 endif
+
 let g:gruvbox_italic = 1
 let g:gruvbox_use_italic = 1
 let g:gruvbox_contrast_dark = "medium"
