@@ -249,7 +249,7 @@ py3(){
    conda activate py3
 }
 #default
-py3
+#py3
 
 # extract, mkcdr and archive creattion were taken from
 # https://gist.github.com/JakubTesarek/8840983
