@@ -48,6 +48,7 @@ Plug 'godlygeek/tabular'
 Plug 'preservim/vim-markdown'
 Plug 'github/copilot.vim'
 Plug 'ryanoasis/vim-devicons'
+Plug 'img-paste-devs/img-paste.vim'
 "Plug 'adah1972/vim-copy-as-rtf'
 "Plug 'tenderlove/vim-to-rtf'
 "Plug 'mhinz/vim-startify'
@@ -583,6 +584,12 @@ let g:vim_json_conceal=0
 
 """ vim-copy-as-rtf
 let g:copy_as_rtf_silence_on_errors = 1
+
+""" img-paste.vim
+autocmd FileType markdown nmap <buffer><silent> <leader>P :call mdip#MarkdownClipboardImage()<CR>
+let g:mdip_imgdir = '.'
+" let g:mdip_imgname = 'image'
+"
 
 """ vim-markdown
 let g:vim_markdown_folding_disabled = 1
