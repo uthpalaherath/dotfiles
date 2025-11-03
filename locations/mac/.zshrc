@@ -84,7 +84,7 @@ tm(){
         tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
     fi
 }
-#tm
+tm
 
 #FZF
 export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
@@ -210,8 +210,8 @@ chruby ruby-3.4.1
 
 #------------------------------------------- ALIASES -------------------------------------------
 
-# sudo alias
 alias sudo='sudo '
+alias dt="tmux detach"
 
 # WVU Connections
 # logging through ssh.wvu.edu
