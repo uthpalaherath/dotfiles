@@ -49,6 +49,7 @@ Plug 'preservim/vim-markdown'
 Plug 'github/copilot.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'img-paste-devs/img-paste.vim'
+Plug 'chriszarate/yazi.vim'
 "Plug 'adah1972/vim-copy-as-rtf'
 "Plug 'tenderlove/vim-to-rtf'
 "Plug 'mhinz/vim-startify'
@@ -589,7 +590,10 @@ let g:copy_as_rtf_silence_on_errors = 1
 autocmd FileType markdown nmap <buffer><silent> <leader>P :call mdip#MarkdownClipboardImage()<CR>
 let g:mdip_imgdir = '.'
 " let g:mdip_imgname = 'image'
-"
+
+""" yazi.vim
+nnoremap <silent> - :Yazi<cr>
+const g:yazi_command = 'yazi'
 
 """ vim-markdown
 let g:vim_markdown_folding_disabled = 1
