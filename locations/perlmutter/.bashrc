@@ -77,7 +77,7 @@ alias tkill="tmux kill-session"
 alias scratch="cd $PSCRATCH"
 alias makejob="cp ~/dotfiles/locations/perlmutter/jobscript.sh ."
 alias interact="salloc --nodes 1 --ntasks-per-node=128 --qos interactive --time 04:00:00 --constraint cpu --account=m3337 --cpus-per-task=2"
-alias interact_gpu="salloc --nodes 1 --ntasks-per-node=64 --qos interactive --time 04:00:00 --constraint gpu --gpus 4 --account=m3337_g --cpus-per-task=2"
+alias interact_gpu="salloc --nodes 1 --ntasks-per-node=64 --qos interactive --time 04:00:00 --constraint gpu --gpus-per-node 4 --account=m3337_g --cpus-per-task=2"
 
 #------------------------------------------- MODULES -------------------------------------------
 
