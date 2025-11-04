@@ -10,7 +10,7 @@
 #SBATCH --mail-user=uthpala.herath@duke.edu
 
 source ~/.bashrc
-ulimit -s unlimited
+intel
 
-cd $WORK_DIR/
-time ibrun aims.x > aims.out 2> aims.err
+cd $SLURM_SUBMIT_DIR/
+ibrun aims.x > aims.out 2> aims.err
