@@ -153,23 +153,21 @@ alias grep='grep --color=auto'
 
 # compilers
 intel(){
+    #module load intel/19.1.1
+    module load intel/23.1.0
+    # source /opt/intel/compilers_and_libraries_2020.4.304/linux/bin/compilervars.sh intel64
+    # export PATH="/opt/intel/compilers_and_libraries_2020.4.304/linux/mpi/intel64/bin/:$PATH"
 
-# intel
-#module load intel/19.1.1
-module load intel/23.1.0
-# source /opt/intel/compilers_and_libraries_2020.4.304/linux/bin/compilervars.sh intel64
-# export PATH="/opt/intel/compilers_and_libraries_2020.4.304/linux/mpi/intel64/bin/:$PATH"
-
-export CC="mpiicc"
-export CXX="mpiicpc"
-export FC="mpiifort"
+    export CC="mpiicc"
+    export CXX="mpiicpc"
+    export FC="mpiifort"
 }
 
 gnu(){
-module load gcc/12.2.0
-export CC="mpicc"
-export CXX="mpicxx"
-export FC="mpif90"
+    module load gcc/12.2.0
+    export CC="mpicc"
+    export CXX="mpicxx"
+    export FC="mpif90"
 }
 # default
 intel
@@ -180,6 +178,7 @@ export HISTIGNORE="pwd:ls:cd"
 #ENV
 NUM_CORES=$SLURM_NTASKS
 WORK_DIR=$SLURM_SUBMIT_DIR
+# export FORT_BUFFERED=TRUE
 
 # CL
 C_INCLUDE_PATH="/home1/apps/cuda/12.2/include/CL/:$C_INCLUDE_PATH"
@@ -201,13 +200,14 @@ export EDITOR="vim"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
-#alias q="squeue -u uthpala"
 alias q='squeue -u uthpala --format="%.18i %.9P %30j %.8u %.2t %.10M %.6D %R"'
-alias sac="sacct --format="JobID,JobName%30,State,User""
 alias scratch="cd /scratch1/05979/uthpala"
 alias interact="idev -p small -N 1 --tasks-per-node 56 -m 240 -A DMR23007"
 alias interact_gpu="idev -p rtx-dev -N 1 --tasks-per-node 16 -m 120 -A DMR23007"
 alias standby="idev -p development -N 1 --tasks-per-node 56 -m 120 -A DMR23007"
+#alias sac="sacct --format="JobID,JobName%-30,State,User""
+#alias sac="sacct -S $(date +%Y-%m-01) -E now -X --format="JobID,JobName%-30,State,WorkDir%-150""
+alias sac="sacct -X --format="JobID,JobName%-30,State,WorkDir%-150""
 
 alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
 alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from frontera" && git push || true && cd -'
@@ -337,7 +337,7 @@ export PATH="/home1/05979/uthpala/local/FHIaims/utilities/:$PATH"
 export PATH="/home1/05979/uthpala/local/globusconnectpersonal-3.2.0/:$PATH"
 
 # vim
-export PATH="/home1/05979/uthpala/local/vim/build/bin/:$PATH"
+# export PATH="/home1/05979/uthpala/local/vim/build/bin/:$PATH"
 
 # Python3
 # export PATH="/home1/05979/uthpala/local/Python-3.9.16/build/bin/:$PATH"
