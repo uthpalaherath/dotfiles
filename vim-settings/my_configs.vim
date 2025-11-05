@@ -593,7 +593,6 @@ let g:mdip_imgdir = '.'
 
 """ yazi.vim
 nnoremap <silent> - :Yazi<cr>
-const g:yazi_command = 'yazi'
 
 """ vim-markdown
 let g:vim_markdown_folding_disabled = 1
@@ -608,6 +607,7 @@ let g:vim_markdown_toml_frontmatter = 1
 let g:vim_markdown_json_frontmatter = 1
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_strikethrough = 1
+let g:vim_markdown_autowrite = 1
 autocmd FileType markdown setlocal conceallevel=2
 
 """ Apply selected LaTeX settings also to Markdown

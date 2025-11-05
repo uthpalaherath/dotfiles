@@ -211,7 +211,6 @@ chruby ruby-3.4.1
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias sudo='sudo '
-alias dt="tmux detach"
 
 # WVU Connections
 # logging through ssh.wvu.edu
