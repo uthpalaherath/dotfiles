@@ -94,7 +94,7 @@ autocmd BufEnter * silent! lcd %:p:h
 " au VimEnter * call InsertIfEmpty()
 
 """ indentLine
-let g:indentLine_char = '┊'
+let g:indentLine_char = '│'
 let g:indentLine_fileTypeExclude = ['markdown']
 
 """ ALE
