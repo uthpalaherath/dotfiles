@@ -61,22 +61,6 @@ unset __conda_setup
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
 
-# conda environment
-py2(){
-    for i in $(seq ${CONDA_SHLVL}); do
-        conda deactivate
-    done
-    conda activate py2
-}
-py3(){
-    for i in $(seq ${CONDA_SHLVL}); do
-        conda deactivate
-    done
-    conda activate py3
-}
-#default
-# py3
-
 # tmux
 export TMUX_DEVICE_NAME=MBP
 tm(){
@@ -142,15 +126,6 @@ extract () {
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
-
-# find-in-file - usage: fif <searchTerm> <directory>
-fif() {
-  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
-  if [ -z "$2" ]; then directory="./"; else directory="$2"; fi
-  rg --files-with-matches --no-messages --smart-case --follow --hidden -g '!{node_modules,.git}' "$1" "$directory"\
-      | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow'\
-      --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
-}
 
 # dump db
 # Usage: dump_db <database_name>
