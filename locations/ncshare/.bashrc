@@ -269,6 +269,16 @@ jobinfo(){
    scontrol show jobid -dd $1
 }
 
+# yazi cd to directory and return default cursor
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp" || true
+    echo -e -n "\x1b[6 q"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
+}
+
 #------------------------------------------- PATHS -------------------------------------------
 
 export PATH="/hpc/home/uherathmudiyanselage1/dotfiles/:$PATH"
@@ -294,3 +304,9 @@ export PATH="/hpc/home/uherathmudiyanselage1/local/cmake-4.0.1/build/bin/:$PATH"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# rust
+. "$HOME/.cargo/env"
+
+# yazi
+export PATH="/hpc/home/uherathmudiyanselage1/local/yazi/target/release/:$PATH"
