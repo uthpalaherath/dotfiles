@@ -23,9 +23,9 @@ Remote clusters:
 
 I basically create symlinks of each of the files in the directories to the system root.
 
-## Forks
+## Clones 
 
-Here's a list of repositories that I have forked and modified.
+Here's a list of repositories that I have cloned. 
 
 - [.tmux](https://github.com/uthpalaherath/.tmux):
     Originally created by [gpakosz](https://github.com/gpakosz/.tmux) to modify tmux configuration. **.tmux.conf.local** contains my configuration.
