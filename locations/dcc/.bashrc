@@ -97,6 +97,7 @@ alias cleandockerall="docker system prune -a -f"
 alias f='vim "$(fzf)"'
 alias scratch="cd /work/ukh"
 alias globus="globusconnectpersonal -start -restrict-paths /hpc/home/ukh,/work/ukh &"
+alias rc="cd /hpc/group/rescomp/ukh"
 
 #------------------------------------------- MODULES -------------------------------------------
 
