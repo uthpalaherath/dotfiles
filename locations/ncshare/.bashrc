@@ -119,7 +119,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-
 #------------------------------------------- INITIALIZATION -------------------------------------------
 
 # Source global definitions
@@ -236,21 +235,6 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-py2(){
-   for i in $(seq ${CONDA_SHLVL}); do
-       conda deactivate
-   done
-   conda activate py2
-}
-py3(){
-   for i in $(seq ${CONDA_SHLVL}); do
-       conda deactivate
-   done
-   conda activate py3
-}
-#default
-#py3
-
 # extract, mkcdr and archive creattion were taken from
 # https://gist.github.com/JakubTesarek/8840983
 # Easy extract
@@ -284,23 +268,6 @@ mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 jobinfo(){
    scontrol show jobid -dd $1
 }
-
-# find-in-file - usage: fif <searchTerm> <directory>
-fif() {
- if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
- if [ -z "$2" ]; then directory="./"; else directory="$2"; fi
- rg --files-with-matches --no-messages --smart-case --follow --hidden -g '!{node_modules,.git}' "$1"    "$directory"\
-     | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow'\
-     --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
-}
-
-# colored cat
-# function pygmentize_cat {
-#   for arg in "$@"; do
-#     pygmentize -g "${arg}" 2> /dev/null || /bin/cat "${arg}"
-#   done
-# }
-# command -v pygmentize > /dev/null && alias cat=pygmentize_cat
 
 #------------------------------------------- PATHS -------------------------------------------
 
