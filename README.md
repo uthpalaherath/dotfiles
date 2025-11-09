@@ -27,10 +27,10 @@ I basically create symlinks of each of the files in the directories to the syste
 
 Here's a list of repositories that I have cloned. 
 
-- [.tmux](https://github.com/uthpalaherath/.tmux):
+- tmux
     Originally created by [gpakosz](https://github.com/gpakosz/.tmux) to modify tmux configuration. **.tmux.conf.local** contains my configuration.
 
-- [vimrc](https://github.com/uthpalaherath/vimrc):
+- vim
     Originally created by [amix](https://github.com/amix/vimrc) to modify vim configuration. **my_configs.vim** contains my configuration.
 
 Disclaimer: *I am a computational physicist, not a computer scientist. These scripts may not look very professional or adhere to coding conventions. They may also contain bugs.*
