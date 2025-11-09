@@ -34,9 +34,9 @@ source ~/.bash_prompt
 
 # tmux
 export TMUX_DEVICE_NAME=dcc
-#if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-#     tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
-#fi
+if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
+     tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
+fi
 
 # Memory
 ulimit -s unlimited
@@ -168,6 +168,16 @@ jobinfo(){
    scontrol show jobid -dd $1
 }
 
+# yazi cd to directory and return default cursor
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp" || true
+    echo -e -n "\x1b[6 q"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
+}
+
 #------------------------------------------- PATHS -------------------------------------------
 
 export PATH="/hpc/home/ukh/dotfiles/:$PATH"
@@ -202,3 +212,9 @@ export NVM_DIR="$HOME/.nvm"
 
 # gpu-burn
 export PATH="/hpc/home/ukh/local/gpu-burn/:$PATH"
+
+# rust
+. "$HOME/.cargo/env"
+
+# yazi
+export PATH="/hpc/home/ukh/local/yazi/target/release/:$PATH"
