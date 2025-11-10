@@ -217,7 +217,8 @@ alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
 alias hybrid3="ssh -Y ukh@vwb3-web-06.egr.duke.edu" #alias: materials.hybrid3.duke.edu
 alias muchasdb="ssh -Y ukh@vwb3-web-04.egr.duke.edu" #alias: materials.hybrid3.duke.edu
-alias dcc="ssh -Y ukh@dcc-login.oit.duke.edu"
+#alias dcc="ssh -Y ukh@dcc-login.oit.duke.edu"
+alias dcc="ssh -Y ukh@dcc-login-01.oit.duke.edu"
 alias dccshed="ssh -Y dcc-sched-01.rc.duke.edu"
 alias ncshare="ssh -Y uherathmudiyanselage1@login.ncshare.org"
 
