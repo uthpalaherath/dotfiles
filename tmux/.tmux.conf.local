@@ -434,10 +434,6 @@ bind \\ if-shell -F '#{window_zoomed_flag}' 'resize-pane -Z' 'split-window -h'
 # move status line to top
 #set -g status-position top
 
-# Renumber sessions
-# set-hook -g session-created "run ~/dotfiles/renumber-tmux-sessions.sh"
-# set-hook -g session-closed  "run ~/dotfiles/renumber-tmux-sessions.sh"
-
 # Renumber windows when one of them is closed
 set-option -g renumber-windows on
 
@@ -506,6 +502,7 @@ tmux_conf_uninstall_plugins_on_reload=true
 # /!\ do not add set -g @plugin 'tmux-plugins/tpm'
 # /!\ do not add run '~/.tmux/plugins/tpm/tpm'
 
+# /!\ the 'set -g @tpm_plugins' syntax is not supported
 # to enable a plugin, use the 'set -g @plugin' syntax:
 # visit https://github.com/tmux-plugins for available plugins
 #set -g @plugin 'tmux-plugins/tmux-sensible'
