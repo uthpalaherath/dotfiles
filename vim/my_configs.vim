@@ -634,7 +634,7 @@ augroup markdown_like_latex
   autocmd FileType markdown setlocal nomodeline
 
   " Disable gitgutter
-  autocmd FileType markdown silent! GitGutterDisable
+  "autocmd FileType markdown silent! GitGutterDisable
 
 augroup END
 
