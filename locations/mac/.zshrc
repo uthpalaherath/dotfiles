@@ -191,6 +191,7 @@ alias sudo='sudo '
 alias rec='asciinema rec'
 alias play='asciinema play'
 alias astream='asciinema stream -r'
+alias asession='asciinema session -r'
 
 # WVU Connections
 # logging through ssh.wvu.edu
