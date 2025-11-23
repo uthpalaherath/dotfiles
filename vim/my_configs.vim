@@ -50,9 +50,6 @@ Plug 'github/copilot.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'img-paste-devs/img-paste.vim'
 Plug 'chriszarate/yazi.vim'
-"Plug 'adah1972/vim-copy-as-rtf'
-"Plug 'tenderlove/vim-to-rtf'
-"Plug 'mhinz/vim-startify'
 
 " Latex plugins
 Plug 'cocopon/iceberg.vim'
@@ -71,7 +68,7 @@ call plug#end()
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
 :set number
 
-" Do not fold
+""" Do not fold
 autocmd FileType javascript setlocal nofoldenable
 
 """ Toggle line wrap
@@ -131,7 +128,7 @@ set softtabstop=4       " backspace after pressing <TAB> will remove up to this 
 set autoindent          " copy indent from current line when starting a new line
 set smartindent         " even better autoindent (e.g. add indent after '{')'}')
 
-""" Colors
+""" Colors and theme
 filetype plugin indent on
 syntax enable
 
@@ -421,7 +418,7 @@ set diffexpr=""
 let g:coc_disable_startup_warning = 1
 
 " Install extensions
-let g:coc_global_extensions = ['coc-snippets', 'coc-clangd', 'coc-python']
+let g:coc_global_extensions = ['coc-snippets', 'coc-clangd', 'coc-pyright']
 
 " coc-snippets
 " Snippets are stored in ~/.config/coc/ultisnips
@@ -579,9 +576,6 @@ nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
 """ git-time-lapse
 " :GitTimeLapse
 " nmap <Leader>gt <Plug>(git-time-lapse)
-
-""" Disable concealing in files
-let g:vim_json_conceal=0
 
 """ vim-copy-as-rtf
 let g:copy_as_rtf_silence_on_errors = 1
