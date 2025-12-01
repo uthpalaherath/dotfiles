@@ -2,16 +2,9 @@
 let g:gruvbox_contrast_dark = "medium"
 colorscheme gruvbox
 set transparency=0
-autocmd VimEnter *.tex WriterToggle
 
-" Default GUI font for everything else
-set guifont=Monaco:h15
-
-" Use Menlo only for Markdown buffers
-augroup MarkdownFont
-  autocmd!
-  autocmd FileType markdown set guifont=Menlo:h15
-augroup END
+" Default GUI font
+set guifont=Liga\ SFMono\ Nerd\ Font:h15
 
 " coc.vim
 let g:coc_node_path = '/Users/ukh/.nvm/versions/node/v22.20.0/bin/node'

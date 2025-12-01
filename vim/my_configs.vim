@@ -52,7 +52,6 @@ Plug 'img-paste-devs/img-paste.vim'
 Plug 'chriszarate/yazi.vim'
 
 " Latex plugins
-Plug 'cocopon/iceberg.vim'
 Plug 'Ron89/thesaurus_query.vim'
 Plug 'dahu/vim-fanfingtastic'
 Plug 'engeljh/vim-latexfmt'
@@ -656,15 +655,6 @@ let g:vimtex_compiler_latexmk = {
 let g:vimtex_view_method = 'skim'
 let g:vimtex_view_skim_reading_bar = 0
 let g:vimtex_view_skim_sync = 0
-
-" Theme
-autocmd VimEnter *.tex colorscheme iceberg
-autocmd VimEnter *.tex syntax enable
-
-augroup tex_syntax
-  au!
-  autocmd BufNewFile,BufRead *.tex syntax enable
-augroup END
 
 " Disable gitgutter and indentlines
 au VimEnter *.tex :GitGutterToggle
