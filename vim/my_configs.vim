@@ -91,7 +91,7 @@ autocmd BufEnter * silent! lcd %:p:h
 
 """ indentLine
 let g:indentLine_char = '│'
-let g:indentLine_fileTypeExclude = ['markdown']
+let g:indentLine_fileTypeExclude = ['markdown','tex']
 
 """ ALE
 let g:ale_virtualtext_cursor = 0
@@ -656,9 +656,8 @@ let g:vimtex_view_method = 'skim'
 let g:vimtex_view_skim_reading_bar = 0
 let g:vimtex_view_skim_sync = 0
 
-" Disable gitgutter and indentlines
-au VimEnter *.tex :GitGutterToggle
-au VimEnter *.tex :IndentLinesToggle
+" Disable gitgutter
+au VimEnter *.tex :GitGutterDisable
 
 " Clean files on exit and key mapping
 augroup vimtex_config
