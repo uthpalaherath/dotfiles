@@ -8,11 +8,18 @@
 #         - Elapsed (seconds)
 #         - GPUEff (time-weighted % per GPU)
 #         - GPUUtil (time-weighted %, ~ GPUEff * avg #GPUs)
-#   3) Combine users into:
-#         - elapsed-time-weighted Avg GPUEff
-#         - GPU-hour-weighted Avg GPUEff (using inferred GPU-hours)
+#   3) For each user, infer:
+#         - avg #GPUs = GPUUtil / GPUEff  (if both >0, else 1.0)
+#         - GPU-hours = Elapsed_hours * avg #GPUs
+#   4) Combine users into:
+#         - partition time-weighted Avg GPUEff
+#         - partition GPU-hour-weighted Avg GPUEff
 #
-# Usage: ./partition_gpu_eff_weighted.sh -p PARTITION -s STARTDATE -e ENDDATE
+# Usage:
+#   ./partition_gpu_eff_weighted.sh -p PARTITION -s STARTDATE -e ENDDATE
+#
+# Example:
+#   ./partition_gpu_eff_weighted.sh -p h200alloc -s 2025-12-01 -e 2025-12-09
 
 set -euo pipefail
 
@@ -27,7 +34,7 @@ while [[ $# -gt 0 ]]; do
     -e|--end)       END="$2";   shift 2;;
     -h|--help)
       echo "Usage: $0 [-p PARTITION] [-s STARTDATE] [-e ENDDATE]"
-      echo "Example: $0 -p h200alloc -s 2025-12-01 -e 2025-12-05"
+      echo "Example: $0 -p h200alloc -s 2025-12-01 -e 2025-12-09"
       exit 0;;
     *) echo "Unknown arg: $1" >&2; exit 2;;
   esac
@@ -73,7 +80,7 @@ if [[ ${#USERS[@]} -eq 0 ]]; then
   exit 0
 fi
 
-# --- 2) For each user, get WEIGHTED row from `slurm-report --plain -u user` --
+# --- 2) For each user, parse their WEIGHTED row from `--plain -u user` ------
 
 BASE_CMD=(slurm-report -r "$PART" -S "$START" --plain)
 if [[ -n "$END" ]]; then
@@ -90,17 +97,13 @@ for u in "${USERS[@]}"; do
   metrics="$(
     awk '
       BEGIN {
-        FS = " ";
-        elapsed_secs  = 0;
-        gpu_eff       = 0;
-        gpu_util      = 0;
-        gpueff_start  = 0;
-        gpuutil_start = 0;
-        gpumemeff_start = 0;
+        elapsed_secs = 0;
+        gpu_eff      = 0;
+        gpu_util     = 0;
       }
 
       # Convert time string to seconds. Supports:
-      #   D-HH:MM:SS, HH:MM:SS, MM:SS
+      #   D-HH:MM:SS, HH:MM:SS (any digits in hours), MM:SS
       function timestr_to_secs(t,    days, hms, a, n, secs, hh, mm, ss) {
         secs = 0;
         if (t ~ /-/) {
@@ -123,26 +126,19 @@ for u in "${USERS[@]}"; do
         return secs;
       }
 
-      # Header line: capture character positions of GPUEff, GPUUtil, GPUMemEff
-      /^User[[:space:]]+JobID/ {
-        header = $0;
-        if (match(header, /GPUEff/))    gpueff_start    = RSTART;
-        if (match(header, /GPUUtil/))   gpuutil_start   = RSTART;
-        if (match(header, /GPUMemEff/)) gpumemeff_start = RSTART;
-        next;
-      }
-
-      # WEIGHTED row: extract elapsed + GPUEff + GPUUtil
-      /WEIGHTED/ {
+      # WEIGHTED row: extract elapsed + GPUEff + GPUUtil by tokens
+      /^[[:space:]]*WEIGHTED[[:space:]]/ {
         line = $0;
 
-        # Find elapsed time as the first time-like token on this line
+        # Split WEIGHTED line into tokens
         n = split(line, a, /[[:space:]]+/);
+
+        # Find the elapsed time token (first time-like thing)
         t_idx = 0;
         for (i = 1; i <= n; i++) {
-          if (a[i] ~ /^[0-9]+-[0-9]{1,2}:[0-9]{2}:[0-9]{2}$/ ||
-              a[i] ~ /^[0-9]{1,2}:[0-9]{2}:[0-9]{2}$/ ||
-              a[i] ~ /^[0-9]{1,2}:[0-9]{2}$/) {
+          if (a[i] ~ /^[0-9]+-[0-9]+:[0-9]{2}:[0-9]{2}$/ ||
+              a[i] ~ /^[0-9]+:[0-9]{2}:[0-9]{2}$/ ||
+              a[i] ~ /^[0-9]+:[0-9]{2}$/) {
             t_idx = i;
             break;
           }
@@ -150,32 +146,35 @@ for u in "${USERS[@]}"; do
         if (t_idx > 0)
           elapsed_secs = timestr_to_secs(a[t_idx]);
 
-        # GPUEff column substring
-        col = "";
-        if (gpueff_start > 0 && gpuutil_start > gpueff_start) {
-          col = substr(line, gpueff_start, gpuutil_start - gpueff_start);
-        } else if (gpueff_start > 0) {
-          col = substr(line, gpueff_start);
+        # Collect all tokens after elapsed (kept in order, including ---)
+        k = 0;
+        delete vals;
+        for (i = t_idx + 1; i <= n; i++) {
+          k++;
+          vals[k] = a[i];
         }
-        if (col != "" && match(col, /[0-9]+(\.[0-9]+)?%/)) {
-          gstr = substr(col, RSTART, RLENGTH);
-          gsub(/%/, "", gstr);
-          gpu_eff = gstr + 0;
+
+        # After elapsed, WEIGHTED row layout is effectively:
+        #   CPUEff, MemEff, GPUEff, GPUUtil, GPUMemEff, GPUMem
+        # So GPUEff is vals[3], GPUUtil is vals[4], when present.
+        gpueff_str  = "";
+        gpuutil_str = "";
+
+        if (k >= 3) gpueff_str  = vals[3];
+        if (k >= 4) gpuutil_str = vals[4];
+
+        # GPUEff
+        if (gpueff_str != "" && gpueff_str != "---" && gpueff_str ~ /%$/) {
+          gsub(/%/, "", gpueff_str);
+          gpu_eff = gpueff_str + 0;
         } else {
           gpu_eff = 0;
         }
 
-        # GPUUtil column substring
-        colu = "";
-        if (gpuutil_start > 0 && gpumemeff_start > gpuutil_start) {
-          colu = substr(line, gpuutil_start, gpumemeff_start - gpuutil_start);
-        } else if (gpuutil_start > 0) {
-          colu = substr(line, gpuutil_start);
-        }
-        if (colu != "" && match(colu, /[0-9]+(\.[0-9]+)?%/)) {
-          ustr = substr(colu, RSTART, RLENGTH);
-          gsub(/%/, "", ustr);
-          gpu_util = ustr + 0;
+        # GPUUtil
+        if (gpuutil_str != "" && gpuutil_str != "---" && gpuutil_str ~ /%$/) {
+          gsub(/%/, "", gpuutil_str);
+          gpu_util = gpuutil_str + 0;
         } else {
           gpu_util = 0;
         }
@@ -212,19 +211,15 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
   {
     user   = $1;
     secs   = $2 + 0;
-    gpueff = $3 + 0;   # %
-    gpuutil= $4 + 0;   # %
+    ge     = $3 + 0;   # GPUEff %
+    gu     = $4 + 0;   # GPUUtil %
 
     if (secs <= 0) next;
 
-    # Store per-user basics
     user_secs[user]    = secs;
-    user_gpueff[user]  = gpueff;
-    user_gpuutil[user] = gpuutil;
+    user_gpueff[user]  = ge;
+    user_gpuutil[user] = gu;
     seen[user] = 1;
-
-    total_secs      += secs;
-    sum_secs_gpueff += secs * gpueff;   # for elapsed-time-weighted avg
   }
   END {
     printf "Partition: %s\n", part;
@@ -238,15 +233,21 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
 
     PROCINFO["sorted_in"] = "@ind_str_asc";
 
-    total_gpuhours        = 0;
-    sum_gpuhours_gpueff   = 0;
-    nusers                = 0;
+    nusers              = 0;
+    total_secs          = 0;
+    total_gpuhours      = 0;
+    sum_secs_gpueff     = 0;
+    sum_gpuhours_gpueff = 0;
 
     for (u in seen) {
       nusers++;
-      s   = user_secs[u];
-      ge  = user_gpueff[u];
-      gu  = user_gpuutil[u];
+
+      s  = user_secs[u];
+      ge = user_gpueff[u];
+      gu = user_gpuutil[u];
+
+      total_secs += s;
+      sum_secs_gpueff += s * ge;
 
       hh = int(s / 3600);
       mm = int((s % 3600) / 60);
@@ -271,8 +272,7 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
              u, elapsed_fmt, gpu_hours, avg_gpus, ge;
     }
 
-    # --- summary section additions ---
-    # total users and total elapsed time
+    # summary
     printf "\nNo. of users: %d\n", nusers;
     if (total_secs > 0) {
       tot_hh = int(total_secs / 3600);
@@ -284,7 +284,7 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
       printf "Total elapsed time: 00:00:00 (0.00 hours)\n";
     }
 
-    printf "Total GPU hours: %.2f\n", total_gpuhours;
+    printf "Total GPU-hours: %.2f\n", total_gpuhours;
 
     if (total_secs > 0) {
       timew_avg = sum_secs_gpueff / total_secs;
