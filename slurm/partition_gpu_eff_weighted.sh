@@ -91,7 +91,7 @@ STATS=""
 
 for u in "${USERS[@]}"; do
   USER_REPORT="$("${BASE_CMD[@]}" -u "$u" 2>/dev/null || true)"
-  [[ -z "$USER_REPORT" ]] && continue
+  [[ -z "$USER_REPORT" ]] && USER_REPORT=""
 
   # Extract elapsed (seconds), GPUEff (%), GPUUtil (%) from WEIGHTED row
   metrics="$(
@@ -147,8 +147,8 @@ for u in "${USERS[@]}"; do
           elapsed_secs = timestr_to_secs(a[t_idx]);
 
         # Collect all tokens after elapsed (kept in order, including ---)
+        for (j in vals) delete vals[j];
         k = 0;
-        delete vals;
         for (i = t_idx + 1; i <= n; i++) {
           k++;
           vals[k] = a[i];
@@ -181,26 +181,17 @@ for u in "${USERS[@]}"; do
       }
 
       END {
-        if (elapsed_secs > 0) {
-          # print: elapsed_seconds gpueff gpuutil
-          printf "%.0f %.4f %.4f\n", elapsed_secs, gpu_eff, gpu_util;
-        }
+        # Always print something, even if elapsed_secs == 0
+        printf "%.0f %.4f %.4f\n", elapsed_secs, gpu_eff, gpu_util;
       }
     ' <<< "$USER_REPORT"
   )"
-
-  [[ -z "$metrics" ]] && continue
 
   # metrics is "secs gpueff gpuutil"
   read -r secs gpueff gpuutil <<< "$metrics"
 
   STATS+="$u $secs $gpueff $gpuutil"$'\n'
 done
-
-if [[ -z "$STATS" ]]; then
-  echo "No per-user WEIGHTED rows with non-zero elapsed found for partition=$PART between $START and ${END:-now}"
-  exit 0
-fi
 
 # --- 3) Aggregate per-user stats -> partition metrics -----------------------
 
@@ -209,13 +200,15 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     OFS = "\t";
   }
   {
+    # Skip completely blank lines (this avoids the extra empty "user" row)
+    if (NF < 1) next;
+
     user   = $1;
     secs   = $2 + 0;
     ge     = $3 + 0;   # GPUEff %
     gu     = $4 + 0;   # GPUUtil %
 
-    if (secs <= 0) next;
-
+    # Always keep the user, even if secs == 0
     user_secs[user]    = secs;
     user_gpueff[user]  = ge;
     user_gpuutil[user] = gu;
@@ -227,7 +220,7 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     printf "End Date:   %s\n\n", (end=="" ? "now" : end);
 
     printf "%-15s %-12s %-12s %-8s %-16s\n",
-           "User","Elapsed","GPU-hours","GPUs","Time-wtd GPUEff";
+           "User","Elapsed","GPU-hours","GPUs","Time-weighted GPUEff";
     printf "%-15s %-12s %-12s %-8s %-16s\n",
            "---------------","----------","----------","----","----------------";
 
@@ -246,7 +239,7 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
       ge = user_gpueff[u];
       gu = user_gpuutil[u];
 
-      total_secs += s;
+      total_secs      += s;
       sum_secs_gpueff += s * ge;
 
       hh = int(s / 3600);
