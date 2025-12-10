@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" Pandoc markdown to PDF converter.
+"""Pandoc markdown to PDF converter.
 
 This script converts markdown files to PDF files using Pandoc.
 For use within Obsidian. Execute in directory with markdown files to be converted.
@@ -25,7 +25,7 @@ import re
 OBSIDIAN_FILTERS_ROOT = Path("/Users/ukh/git/dotfiles/obsidian/filters")
 
 # LaTeX template (preamble included)
-LATEX_TEMPLATE = Path("/Users/ukh/git/dotfiles/latex/custom.latex")
+LATEX_TEMPLATE = Path("/Users/ukh/git/dotfiles/obsidian/custom.latex")
 
 # Primary Zotero bibliography
 MAIN_BIB = Path("/Users/ukh/Library/CloudStorage/Dropbox/references-zotero.bib")
