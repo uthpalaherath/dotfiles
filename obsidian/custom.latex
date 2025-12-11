@@ -194,7 +194,7 @@ $endif$
 \renewcommand{\thesection}{\Roman{section}}
 
 % Paragraph formatting: no indentation and slightly larger space between paragraphs
-%\setlength{\parindent}{0pt}
+\setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}  % Adjust the space to your liking
 
 $if(has-frontmatter)$
