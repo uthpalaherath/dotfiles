@@ -232,8 +232,8 @@ $endif$
 % }
 \affiliation{
 Research Computing \& Support Services\\
-Duke Office of Information Technology\\
-Duke University, Durham, NC 27701, USA\\
+Office of Information Technology\\
+Duke University\\
 }
 $if(date)$
 \date{$date$}
