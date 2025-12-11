@@ -38,7 +38,7 @@ ENABLE_MERMAID = False
 MERMAID_FILTER = "mermaid-filter"
 
 # PDF engine for manual LaTeX runs
-PDF_ENGINE = "xelatex"
+PDF_ENGINE = "lualatex"
 
 # =========================
 # ---- INTERNALS ----------
