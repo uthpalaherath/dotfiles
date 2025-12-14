@@ -589,7 +589,7 @@ nnoremap <silent> - :Yazi<cr>
 
 """ vim-markdown
 let g:vim_markdown_folding_disabled = 1
-let g:vim_markdown_conceal = 1
+let g:vim_markdown_conceal = 2
 let g:vim_markdown_conceal_code_blocks = 0
 let g:vim_markdown_no_default_key_mappings = 0
 let g:vim_markdown_toc_autofit = 1
@@ -601,7 +601,8 @@ let g:vim_markdown_json_frontmatter = 1
 let g:vim_markdown_frontmatter = 1
 let g:vim_markdown_strikethrough = 1
 let g:vim_markdown_autowrite = 1
-autocmd FileType markdown setlocal conceallevel=2
+let g:vim_markdown_math = 1
+let g:vim_markdown_follow_anchor = 1
 
 """ Apply selected LaTeX settings also to Markdown
 augroup markdown_like_latex
