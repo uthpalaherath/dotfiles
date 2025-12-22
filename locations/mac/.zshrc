@@ -153,6 +153,9 @@ function y() {
 
 #------------------------------------------- PATHS -------------------------------------------
 
+# local bin
+export PATH="$HOME/.local/bin:$PATH"
+
 # dotfiles
 export PATH="/Users/ukh/git/dotfiles/:$PATH"
 
