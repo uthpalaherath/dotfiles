@@ -138,6 +138,7 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+export UV_CACHE_DIR=/work/ukh/tmp
 
 # extract, mkcdr and archive creattion were taken from
 # https://gist.github.com/JakubTesarek/8840983
@@ -226,3 +227,12 @@ export PATH="/hpc/home/ukh/local/yazi/target/release/:$PATH"
 
 # Ollama
 export OLLAMA_MODELS=/work/ukh/ollama/models
+
+# vLLM
+export VLLM_WORKER_MULTIPROC_METHOD=spawn
+#export PYTORCH_ALLOC_CONF=expandable_segments:True
+export HF_HOME=/work/ukh/vLLM/.cache
+export HF_DATASETS_CACHE=/work/ukh/vLLM/.cache
+
+# opencode
+export PATH=/hpc/home/ukh/.opencode/bin:$PATH
