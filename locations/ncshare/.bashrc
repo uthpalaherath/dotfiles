@@ -315,3 +315,6 @@ export NVM_DIR="$HOME/.nvm"
 
 # yazi
 export PATH="/hpc/home/uherathmudiyanselage1/local/yazi/target/release/:$PATH"
+
+# opencode
+export PATH=/hpc/home/uherathmudiyanselage1/.opencode/bin:$PATH
