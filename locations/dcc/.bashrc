@@ -236,3 +236,16 @@ export HF_DATASETS_CACHE=/work/ukh/vLLM/.cache
 
 # opencode
 export PATH=/hpc/home/ukh/.opencode/bin:$PATH
+
+# netCDF-C
+export NETCDFHOME=/hpc/home/ukh/local/netcdf-c-4.9.3/build
+export PATH="$NETCDFHOME/bin:$PATH"
+export LD_LIBRARY_PATH="$NETCDFHOME/lib:$LD_LIBRARY_PATH"
+
+# netCDF-Fortran
+export NETCDFFHOME=/hpc/home/ukh/local/netcdf-fortran-4.6.2/build
+export PATH="$NETCDFFHOME/bin:$PATH"
+export LD_LIBRARY_PATH="$NETCDFFHOME/lib:$LD_LIBRARY_PATH"
+
+# siesta
+export PATH="/hpc/home/ukh/apps/siesta-5.4.2/build/bin/:$PATH"
