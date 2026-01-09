@@ -15,7 +15,7 @@
           "npm": "@ai-sdk/openai-compatible",
           "options": {
             "baseURL": "https://litellm.oit.duke.edu/v1",
-            "apiKey": "sk-kKI6CjPJtDjlofPSULE11g"
+            "apiKey": $LITELLM_TOKEN
           },
           "models": {
             "openai/gpt-5": {
