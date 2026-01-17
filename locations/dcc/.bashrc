@@ -48,6 +48,9 @@ ulimit -s unlimited
 
 # Reverse search history
 export HISTIGNORE="pwd:ls:cd"
+shopt -s histappend
+HISTCONTROL=ignoreboth:erasedups
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 # Color folders
 export LS_OPTIONS='--color=auto'
