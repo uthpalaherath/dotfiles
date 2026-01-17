@@ -219,10 +219,10 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     printf "Start Date: %s\n", start;
     printf "End Date:   %s\n\n", (end=="" ? "now" : end);
 
-    printf "%-15s %-12s %-12s %-8s %-16s\n",
-    "User","Elapsed","GPU-hours","GPUs","Time-weighted GPUEff (%)";
-    printf "%-15s %-12s %-12s %-8s %-16s\n",
-           "---------------","----------","----------","----","----------------";
+    printf "%-15s %-12s %-16s\n",
+    "User","GPU-hours","Time-weighted GPUEff (%)";
+    printf "%-15s %-12s %-16s\n",
+           "---------------","----------","----------------";
 
     PROCINFO["sorted_in"] = "@ind_str_asc";
 
@@ -261,22 +261,12 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
       total_gpuhours      += gpu_hours;
       sum_gpuhours_gpueff += gpu_hours * ge;
 
-      printf "%-15s %-12s %-12.2f %-8.2f %-15.2f\n",
-             u, elapsed_fmt, gpu_hours, avg_gpus, ge;
+      printf "%-15s %-12.2f %-15.2f\n",
+             u, gpu_hours, ge;
     }
 
     # summary
     printf "\nNo. of users: %d\n", nusers;
-    if (total_secs > 0) {
-      tot_hh = int(total_secs / 3600);
-      tot_mm = int((total_secs % 3600) / 60);
-      tot_ss = total_secs % 60;
-      printf "Total elapsed time: %02d:%02d:%02d (%.2f hours)\n",
-             tot_hh, tot_mm, tot_ss, total_secs / 3600.0;
-    } else {
-      printf "Total elapsed time: 00:00:00 (0.00 hours)\n";
-    }
-
     printf "Total GPU-hours: %.2f\n", total_gpuhours;
 
     if (total_secs > 0) {
@@ -284,13 +274,6 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
       printf "Partition time-weighted Avg GPUEff: %.4f%%\n", timew_avg;
     } else {
       printf "Partition time-weighted Avg GPUEff: n/a\n";
-    }
-
-    if (total_gpuhours > 0) {
-      gpuhr_avg = sum_gpuhours_gpueff / total_gpuhours;
-      printf "Partition GPU-hour-weighted Avg GPUEff: %.4f%%\n", gpuhr_avg;
-    } else {
-      printf "Partition GPU-hour-weighted Avg GPUEff: n/a\n";
     }
   }
 '

@@ -1,25 +1,27 @@
 #!/usr/bin/env bash
-# partition_gpu_eff_weighted.sh
+# partition_gpu_eff_weighted_mem.sh
 #
 # For a partition + date range:
 #   1) Get list of users from `slurm-report --summary --plain`
 #   2) For each user, run `slurm-report --plain -u user`
-#      and extract the WEIGHTED row's:
+#      and extract WEIGHTED row's:
 #         - Elapsed (seconds)
 #         - GPUEff (time-weighted % per GPU)
 #         - GPUUtil (time-weighted %, ~ GPUEff * avg #GPUs)
+#         - GPUMemEff (time-weighted %)
 #   3) For each user, infer:
 #         - avg #GPUs = GPUUtil / GPUEff  (if both >0, else 1.0)
 #         - GPU-hours = Elapsed_hours * avg #GPUs
 #   4) Combine users into:
 #         - partition time-weighted Avg GPUEff
+#         - partition time-weighted Avg GPU Mem Eff
 #         - partition GPU-hour-weighted Avg GPUEff
 #
 # Usage:
-#   ./partition_gpu_eff_weighted.sh -p PARTITION -s STARTDATE -e ENDDATE
+#   ./partition_gpu_eff_weighted_mem.sh -p PARTITION -s STARTDATE -e ENDDATE
 #
 # Example:
-#   ./partition_gpu_eff_weighted.sh -p h200alloc -s 2025-12-01 -e 2025-12-09
+#   ./partition_gpu_eff_weighted_mem.sh -p h200alloc -s 2025-12-01 -e 2025-12-09
 
 set -euo pipefail
 
@@ -93,13 +95,14 @@ for u in "${USERS[@]}"; do
   USER_REPORT="$("${BASE_CMD[@]}" -u "$u" 2>/dev/null || true)"
   [[ -z "$USER_REPORT" ]] && USER_REPORT=""
 
-  # Extract elapsed (seconds), GPUEff (%), GPUUtil (%) from WEIGHTED row
+  # Extract elapsed (seconds), GPUEff (%), GPUUtil (%), GPUMemEff (%) from WEIGHTED row
   metrics="$(
     awk '
       BEGIN {
         elapsed_secs = 0;
         gpu_eff      = 0;
         gpu_util     = 0;
+        gpu_mem_eff  = 0;
       }
 
       # Convert time string to seconds. Supports:
@@ -126,7 +129,7 @@ for u in "${USERS[@]}"; do
         return secs;
       }
 
-      # WEIGHTED row: extract elapsed + GPUEff + GPUUtil by tokens
+      # WEIGHTED row: extract elapsed + GPUEff + GPUUtil + GPUMemEff by tokens
       /^[[:space:]]*WEIGHTED[[:space:]]/ {
         line = $0;
 
@@ -156,12 +159,14 @@ for u in "${USERS[@]}"; do
 
         # After elapsed, WEIGHTED row layout is effectively:
         #   CPUEff, MemEff, GPUEff, GPUUtil, GPUMemEff, GPUMem
-        # So GPUEff is vals[3], GPUUtil is vals[4], when present.
-        gpueff_str  = "";
-        gpuutil_str = "";
+        # So GPUEff is vals[3], GPUUtil is vals[4], GPUMemEff is vals[5]
+        gpueff_str      = "";
+        gpuutil_str     = "";
+        gpumemeff_str   = "";
 
-        if (k >= 3) gpueff_str  = vals[3];
-        if (k >= 4) gpuutil_str = vals[4];
+        if (k >= 3) gpueff_str    = vals[3];
+        if (k >= 4) gpuutil_str   = vals[4];
+        if (k >= 5) gpumemeff_str = vals[5];
 
         # GPUEff
         if (gpueff_str != "" && gpueff_str != "---" && gpueff_str ~ /%$/) {
@@ -178,22 +183,30 @@ for u in "${USERS[@]}"; do
         } else {
           gpu_util = 0;
         }
+
+        # GPUMemEff
+        if (gpumemeff_str != "" && gpumemeff_str != "---" && gpumemeff_str ~ /%$/) {
+          gsub(/%/, "", gpumemeff_str);
+          gpu_mem_eff = gpumemeff_str + 0;
+        } else {
+          gpu_mem_eff = 0;
+        }
       }
 
       END {
         # Always print something, even if elapsed_secs == 0
-        printf "%.0f %.4f %.4f\n", elapsed_secs, gpu_eff, gpu_util;
+        printf "%.0f %.4f %.4f %.4f\n", elapsed_secs, gpu_eff, gpu_util, gpu_mem_eff;
       }
     ' <<< "$USER_REPORT"
   )"
 
-  # metrics is "secs gpueff gpuutil"
-  read -r secs gpueff gpuutil <<< "$metrics"
+  # metrics is "secs gpueff gpuutil gpumemeff"
+  read -r secs gpueff gpuutil gpumemeff <<< "$metrics"
 
-  STATS+="$u $secs $gpueff $gpuutil"$'\n'
+  STATS+="$u $secs $gpueff $gpuutil $gpumemeff"$'\n'
 done
 
-# --- 3) Aggregate per-user stats -> partition metrics -----------------------
+  # --- 3) Aggregate per-user stats -> partition metrics -----------------------
 
 printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
   BEGIN {
@@ -203,15 +216,17 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     # Skip completely blank lines (this avoids the extra empty "user" row)
     if (NF < 1) next;
 
-    user   = $1;
-    secs   = $2 + 0;
-    ge     = $3 + 0;   # GPUEff %
-    gu     = $4 + 0;   # GPUUtil %
+    user     = $1;
+    secs     = $2 + 0;
+    ge       = $3 + 0;   # GPUEff %
+    gu       = $4 + 0;   # GPUUtil %
+    gme      = $5 + 0;   # GPUMemEff %
 
     # Always keep the user, even if secs == 0
-    user_secs[user]    = secs;
-    user_gpueff[user]  = ge;
-    user_gpuutil[user] = gu;
+    user_secs[user]       = secs;
+    user_gpueff[user]    = ge;
+    user_gpuutil[user]    = gu;
+    user_gpumemeff[user]  = gme;
     seen[user] = 1;
   }
   END {
@@ -219,10 +234,10 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     printf "Start Date: %s\n", start;
     printf "End Date:   %s\n\n", (end=="" ? "now" : end);
 
-    printf "%-15s %-12s %-12s %-8s %-16s\n",
-    "User","Elapsed","GPU-hours","GPUs","Time-weighted GPUEff (%)";
-    printf "%-15s %-12s %-12s %-8s %-16s\n",
-           "---------------","----------","----------","----","----------------";
+    printf "%-15s %-12s %-12s %-8s %-24s %-12s\n",
+    "User","Elapsed","GPU-hours","GPUs","Time-weighted GPUEff (%)","GPU Mem Eff (%)";
+    printf "%-15s %-12s %-12s %-8s %-24s %-12s\n",
+           "---------------","----------","----------","----","------------------------","------------";
 
     PROCINFO["sorted_in"] = "@ind_str_asc";
 
@@ -231,16 +246,19 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     total_gpuhours      = 0;
     sum_secs_gpueff     = 0;
     sum_gpuhours_gpueff = 0;
+    sum_gpumemeff       = 0;
 
     for (u in seen) {
       nusers++;
 
-      s  = user_secs[u];
-      ge = user_gpueff[u];
-      gu = user_gpuutil[u];
+      s   = user_secs[u];
+      ge  = user_gpueff[u];
+      gu  = user_gpuutil[u];
+      gme = user_gpumemeff[u];
 
-      total_secs      += s;
-      sum_secs_gpueff += s * ge;
+      total_secs         += s;
+      sum_secs_gpueff   += s * ge;
+      sum_gpumemeff     += gme;
 
       hh = int(s / 3600);
       mm = int((s % 3600) / 60);
@@ -261,8 +279,8 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
       total_gpuhours      += gpu_hours;
       sum_gpuhours_gpueff += gpu_hours * ge;
 
-      printf "%-15s %-12s %-12.2f %-8.2f %-15.2f\n",
-             u, elapsed_fmt, gpu_hours, avg_gpus, ge;
+      printf "%-15s %-12s %-12.2f %-8.2f %-24.2f %-12.2f\n",
+             u, elapsed_fmt, gpu_hours, avg_gpus, ge, gme;
     }
 
     # summary
@@ -284,6 +302,13 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
       printf "Partition time-weighted Avg GPUEff: %.4f%%\n", timew_avg;
     } else {
       printf "Partition time-weighted Avg GPUEff: n/a\n";
+    }
+
+    if (nusers > 0) {
+      avg_mem_eff = sum_gpumemeff / nusers;
+      printf "Partition Avg GPU Mem Eff: %.4f%%\n", avg_mem_eff;
+    } else {
+      printf "Partition Avg GPU Mem Eff: n/a\n";
     }
 
     if (total_gpuhours > 0) {
