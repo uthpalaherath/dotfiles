@@ -33,6 +33,14 @@ done
 # Run partition_gpu_eff_weighted_simple_ordered.sh
 ./partition_gpu_eff_weighted_simple_ordered_mem.sh -p "$PARTITION" -s "$START_DATE" -e "$END_DATE"
 
+# Sub-account utilization
+if [ $PARTITION == "h200alloc" ]; then
+    echo ""
+    echo "=== Sub-account utilization (GPU-hours) ==="
+    echo ""
+    sreport cluster AccountUtilizationByQoS Start=$START_DATE End=$END_DATE -T gres/gpu Accounts=slurm-subaccount-testing_h200_r,slurm-subaccount-testing_h200_u format=Account%32,QOS,Used -t Hours | tail -n +4
+fi
+
 # Run gpu_stats_minimal.sh to get GPU usage stats
 ./gpu_stats_minimal.sh -p "$PARTITION" -s "$START_DATE" -e "$END_DATE"
 
