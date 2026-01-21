@@ -239,10 +239,10 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     printf "Start Date: %s\n", start;
     printf "End Date:   %s\n\n", (end=="" ? "now" : end);
 
-    printf "%-12s %-12s %-12s %-12s\n",
+    printf "%-24s %-12s %-12s %-12s\n",
     "User","GPU-hours","GPU Eff (%)","GPU Mem Eff (%)";
-    printf "%-12s %-12s %-12s %-12s\n",
-            "-----------","---------","-----------","---------------";
+    printf "%-24s %-12s %-12s %-12s\n",
+            "------------------------","---------","-----------","---------------";
 
     nusers              = 0;
     total_secs          = 0;
@@ -304,7 +304,7 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     # Print sorted results
     for (i = 1; i <= nusers; i++) {
       u = users[i];
-      printf "%-12s %-12.2f %-12.2f %-12.2f\n",
+      printf "%-24s %-12.2f %-12.2f %-12.2f\n",
               u, user_gpuhrs[u], user_ge[u], user_gme[u];
     }
 
