@@ -231,7 +231,7 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
   }
   END {
     printf "\n";
-    printf "=== Time-weighted Average GPU Efficiency ==="
+    printf "=== Time-weighted Average GPU & Memory Efficiency ==="
     printf "\n";
     printf "\n";
 
@@ -239,10 +239,10 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     printf "Start Date: %s\n", start;
     printf "End Date:   %s\n\n", (end=="" ? "now" : end);
 
-    printf "%-15s %-12s %-24s %-12s\n",
-    "User","GPU-hours","Time-weighted GPUEff (%)","GPU Mem Eff (%)";
-    printf "%-15s %-12s %-24s %-12s\n",
-            "---------------","----------","------------------------","------------";
+    printf "%-12s %-12s %-12s %-12s\n",
+    "User","GPU-hours","GPU Eff (%)","GPU Mem Eff (%)";
+    printf "%-12s %-12s %-12s %-12s\n",
+            "-----------","---------","-----------","---------------";
 
     nusers              = 0;
     total_secs          = 0;
@@ -304,7 +304,7 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     # Print sorted results
     for (i = 1; i <= nusers; i++) {
       u = users[i];
-      printf "%-15s %-12.2f %-24.2f %-12.2f\n",
+      printf "%-12s %-12.2f %-12.2f %-12.2f\n",
               u, user_gpuhrs[u], user_ge[u], user_gme[u];
     }
 
@@ -314,16 +314,16 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
 
     if (total_secs > 0) {
       timew_avg = sum_secs_gpueff / total_secs;
-      printf "Partition time-weighted Avg GPUEff: %.4f%%\n", timew_avg;
+      printf "Partition time-weighted Avg GPU Eff: %.4f%%\n", timew_avg;
     } else {
-      printf "Partition time-weighted Avg GPUEff: n/a\n";
+      printf "Partition time-weighted Avg GPU Eff: n/a\n";
     }
 
     if (nusers > 0) {
       avg_mem_eff = sum_gpumemeff / nusers;
-      printf "Partition Avg GPU Mem Eff: %.4f%%\n", avg_mem_eff;
+      printf "Partition time-weighted Avg GPU Mem Eff: %.4f%%\n", avg_mem_eff;
     } else {
-      printf "Partition Avg GPU Mem Eff: n/a\n";
+      printf "Partition time-weighted Avg GPU Mem Eff: n/a\n";
     }
   }
 '
