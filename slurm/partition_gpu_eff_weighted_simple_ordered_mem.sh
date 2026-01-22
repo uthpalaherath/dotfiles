@@ -61,7 +61,24 @@ if printf '%s\n' "$SUMMARY" | grep -qi "No valid jobs found"; then
   exit 0
 fi
 
-# Extract unique users from the summary table (first column after the header separator)
+# Extract unique users and their GPU Hours from the summary table
+readarray -t USER_DATA < <(
+  printf '%s\n' "$SUMMARY" |
+  awk '
+    BEGIN { FS = "[[:space:]]+"; in_table = 0; }
+    /^[-]{2,}$/ { in_table=1; next }    # line of dashes -> start of table rows
+    !in_table { next }
+    NF < 1 { next }
+    {
+      u = $1;
+      gh = $3;  # GPU Hours column is 3rd column
+      if (u == "User" || u == "") next;  # skip header line / junk
+      print u " " gh;
+    }
+  ' | sort -u
+)
+
+# Extract just usernames for the detailed report processing
 readarray -t USERS < <(
   printf '%s\n' "$SUMMARY" |
   awk '
@@ -82,7 +99,16 @@ if [[ ${#USERS[@]} -eq 0 ]]; then
   exit 0
 fi
 
-# --- 2) For each user, parse their WEIGHTED row from `--plain -u user` ------
+  # --- 2) Create lookup table for GPU Hours from summary -------------
+
+# Create associative array with GPU Hours from summary
+declare -A USER_GPU_HOURS
+for line in "${USER_DATA[@]}"; do
+  read -r user gpu_hours <<< "$line"
+  USER_GPU_HOURS["$user"]="$gpu_hours"
+done
+
+# --- 3) For each user, parse their WEIGHTED row from `--plain -u user` ------
 
 BASE_CMD=(slurm-report -r "$PART" -S "$START" --plain)
 if [[ -n "$END" ]]; then
@@ -95,47 +121,20 @@ for u in "${USERS[@]}"; do
   USER_REPORT="$("${BASE_CMD[@]}" -u "$u" 2>/dev/null || true)"
   [[ -z "$USER_REPORT" ]] && USER_REPORT=""
 
-  # Extract elapsed (seconds), GPUEff (%), GPUUtil (%), GPUMemEff (%) from WEIGHTED row
+  # Extract GPUEff (%), GPUUtil (%), GPUMemEff (%) from WEIGHTED row
   metrics="$(
     awk '
       BEGIN {
-        elapsed_secs = 0;
-        gpu_eff      = 0;
-        gpu_util     = 0;
-        gpu_mem_eff  = 0;
+        gpu_eff = 0;
+        gpu_util = 0;
+        gpu_mem_eff = 0;
       }
-
-      # Convert time string to seconds. Supports:
-      #   D-HH:MM:SS, HH:MM:SS (any digits in hours), MM:SS
-      function timestr_to_secs(t,    days, hms, a, n, secs, hh, mm, ss) {
-        secs = 0;
-        if (t ~ /-/) {
-          split(t, a, "-");
-          days = a[1] + 0;
-          hms  = a[2];
-        } else {
-          days = 0;
-          hms  = t;
-        }
-        n = split(hms, a, ":");
-        if (n == 3) {
-          hh = a[1]+0; mm = a[2]+0; ss = a[3]+0;
-        } else if (n == 2) {
-          hh = 0; mm = a[1]+0; ss = a[2]+0;
-        } else {
-          return 0;
-        }
-        secs = ((days * 24 + hh) * 3600) + (mm * 60) + ss;
-        return secs;
-      }
-
-      # WEIGHTED row: extract elapsed + GPUEff + GPUUtil + GPUMemEff by tokens
+      
+      # WEIGHTED row: extract GPUEff + GPUUtil + GPUMemEff by tokens
       /^[[:space:]]*WEIGHTED[[:space:]]/ {
         line = $0;
-
-        # Split WEIGHTED line into tokens
         n = split(line, a, /[[:space:]]+/);
-
+        
         # Find the elapsed time token (first time-like thing)
         t_idx = 0;
         for (i = 1; i <= n; i++) {
@@ -146,9 +145,7 @@ for u in "${USERS[@]}"; do
             break;
           }
         }
-        if (t_idx > 0)
-          elapsed_secs = timestr_to_secs(a[t_idx]);
-
+        
         # Collect all tokens after elapsed (kept in order, including ---)
         for (j in vals) delete vals[j];
         k = 0;
@@ -160,12 +157,12 @@ for u in "${USERS[@]}"; do
         # After elapsed, WEIGHTED row layout is effectively:
         #   CPUEff, MemEff, GPUEff, GPUUtil, GPUMemEff, GPUMem
         # So GPUEff is vals[3], GPUUtil is vals[4], GPUMemEff is vals[5]
-        gpueff_str      = "";
-        gpuutil_str     = "";
-        gpumemeff_str   = "";
+        gpueff_str = "";
+        gpuutil_str = "";
+        gpumemeff_str = "";
 
-        if (k >= 3) gpueff_str    = vals[3];
-        if (k >= 4) gpuutil_str   = vals[4];
+        if (k >= 3) gpueff_str = vals[3];
+        if (k >= 4) gpuutil_str = vals[4];
         if (k >= 5) gpumemeff_str = vals[5];
 
         # GPUEff
@@ -194,19 +191,20 @@ for u in "${USERS[@]}"; do
       }
 
       END {
-        # Always print something, even if elapsed_secs == 0
-        printf "%.0f %.4f %.4f %.4f\n", elapsed_secs, gpu_eff, gpu_util, gpu_mem_eff;
+        printf "%.4f %.4f %.4f\n", gpu_eff, gpu_util, gpu_mem_eff;
       }
     ' <<< "$USER_REPORT"
   )"
 
-  # metrics is "secs gpueff gpuutil gpumemeff"
-  read -r secs gpueff gpuutil gpumemeff <<< "$metrics"
+  # metrics is "gpueff gpuutil gpumemeff"
+  read -r gpueff gpuutil gpumemeff <<< "$metrics"
 
-  STATS+="$u $secs $gpueff $gpuutil $gpumemeff"$'\n'
+  # Use GPU hours from summary instead of calculating
+  gpu_hours="${USER_GPU_HOURS[$u]}"
+  STATS+="$u $gpueff $gpuutil $gpumemeff $gpu_hours"$'\n'
 done
 
-# --- 3) Aggregate per-user stats -> partition metrics -----------------------
+  # --- 4) Aggregate per-user stats -> partition metrics -----------------------
 
 printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
   BEGIN {
@@ -217,16 +215,16 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     if (NF < 1) next;
 
     user     = $1;
-    secs     = $2 + 0;
-    ge       = $3 + 0;   # GPUEff %
-    gu       = $4 + 0;   # GPUUtil %
-    gme      = $5 + 0;   # GPUMemEff %
+    ge       = $2 + 0;   # GPUEff %
+    gu       = $3 + 0;   # GPUUtil %
+    gme      = $4 + 0;   # GPUMemEff %
+    gh       = $5 + 0;   # GPU Hours from summary
 
-    # Always keep the user, even if secs == 0
-    user_secs[user]       = secs;
+    # Always keep the user, even if no GPU hours
     user_gpueff[user]    = ge;
     user_gpuutil[user]    = gu;
     user_gpumemeff[user]  = gme;
+    user_gpuhrs[user]     = gh;
     seen[user] = 1;
   }
   END {
@@ -245,7 +243,6 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
             "------------------------","---------","-----------","---------------";
 
     nusers              = 0;
-    total_secs          = 0;
     total_gpuhours      = 0;
     sum_secs_gpueff     = 0;
     sum_gpuhours_gpueff = 0;
@@ -255,37 +252,19 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     for (u in seen) {
       nusers++;
 
-      s   = user_secs[u];
       ge  = user_gpueff[u];
       gu  = user_gpuutil[u];
       gme = user_gpumemeff[u];
+      gh  = user_gpuhrs[u];
 
-      total_secs         += s;
-      sum_secs_gpueff   += s * ge;
+      sum_secs_gpueff   += gh * 3600 * ge;
       sum_gpumemeff     += gme;
 
-      hh = int(s / 3600);
-      mm = int((s % 3600) / 60);
-      ss = s % 60;
-      elapsed_fmt = sprintf("%02d:%02d:%02d", hh, mm, ss);
-
-      elapsed_hours = s / 3600.0;
-
-      # Infer avg #GPUs from GPUUtil / GPUEff when both >0, else assume 1 GPU
-      if (ge > 0 && gu > 0) {
-        avg_gpus = gu / ge;
-      } else {
-        avg_gpus = 1.0;
-      }
-
-      gpu_hours = elapsed_hours * avg_gpus;
-
-      total_gpuhours      += gpu_hours;
-      sum_gpuhours_gpueff += gpu_hours * ge;
+      total_gpuhours      += gh;
+      sum_gpuhours_gpueff += gh * ge;
 
       # Store user data for later sorting
       users[nusers] = u;
-      user_gpuhrs[u] = gpu_hours;
       user_ge[u] = ge;
       user_gme[u] = gme;
     }
@@ -312,8 +291,8 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
     printf "\nNo. of users: %d\n", nusers;
     printf "Total GPU-hours: %.2f\n", total_gpuhours;
 
-    if (total_secs > 0) {
-      timew_avg = sum_secs_gpueff / total_secs;
+    if (total_gpuhours > 0) {
+      timew_avg = sum_gpuhours_gpueff / total_gpuhours;
       printf "Partition time-weighted Avg GPU Eff: %.4f%%\n", timew_avg;
     } else {
       printf "Partition time-weighted Avg GPU Eff: n/a\n";
@@ -321,9 +300,9 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
 
     if (nusers > 0) {
       avg_mem_eff = sum_gpumemeff / nusers;
-      printf "Partition time-weighted Avg GPU Mem Eff: %.4f%%\n", avg_mem_eff;
+      printf "Partition Avg GPU Mem Eff: %.4f%%\n", avg_mem_eff;
     } else {
-      printf "Partition time-weighted Avg GPU Mem Eff: n/a\n";
+      printf "Partition Avg GPU Mem Eff: n/a\n";
     }
   }
 '
