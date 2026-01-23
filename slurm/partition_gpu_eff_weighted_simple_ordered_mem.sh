@@ -129,12 +129,12 @@ for u in "${USERS[@]}"; do
         gpu_util = 0;
         gpu_mem_eff = 0;
       }
-      
+
       # WEIGHTED row: extract GPUEff + GPUUtil + GPUMemEff by tokens
       /^[[:space:]]*WEIGHTED[[:space:]]/ {
         line = $0;
         n = split(line, a, /[[:space:]]+/);
-        
+
         # Find the elapsed time token (first time-like thing)
         t_idx = 0;
         for (i = 1; i <= n; i++) {
@@ -145,7 +145,7 @@ for u in "${USERS[@]}"; do
             break;
           }
         }
-        
+
         # Collect all tokens after elapsed (kept in order, including ---)
         for (j in vals) delete vals[j];
         k = 0;
@@ -300,9 +300,9 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" '
 
     if (nusers > 0) {
       avg_mem_eff = sum_gpumemeff / nusers;
-      printf "Partition Avg GPU Mem Eff: %.4f%%\n", avg_mem_eff;
+      printf "Partition time-weighted Avg GPU Mem Eff: %.4f%%\n", avg_mem_eff;
     } else {
-      printf "Partition Avg GPU Mem Eff: n/a\n";
+      printf "Partition time-weighted Avg GPU Mem Eff: n/a\n";
     }
   }
 '
