@@ -58,8 +58,8 @@ echo ""
 echo "Email list for users:"
 #for i in $(slurm-report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" --summary --plain | tail -n +5 | awk -F " " '{print $1}'); do echo -n "$i@duke.edu,"; done
 if [ $PARTITION == "h200alloc" ]; then
-    for i in `sacctmgr show assoc where account=slurm-subaccount-testing_h200_u format=user --noheader`; do echo -n $i@duke.edu,;done
+    for i in `sacctmgr show assoc where account=slurm-subaccount-testing_h200_u format=user --noheader`; do echo -n $i@duke.edu\;;done
 elif [ $PARTITION == "h200ea" ]; then
-    for i in `sacctmgr show assoc where account=h200ea format=user --noheader`; do echo -n $i@duke.edu,;done
+    for i in `sacctmgr show assoc where account=h200ea format=user --noheader`; do echo -n $i@duke.edu\;;done
 fi
 echo
