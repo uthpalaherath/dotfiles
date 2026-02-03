@@ -32,7 +32,7 @@ for user in $(slurm-report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" --sum
 done
 
 # Run partition_gpu_eff_weighted_simple_ordered.sh
-./partition_gpu_eff_weighted_simple_ordered_mem.sh -p "$PARTITION" -s "$START_DATE" -e "$END_DATE"
+./partition_gpu_eff_weighted_simple_ordered_mem_csv.sh -p "$PARTITION" -s "$START_DATE" -e "$END_DATE" -c
 
 # Sub-account utilization
 if [ $PARTITION == "h200alloc" ]; then
