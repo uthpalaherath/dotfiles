@@ -26,7 +26,6 @@ SLURM_REPORT_DIR="slurm-reports_${PARTITION}_${START_DATE}-${END_DATE}"
 mkdir -p "$SLURM_REPORT_DIR"
 
 # dump slurm-report for each of those users in directory
-echo "Generating individual user reports..."
 for user in $(slurm-gpu report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" --summary --plain | tail -n +3 | awk -F " " '{print $1}'); do
     slurm-gpu report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" -u "$user" > "$SLURM_REPORT_DIR/${PARTITION}_${user}_${START_DATE//-/}-${END_DATE//-/}.txt"
 done
