@@ -242,9 +242,11 @@ alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_p
 alias mount_timewarp2="umount ~/HPC/timewarp2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp2/home"
 alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
 alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
-alias mount_dcc="umount ~/HPC/dcc/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@dcc-login.oit.duke.edu: ~/HPC/dcc/home"
+#alias mount_dcc="umount ~/HPC/dcc/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@dcc-login.oit.duke.edu: ~/HPC/dcc/home"
+alias mount_dcc="umount ~/HPC/dcc/home; sshfs -o follow_symlinks ukh@dcc-login.oit.duke.edu: ~/HPC/dcc/home"
 alias mount_muchasdb="umount ~/HPC/muchasdb/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@vwb3-web-03.egr.duke.edu: ~/HPC/muchasdb/home"
-alias mount_ncshare="umount ~/HPC/ncshare/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uherathmudiyanselage1@login.ncshare.org: ~/HPC/ncshare/home"
+#alias mount_ncshare="umount ~/HPC/ncshare/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uherathmudiyanselage1@login.ncshare.org:/hpc/home/uherathmudiyanselage1 ~/HPC/ncshare/home"
+alias mount_ncshare="umount ~/HPC/ncshare/home; sshfs -o follow_symlinks uherathmudiyanselage1@login.ncshare.org:/hpc/home/uherathmudiyanselage1 ~/HPC/ncshare/home"
 
 # git repos
 alias dotrebase='cd /Users/ukh/dotfiles && git pull --rebase || true && cd -'
