@@ -47,7 +47,7 @@ done
 
 # --- 1) Get user list from summary (ONLY for users) -------------------------
 
-SUM_CMD=(slurm-report -r "$PART" -S "$START" --summary --plain)
+SUM_CMD=(slurm-gpu report -r "$PART" -S "$START" --summary --plain)
 if [[ -n "$END" ]]; then
   SUM_CMD+=(-E "$END")
 fi
@@ -113,7 +113,7 @@ done
 
 # --- 3) For each user, parse their WEIGHTED row from `--plain -u user` ------
 
-BASE_CMD=(slurm-report -r "$PART" -S "$START" --plain)
+BASE_CMD=(slurm-gpu report -r "$PART" -S "$START" --plain)
 if [[ -n "$END" ]]; then
   BASE_CMD+=(-E "$END")
 fi
