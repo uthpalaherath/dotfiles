@@ -60,7 +60,7 @@ if [ $PARTITION == "h200alloc" ]; then
     for i in `sacctmgr show assoc where account=slurm-subaccount-testing_h200_u format=user --noheader`; do echo -n $i@duke.edu\;;done
 elif [ $PARTITION == "h200ea" ]; then
     for i in `sacctmgr show assoc where account=h200ea format=user --noheader`; do echo -n $i@duke.edu\;;done
-elif [ $PARTITION == "gpu" ]; then
+elif [ $PARTITION == "gpu"] || [ $PARTITION == "gpu-hp" ]; then
     ldapsearch -H ldap://ncshare-com-01.ncshare.org -x -b dc=ncshare,dc=org '(uid=*)' mail \
   | grep -oE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' \
   | paste -sd ';' -
