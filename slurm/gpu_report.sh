@@ -52,17 +52,24 @@ fi
 # Run gpu_stats_minimal.sh to get GPU usage stats
 ./gpu_stats_minimal.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
 
+# GPU quota for high-priority account
+if [ $PARTITION == "gpu-hp" ]; then
+    echo ""
+    echo "GPU Quota:"
+    get_gpu_quota.sh
+fi
+
 # list of emails for the users
 echo ""
-echo "Email list for users:"
+echo "Email list:"
 #for i in $(slurm-report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" --summary --plain | tail -n +5 | awk -F " " '{print $1}'); do echo -n "$i@duke.edu,"; done
 if [ $PARTITION == "h200alloc" ]; then
     for i in `sacctmgr show assoc where account=slurm-subaccount-testing_h200_u format=user --noheader`; do echo -n $i@duke.edu\;;done
 elif [ $PARTITION == "h200ea" ]; then
     for i in `sacctmgr show assoc where account=h200ea format=user --noheader`; do echo -n $i@duke.edu\;;done
-elif [ $PARTITION == "gpu"] || [ $PARTITION == "gpu-hp" ]; then
-    ldapsearch -H ldap://ncshare-com-01.ncshare.org -x -b dc=ncshare,dc=org '(uid=*)' mail \
-  | grep -oE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' \
-  | paste -sd ';' -
+elif [ $PARTITION == "gpu" ]; then
+  ./get_email_address.sh appstate_h200,campbell_h200,catawba_h200,chowan_h200,davidson_h200,duke_h200,elon_h200,guilford_h200,meredith_h200,ncat_h200,nccu_h200,ncssm_h200,ncsu_h200,unc_h200,charlotte_h200,fsu_h200,uncp_h200,uncw_h200,wfu_h200,wssu_h200
+elif [ $PARTITION == "gpu-hp" ]; then
+  ./get_email_address.sh davidson_h200_hp,duke_h200_hp,ncat_h200_hp,nccu_h200_hp,ncsu_h200_hp,unc_h200_hp,charlotte_h200_hp,fsu_h200_hp,wssu_h200_hp
 fi
 echo
