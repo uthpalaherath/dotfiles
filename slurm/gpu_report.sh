@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 # Usage:
-# gpu_report.sh -p partition -s start_date -e end_date
+# gpu_report.sh -r partition -S start_date -E end_date
 
 # Parse command line arguments
-while getopts "p:s:e:" opt; do
+while getopts "r:S:E:" opt; do
     case $opt in
-        p) PARTITION="$OPTARG";;
-        s) START_DATE="$OPTARG";;
-        e) END_DATE="$OPTARG";;
+        r) PARTITION="$OPTARG";;
+        S) START_DATE="$OPTARG";;
+        E) END_DATE="$OPTARG";;
         \?) echo "Invalid option: -$OPTARG" >&2; exit 1;;
         :) echo "Option -$OPTARG requires an argument." >&2; exit 1;;
     esac
@@ -16,8 +16,8 @@ done
 
 # Check if all required arguments are provided
 if [ -z "$PARTITION" ] || [ -z "$START_DATE" ] || [ -z "$END_DATE" ]; then
-    echo "Usage: $0 -p partition -s start_date -e end_date"
-    echo "Example: $0 -p h200alloc -s 2025-12-30 -e 2026-01-08"
+    echo "Usage: $0 -r partition -S start_date -E end_date"
+    echo "Example: $0 -r h200alloc -S 2025-12-30 -E 2026-01-08"
     exit 1
 fi
 
@@ -30,8 +30,8 @@ for user in $(slurm-gpu report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" -
     slurm-gpu report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" -u "$user" > "$SLURM_REPORT_DIR/${PARTITION}_${user}_${START_DATE//-/}-${END_DATE//-/}.txt"
 done
 
-# Run partition_gpu_eff_weighted_simple_ordered.sh
-./partition_gpu_eff_weighted_simple_ordered_mem_csv.sh -p "$PARTITION" -s "$START_DATE" -e "$END_DATE"
+# Run partition_gpu_eff.sh
+./partition_gpu_eff.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
 
 # Sub-account utilization
 if [ $PARTITION == "h200alloc" ]; then
@@ -50,7 +50,7 @@ if [ $PARTITION == "h200alloc" ]; then
 fi
 
 # Run gpu_stats_minimal.sh to get GPU usage stats
-./gpu_stats_minimal.sh -p "$PARTITION" -s "$START_DATE" -e "$END_DATE"
+./gpu_stats_minimal.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
 
 # list of emails for the users
 echo ""

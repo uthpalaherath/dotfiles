@@ -18,9 +18,9 @@ usage() {
 Usage: $(basename "$0") [options]
 
 Options:
-  -p, --partition PART   Partition to query (default: ${PARTITION})
-  -s, --start   DATE     sacct start date (inclusive) in YYYY-MM-DD (default: ${START_DATE})
-  -e, --end     DATE     sacct end date (inclusive) in YYYY-MM-DD (default: ${END_DATE})
+  -r, --partition PART   Partition to query (default: ${PARTITION})
+  -S, --start   DATE     sacct start date (inclusive) in YYYY-MM-DD (default: ${START_DATE})
+  -E, --end     DATE     sacct end date (inclusive) in YYYY-MM-DD (default: ${END_DATE})
   -h, --help             Show this help and exit
 
 Examples:
@@ -33,11 +33,11 @@ EOF
 # parse arguments
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -p|--partition)
+    -r|--partition)
       PARTITION="$2"; shift 2;;
-    -s|--start)
+    -S|--start)
       START_DATE="$2"; shift 2;;
-    -e|--end)
+    -E|--end)
       END_DATE="$2"; shift 2;;
     -h|--help)
       usage; exit 0;;
