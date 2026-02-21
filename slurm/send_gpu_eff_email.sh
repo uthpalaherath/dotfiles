@@ -93,7 +93,8 @@ for user in "${!USER_GPUEFF[@]}"; do
   gpueff="${USER_GPUEFF[$user]}"
   gpumemeff="${USER_GPUMEMEFF[$user]}"
 
-  if (( $(echo "$gpueff < $THRESHOLD_GPU" | bc -l) )) && (( $(echo "$gpumemeff < $THRESHOLD_GPU_MEM" | bc -l) )); then
+  if awk -v g="$gpueff" -v t="$THRESHOLD_GPU" 'BEGIN {exit !(g < t)}' && \
+     awk -v g="$gpumemeff" -v t="$THRESHOLD_GPU_MEM" 'BEGIN {exit !(g < t)}'; then
     email="$(get_email_for_user "$user" "$PART")"
 
     if [[ -z "$email" ]]; then
