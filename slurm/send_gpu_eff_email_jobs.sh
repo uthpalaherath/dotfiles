@@ -217,9 +217,11 @@ Duke University
 "
 
   echo "Sending email to: $email (User: $user, GPUEff: $gpueff%, GPUMemEff: $gpumemeff%)"
+  set +e
   send_email "$email" "$SUBJECT" "$BODY"
+  set -e
   echo "DEBUG: after send_email for $user" >&2
-  ((SENT_COUNT++))
+  ((SENT_COUNT++)) || true
   echo "DEBUG: after SENT_COUNT++ for $user, now=$SENT_COUNT" >&2
 done
 
