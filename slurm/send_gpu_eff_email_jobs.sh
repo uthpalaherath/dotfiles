@@ -59,7 +59,7 @@ while IFS= read -r line; do
 
   USER_GPUEFF["$user"]="$gpu_eff"
   USER_GPUMEMEFF["$user"]="$gpu_mem_eff"
-done <<< "$TELEGRAF_OUTPUT"
+done < <(echo "$TELEGRAF_OUTPUT")
 
 declare -A LOW_USERS
 
@@ -181,15 +181,17 @@ Your time-weighted GPU efficiency for partition ${PART} during ${START} to ${END
 
 The following jobs have low GPU efficiency or GPU memory efficiency:
 
+JobID       State       Elapsed   CPUEff  MemEff  GPUEff  GPUUtil  GPUMemEff  GPUMem
+------     ---------   --------   ------  ------  ------  -------  ---------  ------
 ${jobs}
 
-These jobs show GPU utilization below the threshold: GPUEff < ${THRESHOLD_GPU}% OR GPUMemEff < ${THRESHOLD_GPU_MEM}% !
+These jobs show GPU utilization below the threshold: GPUEff < ${THRESHOLD_GPU}% AND GPUMemEff < ${THRESHOLD_GPU_MEM}% !
 
 To check job details, from a login node run:
 sacct -j <job_id>
 
 To assess your GPU utilization, please run the following command from a login node:
-slurm-gpu report -r ${PART} -S yesterday -E now -u ${user}
+slurm-gpu report -r ${PART} -S ${START} -E ${END} -u ${user}
 
 This will help you identify jobs that may be underutilizing GPU resources.
 If you have any questions or need assistance optimizing your GPU usage, please feel free to reach out.
