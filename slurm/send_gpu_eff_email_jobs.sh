@@ -181,6 +181,8 @@ Your time-weighted GPU efficiency for partition ${PART} during ${START} to ${END
 
 The following jobs have low GPU efficiency and GPU memory efficiency:
 
+User        JobID    State   Elapsed   TimeEff   CPUEff  MemEff   GPUEff  GPUUtil     GPUMemEff  GPUMem  Partition
+----        -----    -----   -------   -------   ------  ------   ------  -------     ---------  ------  ---------
 ${jobs}
 
 These jobs show GPU utilization below the threshold: GPUEff < ${THRESHOLD_GPU}% and GPUMemEff < ${THRESHOLD_GPU_MEM}% !
