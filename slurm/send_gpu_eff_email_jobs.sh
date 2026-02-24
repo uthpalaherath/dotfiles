@@ -38,7 +38,7 @@ fi
 
 echo "Step 1: Getting time-weighted averages for all users..."
 
-TELEGRAF_OUTPUT="$(slurm-gpu report -r "$PART" -S "$START" -E "$END" --telegraf 2>/dev/null || true)"
+TELEGRAF_OUTPUT="$(slurm-gpu report -r "$PART" -S "$START" -E "$END" --telegraf -a 2>/dev/null || true)"
 
 if [[ -z "$TELEGRAF_OUTPUT" ]]; then
   echo "No efficiency data for partition=$PART between $START and ${END:-now}"
@@ -69,11 +69,8 @@ for user in "${!USER_GPUEFF[@]}"; do
   gpueff="${USER_GPUEFF[$user]}"
   gpumemeff="${USER_GPUMEMEFF[$user]}"
 
-  echo "DEBUG: Checking user=$user gpueff=$gpueff gpumemeff=$gpumemeff" >&2
-
   if awk -v g="$gpueff" -v t="$THRESHOLD_GPU" 'BEGIN {exit !(g < t)}' && \
      awk -v g="$gpumemeff" -v t="$THRESHOLD_GPU_MEM" 'BEGIN {exit !(g < t)}'; then
-    echo "DEBUG: Adding $user to LOW_USERS" >&2
     LOW_USERS["$user"]=1
   fi
 done
@@ -152,9 +149,7 @@ send_email() {
   local subject="$2"
   local body="$3"
 
-  echo "DEBUG: in send_email, to=$to" >&2
   echo "$body" | mailx -s "$subject" -c "$CC_EMAIL" "$to" || true
-  echo "DEBUG: mailx returned for $to" >&2
 }
 
 SENT_COUNT=0
@@ -163,23 +158,18 @@ SKIP_COUNT=0
 echo "Step 3: Sending emails..."
 
 for user in "${!LOW_USERS[@]}"; do
-  echo "DEBUG: Processing user=$user in email loop" >&2
   gpueff="${USER_GPUEFF[$user]}"
   gpumemeff="${USER_GPUMEMEFF[$user]}"
 
   email="$(get_email_for_user "$user" "$PART")"
 
-  echo "DEBUG: email for $user = '$email'" >&2
-
   if [[ -z "$email" ]]; then
     echo "Skipping $user: no email found"
-    ((SKIP_COUNT++))
+    ((SKIP_COUNT++)) || true
     continue
   fi
 
   jobs="$(get_underutilizing_jobs "$user" "$PART" "$START" "$END")"
-
-  echo "DEBUG: about to create email body for $user" >&2
 
   SUBJECT="Low GPU Utilization Alert - Partition:${PART}"
 
@@ -191,8 +181,8 @@ Your time-weighted GPU efficiency for partition ${PART} during ${START} to ${END
 
 The following jobs have low GPU efficiency or GPU memory efficiency:
 
-JobID       State       Elapsed   CPUEff  MemEff  GPUEff  GPUUtil  GPUMemEff  GPUMem
-------     ---------   --------   ------  ------  ------  -------  ---------  ------
+User        JobID       State       Elapsed   TimeEff  CPUEff  MemEff  GPUEff  GPUUtil  GPUMemEff  GPUMem    Partition
+----        -----       -----       -------   -------  ------  ------  ------  -------  ---------  ------    ---------
 ${jobs}
 
 These jobs show GPU utilization below the threshold: GPUEff < ${THRESHOLD_GPU}% AND GPUMemEff < ${THRESHOLD_GPU_MEM}% !
@@ -220,9 +210,7 @@ Duke University
   set +e
   send_email "$email" "$SUBJECT" "$BODY"
   set -e
-  echo "DEBUG: after send_email for $user" >&2
   ((SENT_COUNT++)) || true
-  echo "DEBUG: after SENT_COUNT++ for $user, now=$SENT_COUNT" >&2
 done
 
 echo ""
