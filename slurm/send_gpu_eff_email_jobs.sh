@@ -139,7 +139,19 @@ get_underutilizing_jobs() {
     fi
 
     if [[ -n "$low_gpu" ]] || [[ -n "$low_mem" ]]; then
-      echo "$line"
+      printf "%-12s %-11s %-10s %-11s %-8s %-7s %-7s %-7s %-8s %-10s %-8s %-12s\n" \
+        "$(echo "$line" | awk '{print $1}')" \
+        "$(echo "$line" | awk '{print $2}')" \
+        "$(echo "$line" | awk '{print $3}')" \
+        "$(echo "$line" | awk '{print $4}')" \
+        "$(echo "$line" | awk '{print $5}')" \
+        "$(echo "$line" | awk '{print $6}')" \
+        "$(echo "$line" | awk '{print $7}')" \
+        "$(echo "$line" | awk '{print $8}')" \
+        "$(echo "$line" | awk '{print $9}')" \
+        "$(echo "$line" | awk '{print $10}')" \
+        "$(echo "$line" | awk '{print $11}')" \
+        "$(echo "$line" | awk '{print $12}')"
     fi
   done
 }
@@ -181,8 +193,8 @@ Your time-weighted GPU efficiency for partition ${PART} during ${START} to ${END
 
 The following jobs have low GPU efficiency or GPU memory efficiency:
 
-User        JobID       State       Elapsed   TimeEff  CPUEff  MemEff  GPUEff  GPUUtil  GPUMemEff  GPUMem    Partition
-----        -----       -----       -------   -------  ------  ------  ------  -------  ---------  ------    ---------
+User          JobID       State       Elapsed     TimeEff  CPUEff   MemEff   GPUEff   GPUUtil   GPUMemEff  GPUMem    Partition
+----          -----       -----       -------     -------  ------   ------   ------   -------   ---------  ------    ---------
 ${jobs}
 
 These jobs show GPU utilization below the threshold: GPUEff < ${THRESHOLD_GPU}% AND GPUMemEff < ${THRESHOLD_GPU_MEM}% !
