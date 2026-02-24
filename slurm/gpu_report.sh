@@ -55,7 +55,7 @@ fi
 # GPU quota for high-priority account
 if [ $PARTITION == "gpu-hp" ]; then
     echo ""
-    echo "Monthly GPU Quota:"
+    echo "High-Priority Monthly GPU Quota:"
     get_gpu_quota.sh
 fi
 
