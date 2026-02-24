@@ -152,7 +152,9 @@ send_email() {
   local subject="$2"
   local body="$3"
 
+  echo "DEBUG: in send_email, to=$to" >&2
   echo "$body" | mailx -s "$subject" -c "$CC_EMAIL" "$to" || true
+  echo "DEBUG: mailx returned for $to" >&2
 }
 
 SENT_COUNT=0
@@ -216,7 +218,9 @@ Duke University
 
   echo "Sending email to: $email (User: $user, GPUEff: $gpueff%, GPUMemEff: $gpumemeff%)"
   send_email "$email" "$SUBJECT" "$BODY"
+  echo "DEBUG: after send_email for $user" >&2
   ((SENT_COUNT++))
+  echo "DEBUG: after SENT_COUNT++ for $user, now=$SENT_COUNT" >&2
 done
 
 echo ""
