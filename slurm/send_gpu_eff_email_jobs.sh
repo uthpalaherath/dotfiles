@@ -69,8 +69,11 @@ for user in "${!USER_GPUEFF[@]}"; do
   gpueff="${USER_GPUEFF[$user]}"
   gpumemeff="${USER_GPUMEMEFF[$user]}"
 
+  echo "DEBUG: Checking user=$user gpueff=$gpueff gpumemeff=$gpumemeff" >&2
+
   if awk -v g="$gpueff" -v t="$THRESHOLD_GPU" 'BEGIN {exit !(g < t)}' && \
      awk -v g="$gpumemeff" -v t="$THRESHOLD_GPU_MEM" 'BEGIN {exit !(g < t)}'; then
+    echo "DEBUG: Adding $user to LOW_USERS" >&2
     LOW_USERS["$user"]=1
   fi
 done
@@ -158,10 +161,13 @@ SKIP_COUNT=0
 echo "Step 3: Sending emails..."
 
 for user in "${!LOW_USERS[@]}"; do
+  echo "DEBUG: Processing user=$user in email loop" >&2
   gpueff="${USER_GPUEFF[$user]}"
   gpumemeff="${USER_GPUMEMEFF[$user]}"
 
   email="$(get_email_for_user "$user" "$PART")"
+
+  echo "DEBUG: email for $user = '$email'" >&2
 
   if [[ -z "$email" ]]; then
     echo "Skipping $user: no email found"
@@ -170,6 +176,8 @@ for user in "${!LOW_USERS[@]}"; do
   fi
 
   jobs="$(get_underutilizing_jobs "$user" "$PART" "$START" "$END")"
+
+  echo "DEBUG: jobs for $user = '$jobs'" >&2
 
   SUBJECT="Low GPU Utilization Alert - Partition:${PART}"
 
