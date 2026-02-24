@@ -179,19 +179,19 @@ Your time-weighted GPU efficiency for partition ${PART} during ${START} to ${END
   GPUEff: ${gpueff}%
   GPUMemEff: ${gpumemeff}%
 
-The following jobs have low GPU efficiency or GPU memory efficiency:
+The following jobs have low GPU efficiency and GPU memory efficiency:
 
 ${jobs}
 
-These jobs show GPU utilization below the threshold: GPUEff < ${THRESHOLD_GPU}% AND GPUMemEff < ${THRESHOLD_GPU_MEM}% !
+These jobs show GPU utilization below the threshold: GPUEff < ${THRESHOLD_GPU}% and GPUMemEff < ${THRESHOLD_GPU_MEM}% !
 
-These jobs show GPU utilization below the threshold: GPUEff < ${THRESHOLD_GPU}% AND GPUMemEff < ${THRESHOLD_GPU_MEM}% !
+From a login node, run the following commands to investigate further,
 
-To check job details, from a login node run:
-sacct -j <job_id>
+- To check SLURM job details:
+    sacct -j <job_id>
 
-To assess your GPU utilization, please run the following command from a login node:
-slurm-gpu report -r ${PART} -S ${START} -E ${END} -u ${user}
+- To assess your GPU utilization:
+    slurm-gpu report -r ${PART} -S ${START} -E ${END} -u ${user}
 
 This will help you identify jobs that may be underutilizing GPU resources.
 If you have any questions or need assistance optimizing your GPU usage, please feel free to reach out.
