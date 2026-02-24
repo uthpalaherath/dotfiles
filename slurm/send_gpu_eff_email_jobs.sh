@@ -152,7 +152,7 @@ send_email() {
   local subject="$2"
   local body="$3"
 
-  echo "$body" | mailx -s "$subject" -c "$CC_EMAIL" "$to"
+  echo "$body" | mailx -s "$subject" -c "$CC_EMAIL" "$to" || true
 }
 
 SENT_COUNT=0
@@ -177,7 +177,7 @@ for user in "${!LOW_USERS[@]}"; do
 
   jobs="$(get_underutilizing_jobs "$user" "$PART" "$START" "$END")"
 
-  echo "DEBUG: jobs for $user = '$jobs'" >&2
+  echo "DEBUG: about to create email body for $user" >&2
 
   SUBJECT="Low GPU Utilization Alert - Partition:${PART}"
 
