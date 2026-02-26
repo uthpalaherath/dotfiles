@@ -1,8 +1,8 @@
 #!/bin/bash
 # This script is used to set billing limits for GPU High Priority QoS and reset usage.
 # Usage:
-#  To set billing limits : gpu-hp_reset.sh set
-#  To reset usage and log: gpu-hp_reset.sh reset
+#  To set billing limits : gpu_reset.sh set
+#  To reset usage and log: gpu_reset.sh reset
 
 declare -A BILLING_LIMITS=(
     ["duke_h200_hp"]=216000
@@ -14,16 +14,6 @@ declare -A BILLING_LIMITS=(
     ["nccu_h200_hp"]=64800
     ["davidson_h200_hp"]=64800
     ["fsu_h200_hp"]=64800
-    # ["duke_h200_hp"]=120
-    # ["unc_h200_hp"]=120
-    # ["ncsu_h200_hp"]=120
-    # ["ncat_h200_hp"]=120
-    # ["charlotte_h200_hp"]=120
-    # ["wssu_h200_hp"]=120
-    # ["nccu_h200_hp"]=120
-    # ["davidson_h200_hp"]=120
-    # ["fsu_h200_hp"]=120
-
 )
 
 QOS_LIST="duke_h200_hp unc_h200_hp ncsu_h200_hp ncat_h200_hp charlotte_h200_hp wssu_h200_hp nccu_h200_hp davidson_h200_hp fsu_h200_hp"
