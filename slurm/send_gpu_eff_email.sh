@@ -16,7 +16,7 @@ START="$(date -d 'today' +%Y-%m-%d)"
 END="now"
 THRESHOLD_GPU=50
 THRESHOLD_GPU_MEM=50
-CC_EMAIL="uthpala.herath@duke.edu,rescomputing@duke.edu"
+CC_EMAIL="uthpala.herath@duke.edu rescomputing@duke.edu"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -153,7 +153,12 @@ send_email() {
   local subject="$2"
   local body="$3"
 
-  echo "$body" | mailx -s "$subject" -c "$CC_EMAIL" "$to" || true
+  local cc_args=""
+  for cc in $CC_EMAIL; do
+    cc_args+=" -c $cc"
+  done
+
+  echo "$body" | mailx -s "$subject" $cc_args "$to" || true
 }
 
 SENT_COUNT=0
