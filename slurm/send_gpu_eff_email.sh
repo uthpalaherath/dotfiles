@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
-# send_gpu_eff_email.sh
+# send_gpu_eff_email_jobs.sh
 #
-# Send emails to users whose GPU efficiency AND GPU memory efficiency
-# are both below the specified thresholds.
+# Send emails to users with low GPU efficiency, including specific job details.
 #
 # Usage:
-#   send_gpu_eff_email.sh -r PARTITION -S STARTDATE -E ENDDATE
+#   send_gpu_eff_email_jobs.sh -r PARTITION -S STARTDATE -E ENDDATE
 #
 # Example:
-#   send_gpu_eff_email.sh -r h200alloc -S 2026-01-01 -E 2026-01-31
+#   send_gpu_eff_email_jobs.sh -r h200alloc -S 2026-02-17 -E 2026-02-23
 
 set -euo pipefail
 
@@ -26,7 +25,7 @@ while [[ $# -gt 0 ]]; do
     -E|--end)       END="$2";   shift 2;;
     -h|--help)
       echo "Usage: $0 -r PARTITION -S STARTDATE -ENDDATE"
-      echo "Example: $0 -r h200alloc -S 2026-01-01 -E 2026-01-31"
+      echo "Example: $0 -r h200alloc -S 2026-02-17 -E 2026-02-23"
       exit 0;;
     *) echo "Unknown arg: $1" >&2; exit 2;;
   esac
@@ -37,9 +36,11 @@ if [[ -z "$PART" ]]; then
   exit 1
 fi
 
-EFF_OUTPUT="$(slurm-gpu report -r "$PART" -S "$START" -E "$END" --telegraf -a 2>/dev/null || true)"
+echo "Step 1: Getting time-weighted averages for all users..."
 
-if [[ -z "$EFF_OUTPUT" ]]; then
+TELEGRAF_OUTPUT="$(slurm-gpu report -r "$PART" -S "$START" -E "$END" --telegraf -a 2>/dev/null || true)"
+
+if [[ -z "$TELEGRAF_OUTPUT" ]]; then
   echo "No efficiency data for partition=$PART between $START and ${END:-now}"
   exit 0
 fi
@@ -58,7 +59,28 @@ while IFS= read -r line; do
 
   USER_GPUEFF["$user"]="$gpu_eff"
   USER_GPUMEMEFF["$user"]="$gpu_mem_eff"
-done <<< "$EFF_OUTPUT"
+done < <(echo "$TELEGRAF_OUTPUT")
+
+declare -A LOW_USERS=()
+
+echo "Step 2: Finding users with low GPU and GPU memory efficiency..."
+
+for user in "${!USER_GPUEFF[@]}"; do
+  gpueff="${USER_GPUEFF[$user]}"
+  gpumemeff="${USER_GPUMEMEFF[$user]}"
+
+  if awk -v g="$gpueff" -v t="$THRESHOLD_GPU" 'BEGIN {exit !(g < t)}' && \
+     awk -v g="$gpumemeff" -v t="$THRESHOLD_GPU_MEM" 'BEGIN {exit !(g < t)}'; then
+    LOW_USERS["$user"]=1
+  fi
+done
+
+if [[ ${#LOW_USERS[@]} -eq 0 ]]; then
+  echo "No users found with GPU efficiency < ${THRESHOLD_GPU}% AND GPU mem efficiency < ${THRESHOLD_GPU_MEM}%"
+  exit 0
+fi
+
+echo "Found ${#LOW_USERS[@]} users with low GPU efficiency"
 
 get_email_for_user() {
   local user="$1"
@@ -75,45 +97,106 @@ get_email_for_user() {
   fi
 }
 
+get_underutilizing_jobs() {
+  local user="$1"
+  local part="$2"
+  local start="$3"
+  local end="$4"
+
+  local user_output
+  user_output="$(slurm-gpu report -r "$part" -S "$start" -E "$end" --plain -u "$user" 2>/dev/null || true)"
+
+  if [[ -z "$user_output" ]]; then
+    return
+  fi
+
+  echo "$user_output" | while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    [[ "$line" =~ ^User ]] && continue
+    [[ "$line" =~ ^-+$ ]] && continue
+    [[ "$line" =~ ^\ *WEIGHTED ]] && continue
+
+    state="$(echo "$line" | awk '{print $3}')"
+    [[ "$state" == "RUNNING" || "$state" == "PENDING" || "$state" == "PREEMPTED" ]] && continue
+
+    gpueff="$(echo "$line" | awk '{print $8}')"
+    gpumemeff="$(echo "$line" | awk '{print $10}')"
+    gpumem="$(echo "$line" | awk '{print $11}')"
+
+    [[ "$gpueff" == "---" ]] && gpueff="0"
+    [[ "$gpumemeff" == "---" ]] && gpumemeff="0"
+    [[ "$gpumem" == "---" ]] && gpumem="-"
+
+    gpueff="${gpueff//%}"
+    gpumemeff="${gpumemeff//%}"
+
+    low_gpu=""
+    low_mem=""
+
+    if awk -v g="$gpueff" -v t="$THRESHOLD_GPU" 'BEGIN {exit !(g < t)}'; then
+      low_gpu="yes"
+    fi
+    if awk -v g="$gpumemeff" -v t="$THRESHOLD_GPU_MEM" 'BEGIN {exit !(g < t)}'; then
+      low_mem="yes"
+    fi
+
+    if [[ -n "$low_gpu" ]] && [[ -n "$low_mem" ]]; then
+      jobid="$(echo "$line" | awk '{print $2}')"
+      elapsed="$(echo "$line" | awk '{print $4}')"
+      echo "$jobid | $state | $elapsed | ${gpueff}% | ${gpumemeff}% | $gpumem"
+    fi
+  done
+}
+
 send_email() {
   local to="$1"
   local subject="$2"
   local body="$3"
 
-  echo "$body" | mailx -s "$subject" -c "$CC_EMAIL" "$to"
+  echo "$body" | mailx -s "$subject" -c "$CC_EMAIL" "$to" || true
 }
 
 SENT_COUNT=0
 SKIP_COUNT=0
 
-echo "Finding underutilizing users (GPU Eff < $THRESHOLD_GPU% AND GPU Mem Eff < $THRESHOLD_GPU_MEM%)..."
-echo ""
+echo "Step 3: Sending emails..."
 
-for user in "${!USER_GPUEFF[@]}"; do
+for user in "${!LOW_USERS[@]}"; do
   gpueff="${USER_GPUEFF[$user]}"
   gpumemeff="${USER_GPUMEMEFF[$user]}"
 
-  if awk -v g="$gpueff" -v t="$THRESHOLD_GPU" 'BEGIN {exit !(g < t)}' && \
-     awk -v g="$gpumemeff" -v t="$THRESHOLD_GPU_MEM" 'BEGIN {exit !(g < t)}'; then
-    email="$(get_email_for_user "$user" "$PART")"
+  email="$(get_email_for_user "$user" "$PART")"
 
-    if [[ -z "$email" ]]; then
-      echo "Skipping $user: no email found"
-      ((SKIP_COUNT++))
-      continue
-    fi
+  if [[ -z "$email" ]]; then
+    echo "Skipping $user: no email found"
+    ((SKIP_COUNT++)) || true
+    continue
+  fi
 
-    SUBJECT="Low GPU Utilization Alert - Partition:${PART}"
+  jobs="$(get_underutilizing_jobs "$user" "$PART" "$START" "$END")"
 
-    BODY="Dear ${user},
+  SUBJECT="Low GPU Utilization Alert - Partition:${PART}"
 
-Your GPU utilization on partition ${PART} is low!
+  BODY="Dear ${user},
 
-Time-weighted Average GPU Efficiency: ${gpueff}% (threshold: ${THRESHOLD_GPU}%)
-Time-weighted Average GPU Memory Efficiency: ${gpumemeff}% (threshold: ${THRESHOLD_GPU_MEM}%)
+Your time-weighted GPU efficiency for partition ${PART} during ${START} to ${END} is:
+  GPUEff: ${gpueff}%
+  GPUMemEff: ${gpumemeff}%
 
-To assess your GPU utilization, please run the following command from a login node:
-slurm-gpu report -r ${PART} -S today -E now -u ${user}
+The following jobs have low GPU efficiency and GPU memory efficiency:
+
+JobID | State | Elapsed | GPUEff | GPUMemEff | GPUMem
+${jobs}
+
+These jobs show GPU utilization below the threshold: GPUEff < ${THRESHOLD_GPU}% and GPUMemEff < ${THRESHOLD_GPU_MEM}% !
+
+From a login node, run the following commands to investigate further,
+
+- To check SLURM job details:
+    sacct -j <job_id>
+
+- To assess your GPU utilization:
+    slurm-gpu report -r ${PART} -S ${START} -E ${END} -u ${user}
 
 This will help you identify jobs that may be underutilizing GPU resources.
 If you have any questions or need assistance optimizing your GPU usage, please feel free to reach out.
@@ -127,10 +210,12 @@ Research Computing & Support Services
 Office of Information Technology
 Duke University
 "
-    echo "Sending email to: $email (User: $user, GPUEff: $gpueff%, GPUMemEff: $gpumemeff%)"
-    send_email "$email" "$SUBJECT" "$BODY"
-    ((SENT_COUNT++))
-  fi
+
+  echo "Sending email to: $email (User: $user, GPUEff: $gpueff%, GPUMemEff: $gpumemeff%)"
+  set +e
+  send_email "$email" "$SUBJECT" "$BODY"
+  set -e
+  ((SENT_COUNT++)) || true
 done
 
 echo ""
