@@ -16,7 +16,7 @@ START="$(date -d 'today' +%Y-%m-%d)"
 END="now"
 THRESHOLD_GPU=50
 THRESHOLD_GPU_MEM=50
-CC_EMAIL="uthpala.herath@duke.edu"
+CC_EMAIL="uthpala.herath@duke.edu,rescomputing@duke.edu"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
