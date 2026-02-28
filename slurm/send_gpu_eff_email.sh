@@ -204,12 +204,12 @@ From a login node, run the following commands to investigate further,
     slurm-gpu report -r ${PART} -S ${START} -E ${END} -u ${user}
 
 This will help you identify jobs that may be underutilizing GPU resources.
-If you have any questions or need assistance optimizing your GPU usage, please feel free to reach out.
+Please reach out to us at rescomputing@duke.edu to get assistance in optimizing your GPU utilization.
 
 Thank you,
 Uthpala
 
-Uthpala Herath
+Uthpala Herath, Ph.D.
 Sr. Engagement Specialist
 Research Computing & Support Services
 Office of Information Technology
