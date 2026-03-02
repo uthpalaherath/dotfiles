@@ -38,9 +38,6 @@ reset_usage() {
     printf "%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" >> "$log_file"
 
     for qos in $QOS_LIST; do
-        echo "Resetting RawUsage for $qos"
-        sacctmgr --immediate modify qos where name="$qos" set RawUsage=0
-
         output=$(scontrol show assoc_mgr flags=qos qos="$qos" 2>/dev/null | grep 'GrpTRESMins=' | grep -o 'billing=[^()]*([0-9]*)' | grep -o '[0-9]*')
 
         billing_set=$(echo "$output" | head -1)
@@ -48,6 +45,9 @@ reset_usage() {
         remaining=$((billing_set - billing_used))
 
         printf "%-20s | %-20s | %-20s | %-20s\n" "$qos" "$billing_set" "$billing_used" "$remaining" >> "$log_file"
+
+        echo "Resetting RawUsage for $qos"
+        sacctmgr --immediate modify qos where name="$qos" set RawUsage=0
     done
 
     echo "Log saved to $log_file"
