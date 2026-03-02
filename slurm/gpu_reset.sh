@@ -28,6 +28,7 @@ set_billing() {
 
 reset_usage() {
     local log_dir="$HOME/logs"
+    mkdir -p "$log_dir"
     local timestamp=$(date +%Y%m%d_%H%M%S)
     local log_file="$log_dir/gpu-hp_reset-${timestamp}.log"
 
