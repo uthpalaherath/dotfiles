@@ -15,8 +15,10 @@ PART=""
 START="$(date -d 'today' +%Y-%m-%d)"
 END="now"
 THRESHOLD_GPU=50
-THRESHOLD_GPU_MEM=50
+THRESHOLD_GPU_MEM=30
+THRESHOLD_TIME_LIMIT=1 #in hours
 CC_EMAIL="uthpala.herath@duke.edu rescomputing@duke.edu"
+LOG_DIR="/hpc/home/ukh/log/daily"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -63,7 +65,7 @@ done < <(echo "$TELEGRAF_OUTPUT")
 
 declare -A LOW_USERS=()
 
-echo "Step 2: Finding users with low GPU and GPU memory efficiency..."
+echo "Step 2: Finding users with low time-weighted GPU and GPU memory efficiency..."
 
 for user in "${!USER_GPUEFF[@]}"; do
   gpueff="${USER_GPUEFF[$user]}"
@@ -123,8 +125,8 @@ get_underutilizing_jobs() {
     gpumemeff="$(echo "$line" | awk '{print $10}')"
     gpumem="$(echo "$line" | awk '{print $11}')"
 
-    [[ "$gpueff" == "---" ]] && gpueff="0"
-    [[ "$gpumemeff" == "---" ]] && gpumemeff="0"
+    [[ "$gpueff" == "---" ]] && continue
+    [[ "$gpumemeff" == "---" ]] && continue
     [[ "$gpumem" == "---" ]] && gpumem="-"
 
     gpueff="${gpueff//%}"
@@ -143,6 +145,24 @@ get_underutilizing_jobs() {
     if [[ -n "$low_gpu" ]] && [[ -n "$low_mem" ]]; then
       jobid="$(echo "$line" | awk '{print $2}')"
       elapsed="$(echo "$line" | awk '{print $4}')"
+
+      if [[ "$elapsed" =~ ^([0-9]+)-([0-9]+):([0-9]+):([0-9]+)$ ]]; then
+        days="${BASH_REMATCH[1]}"
+        hours="${BASH_REMATCH[2]}"
+        mins="${BASH_REMATCH[3]}"
+        secs="${BASH_REMATCH[4]}"
+        elapsed_hours=$(awk "BEGIN {print $days * 24 + $hours + $mins / 60 + $secs / 3600}")
+      elif [[ "$elapsed" =~ ^([0-9]+):([0-9]+):([0-9]+)$ ]]; then
+        hours="${BASH_REMATCH[1]}"
+        mins="${BASH_REMATCH[2]}"
+        secs="${BASH_REMATCH[3]}"
+        elapsed_hours=$(awk "BEGIN {print $hours + $mins / 60 + $secs / 3600}")
+      else
+        continue
+      fi
+
+      awk -v h="$elapsed_hours" -v t="$THRESHOLD_TIME_LIMIT" 'BEGIN {exit !(h >= t)}' || continue
+
       echo "$jobid | $state | $elapsed | ${gpueff}% | ${gpumemeff}% | $gpumem"
     fi
   done
@@ -159,6 +179,15 @@ send_email() {
   done
 
   echo "$body" | mailx -s "$subject" $cc_args "$to" || true
+}
+
+log_email() {
+  mkdir -p "$LOG_DIR"
+  local user="$1"
+  local body="$2"
+
+  local log_file="${LOG_DIR}/${END}_${user}_${PART}.txt"
+  echo "$body" > "$log_file"
 }
 
 SENT_COUNT=0
@@ -180,20 +209,28 @@ for user in "${!LOW_USERS[@]}"; do
 
   jobs="$(get_underutilizing_jobs "$user" "$PART" "$START" "$END")"
 
+  if [[ -z "$jobs" ]]; then
+    echo "Skipping $user: no jobs meeting criteria (GPUEff < ${THRESHOLD_GPU}% AND GPUMemEff < ${THRESHOLD_GPU_MEM}% AND elapsed >= ${THRESHOLD_TIME_LIMIT}h)"
+    ((SKIP_COUNT++)) || true
+    continue
+  fi
+
   SUBJECT="Low GPU Utilization Alert - Partition:${PART}"
 
   BODY="Dear ${user},
 
-Your time-weighted GPU efficiency for partition ${PART} during ${START} to ${END} is:
+THIS IS AN AUTOMATED MESSAGE!
+
+Your time-weighted average GPU efficiency for partition ${PART} during ${START} to ${END} is:
   GPUEff: ${gpueff}%
   GPUMemEff: ${gpumemeff}%
 
-The following jobs have low GPU efficiency and GPU memory efficiency:
+The following jobs have low GPU efficiency (< ${THRESHOLD_GPU}%) and GPU memory efficiency (< ${THRESHOLD_GPU_MEM}%) with a runtime over ${THRESHOLD_TIME_LIMIT} hour(s):
 
 JobID | State | Elapsed | GPUEff | GPUMemEff | GPUMem
 ${jobs}
 
-These jobs show GPU utilization below the threshold: GPUEff < ${THRESHOLD_GPU}% and GPUMemEff < ${THRESHOLD_GPU_MEM}% !
+*Please ignore jobs that have been submited to fractional (MIG) GPUs as they do not report GPU efficiency metrics.
 
 From a login node, run the following commands to investigate further,
 
@@ -207,18 +244,13 @@ This will help you identify jobs that may be underutilizing GPU resources.
 Please reach out to us at rescomputing@duke.edu to get assistance in optimizing your GPU utilization.
 
 Thank you,
-Uthpala
-
-Uthpala Herath, Ph.D.
-Sr. Engagement Specialist
-Research Computing & Support Services
-Office of Information Technology
-Duke University
+Duke Research Computing Team
 "
 
   echo "Sending email to: $email (User: $user, GPUEff: $gpueff%, GPUMemEff: $gpumemeff%)"
   set +e
   send_email "$email" "$SUBJECT" "$BODY"
+  log_email "$user" "$BODY"
   set -e
   ((SENT_COUNT++)) || true
 done
