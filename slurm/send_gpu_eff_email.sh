@@ -9,6 +9,7 @@
 # Example:
 #   send_gpu_eff_email_jobs.sh -r h200alloc -S 2026-02-17 -E 2026-02-23
 
+export PATH="$HOME/.cargo/bin:/usr/bin:/bin:$PATH"
 set -euo pipefail
 
 PART=""
@@ -125,20 +126,20 @@ get_underutilizing_jobs() {
     gpumemeff="$(echo "$line" | awk '{print $10}')"
     gpumem="$(echo "$line" | awk '{print $11}')"
 
-    [[ "$gpueff" == "---" ]] && continue
-    [[ "$gpumemeff" == "---" ]] && continue
     [[ "$gpumem" == "---" ]] && gpumem="-"
 
-    gpueff="${gpueff//%}"
-    gpumemeff="${gpumemeff//%}"
+    gpueff_disp="$gpueff"
+    gpumemeff_disp="$gpumemeff"
+    [[ "$gpueff" == "---" ]] && gpueff_disp="0" || gpueff_disp="${gpueff//%}"
+    [[ "$gpumemeff" == "---" ]] && gpumemeff_disp="0" || gpumemeff_disp="${gpumemeff//%}"
 
     low_gpu=""
     low_mem=""
 
-    if awk -v g="$gpueff" -v t="$THRESHOLD_GPU" 'BEGIN {exit !(g < t)}'; then
+    if awk -v g="$gpueff_disp" -v t="$THRESHOLD_GPU" 'BEGIN {exit !(g < t)}'; then
       low_gpu="yes"
     fi
-    if awk -v g="$gpumemeff" -v t="$THRESHOLD_GPU_MEM" 'BEGIN {exit !(g < t)}'; then
+    if awk -v g="$gpumemeff_disp" -v t="$THRESHOLD_GPU_MEM" 'BEGIN {exit !(g < t)}'; then
       low_mem="yes"
     fi
 
@@ -163,7 +164,7 @@ get_underutilizing_jobs() {
 
       awk -v h="$elapsed_hours" -v t="$THRESHOLD_TIME_LIMIT" 'BEGIN {exit !(h >= t)}' || continue
 
-      echo "$jobid | $state | $elapsed | ${gpueff}% | ${gpumemeff}% | $gpumem"
+      echo "$jobid | $state | $elapsed | ${gpueff} | ${gpumemeff} | $gpumem"
     fi
   done
 }
