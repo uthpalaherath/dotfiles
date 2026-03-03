@@ -21,13 +21,21 @@ if [ -z "$PARTITION" ] || [ -z "$START_DATE" ] || [ -z "$END_DATE" ]; then
     exit 1
 fi
 
-# Create slurm-reports directory if it doesn't exist
-SLURM_REPORT_DIR="slurm-reports_${PARTITION}_${START_DATE}-${END_DATE}"
-mkdir -p "$SLURM_REPORT_DIR"
+# Create log file path for capturing output
+OUTPUT_DIR="$HOME/logs/${PARTITION}"
+mkdir -p "$OUTPUT_DIR"
+LOG_FILE="${OUTPUT_DIR}/${PARTITION}_${START_DATE}-${END_DATE}.txt"
+
+# Set up output to be saved to log file while also displaying to stdout
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+# Create user-reports directory
+USER_REPORTS_DIR="${OUTPUT_DIR}/user-reports"
+mkdir -p "$USER_REPORTS_DIR"
 
 # dump slurm-report for each of those users in directory
 for user in $(slurm-gpu report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" --summary --plain | tail -n +3 | awk -F " " '{print $1}'); do
-    slurm-gpu report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" -u "$user" > "$SLURM_REPORT_DIR/${PARTITION}_${user}_${START_DATE//-/}-${END_DATE//-/}.txt"
+    slurm-gpu report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" -u "$user" > "$USER_REPORTS_DIR/${PARTITION}_${user}_${START_DATE//-/}-${END_DATE//-/}.txt"
 done
 
 # Run partition_gpu_eff.sh
@@ -73,3 +81,8 @@ elif [ $PARTITION == "gpu-hp" ]; then
   ./get_email_address.sh davidson_h200_hp,duke_h200_hp,ncat_h200_hp,nccu_h200_hp,ncsu_h200_hp,unc_h200_hp,charlotte_h200_hp,fsu_h200_hp,wssu_h200_hp
 fi
 echo
+
+# Create tar.gz archive of the user-reports directory
+ARCHIVE_NAME="${OUTPUT_DIR}/${PARTITION}_${START_DATE}-${END_DATE}.tar.gz"
+tar -czf "$ARCHIVE_NAME" -C "$OUTPUT_DIR" user-reports
+rm -rf "${USER_REPORTS_DIR}"
