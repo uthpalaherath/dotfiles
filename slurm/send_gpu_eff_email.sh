@@ -126,8 +126,6 @@ get_underutilizing_jobs() {
     gpumemeff="$(echo "$line" | awk '{print $10}')"
     gpumem="$(echo "$line" | awk '{print $11}')"
 
-    [[ "$gpumem" == "---" ]] && gpumem="-"
-
     gpueff_disp="$gpueff"
     gpumemeff_disp="$gpumemeff"
     [[ "$gpueff" == "---" ]] && gpueff_disp="0" || gpueff_disp="${gpueff//%}"
