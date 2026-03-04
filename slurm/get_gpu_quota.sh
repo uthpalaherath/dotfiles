@@ -24,11 +24,11 @@ case "$1" in
         get_quota
         ;;
     -h|--help)
-        echo "Usage: $0 {set|reset}"
+        echo "Usage: $0"
         exit 1
         ;;
     *)
-        echo "Usage: $0 {set|reset}"
+        echo "Usage: $0"
         exit 1
         ;;
 esac
