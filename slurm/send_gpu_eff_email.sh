@@ -89,7 +89,7 @@ get_email_for_user() {
   local user="$1"
   local part="$2"
 
-  if [[ "$part" == "h200alloc" || "$part" == "h200ea" ]]; then
+  if [[ "$part" == "h200alloc" || "$part" == "h200ea" || "$part" == "scavenger-h200" ]]; then
     echo "${user}@duke.edu"
   else
     local email
