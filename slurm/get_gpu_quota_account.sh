@@ -1,6 +1,8 @@
 #!/bin/bash
-# This script shows the quota and usage minutes for GPU High Priority QoS for the user's account.
-# Usage: get_gpu_quota_account.sh
+# This script shows the quota and usage minutes (or hours) for GPU High Priority QoS for the user's account.
+# Usage: get_gpu_quota_account.sh [-H]
+
+show_hours=false
 
 declare -A QOS_ACCOUNT_MAP=(
     [duke_h200_hp]=duke
@@ -35,7 +37,13 @@ get_quota() {
         exit 1
     fi
 
-    printf "%-20s | %-20s | %-20s | %-20s\n" "QoS" "Billing Minutes" "Used" "Remaining"
+    if [ "$show_hours" = true ]; then
+        echo "Institutional Usage (GPU-hours)"
+    else
+        echo "Institutional Usage (GPU-minutes)"
+    fi
+
+    printf "%-20s | %-20s | %-20s | %-20s\n" "QoS" "Quota" "Used" "Remaining"
     printf "%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})"
 
     output=$(scontrol show assoc_mgr flags=qos qos="$user_qos" 2>/dev/null | grep 'GrpTRESMins=' | grep -o 'billing=[^()]*([0-9]*)' | grep -o '[0-9]*')
@@ -44,6 +52,12 @@ get_quota() {
     billing_used=$(echo "$output" | tail -1)
     remaining=$((billing_set - billing_used))
 
+    if [ "$show_hours" = true ]; then
+        billing_set=$((billing_set / 60))
+        billing_used=$((billing_used / 60))
+        remaining=$((remaining / 60))
+    fi
+
     printf "%-20s | %-20s | %-20s | %-20s\n" "$user_qos" "$billing_set" "$billing_used" "$remaining"
 }
 
@@ -51,12 +65,17 @@ case "$1" in
     "")
         get_quota
         ;;
+    -H)
+        show_hours=true
+        get_quota
+        ;;
     -h|--help)
-        echo "Usage: $0"
-        exit 1
+        echo "Usage: $0 [-H]"
+        echo "-H Show usage in GPU-hours instead of GPU-minutes"
+        exit 0
         ;;
     *)
-        echo "Usage: $0"
+        echo "Usage: $0 [-H]"
         exit 1
         ;;
 esac
