@@ -64,7 +64,7 @@ fi
 if [ $PARTITION == "gpu-hp" ]; then
     echo ""
     echo "High-Priority Monthly GPU Quota:"
-    get_gpu_quota.sh
+    get_gpu_quota.sh -H
 fi
 
 # list of emails for the users
