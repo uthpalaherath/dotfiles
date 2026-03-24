@@ -114,12 +114,16 @@ if command -v module >/dev/null 2>&1; then
         module load compiler/latest > /dev/null
         module load mkl/latest > /dev/null
         module load mpi/latest > /dev/null
+        export CC=mpiicx
+        export CXX=mpiicpx
+        export FC=mpiifx
     }
 
     gnu(){
         module load OpenMPI/4.1.6 > /dev/null
-        # module load MPICH/3.2.1 > /dev/null
-        # module load OpenBLAS/3.23 > /dev/null
+        export CC=mpicc
+        export CXX=mpicxx
+        export FC=mpif90
     }
     # default
     intel
@@ -252,3 +256,10 @@ export LD_LIBRARY_PATH="$NETCDFFHOME/lib:$LD_LIBRARY_PATH"
 
 # siesta
 export PATH="/hpc/home/ukh/apps/siesta-5.4.2/build/bin/:$PATH"
+
+# gengetopt
+export PATH="/hpc/group/rescomp/ukh/apps/gengetopt-2.23/build/bin/:$PATH"
+
+# mpi-test-suite
+# export PATH="/hpc/group/rescomp/ukh/apps/mpi-test-suite/build-intel/bin/:$PATH"
+export PATH="/hpc/group/rescomp/ukh/apps/mpi-test-suite/build-gnu/bin/:$PATH"
