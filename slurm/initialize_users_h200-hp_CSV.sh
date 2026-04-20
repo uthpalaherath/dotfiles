@@ -1,18 +1,18 @@
 #!/bin/bash
 # Initializes user associations and limits for the H200 high-priority allocation.
 # Usage:
-# ./initialize_users_h200-hp.sh [--dry-run] [path/to/h200-hp-labs-mapping.csv]
+# ./initialize_users_h200-hp.sh [--dry-run] [path/to/all_rt_members.csv]
 
 set -euo pipefail
 
 shopt -s extglob
 
-CSV_FILE="/hpc/home/ukh/accounting/h200-hp-labs-mapping.csv"
+CSV_FILE="/hpc/home/ukh/accounting/all_rt_members.csv"
 CSV_ARG_SEEN=false
 DRY_RUN=false
 
 usage() {
-    echo "Usage: $0 [--dry-run] [path/to/h200-hp-labs-mapping.csv]"
+    echo "Usage: $0 [--dry-run] [path/to/all_rt_members.csv]"
 }
 
 while [[ $# -gt 0 ]]; do
@@ -45,11 +45,6 @@ done
 
 if ! command -v sacctmgr >/dev/null 2>&1; then
     echo "Error: sacctmgr command not found in PATH"
-    exit 1
-fi
-
-if ! command -v getent >/dev/null 2>&1; then
-    echo "Error: getent command not found in PATH"
     exit 1
 fi
 
@@ -111,46 +106,6 @@ ensure_user_assoc() {
 
     echo "Applying limits: $user_name -> $account_name"
     set_assoc_limits "$user_name" "$account_name"
-}
-
-get_group_users() {
-    local group_name="$1"
-    local group_line
-    local members_field
-    local member
-    local seen_members
-
-    group_line="$(getent group "$group_name" || true)"
-    if [[ -z "$group_line" ]]; then
-        echo "Warning: group not found: $group_name" >&2
-        return 0
-    fi
-
-    IFS=':' read -r _ _ _ members_field <<< "$group_line"
-    members_field="$(trim_field "$members_field")"
-    [[ -z "$members_field" ]] && return 0
-
-    seen_members=""
-    IFS=',' read -r -a members <<< "$members_field"
-    for member in "${members[@]}"; do
-        member="$(trim_field "$member")"
-        [[ -z "$member" ]] && continue
-
-        case "|$seen_members|" in
-            *"|$member|"*)
-                continue
-                ;;
-            *)
-                if [[ -z "$seen_members" ]]; then
-                    seen_members="$member"
-                else
-                    seen_members+="|$member"
-                fi
-                ;;
-        esac
-
-        printf '%s\n' "$member"
-    done
 }
 
 add_seen_account() {
@@ -217,44 +172,48 @@ while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
         continue
     fi
 
-    IFS=',' read -r parent_account unrestricted_account restricted_account rtoolkits_link extra_field <<< "$raw_line"
+    user_name="${raw_line##*,}"
+    prefix_without_netid="${raw_line%,*}"
 
-    parent_account="$(trim_field "$parent_account")"
-    unrestricted_account="$(trim_field "$unrestricted_account")"
-    restricted_account="$(trim_field "$restricted_account")"
-    rtoolkits_link="$(trim_field "$rtoolkits_link")"
-    extra_field="$(trim_field "${extra_field:-}")"
-
-    if [[ -n "$extra_field" || -z "$parent_account" || -z "$unrestricted_account" || -z "$restricted_account" || -z "$rtoolkits_link" ]]; then
+    if [[ "$prefix_without_netid" == "$raw_line" ]]; then
         echo "Skipping malformed row $line_number in $CSV_FILE"
         continue
     fi
 
-    if [[ "$rtoolkits_link" =~ ([0-9]+)/?$ ]]; then
-        project_id="${BASH_REMATCH[1]}"
-    else
-        echo "Skipping row $line_number in $CSV_FILE: unable to parse project id from RToolkits Link"
+    project_name="${raw_line%%,*}"
+    remainder_after_project="${raw_line#*,}"
+    remainder_after_type="${remainder_after_project#*,}"
+
+    if [[ "$remainder_after_project" == "$raw_line" || "$remainder_after_type" == "$remainder_after_project" ]]; then
+        echo "Skipping malformed row $line_number in $CSV_FILE"
         continue
     fi
 
-    unrestricted_group="${project_id}-h200u"
-    restricted_group="${project_id}-h200r"
+    team_name="${remainder_after_type%%,*}"
 
-    echo "Processing $parent_account (project $project_id)"
+    user_name="$(trim_field "$user_name")"
+    project_name="$(trim_field "$project_name")"
+    team_name="$(trim_field "$team_name")"
 
-    while IFS= read -r user_name; do
-        user_name="$(trim_field "$user_name")"
-        [[ -z "$user_name" ]] && continue
-        ensure_user_assoc "$user_name" "$unrestricted_account"
-        add_seen_account "$unrestricted_account"
-    done <<< "$(get_group_users "$unrestricted_group")"
+    if [[ -z "$user_name" || -z "$project_name" || -z "$team_name" ]]; then
+        echo "Skipping malformed row $line_number in $CSV_FILE"
+        continue
+    fi
 
-    while IFS= read -r user_name; do
-        user_name="$(trim_field "$user_name")"
-        [[ -z "$user_name" ]] && continue
-        ensure_user_assoc "$user_name" "$restricted_account"
-        add_seen_account "$restricted_account"
-    done <<< "$(get_group_users "$restricted_group")"
+    case "$team_name" in
+        dcc_h200_restricted)
+            account_name="${project_name}_h200_r"
+            ;;
+        dcc_h200_unrestricted)
+            account_name="${project_name}_h200"
+            ;;
+        *)
+            continue
+            ;;
+    esac
+
+    ensure_user_assoc "$user_name" "$account_name"
+    add_seen_account "$account_name"
 done < "$CSV_FILE"
 
 if [[ -n "$SEEN_ACCOUNTS" ]]; then

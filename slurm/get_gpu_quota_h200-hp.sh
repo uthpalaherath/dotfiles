@@ -4,17 +4,35 @@
 
 show_hours=false
 
-QOS_LIST="duke_h200_hp unc_h200_hp ncsu_h200_hp ncat_h200_hp charlotte_h200_hp wssu_h200_hp nccu_h200_hp davidson_h200_hp fsu_h200_hp"
+QOS_CSV="/hpc/home/ukh/accounting/h200-hp-labs.csv"
+QOS_LIST=""
+
+load_qos_list() {
+    if [ ! -f "$QOS_CSV" ]; then
+        echo "Error: QoS CSV file not found at $QOS_CSV" >&2
+        exit 1
+    fi
+
+    QOS_LIST=""
+    while IFS=, read -r _ qos _; do
+        [ "$qos" = "Unrestricted Account" ] && continue
+        [ -z "$qos" ] && continue
+        qos=${qos//$'\r'/}
+        QOS_LIST+="$qos "
+    done < "$QOS_CSV"
+}
 
 minutes_to_hours() {
     awk -v mins="$1" 'BEGIN { printf "%.2f", mins / 60 }'
 }
 
 get_quota() {
+    load_qos_list
+
     if [ "$show_hours" = true ]; then
-        echo "Institutional Usage (GPU-hours)"
+        echo "Account Usage (GPU-hours)"
     else
-        echo "Institutional Usage (GPU-minutes)"
+        echo "Account Usage (GPU-minutes)"
     fi
     printf "%-20s | %-20s | %-20s | %-20s\n" "QoS" "Quota" "Used" "Remaining"
     printf "%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})"

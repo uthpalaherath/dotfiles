@@ -70,11 +70,25 @@ fi
 # list of emails for the users
 echo ""
 echo "Email list:"
-#for i in $(slurm-report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" --summary --plain | tail -n +5 | awk -F " " '{print $1}'); do echo -n "$i@duke.edu,"; done
-if [ $PARTITION == "h200alloc" ]; then
-    for i in `sacctmgr show assoc where account=slurm-subaccount-testing_h200_u format=user --noheader`; do echo -n $i@duke.edu\;;done
-elif [ $PARTITION == "h200ea" ]; then
-    for i in `sacctmgr show assoc where account=h200ea format=user --noheader`; do echo -n $i@duke.edu\;;done
+if [ $PARTITION == "h200-hp" ]; then
+    H200_HP_CSV="/hpc/home/ukh/accounting/h200-hp-labs.csv"
+    if [ -f "$H200_HP_CSV" ]; then
+        {
+            while IFS=, read -r parent_account unrestricted_account restricted_account _; do
+                parent_account=${parent_account//$'\r'/}
+                unrestricted_account=${unrestricted_account//$'\r'/}
+                restricted_account=${restricted_account//$'\r'/}
+
+                [ "$parent_account" = "Parent Account" ] && continue
+                [ -z "$parent_account" ] && continue
+
+                sacctmgr show assoc where account="$unrestricted_account" format=user --noheader 2>/dev/null
+                sacctmgr show assoc where account="$restricted_account" format=user --noheader 2>/dev/null
+            done < "$H200_HP_CSV"
+        } | awk 'NF { print $1 "@duke.edu" }' | sort -u | paste -sd ';' -
+    else
+        echo "Error: CSV file not found at $H200_HP_CSV" >&2
+    fi
 elif [ $PARTITION == "scavenger-h200" ]; then
     for i in `sacctmgr show assoc where account=scavenger-h200 format=user --noheader`; do echo -n $i@duke.edu\;;done
 elif [ $PARTITION == "gpu" ]; then
