@@ -78,7 +78,6 @@ export EDITOR="vim"
 
 # Modules
 export MODULEPATH="/hpc/group/blumlab/modulefiles/:$MODULEPATH"
-export MODULEPATH="/hpc/group/blumlab/intel/oneapi/modulefiles/:$MODULEPATH"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -111,6 +110,7 @@ if command -v module >/dev/null 2>&1; then
 
     # Compiler
     intel(){
+        export MODULEPATH="/hpc/group/blumlab/intel/oneapi/modulefiles/:$MODULEPATH"
         module load compiler/latest > /dev/null
         module load mkl/latest > /dev/null
         module load mpi/latest > /dev/null
