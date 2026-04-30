@@ -11,20 +11,7 @@ if [[ "${1:-}" == "-i" ]]; then
 fi
 
 labs=(
-  capellab
-  ditalialab
-  eroglulab
-  gibertlab
-  hiltonlab
-  jbird
-  mchenlab
-  munjallab
-  nicchittalab
-  tatalab
-  yildirimlab
-  lynchlab
-  reiterlab
-  salhashoorlab
+    szhoulab
 )
 
 for n in "${labs[@]}"; do
