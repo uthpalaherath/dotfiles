@@ -30,7 +30,9 @@ fi
 unset rc
 
 # Source for colorful terminal
-source ~/.bash_prompt
+if [[ $- == *i* ]] && [ -f ~/.bash_prompt ]; then
+    source ~/.bash_prompt
+fi
 
 # tmux
 export TMUX_DEVICE_NAME=dcc
@@ -47,10 +49,13 @@ fi
 ulimit -s unlimited
 
 # Reverse search history
-export HISTIGNORE="pwd:ls:cd"
-shopt -s histappend
-HISTCONTROL=ignoreboth:erasedups
-export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+if [[ $- == *i* ]]; then
+    export HISTIGNORE="pwd:ls:cd"
+    shopt -s histappend
+    HISTCONTROL=ignoreboth:erasedups
+    #export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+    export PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
 
 # Color folders
 export LS_OPTIONS='--color=auto'
@@ -63,21 +68,31 @@ export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
 
 #FZF
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
-export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
-export FZF_CTRL_R_OPTS="
- --preview 'echo {}' --preview-window 'hidden'
- --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
- --color header:italic
- --header 'Press CTRL-Y to copy command into clipboard'"
-export FZF_ALT_C_OPTS="
- --walker-skip .git,node_modules,target
- --preview 'tree -C {}'"
+if [[ $- == *i* ]]; then
+    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+    export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+    export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
+    export FZF_CTRL_R_OPTS="
+     --preview 'echo {}' --preview-window 'hidden'
+     --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+     --color header:italic
+     --header 'Press CTRL-Y to copy command into clipboard'"
+    export FZF_ALT_C_OPTS="
+     --walker-skip .git,node_modules,target
+     --preview 'tree -C {}'"
+fi
 export EDITOR="vim"
 
 # Modules
 export MODULEPATH="/hpc/group/blumlab/modulefiles/:$MODULEPATH"
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# rust
+. "$HOME/.cargo/env"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -106,11 +121,10 @@ alias rc="cd /hpc/group/rescomp/ukh"
 
 if command -v module >/dev/null 2>&1; then
 
-    module load cmake/3.28.3 > /dev/null
-
     # Compiler
     intel(){
         export MODULEPATH="/hpc/group/blumlab/intel/oneapi/modulefiles/:$MODULEPATH"
+        module load cmake/3.28.3 > /dev/null
         module load compiler/latest > /dev/null
         module load mkl/latest > /dev/null
         module load mpi/latest > /dev/null
@@ -120,27 +134,27 @@ if command -v module >/dev/null 2>&1; then
     }
 
     gnu(){
+        module load cmake/3.28.3 > /dev/null
         module load OpenMPI/4.1.6 > /dev/null
         export CC=mpicc
         export CXX=mpicxx
         export FC=mpif90
     }
     # default
-    intel
+    # intel
 fi
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
-
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/hpc/group/rescomp/ukh/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/hpc/group/rescomp/ukh/miniforge3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/hpc/group/rescomp/ukh/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/hpc/group/rescomp/ukh/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/hpc/group/rescomp/ukh/miniforge3/etc/profile.d/conda.sh" ]; then
+        . "/hpc/group/rescomp/ukh/miniforge3/etc/profile.d/conda.sh"
     else
-        export PATH="/hpc/group/rescomp/ukh/miniconda3/bin:$PATH"
+        export PATH="/hpc/group/rescomp/ukh/miniforge3/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -151,35 +165,30 @@ export UV_CACHE_DIR=/work/ukh/tmp
 # https://gist.github.com/JakubTesarek/8840983
 # Easy extract
 extract () {
-if [ -f $1 ] ; then
-case $1 in
-*.tar.bz2)   tar xvjf $1    ;;
-*.tar.gz)    tar xvzf $1    ;;
-*.bz2)       bunzip2 $1     ;;
-*.rar)       rar x $1       ;;
-*.gz)        gunzip $1      ;;
-*.tar)       tar xvf $1     ;;
-*.tbz2)      tar xvjf $1    ;;
-*.tgz)       tar xvzf $1    ;;
-*.zip)       unzip $1       ;;
-*.Z)         uncompress $1  ;;
-*.7z)        7z x $1        ;;
-*)           echo "don't know how to extract '$1'..." ;;
-esac
-else
-echo "'$1' is not a valid file!"
-fi
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xvjf $1    ;;
+            *.tar.gz)    tar xvzf $1    ;;
+            *.bz2)       bunzip2 $1     ;;
+            *.rar)       rar x $1       ;;
+            *.gz)        gunzip $1      ;;
+            *.tar)       tar xvf $1     ;;
+            *.tbz2)      tar xvjf $1    ;;
+            *.tgz)       tar xvzf $1    ;;
+            *.zip)       unzip $1       ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1        ;;
+            *)           echo "don't know how to extract '$1'..." ;;
+        esac
+    else
+        echo "'$1' is not a valid file!"
+    fi
 }
 
 # Creates an archive from given directory
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
-
-# Get job info from job-id
-jobinfo(){
-   scontrol show jobid -dd $1
-}
 
 # yazi cd to directory and return default cursor
 function y() {
@@ -218,22 +227,14 @@ export LD_LIBRARY_PATH="/hpc/home/ukh/libs/scalapack-2.2.2/:$LD_LIBRARY_PATH"
 # export PATH="/hpc/home/ukh/local/FHIaims/FHIaims-intel/bin/:$PATH"
 # export PATH="/hpc/home/ukh/local/FHIaims/FHIaims-intel/utilities/:$PATH"
 
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
 # gpu-burn
 export PATH="/hpc/home/ukh/local/gpu-burn/:$PATH"
-
-# rust
-. "$HOME/.cargo/env"
 
 # yazi
 export PATH="/hpc/home/ukh/local/yazi/target/release/:$PATH"
 
 # Ollama
-export OLLAMA_MODELS=/work/ukh/ollama/models
+# export OLLAMA_MODELS=/work/ukh/ollama/models
 
 # vLLM
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
@@ -263,3 +264,7 @@ export PATH="/hpc/group/rescomp/ukh/apps/gengetopt-2.23/build/bin/:$PATH"
 # mpi-test-suite
 # export PATH="/hpc/group/rescomp/ukh/apps/mpi-test-suite/build-intel/bin/:$PATH"
 export PATH="/hpc/group/rescomp/ukh/apps/mpi-test-suite/build-gnu/bin/:$PATH"
+
+# vim
+export PATH="/hpc/group/rescomp/ukh/apps/vim-local/bin/:$PATH"
+export LD_LIBRARY_PATH="/hpc/group/rescomp/ukh/miniforge3/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
