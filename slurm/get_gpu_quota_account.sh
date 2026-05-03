@@ -5,7 +5,7 @@
 show_hours=false
 
 minutes_to_hours() {
-    awk -v mins="$1" 'BEGIN { printf "%.2f", mins / 60 }'
+    awk -v mins="$1" 'BEGIN { printf "%.2f", (mins + 0) / 60 }'
 }
 
 declare -A QOS_ACCOUNT_MAP=(
@@ -55,14 +55,17 @@ get_quota() {
     billing_set=$(echo "$output" | head -1)
     billing_used=$(echo "$output" | tail -1)
     remaining=$((billing_set - billing_used))
+    billing_set_display="$billing_set"
+    billing_used_display="$billing_used"
+    remaining_display="$remaining"
 
     if [ "$show_hours" = true ]; then
-        billing_set=$(minutes_to_hours "$billing_set")
-        billing_used=$(minutes_to_hours "$billing_used")
-        remaining=$(minutes_to_hours "$remaining")
+        billing_set_display=$(minutes_to_hours "$billing_set")
+        billing_used_display=$(minutes_to_hours "$billing_used")
+        remaining_display=$(minutes_to_hours "$remaining")
     fi
 
-    printf "%-20s | %-20s | %-20s | %-20s\n" "$user_qos" "$billing_set" "$billing_used" "$remaining"
+    printf "%-20s | %-20s | %-20s | %-20s\n" "$user_qos" "$billing_set_display" "$billing_used_display" "$remaining_display"
 }
 
 case "$1" in
