@@ -60,11 +60,18 @@ fi
 # Run gpu_stats_minimal.sh to get GPU usage stats
 ./gpu_stats_minimal.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
 
-# GPU quota for high-priority account
-if [ $PARTITION == "gpu-hp" ]; then
+# GPU quota/reset log for high-priority partitions
+if [ "$PARTITION" == "gpu-hp" ]; then
     echo ""
-    echo "High-Priority Monthly GPU Quota:"
-    get_gpu_quota.sh -H
+    echo "High-Priority Quota Pre-reset Snapshot  "
+    LOG_DIR="$HOME/logs/${PARTITION}_reset"
+    LATEST_LOG=$(ls -1t "$LOG_DIR"/*.log 2>/dev/null | sed -n '1p')
+
+    if [ -n "$LATEST_LOG" ] && [ -f "$LATEST_LOG" ]; then
+        cat "$LATEST_LOG"
+    else
+        echo "No reset log found in $LOG_DIR"
+    fi
 fi
 
 # list of emails for the users

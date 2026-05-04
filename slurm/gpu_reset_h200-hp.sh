@@ -46,7 +46,7 @@ load_qos_list() {
 }
 
 reset_usage() {
-    local log_dir="/hpc/home/ukh/logs"
+    local log_dir="/hpc/home/ukh/logs/h200-hp_reset"
     mkdir -p "$log_dir"
     local timestamp
     local log_file
