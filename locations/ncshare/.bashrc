@@ -148,7 +148,9 @@ fi
 unset rc
 
 # Source for colorful terminal
-source ~/.bash_prompt
+if [[ $- == *i* ]] && [ -f ~/.bash_prompt ]; then
+    source ~/.bash_prompt
+fi
 
 # tmux
 export TMUX_DEVICE_NAME=ncshare
@@ -165,10 +167,13 @@ fi
 ulimit -s unlimited
 
 # Reverse search history
-export HISTIGNORE="pwd:ls:cd"
-shopt -s histappend
-HISTCONTROL=ignoreboth:erasedups
-export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+if [[ $- == *i* ]]; then
+    export HISTIGNORE="pwd:ls:cd"
+    shopt -s histappend
+    HISTCONTROL=ignoreboth:erasedups
+    #export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+    export PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
 
 # Color folders
 export LS_OPTIONS='--color=auto'
@@ -186,18 +191,28 @@ export MKL_DYNAMIC=FALSE
 # export I_MPI_PMI_LIBRARY=/usr/lib/x86_64-linux-gnu/libpmi.so.0
 
 #FZF
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
-export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
-export FZF_CTRL_R_OPTS="
- --preview 'echo {}' --preview-window 'hidden'
- --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
- --color header:italic
- --header 'Press CTRL-Y to copy command into clipboard'"
-export FZF_ALT_C_OPTS="
- --walker-skip .git,node_modules,target
- --preview 'tree -C {}'"
+if [[ $- == *i* ]]; then
+    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+    export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+    export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
+    export FZF_CTRL_R_OPTS="
+     --preview 'echo {}' --preview-window 'hidden'
+     --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+     --color header:italic
+     --header 'Press CTRL-Y to copy command into clipboard'"
+    export FZF_ALT_C_OPTS="
+     --walker-skip .git,node_modules,target
+     --preview 'tree -C {}'"
+fi
 export EDITOR="vim"
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# rust
+. "$HOME/.cargo/env"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
@@ -230,14 +245,14 @@ source /hpc/home/uherathmudiyanselage1/intel/oneapi/setvars.sh --force > /dev/nu
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/hpc/home/uherathmudiyanselage1/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/hpc/home/uherathmudiyanselage1/miniforge3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/hpc/home/uherathmudiyanselage1/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/hpc/home/uherathmudiyanselage1/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/hpc/home/uherathmudiyanselage1/miniforge3/etc/profile.d/conda.sh" ]; then
+        . "/hpc/home/uherathmudiyanselage1/miniforge3/etc/profile.d/conda.sh"
     else
-        export PATH="/hpc/home/uherathmudiyanselage1/miniconda3/bin:$PATH"
+        export PATH="/hpc/home/uherathmudiyanselage1/miniforge3/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -271,11 +286,6 @@ fi
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
-
-# Get job info from job-id
-jobinfo(){
-   scontrol show jobid -dd $1
-}
 
 # yazi cd to directory and return default cursor
 function y() {
@@ -312,16 +322,13 @@ export PATH="/hpc/home/uherathmudiyanselage1/local/FHIaims/utilities/:$PATH"
 # cmake
 export PATH="/hpc/home/uherathmudiyanselage1/local/cmake-4.0.1/build/bin/:$PATH"
 
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# rust
-. "$HOME/.cargo/env"
-
 # yazi
 export PATH="/hpc/home/uherathmudiyanselage1/local/yazi/target/release/:$PATH"
 
 # opencode
 export PATH=/hpc/home/uherathmudiyanselage1/.opencode/bin:$PATH
+
+# vim
+export PATH="/hpc/home/uherathmudiyanselage1/apps/vim/bin/:$PATH"
+export VIM="/hpc/home/uherathmudiyanselage1/apps/vim/share/vim"
+export VIMRUNTIME="/hpc/home/uherathmudiyanselage1/apps/vim/share/vim/vim92"
