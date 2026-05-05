@@ -233,9 +233,6 @@ export PATH="/hpc/home/ukh/local/gpu-burn/:$PATH"
 # yazi
 export PATH="/hpc/home/ukh/local/yazi/target/release/:$PATH"
 
-# Ollama
-# export OLLAMA_MODELS=/work/ukh/ollama/models
-
 # vLLM
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 #export PYTORCH_ALLOC_CONF=expandable_segments:True
