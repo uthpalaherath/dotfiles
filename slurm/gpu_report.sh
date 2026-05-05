@@ -17,7 +17,7 @@ done
 # Check if all required arguments are provided
 if [ -z "$PARTITION" ] || [ -z "$START_DATE" ] || [ -z "$END_DATE" ]; then
     echo "Usage: $0 -r partition -S start_date -E end_date"
-    echo "Example: $0 -r h200alloc -S 2025-12-30 -E 2026-01-08"
+    echo "Example: $0 -r scavenger-h200 -S 2025-12-30 -E 2026-01-08"
     exit 1
 fi
 
@@ -40,22 +40,6 @@ done
 
 # Run partition_gpu_eff.sh
 ./partition_gpu_eff.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
-
-# Sub-account utilization
-if [ $PARTITION == "h200alloc" ]; then
-    echo ""
-    echo "=== Sub-account utilization ==="
-    echo ""
-    #sreport cluster AccountUtilizationByQoS Start=$START_DATE End=$END_DATE -T gres/gpu Accounts=slurm-subaccount-testing_h200_r,slurm-subaccount-testing_h200_u format=Account%32,QOS,Used -t Hours | tail -n +4
-    u_sum=$(slurm-gpu report -r h200alloc -A slurm-subaccount-testing_h200_u -S "${START_DATE}" -E "${END_DATE}" --summary --plain \
-            | tail -n +3 \
-            | awk '{s+=$3} END {print s}')
-    r_sum=$(slurm-gpu report -r h200alloc -A slurm-subaccount-testing_h200_r -S "${START_DATE}" -E "${END_DATE}" --summary --plain \
-            | tail -n +3 \
-            | awk '{s+=$3} END {print s}')
-    echo "slurm-subaccount-testing_h200_u: ${u_sum} GPU-hours"
-    echo "slurm-subaccount-testing_h200_r: ${r_sum} GPU-hours"
-fi
 
 # Run gpu_stats_minimal.sh to get GPU usage stats
 ./gpu_stats_minimal.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
