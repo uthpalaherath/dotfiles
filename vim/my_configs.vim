@@ -19,46 +19,50 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 call plug#begin('~/.vim_runtime/my_plugins')
 
-" Plugins list
+" Core plugins
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'whiteinge/diffconflicts'
 Plug 'zivyangll/git-blame.vim'
-Plug 'junkblocker/git-time-lapse'
 Plug 'Yggdroot/indentLine'
-Plug 'tomasr/molokai'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'preservim/tagbar'
 Plug 'djoshea/vim-autoread'
-Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'szw/vim-maximizer'
-Plug 'jpalardy/vim-slime', { 'for': 'python' }
-Plug 'hanschen/vim-ipython-cell', { 'for': 'python' }
-Plug 'pixelneo/vim-python-docstring'
-Plug 'kshenoy/vim-signature'
-Plug 'psliwka/vim-smoothie'
-Plug 'ZSaberLv0/ZFVimDirDiff'
-Plug 'ZSaberLv0/ZFVimJob'
-Plug 'ZSaberLv0/ZFVimIgnore'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+
+" Lazy-loaded utilities
+Plug 'whiteinge/diffconflicts', { 'on': ['DiffConflicts'] }
+Plug 'junkblocker/git-time-lapse', { 'on': ['GitTimeLapse'] }
+Plug 'preservim/tagbar', { 'on': ['TagbarToggle'] }
+Plug 'szw/vim-maximizer', { 'on': ['MaximizerToggle'] }
+Plug 'ZSaberLv0/ZFVimDirDiff', { 'on': ['ZFDirDiff'] }
+Plug 'ZSaberLv0/ZFVimJob', { 'on': ['ZFDirDiff'] }
+Plug 'ZSaberLv0/ZFVimIgnore', { 'on': ['ZFDirDiff'] }
+Plug 'chriszarate/yazi.vim', { 'on': ['Yazi'] }
+
+" Filetype-specific plugins
+Plug 'jpalardy/vim-slime', { 'for': 'python' }
+Plug 'hanschen/vim-ipython-cell', { 'for': 'python' }
+Plug 'pixelneo/vim-python-docstring', { 'for': 'python' }
+Plug 'preservim/vim-markdown', { 'for': 'markdown' }
+Plug 'img-paste-devs/img-paste.vim', { 'for': 'markdown' }
+
+" Optional UI helpers
+Plug 'kshenoy/vim-signature'
+Plug 'psliwka/vim-smoothie'
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'uthpalaherath/vim-copy-as-rtf'
 Plug 'godlygeek/tabular'
-Plug 'preservim/vim-markdown'
 Plug 'ryanoasis/vim-devicons'
-Plug 'img-paste-devs/img-paste.vim'
-Plug 'chriszarate/yazi.vim'
 
-" Latex plugins
-Plug 'Ron89/thesaurus_query.vim'
-Plug 'dahu/vim-fanfingtastic'
-Plug 'engeljh/vim-latexfmt'
-Plug 'preservim/vim-litecorrect'
-Plug 'preservim/vim-pencil'
-Plug 'kana/vim-textobj-user'
-Plug 'preservim/vim-textobj-sentence'
-Plug 'lervag/vimtex'
+" Latex plugins (load only when needed)
+Plug 'Ron89/thesaurus_query.vim', { 'for': ['tex', 'markdown'] }
+Plug 'dahu/vim-fanfingtastic', { 'for': ['tex', 'markdown'] }
+Plug 'engeljh/vim-latexfmt', { 'for': 'tex' }
+Plug 'preservim/vim-litecorrect', { 'for': ['tex', 'markdown'] }
+Plug 'preservim/vim-pencil', { 'for': ['tex', 'markdown'] }
+Plug 'kana/vim-textobj-user', { 'for': ['tex', 'markdown'] }
+Plug 'preservim/vim-textobj-sentence', { 'for': ['tex', 'markdown'] }
+Plug 'lervag/vimtex', { 'for': ['tex', 'markdown'] }
 call plug#end()
 
 :set encoding=utf-8
@@ -73,7 +77,8 @@ autocmd FileType javascript setlocal nofoldenable
 map <F9> :set wrap!<CR>
 
 """ Change current working directory to file dir
-autocmd BufEnter * silent! lcd %:p:h
+let g:my_auto_lcd = get(g:, 'my_auto_lcd', 0)
+autocmd BufEnter * if g:my_auto_lcd && &buftype ==# '' && expand('%:p') !=# '' | silent! lcd %:p:h | endif
 
 """ Vim splits
 :set splitright
@@ -101,13 +106,13 @@ let g:ale_fix_on_save = 1
 let g:ale_lint_on_enter = 0 """ Don't lint when opening a file
 let g:ale_sign_error = '•'
 let g:ale_sign_warning = '.'
-autocmd VimEnter * :let g:ale_change_sign_column_color = 0
-autocmd VimEnter * :highlight! ALEErrorSign ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
-autocmd VimEnter * :highlight! ALEWarningSign ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
-autocmd VimEnter * :highlight! ALEInfoSign   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
-autocmd VimEnter * :highlight! ALEError ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
-autocmd VimEnter * :highlight! ALEWarning ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
-autocmd VimEnter * :highlight! ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
+let g:ale_change_sign_column_color = 0
+highlight! ALEErrorSign ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
+highlight! ALEWarningSign ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
+highlight! ALEInfoSign   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
+highlight! ALEError ctermfg=9 ctermbg=NONE guifg=#ff0000 guibg=NONE
+highlight! ALEWarning ctermfg=11 ctermbg=NONE guifg=#ffff00 guibg=NONE
+highlight! ALEInfo   ctermfg=14 ctermbg=NONE guifg=#00ffff guibg=NONE
 
 " Disable ALE for tex files
 autocmd BufEnter *.tex ALEDisable
@@ -132,19 +137,9 @@ syntax enable
 
 " Color check and apply
 if has('termguicolors')
-  let s_has_colorterm = (exists('$COLORTERM') && $COLORTERM =~? 'truecolor')
-  let s_has_tc = 0
-  if executable('infocmp')
-    let s_info = system('infocmp ' . shellescape($TERM) . ' 2>/dev/null')
-    if v:shell_error == 0 && s_info =~# 'Tc'
-      let s_has_tc = 1
-    endif
-  endif
-  if s_has_colorterm || s_has_tc
+  " Keep startup fast: avoid running shell checks on every launch.
+  if exists('$COLORTERM') && $COLORTERM =~? 'truecolor\|24bit'
     set termguicolors
-  else
-    set notermguicolors
-    let &t_Co = 256
   endif
 endif
 
