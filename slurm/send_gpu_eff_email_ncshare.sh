@@ -7,7 +7,7 @@
 #   send_gpu_eff_email_jobs.sh -r PARTITION -S STARTDATE -E ENDDATE
 #
 # Example:
-#   send_gpu_eff_email_jobs.sh -r h200alloc -S 2026-02-17 -E 2026-02-23
+#   send_gpu_eff_email_jobs.sh -r gpu -S 2026-02-17 -E 2026-02-23
 
 export PATH="$HOME/.cargo/bin:/usr/bin:/bin:$PATH"
 set -euo pipefail
@@ -28,7 +28,7 @@ while [[ $# -gt 0 ]]; do
     -E|--end)       END="$2";   shift 2;;
     -h|--help)
       echo "Usage: $0 -r PARTITION -S STARTDATE -ENDDATE"
-      echo "Example: $0 -r h200alloc -S 2026-02-17 -E 2026-02-23"
+      echo "Example: $0 -r gpu -S 2026-02-17 -E 2026-02-23"
       exit 0;;
     *) echo "Unknown arg: $1" >&2; exit 2;;
   esac
@@ -89,11 +89,9 @@ get_email_for_user() {
   local user="$1"
   local part="$2"
 
-  if [[ "$part" == "h200alloc" || "$part" == "h200ea" || "$part" == "scavenger-h200" ]]; then
-    echo "${user}@duke.edu"
-  else
+  if [[ "$part" == "gpu" || "$part" == "gpu-hp" ]]; then
     local email
-    email="$(./get_email_address.sh "$user" 2>/dev/null | head -1)" || true
+    email="$(${HOME}/dotfiles/slurm/get_email_address.sh "$user" 2>/dev/null | head -1)" || true
     if [[ -n "$email" ]]; then
       echo "$email"
     fi
