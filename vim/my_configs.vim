@@ -167,7 +167,16 @@ let NERDTreeQuitOnOpen = 1
 let NERDTreeGitStatusConcealBrackets = 0 " default: 0
 let NERDTreeGitStatusShowClean = 0 " default: 0
 let NERDTreeNaturalSort = 1
-noremap <leader>nn :NERDTreeToggle %<CR>
+
+" Toggle NERDTree
+function! ToggleNERDTreeForBuffer() abort
+  if empty(expand('%:p'))
+    NERDTreeToggle
+  else
+    execute 'NERDTreeToggle ' . fnameescape(expand('%:p'))
+  endif
+endfunction
+nnoremap <leader>nn :call ToggleNERDTreeForBuffer()<CR>
 
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 hi Directory guifg=#FF0000 ctermfg=blue
