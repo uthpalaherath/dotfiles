@@ -65,6 +65,7 @@ Plug 'preservim/vim-textobj-sentence', { 'for': ['tex', 'markdown'] }
 Plug 'lervag/vimtex', { 'for': ['tex', 'markdown'] }
 call plug#end()
 
+""" General settings
 :set encoding=utf-8
 :set fileencoding=utf-8
 :set display=lastline    " Show as much as possible of a wrapped last line, not just @.
@@ -83,15 +84,6 @@ autocmd BufEnter * if g:my_auto_lcd && &buftype ==# '' && expand('%:p') !=# '' |
 """ Vim splits
 :set splitright
 :set splitbelow
-
-" Start in insert mode only if file is empty
-"autocmd BufNewFile * startinsert
-" function! InsertIfEmpty()
-"   if expand('%') ==# "" || filereadable(expand('%')) == 0 || (line('$') == 1 && col('$') == 1)
-"     startinsert
-"   endif
-" endfunction
-" au VimEnter * call InsertIfEmpty()
 
 """ indentLine
 let g:indentLine_char = '│'
@@ -175,40 +167,11 @@ let NERDTreeQuitOnOpen = 1
 let NERDTreeGitStatusConcealBrackets = 0 " default: 0
 let NERDTreeGitStatusShowClean = 0 " default: 0
 let NERDTreeNaturalSort = 1
+noremap <leader>nn :NERDTreeToggle %<CR>
 
-" function! StartUp()
-"     if 0 == argc()
-"         NERDTree
-"     end
-" endfunction
-" autocmd VimEnter * call StartUp()
-" autocmd VimEnter * wincmd h
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 hi Directory guifg=#FF0000 ctermfg=blue
 let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
-
-" Reveal current file
-function! IsNERDTreeOpen()
-  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
-endfunction
-
-" Create a function that ensures NERDTree is open and highlights the current file
-function! HighlightInNERDTree() abort
-  " If NERDTree isn't open, open it
-  if !IsNERDTreeOpen()
-    NERDTree
-  endif
-
-  " Highlight the current file iff it's modifiable, non-empty, and we're not in diff mode
-  if &modifiable && strlen(expand('%')) > 0 && !&diff
-    NERDTreeFind
-    " Return to original window
-    wincmd p
-  endif
-endfunction
-
-" Map <leader>n to call the highlight function
-nnoremap <leader>n :call HighlightInNERDTree()<CR>
 
 """ Copy to buffer (Only works on Mac)
 " map <C-c> y:e ~/clipboard<CR>P:w! !pbcopy<CR><CR>:bdelete!<CR>
@@ -252,17 +215,9 @@ nnoremap <C-W>\ :vnew<CR>
 nnoremap <leader>m :SignatureRefresh<CR>
 
 """ Fortran
-":let b:fortran_fixed_source=0
-":set syntax=fortran
 let fortran_free_source=1
 let fortran_do_enddo=1
 let fortran_more_precise=1
-
-" Enable folding
-"set foldmethod=indent
-"set foldlevel=99
-" set nofoldenable
-"set foldcolumn=0
 
 """ vim-python-docstring
 let g:python_style = 'numpy'
@@ -270,7 +225,6 @@ let g:python_style = 'numpy'
 """ vim-slime
 let g:slime_target = "vimterminal"
 let g:ipython_cell_delimit_cells_by = "marks"
-" fix paste issues in ipython
 let g:slime_python_ipython = 1
 let g:slime_dont_ask_default = 1
 
@@ -323,14 +277,6 @@ nnoremap <Leader>qq :IPythonCellRestart<CR>
 " map terminal scroll to Ctrl+b
 tnoremap <c-b> <c-\><c-n>
 
-""" Startify
-" let g:startify_session_persistence = 1
-" let g:startify_lists = [
-"       \ { 'type': 'sessions',  'header': ['   Sessions']       },
-"       \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
-"       \ ]
-" let g:startify_bookmarks = [ '~/.vim_runtime/my_configs.vim' ]
-
 """ vim-maximizer
 let g:maximizer_default_mapping_key = '<C-W>z'
 nnoremap <silent><C-W>z :MaximizerToggle<CR>
@@ -340,9 +286,6 @@ inoremap <silent><C-W>z <C-o>:MaximizerToggle<CR>
 """ Inner slashes
 onoremap <silent> i/ :<C-U>normal! T/vt/<CR>
 onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
-
-""" Delete buffer when navigating back
-"map <silent> <C-o> :bdelete<CR>
 
 """ Cursor options
 :autocmd InsertEnter * set cul
@@ -357,7 +300,7 @@ let &t_EI = "\e[2 q"
 " reset cursor when vim exits
 autocmd VimLeave * silent !printf '\e[6 q'
 
-""" Resume cursor location, except for github commits
+" Resume cursor location, except for github commits
 augroup vimStartup
 au!
 autocmd BufReadPost *
@@ -565,10 +508,6 @@ let g:copilot_no_tab_map = v:true
 
 """ git-blame
 nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
-
-""" git-time-lapse
-" :GitTimeLapse
-" nmap <Leader>gt <Plug>(git-time-lapse)
 
 """ vim-copy-as-rtf
 let g:copy_as_rtf_silence_on_errors = 1
