@@ -54,7 +54,7 @@ Plug 'uthpalaherath/vim-copy-as-rtf'
 Plug 'godlygeek/tabular'
 Plug 'ryanoasis/vim-devicons'
 
-" Latex plugins (load only when needed)
+" Latex plugins
 Plug 'Ron89/thesaurus_query.vim', { 'for': ['tex', 'markdown'] }
 Plug 'dahu/vim-fanfingtastic', { 'for': ['tex', 'markdown'] }
 Plug 'engeljh/vim-latexfmt', { 'for': 'tex' }
@@ -511,9 +511,9 @@ command! -bang -nargs=* BLines
 nnoremap <silent> <leader>q :call fzf#vim#command_history({'sink': 'e', 'window': 'botright 20new', 'options': '--no-preview'})<CR>
 
 """ github-copilot
-"let g:copilot_assume_mapped = v:true
 imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
 let g:copilot_no_tab_map = v:true
+imap <C-L> <Plug>(copilot-accept-word)
 
 """ git-blame
 nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
