@@ -233,12 +233,6 @@ export PATH="/hpc/home/ukh/local/gpu-burn/:$PATH"
 # yazi
 export PATH="/hpc/home/ukh/local/yazi/target/release/:$PATH"
 
-# vLLM
-export VLLM_WORKER_MULTIPROC_METHOD=spawn
-#export PYTORCH_ALLOC_CONF=expandable_segments:True
-export HF_HOME=/work/ukh/vLLM/.cache
-export HF_DATASETS_CACHE=/work/ukh/vLLM/.cache
-
 # opencode
 export PATH=/hpc/home/ukh/.opencode/bin:$PATH
 
