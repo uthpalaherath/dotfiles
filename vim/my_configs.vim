@@ -23,7 +23,6 @@ call plug#begin('~/.vim_runtime/my_plugins')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'zivyangll/git-blame.vim'
 Plug 'Yggdroot/indentLine'
-Plug 'djoshea/vim-autoread'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
