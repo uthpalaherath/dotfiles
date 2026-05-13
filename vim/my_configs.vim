@@ -529,6 +529,9 @@ let g:vim_markdown_autowrite = 1
 let g:vim_markdown_math = 1
 let g:vim_markdown_follow_anchor = 1
 
+" Disable ]h mapping
+map <Plug> <Plug>Markdown_MoveToCurHeader
+
 """ Apply selected LaTeX settings also to Markdown
 augroup markdown_like_latex
   autocmd!
