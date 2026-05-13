@@ -319,7 +319,7 @@ autocmd BufReadPost *
 augroup END
 
 """ Auto-pair modifications
-let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '```':'```', '"""':'"""', "'''":"'''", "`":"`",'$':'$'}
+let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '```':'```', '"""':'"""', "'''":"'''", "`":"`"}
 
 """ ctags
 nnoremap <leader>. :CtrlPTag<cr>
@@ -343,21 +343,6 @@ set diffexpr=""
 
 """ coc-vim
 " ~/.vim/coc-settings.json
-"
-"{
-"  "diagnostic.displayByAle": true,
-"  "coc.preferences.snippets.enable": true,
-"  "suggest.snippetIndicator": "",
-"  "suggest.noselect": true,
-
-"  "languageserver": {
-"     "fortran": {
-"       "command": "fortls",
-"       "filetypes": ["fortran"],
-"       "rootPatterns": [".fortls", ".git/"]
-"      }
-"    }
-"}
 
 " Disable warning
 let g:coc_disable_startup_warning = 1
