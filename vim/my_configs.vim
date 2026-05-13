@@ -42,7 +42,6 @@ Plug 'chriszarate/yazi.vim', { 'on': ['Yazi'] }
 Plug 'jpalardy/vim-slime', { 'for': 'python' }
 Plug 'hanschen/vim-ipython-cell', { 'for': 'python' }
 Plug 'pixelneo/vim-python-docstring', { 'for': 'python' }
-Plug 'preservim/vim-markdown', { 'for': 'markdown' }
 Plug 'img-paste-devs/img-paste.vim', { 'for': 'markdown' }
 
 " Optional UI helpers
