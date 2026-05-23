@@ -51,6 +51,7 @@ Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'uthpalaherath/vim-copy-as-rtf'
 Plug 'godlygeek/tabular'
 Plug 'ryanoasis/vim-devicons'
+Plug 'ConradIrwin/vim-bracketed-paste'
 
 " Latex plugins
 Plug 'Ron89/thesaurus_query.vim', { 'for': ['tex', 'markdown'] }

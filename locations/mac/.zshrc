@@ -45,18 +45,31 @@ export FC="mpif90"
 # PYTHON
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/ukh/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/Users/ukh/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/Users/ukh/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/ukh/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/Users/ukh/miniforge3/etc/profile.d/conda.sh" ]; then
+        . "/Users/ukh/miniforge3/etc/profile.d/conda.sh"
     else
-        export PATH="/Users/ukh/miniconda3/bin:$PATH"
+        export PATH="/Users/ukh/miniforge3/bin:$PATH"
     fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
+# >>> mamba initialize >>>
+# !! Contents within this block are managed by 'mamba shell init' !!
+export MAMBA_EXE='/Users/ukh/miniforge3/bin/mamba';
+export MAMBA_ROOT_PREFIX='/Users/ukh/miniforge3';
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell zsh --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__mamba_setup"
+else
+    alias mamba="$MAMBA_EXE"  # Fallback on help from mamba activate
+fi
+unset __mamba_setup
+# <<< mamba initialize <<<
 
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
@@ -97,6 +110,9 @@ setopt hist_ignore_dups
 setopt hist_ignore_space
 setopt hist_expire_dups_first
 setopt hist_verify
+
+# Hugging Face
+export HF_HOME="/Users/ukh/.cache/huggingface"
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
@@ -151,6 +167,12 @@ function y() {
     echo -e -n "\x1b[6 q"
     [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
     rm -f -- "$tmp"
+}
+
+# vLLM-metal
+function vllm-metal() {
+    conda deactivate 2>/dev/null
+    source ~/.venv-vllm-metal/bin/activate
 }
 
 #------------------------------------------- PATHS -------------------------------------------
