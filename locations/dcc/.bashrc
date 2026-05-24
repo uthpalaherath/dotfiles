@@ -127,6 +127,9 @@ export NVM_DIR="$HOME/.nvm"
 # HuggingFace
 export HF_HOME="/work/${USER}/huggingface"
 
+# Ollama
+export OLLAMA_MODELS="/work/${USER}/ollama/models"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
