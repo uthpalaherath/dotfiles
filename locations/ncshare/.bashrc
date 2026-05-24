@@ -190,6 +190,36 @@ export MKL_DYNAMIC=FALSE
 # export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
 # export I_MPI_PMI_LIBRARY=/usr/lib/x86_64-linux-gnu/libpmi.so.0
 
+# PYTHON
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/hpc/home/uherathmudiyanselage1/miniforge3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/hpc/home/uherathmudiyanselage1/miniforge3/etc/profile.d/conda.sh" ]; then
+        . "/hpc/home/uherathmudiyanselage1/miniforge3/etc/profile.d/conda.sh"
+    else
+        export PATH="/hpc/home/uherathmudiyanselage1/miniforge3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+# >>> mamba initialize >>>
+# !! Contents within this block are managed by 'mamba shell init' !!
+export MAMBA_EXE='/hpc/home/uherathmudiyanselage1/miniforge3/bin/mamba';
+export MAMBA_ROOT_PREFIX='/hpc/home/uherathmudiyanselage1/miniforge3';
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell zsh --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+if [ $? -eq 0  ]; then
+        eval "$__mamba_setup"
+    else
+            alias mamba="$MAMBA_EXE"  # Fallback on help from mamba activate
+fi
+unset __mamba_setup
+# <<< mamba initialize <<<
+export UV_CACHE_DIR=/work/${USER}/tmp
+
 #FZF
 if [[ $- == *i* ]]; then
     [ -f ~/.fzf.bash ] && source ~/.fzf.bash
@@ -242,21 +272,6 @@ alias globus="globusconnectpersonal -start -restrict-paths /hpc/home/uherathmudi
 source /hpc/home/uherathmudiyanselage1/intel/oneapi/setvars.sh --force > /dev/null
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/hpc/home/uherathmudiyanselage1/miniforge3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/hpc/home/uherathmudiyanselage1/miniforge3/etc/profile.d/conda.sh" ]; then
-        . "/hpc/home/uherathmudiyanselage1/miniforge3/etc/profile.d/conda.sh"
-    else
-        export PATH="/hpc/home/uherathmudiyanselage1/miniforge3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 
 # extract, mkcdr and archive creattion were taken from
 # https://gist.github.com/JakubTesarek/8840983
