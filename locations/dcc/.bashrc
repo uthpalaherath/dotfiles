@@ -67,6 +67,7 @@ export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
 
+# PYTHON
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/hpc/group/rescomp/ukh/miniforge3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
