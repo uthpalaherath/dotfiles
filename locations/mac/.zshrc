@@ -304,3 +304,6 @@ alias cleanup="rm -rf ~/Library/Caches/ ~/Library/Logs /Library/Caches/ /System/
 
 # box folder
 alias box="cd /Users/ukh/Library/CloudStorage/Box-Box"
+
+# Obsidian Notebook vault
+alias obs="cd '/Users/ukh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notebooks'"

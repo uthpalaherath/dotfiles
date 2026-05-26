@@ -501,6 +501,8 @@ nnoremap <silent> <leader>q :call fzf#vim#command_history({'sink': 'e', 'window'
 imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
 let g:copilot_no_tab_map = v:true
 imap <C-L> <Plug>(copilot-accept-word)
+imap <C-j> <Plug>(copilot-next)
+imap <C-k> <Plug>(copilot-previous)
 
 """ git-blame
 nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
