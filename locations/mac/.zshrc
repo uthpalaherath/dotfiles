@@ -111,8 +111,11 @@ setopt hist_ignore_space
 setopt hist_expire_dups_first
 setopt hist_verify
 
-# Hugging Face
+# HuggingFace
 export HF_HOME="/Users/ukh/.cache/huggingface"
+
+# Ollama
+export OLLAMA_MODELS="/Users/ukh/.cache/ollama/models"
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 

@@ -43,6 +43,7 @@ Plug 'jpalardy/vim-slime', { 'for': 'python' }
 Plug 'hanschen/vim-ipython-cell', { 'for': 'python' }
 Plug 'pixelneo/vim-python-docstring', { 'for': 'python' }
 Plug 'img-paste-devs/img-paste.vim', { 'for': 'markdown' }
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install', 'for': 'markdown' }
 
 " Optional UI helpers
 Plug 'kshenoy/vim-signature'
@@ -65,10 +66,11 @@ Plug 'lervag/vimtex', { 'for': ['tex', 'markdown'] }
 call plug#end()
 
 """ General settings
-:set encoding=utf-8
-:set fileencoding=utf-8
-:set display=lastline    " Show as much as possible of a wrapped last line, not just @.
-:set number
+set encoding=utf-8
+set fileencoding=utf-8
+set display=lastline    " Show as much as possible of a wrapped last line, not just @.
+set number
+set conceallevel=2
 
 """ Do not fold
 autocmd FileType javascript setlocal nofoldenable
@@ -81,8 +83,8 @@ let g:my_auto_lcd = get(g:, 'my_auto_lcd', 0)
 autocmd BufEnter * if g:my_auto_lcd && &buftype ==# '' && expand('%:p') !=# '' | silent! lcd %:p:h | endif
 
 """ Vim splits
-:set splitright
-:set splitbelow
+set splitright
+set splitbelow
 
 """ indentLine
 let g:indentLine_char = '│'
@@ -112,7 +114,7 @@ autocmd BufEnter *.tex ALEDisable
 noremap <silent> <F3> :set invnumber invrelativenumber \| IndentLinesToggle \| :GitGutterToggle <CR>
 
 """ Remapping keys
-:imap jk <ESC>`^
+imap jk <ESC>`^
 
 """ Tab settings
 set tabstop=4           """ width that a <TAB> character displays as
@@ -296,15 +298,15 @@ onoremap <silent> i/ :<C-U>normal! T/vt/<CR>
 onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
 
 """ Cursor options
-:autocmd InsertEnter * set cul
-:autocmd InsertLeave * set nocul
+autocmd InsertEnter * set cul
+autocmd InsertLeave * set nocul
 
 " Cursor style
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
 
 " Disable all blinking:
-:set guicursor+=a:blinkon0
+set guicursor+=a:blinkon0
 " reset cursor when vim exits
 autocmd VimLeave * silent !printf '\e[6 q'
 
@@ -331,7 +333,7 @@ nmap <F8> :TagbarToggle<CR>
 let g:tagbar_sort = 0
 
 " Open the definition in a new tab
-:nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
+nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
 
 " Open the definition in a vertical split
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
@@ -356,9 +358,9 @@ let g:coc_snippet_prev = '<c-k>'
 vmap <C-j> <Plug>(coc-snippets-select)
 
 " Customize colors
-:highlight CocFloating ctermbg=238 guibg=#444444
-:highlight CocFloating ctermfg=Gray guifg=Gray
-:highlight CocMenuSel ctermbg=240 guibg=#585858
+highlight CocFloating ctermbg=238 guibg=#444444
+highlight CocFloating ctermfg=Gray guifg=Gray
+highlight CocMenuSel ctermbg=240 guibg=#585858
 
 " Some servers have issues with backup files, see #649.
 set nobackup
