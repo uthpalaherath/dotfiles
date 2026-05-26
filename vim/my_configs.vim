@@ -27,6 +27,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'madox2/vim-ai'
 
 " Lazy-loaded utilities
 Plug 'whiteinge/diffconflicts', { 'on': ['DiffConflicts'] }
@@ -562,6 +563,42 @@ augroup markdown_like_latex
   "autocmd FileType markdown silent! GitGutterDisable
 
 augroup END
+
+""" markdown-preview
+let g:mkdp_page_title = '${name}'
+let g:mkdp_images_path = '.markdown_images'
+
+""" vim-ai
+let g:vim_ai_complete = {
+\  "options": {
+\    "endpoint_url": "https://litellm.oit.duke.edu/v1/chat/completions",
+\    "model": "gpt-5.4",
+\  },
+\}
+
+let g:vim_ai_chat = {
+\  "options": {
+\    "endpoint_url": "https://litellm.oit.duke.edu/v1/chat/completions",
+\    "model": "gpt-5.4",
+\  },
+\}
+
+let g:vim_ai_edit = {
+\  "options": {
+\    "endpoint_url": "https://litellm.oit.duke.edu/v1/chat/completions",
+\    "model": "gpt-5.4",
+\  },
+\}
+
+let g:vim_ai_image = {
+\  "options": {
+\    "endpoint_url": "https://litellm.oit.duke.edu/v1/images/generations",
+\    "model": "gpt-image-2",
+\  },
+\  "ui": {
+\    "download_dir": ".",
+\  },
+\}
 
 """ ---------- LATEX SETTINGS ----------
 
