@@ -594,8 +594,8 @@ let g:vim_ai_edit = {
 
 let g:vim_ai_image = {
 \  "options": {
-\    "endpoint_url": "https://litellm.oit.duke.edu/v1/images/generations",
-\    "model": "gpt-image-2",
+\    "endpoint_url": "http://localhost:11434/v1/images/generations",
+\    "model": "x/flux2-klein:latest",
 \  },
 \  "ui": {
 \    "download_dir": ".",
