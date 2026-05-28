@@ -51,7 +51,6 @@ Plug 'kshenoy/vim-signature'
 Plug 'psliwka/vim-smoothie'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'uthpalaherath/vim-copy-as-rtf'
-Plug 'godlygeek/tabular'
 Plug 'ryanoasis/vim-devicons'
 Plug 'ConradIrwin/vim-bracketed-paste'
 
