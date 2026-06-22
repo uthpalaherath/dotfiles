@@ -83,7 +83,7 @@ if [ $PARTITION == "h200-hp" ]; then
 elif [ $PARTITION == "scavenger-h200" ]; then
     for i in `sacctmgr show assoc where account=scavenger-h200 format=user --noheader`; do echo -n $i@duke.edu\;;done
 elif [ $PARTITION == "gpu" ]; then
-  ./get_email_address.sh appstate_h200,campbell_h200,catawba_h200,chowan_h200,davidson_h200,duke_h200,elon_h200,guilford_h200,meredith_h200,ncat_h200,nccu_h200,ncssm_h200,ncsu_h200,unc_h200,charlotte_h200,fsu_h200,uncp_h200,uncw_h200,wfu_h200,wssu_h200
+  ./get_email_address.sh appstate_h200,campbell_h200,catawba_h200,chowan_h200,davidson_h200,duke_h200,elon_h200,guilford_h200,meredith_h200,ncat_h200,nccu_h200,ncssm_h200,ncsu_h200,unc_h200,charlotte_h200,fsu_h200,uncp_h200,uncw_h200,wcu_h200,wfu_h200,wssu_h200
 elif [ $PARTITION == "gpu-hp" ]; then
   ./get_email_address.sh davidson_h200_hp,duke_h200_hp,ncat_h200_hp,nccu_h200_hp,ncsu_h200_hp,unc_h200_hp,charlotte_h200_hp,fsu_h200_hp,wssu_h200_hp
 fi

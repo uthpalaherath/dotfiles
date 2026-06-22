@@ -10,14 +10,18 @@ minutes_to_hours() {
     awk -v mins="$1" 'BEGIN { printf "%.2f", (mins + 0) / 60 }'
 }
 
+percent_used() {
+    awk -v used="$1" -v total="$2" 'BEGIN { if ((total + 0) == 0) printf "N/A"; else printf "%.2f%%", ((used + 0) / (total + 0)) * 100 }'
+}
+
 get_quota() {
     if [ "$show_hours" = true ]; then
         echo "Institutional Usage (GPU-hours)"
     else
         echo "Institutional Usage (GPU-minutes)"
     fi
-    printf "%-20s | %-20s | %-20s | %-20s\n" "QoS" "Quota" "Used" "Remaining"
-    printf "%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})"
+    printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "QoS" "Quota" "Used" "Remaining" "Used %"
+    printf "%-20s-+-%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})"
 
     for qos in $QOS_LIST; do
         output=$(scontrol show assoc_mgr flags=qos qos="$qos" 2>/dev/null | grep 'GrpTRESMins=' | grep -o 'billing=[^()]*([0-9]*)' | grep -o '[0-9]*')
@@ -28,6 +32,7 @@ get_quota() {
         billing_set_display="$billing_set"
         billing_used_display="$billing_used"
         remaining_display="$remaining"
+        percent_used_display=$(percent_used "$billing_used" "$billing_set")
 
         if [ "$show_hours" = true ]; then
             billing_set_display=$(minutes_to_hours "$billing_set")
@@ -35,7 +40,7 @@ get_quota() {
             remaining_display=$(minutes_to_hours "$remaining")
         fi
 
-        printf "%-20s | %-20s | %-20s | %-20s\n" "$qos" "$billing_set_display" "$billing_used_display" "$remaining_display"
+        printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "$qos" "$billing_set_display" "$billing_used_display" "$remaining_display" "$percent_used_display"
     done
 }
 

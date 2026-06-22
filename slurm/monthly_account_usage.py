@@ -42,8 +42,11 @@ ACCOUNT_COLORS = {
     "uncc": "#BCBD22",
     "uncfsu": "#FF7F0E",
     "uncp": "#1F9A8A",
+    "uncw": "#005F73",
     "undefined": "#B8B8B8",
+    "wcu": "#FFD166",
     "wfu": "#000000",
+    "wssu": "#4ECDC4",
 }
 
 
