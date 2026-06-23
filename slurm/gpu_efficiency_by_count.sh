@@ -211,8 +211,8 @@ function record_request(gpu_type, gpus, key) {
 }
 
 END {
-  printf "%-10s %4s %10s %13s %20s %12s %15s\n", "GPU Type", "GPUs", "Total Jobs", "Measured Jobs", "Total Requested GPUs", "TWA GPU Eff%", "TWA GPU Mem Eff%"
-  printf "%-10s %4s %10s %13s %20s %12s %15s\n", "--------", "----", "----------", "-------------", "--------------------", "-----------", "---------------"
+  printf "%-18s %4s %10s %13s %20s %12s %15s\n", "GPU Type", "GPUs", "Total Jobs", "Measured Jobs", "Total Requested GPUs", "TWA GPU Eff%", "TWA GPU Mem Eff%"
+  printf "%-18s %4s %10s %13s %20s %12s %15s\n", "--------", "----", "----------", "-------------", "--------------------", "-----------", "---------------"
   for (gpus = min_gpus; gpus <= max_gpus; gpus++) {
     for (key in jobs) {
       split(key, key_parts, SUBSEP)
@@ -224,9 +224,9 @@ END {
       if (total_seconds[key] > 0) {
         gpu_avg = weighted_gpu_eff[key] / total_seconds[key]
         mem_avg = weighted_mem_eff[key] / total_seconds[key]
-        printf "%-10s %4d %10d %13d %20d %11.2f%% %14.2f%%\n", gpu_type, gpus, jobs[key], eff_jobs[key], total_gpus[key], gpu_avg, mem_avg
+        printf "%-18s %4d %10d %13d %20d %11.2f%% %14.2f%%\n", gpu_type, gpus, jobs[key], eff_jobs[key], total_gpus[key], gpu_avg, mem_avg
       } else {
-        printf "%-10s %4d %10d %13d %20d %12s %15s\n", gpu_type, gpus, jobs[key], 0, total_gpus[key], "n/a", "n/a"
+        printf "%-18s %4d %10d %13d %20d %12s %15s\n", gpu_type, gpus, jobs[key], 0, total_gpus[key], "n/a", "n/a"
       }
     }
   }

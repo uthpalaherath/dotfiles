@@ -84,8 +84,8 @@ BEGIN {
   gpu_memory_mb["h200_1g.18gb"] = 18432
   gpu_memory_mb["h200_3g.71gb"] = 72704
   gpu_memory_mb["h200_4g.71gb"] = 72704
-  printf "%-24s %-14s %-16s %4s %11s %10s %12s %12s\n", "User", "JobID", "GPU Type", "GPUs", "Elapsed", "GPU Eff%", "GPU Mem (GB)", "GPU Mem Eff%"
-  printf "%-24s %-14s %-16s %4s %11s %10s %12s %12s\n", "----", "-----", "--------", "----", "-------", "--------", "------------", "------------"
+  printf "%-24s %-14s %-18s %4s %11s %10s %12s %12s\n", "User", "JobID", "GPU Type", "GPUs", "Elapsed", "GPU Eff%", "GPU Mem (GB)", "GPU Mem Eff%"
+  printf "%-24s %-14s %-18s %4s %11s %10s %12s %12s\n", "----", "-----", "--------", "----", "-------", "--------", "------------", "------------"
 }
 
 function gpu_model_mem_mb(model) {
@@ -154,7 +154,7 @@ function gpu_model_mem_mb(model) {
           used_gpu_mem_gb = gpu_mem / 1000.0
           gpu_mem_eff = gpu_mem / current_capacity_mb * 100.0
           gpu_util_per_gpu = gpu_util / current_gpus
-          printf "%-24s %-14s %-16s %4d %11s %9.2f%% %12.2f %11.2f%%\n", current_user, current_job, current_gpu_type, current_gpus, current_elapsed, gpu_util_per_gpu, used_gpu_mem_gb, gpu_mem_eff
+          printf "%-24s %-14s %-18s %4d %11s %9.2f%% %12.2f %11.2f%%\n", current_user, current_job, current_gpu_type, current_gpus, current_elapsed, gpu_util_per_gpu, used_gpu_mem_gb, gpu_mem_eff
         }
     }
 
