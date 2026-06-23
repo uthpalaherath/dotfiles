@@ -111,7 +111,7 @@ function gpu_model_mem_mb(model) {
   return (model in gpu_memory_mb) ? gpu_memory_mb[model] : default_gpu_mem_mb
 }
 
-function record_job(gpu_type, gpus, capacity_mb, elapsed, usage, parts, i, n, key, gpu_mem_mb, gpu_util, seconds, gpu_eff, mem_eff) {
+function record_job(gpu_type, gpus, capacity_mb, elapsed, gpu_mem_mb, gpu_util, key, seconds, gpu_eff, mem_eff) {
   if (gpus <= 0 || capacity_mb <= 0) {
     return
   }
@@ -119,19 +119,6 @@ function record_job(gpu_type, gpus, capacity_mb, elapsed, usage, parts, i, n, ke
   seconds = elapsed_to_seconds(elapsed)
   if (seconds <= 0) {
     return
-  }
-
-  gpu_mem_mb = 0
-  gpu_util = 0
-  n = split(usage, parts, ",")
-  for (i = 1; i <= n; i++) {
-    gsub(/^[[:space:]]+|[[:space:]]+$/, "", parts[i])
-    if (match(parts[i], /^gres\/gpumem=([0-9]+)M?$/, m)) {
-      gpu_mem_mb = m[1] + 0
-    }
-    if (match(parts[i], /^gres\/gpuutil=([0-9]+)/, m)) {
-      gpu_util = m[1] + 0
-    }
   }
 
   gpu_eff = gpu_util / gpus
@@ -160,6 +147,40 @@ function record_request(gpu_type, gpus, key) {
   }
 }
 
+function collect_step_usage(usage, parts, i, n, gpu_mem_mb, gpu_util, found_usage) {
+  gpu_mem_mb = 0
+  gpu_util = 0
+  found_usage = 0
+  n = split(usage, parts, ",")
+  for (i = 1; i <= n; i++) {
+    gsub(/^[[:space:]]+|[[:space:]]+$/, "", parts[i])
+    if (match(parts[i], /^gres\/gpumem=([0-9]+)M?$/, m)) {
+      gpu_mem_mb = m[1] + 0
+      found_usage = 1
+    }
+    if (match(parts[i], /^gres\/gpuutil=([0-9]+)/, m)) {
+      gpu_util = m[1] + 0
+      found_usage = 1
+    }
+  }
+
+  if (found_usage) {
+    current_measured = 1
+    if (gpu_mem_mb > current_gpu_mem) {
+      current_gpu_mem = gpu_mem_mb
+    }
+    if (gpu_util > current_gpu_util) {
+      current_gpu_util = gpu_util
+    }
+  }
+}
+
+function flush_current_job() {
+  if (current_job != "" && current_measured) {
+    record_job(current_gpu_type, current_gpus, current_capacity_mb, current_elapsed, current_gpu_mem, current_gpu_util)
+  }
+}
+
 {
   jobid = $2
   tres = $3
@@ -167,6 +188,8 @@ function record_request(gpu_type, gpus, key) {
   elapsed = $5
 
   if (jobid !~ /\./) {
+    flush_current_job()
+
     n = split(tres, parts, ",")
     model_gpu_count = 0
     model_gpu_capacity_mb = 0
@@ -198,18 +221,18 @@ function record_request(gpu_type, gpus, key) {
     current_gpus = gpu_count
     current_capacity_mb = gpu_capacity_mb
     current_elapsed = elapsed
+    current_gpu_mem = 0
+    current_gpu_util = 0
+    current_measured = 0
     record_request(gpu_type, gpu_count)
-  } else if (jobid ~ /\.batch$/ && current_job != "") {
-    record_job(current_gpu_type, current_gpus, current_capacity_mb, current_elapsed, usage)
-    current_job = ""
-    current_gpu_type = ""
-    current_gpus = 0
-    current_capacity_mb = 0
-    current_elapsed = ""
+  } else if (jobid !~ /\.extern$/ && current_job != "") {
+    collect_step_usage(usage)
   }
 }
 
 END {
+  flush_current_job()
+
   printf "%-18s %4s %10s %13s %20s %12s %15s\n", "GPU Type", "GPUs", "Total Jobs", "Measured Jobs", "Total Requested GPUs", "TWA GPU Eff%", "TWA GPU Mem Eff%"
   printf "%-18s %4s %10s %13s %20s %12s %15s\n", "--------", "----", "----------", "-------------", "--------------------", "-----------", "---------------"
   for (gpus = min_gpus; gpus <= max_gpus; gpus++) {

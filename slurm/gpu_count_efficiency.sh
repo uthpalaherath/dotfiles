@@ -92,6 +92,72 @@ function gpu_model_mem_mb(model) {
   return (model in gpu_memory_mb) ? gpu_memory_mb[model] : default_gpu_mem_mb
 }
 
+function should_print_job(gpus) {
+  return (gpu_filter == "") || (gpus == gpu_filter + 0)
+}
+
+function print_unmeasured_job() {
+  if (current_gpus > 0 && should_print_job(current_gpus)) {
+    printf "%-24s %-14s %-18s %4d %11s %10s %12s %12s\n", current_user, current_job, current_gpu_type, current_gpus, current_elapsed, "n/a", "n/a", "n/a"
+  }
+}
+
+function print_current_job() {
+  if (current_gpus <= 0 || !should_print_job(current_gpus)) {
+    return
+  }
+
+  if (!current_measured || current_capacity_mb <= 0) {
+    print_unmeasured_job()
+    return
+  }
+
+  used_gpu_mem_gb = current_gpu_mem / 1000.0
+  gpu_mem_eff = current_gpu_mem / current_capacity_mb * 100.0
+  gpu_util_per_gpu = current_gpu_util / current_gpus
+  printf "%-24s %-14s %-18s %4d %11s %9.2f%% %12.2f %11.2f%%\n", current_user, current_job, current_gpu_type, current_gpus, current_elapsed, gpu_util_per_gpu, used_gpu_mem_gb, gpu_mem_eff
+}
+
+function reset_current_job() {
+  current_job = ""
+  current_user = ""
+  current_gpu_type = ""
+  current_gpus = 0
+  current_capacity_mb = 0
+  current_elapsed = ""
+  current_gpu_mem = 0
+  current_gpu_util = 0
+  current_measured = 0
+}
+
+function collect_step_usage(usage, parts, i, n, gpu_mem, gpu_util, found_usage) {
+  gpu_mem = 0
+  gpu_util = 0
+  found_usage = 0
+  n = split(usage, parts, ",")
+  for (i = 1; i <= n; i++) {
+    gsub(/^[[:space:]]+|[[:space:]]+$/, "", parts[i])
+    if (match(parts[i], /^gres\/gpumem=([0-9]+)M?$/, m)) {
+      gpu_mem = m[1] + 0
+      found_usage = 1
+    }
+    if (match(parts[i], /^gres\/gpuutil=([0-9]+)/, m)) {
+      gpu_util = m[1] + 0
+      found_usage = 1
+    }
+  }
+
+  if (found_usage) {
+    current_measured = 1
+    if (gpu_mem > current_gpu_mem) {
+      current_gpu_mem = gpu_mem
+    }
+    if (gpu_util > current_gpu_util) {
+      current_gpu_util = gpu_util
+    }
+  }
+}
+
 {
   user = $1
   jobid = $2
@@ -101,6 +167,10 @@ function gpu_model_mem_mb(model) {
 
   # Check if this is a main job line (not .batch or .extern)
   if (jobid !~ /\./) {
+    if (current_job != "") {
+      print_current_job()
+    }
+
     n = split(tres, parts, ",")
     model_gpu_count = 0
     model_gpu_capacity_mb = 0
@@ -131,39 +201,18 @@ function gpu_model_mem_mb(model) {
     current_gpus = gpu_count
     current_capacity_mb = gpu_capacity_mb
     current_elapsed = elapsed
+    current_gpu_mem = 0
+    current_gpu_util = 0
+    current_measured = 0
   }
-  # Check if this is a .batch line
-  else if (jobid ~ /\.batch$/ && current_job != "") {
-    # Parse TresUsageInTot for GPU memory and utilization
-    gpu_mem = 0
-    gpu_util = 0
-    n = split(usage, parts, ",")
-    for (i = 1; i <= n; i++) {
-      gsub(/^[[:space:]]+|[[:space:]]+$/, "", parts[i])
-      if (match(parts[i], /^gres\/gpumem=([0-9]+)M?$/, m)) {
-        gpu_mem = m[1] + 0
-      }
-      if (match(parts[i], /^gres\/gpuutil=([0-9]+)/, m)) {
-        gpu_util = m[1] + 0
-      }
-    }
+  # Collect telemetry from .batch and numbered job steps; .extern has no useful GPU work.
+  else if (jobid !~ /\.extern$/ && current_job != "") {
+    collect_step_usage(usage)
+  }
+}
 
-    # Apply GPU filter if specified
-    if ((gpu_filter == "") || (current_gpus == gpu_filter+0)) {
-        if (current_gpus > 0 && current_capacity_mb > 0) {
-          used_gpu_mem_gb = gpu_mem / 1000.0
-          gpu_mem_eff = gpu_mem / current_capacity_mb * 100.0
-          gpu_util_per_gpu = gpu_util / current_gpus
-          printf "%-24s %-14s %-18s %4d %11s %9.2f%% %12.2f %11.2f%%\n", current_user, current_job, current_gpu_type, current_gpus, current_elapsed, gpu_util_per_gpu, used_gpu_mem_gb, gpu_mem_eff
-        }
-    }
-
-    # Reset for next job
-    current_job = ""
-    current_user = ""
-    current_gpu_type = ""
-    current_gpus = 0
-    current_capacity_mb = 0
-    current_elapsed = ""
+END {
+  if (current_job != "") {
+    print_current_job()
   }
 }'
