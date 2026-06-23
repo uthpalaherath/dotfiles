@@ -48,8 +48,7 @@ done
 set -euo pipefail
 
 echo
-echo "=== GPU efficiency by requested GPU count for partition: $PARTITION during window: $START_DATE - $END_DATE ==="
-echo "Using model-specific GPU memory sizes when available."
+echo "=== GPU efficiency by count for partition: $PARTITION during window: $START_DATE - $END_DATE ==="
 echo
 
 sacct -P --format=user,JobID,AllocTRES,TresUsageInTot,Elapsed -S "$START_DATE" -E "$END_DATE" --partition="$PARTITION" -a --noheader \
