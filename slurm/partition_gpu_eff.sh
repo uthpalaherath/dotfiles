@@ -307,7 +307,6 @@ printf '%s\n' "$STATS" | awk -v part="$PART" -v start="$START" -v end="$END" -v 
       exit;
     }
 
-    printf "\n";
     printf "=== Time-weighted Average GPU & Memory Efficiency ===";
     printf "\n";
     printf "\n";
