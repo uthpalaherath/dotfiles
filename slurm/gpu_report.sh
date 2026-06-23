@@ -42,7 +42,8 @@ done
 ./partition_gpu_eff.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
 
 # Run gpu_stats_minimal.sh to get GPU usage stats
-./gpu_stats_minimal.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
+# ./gpu_stats_minimal.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
+./gpu_efficiency_by_count.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
 
 # GPU quota/reset log for high-priority partitions
 if [ "$PARTITION" == "gpu-hp" ]; then
