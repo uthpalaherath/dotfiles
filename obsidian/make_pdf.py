@@ -62,6 +62,14 @@ def run_bibtex(workdir: Path, basename: str):
     print("bibtex complete.")
 
 
+def has_citations(workdir: Path, basename: str):
+    """Return True when the LaTeX aux file contains citations for BibTeX."""
+    auxfile = workdir / f"{basename}.aux"
+    if not auxfile.exists():
+        return False
+    return r"\citation" in auxfile.read_text(errors="ignore")
+
+
 def make_pdf(argv):
     if len(argv) < 3:
         print("Usage: make_pdf.py <note_dir> <note_filename.md>")
@@ -125,7 +133,11 @@ def make_pdf(argv):
     # Always include MAIN_BIB, plus any *.bib in the working directory.
     bib_files = [str(MAIN_BIB)]
 
-    local_bibs = sorted(p for p in workdir.glob("*.bib") if p.is_file())
+    local_bibs = sorted(
+        p
+        for p in workdir.glob("*.bib")
+        if p.is_file() and p.name != f"{basename}Notes.bib"
+    )
 
     main_bib_resolved = MAIN_BIB.resolve()
     for bf in local_bibs:
@@ -189,7 +201,10 @@ def make_pdf(argv):
         else:
             # natbib flow with bibtex
             run_pdflatex(workdir, basename)
-            run_bibtex(workdir, basename)
+            if has_citations(workdir, basename):
+                run_bibtex(workdir, basename)
+            else:
+                print("No citations found; skipping bibtex.")
             run_pdflatex(workdir, basename)
             run_pdflatex(workdir, basename)
     except subprocess.CalledProcessError as e:

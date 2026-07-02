@@ -216,6 +216,17 @@ chruby ruby-3.4.1
 # siesta
 export PATH="/Users/ukh/apps/siesta-5.4.2/build/bin/:$PATH"
 
+# >>> DMFTwDFT setup >>>
+export PATH="/Users/ukh/apps/DMFTwDFT3/bin/:$PATH"
+export PYTHONPATH="/Users/ukh/apps/DMFTwDFT3/bin/:$PYTHONPATH"
+# <<< DMFTwDFT setup <<<
+
+# wannier90
+export PATH="/Users/ukh/apps/wannier90/wannier90-3.1.0/:$PATH"
+
+# VASP
+export PATH="/Users/ukh/apps/VASP/vasp.5.4.4/bin/:$PATH"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias sudo='sudo '
@@ -258,7 +269,7 @@ alias hybrid3="ssh -Y ukh@vwb3-web-06.egr.duke.edu" #alias: materials.hybrid3.du
 alias muchasdb="ssh -Y ukh@vwb3-web-04.egr.duke.edu" #alias: materials.hybrid3.duke.edu
 alias dcca="ssh -Y ukh@dcc-login.oit.duke.edu"
 alias dcc="ssh -Y ukh@dcc-login-01.oit.duke.edu"
-alias dccshed="ssh -Y dcc-sched-01.rc.duke.edu"
+alias dccsched="ssh -Y dcc-sched-01.rc.duke.edu"
 alias ncshare="ssh -Y uherathmudiyanselage1@login.ncshare.org"
 
 # Mounting drives
