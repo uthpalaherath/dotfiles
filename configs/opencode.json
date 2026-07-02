@@ -3,10 +3,9 @@
     "default_agent": "plan",
     "theme": "gruvbox",
     "permission": {
-        "edit": "ask"
-    },
-    "tui": {
-        "copy_on_select": true
+        "edit": "ask",
+        "bash": "allow",
+        "webfetch": "allow"
     },
     "provider": {
         "ollama": {
@@ -21,7 +20,8 @@
                 "qwen3-coder-next": {},
                 "glm-4.7-flash": {},
                 "hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF":{},
-                "hf.co/prism-ml/Bonsai-8B-gguf": {}
+                "hf.co/prism-ml/Bonsai-8B-gguf": {},
+                "mistral-medium-3.5": {}
             }
         },
         "vllm": {

@@ -15,9 +15,6 @@ then
 fi
 export PATH
 
-# Uncomment the following line if you don't like systemctl's auto-paging feature:
-# export SYSTEMD_PAGER=
-
 # User specific aliases and functions
 if [ -d ~/.bashrc.d ]; then
 	for rc in ~/.bashrc.d/*; do
@@ -26,7 +23,6 @@ if [ -d ~/.bashrc.d ]; then
 		fi
 	done
 fi
-
 unset rc
 
 # Source for colorful terminal
@@ -53,7 +49,6 @@ if [[ $- == *i* ]]; then
     export HISTIGNORE="pwd:ls:cd"
     shopt -s histappend
     HISTCONTROL=ignoreboth:erasedups
-    #export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
     export PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 fi
 
@@ -63,6 +58,7 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
+# OpenMP and MKL
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
@@ -130,10 +126,13 @@ export HF_HOME="/work/${USER}/huggingface"
 # Ollama
 export OLLAMA_MODELS="/work/${USER}/ollama/models"
 
+# GNUTERM
+export GNUTERM=x11
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
-alias interact="salloc --nodes 1 --ntasks-per-node=20 --qos interactive --time 04:00:00"
+alias interact="srun -A rescomp -p interactive -t 02:00:00 --pty bash -i"
 #alias sac="sacct --format="JobID,JobName%-30,State,User""
 #alias sac="sacct -S $(date +%Y-%m-01) -E now -X --format="JobID,JobName%-30,State,WorkDir%-150""
 alias sac="sacct -X --format="JobID,JobName%-30,State,nodelist%-30,WorkDir%-150""
@@ -152,6 +151,7 @@ alias f='vim "$(fzf)"'
 alias scratch="cd /work/ukh"
 alias globus="globusconnectpersonal -start -restrict-paths /hpc/home/ukh,/work/ukh &"
 alias rc="cd /hpc/group/rescomp/ukh"
+alias sched='ssh -Y dcc-sched-01.rc.duke.edu'
 
 #------------------------------------------- MODULES -------------------------------------------
 
@@ -171,10 +171,12 @@ if command -v module >/dev/null 2>&1; then
 
     gnu(){
         module load cmake/3.28.3 > /dev/null
-        module load OpenMPI/4.1.6 > /dev/null
+        # module load OpenMPI/4.1.6 > /dev/null
+        # module load MPICH/3.2.1 > /dev/null
+        module load mpich/5.0.1 > /dev/null
         export CC=mpicc
         export CXX=mpicxx
-        export FC=mpif90
+        export FC=mpifort
     }
     # default
     # intel
@@ -235,27 +237,11 @@ export PATH="/hpc/home/ukh/local/ripgrep/:$PATH"
 # bat
 export PATH="/hpc/home/ukh/local/bat/:$PATH"
 
-# local libs
-export LD_LIBRARY_PATH="/hpc/home/ukh/libs/:$LD_LIBRARY_PATH"
-
-# lapack
-export LD_LIBRARY_PATH="/hpc/home/ukh/libs/lapack-3.12.1/:$LD_LIBRARY_PATH"
-
-# scalapack
-export LD_LIBRARY_PATH="/hpc/home/ukh/libs/scalapack-2.2.2/:$LD_LIBRARY_PATH"
-
-# FHI-aims
-# export PATH="/hpc/home/ukh/local/FHIaims/FHIaims-intel/bin/:$PATH"
-# export PATH="/hpc/home/ukh/local/FHIaims/FHIaims-intel/utilities/:$PATH"
-
 # gpu-burn
 export PATH="/hpc/home/ukh/local/gpu-burn/:$PATH"
 
 # yazi
 export PATH="/hpc/home/ukh/local/yazi/target/release/:$PATH"
-
-# opencode
-export PATH=/hpc/home/ukh/.opencode/bin:$PATH
 
 # netCDF-C
 export NETCDFHOME=/hpc/home/ukh/local/netcdf-c-4.9.3/build
@@ -268,7 +254,7 @@ export PATH="$NETCDFFHOME/bin:$PATH"
 export LD_LIBRARY_PATH="$NETCDFFHOME/lib:$LD_LIBRARY_PATH"
 
 # siesta
-export PATH="/hpc/home/ukh/apps/siesta-5.4.2/build/bin/:$PATH"
+export PATH="/hpc/group/rescomp/ukh/apps/siesta-5.4.2/build/bin/:$PATH"
 
 # gengetopt
 export PATH="/hpc/group/rescomp/ukh/apps/gengetopt-2.23/build/bin/:$PATH"
@@ -280,3 +266,14 @@ export PATH="/hpc/group/rescomp/ukh/apps/mpi-test-suite/build-gnu/bin/:$PATH"
 # vim
 export PATH="/hpc/group/rescomp/ukh/apps/vim-local/bin/:$PATH"
 export LD_LIBRARY_PATH="/hpc/group/rescomp/ukh/miniforge3/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+
+# >>> DMFTwDFT setup >>>
+export PATH="/hpc/group/rescomp/ukh/apps/DMFTwDFT3/bin/:$PATH"
+export PYTHONPATH="/hpc/group/rescomp/ukh/apps/DMFTwDFT3/bin/:$PYTHONPATH"
+# <<< DMFTwDFT setup <<<
+
+# wannier90
+export PATH="/hpc/group/rescomp/ukh/apps/wannier90/wannier90-3.1.0/:$PATH"
+
+# opencode
+export PATH=/hpc/home/ukh/.opencode/bin:$PATH

@@ -31,6 +31,7 @@ ACCOUNTS=(
     "uncfsu"
     "uncp"
     "uncw"
+    "wcu"
     "wfu"
     "wssu"
 )

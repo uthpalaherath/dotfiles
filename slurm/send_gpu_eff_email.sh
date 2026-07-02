@@ -222,8 +222,6 @@ The following jobs have low GPU efficiency (< ${THRESHOLD_GPU}%) and GPU memory 
 JobID | State | Elapsed | GPUEff | GPUMemEff | GPUMem
 ${jobs}
 
-*Please ignore jobs that have been submited to fractional (MIG) GPUs as they do not report GPU efficiency metrics.
-
 From a login node, run the following commands to investigate further,
 
 - To check SLURM job details:
