@@ -12,6 +12,7 @@
 \usepackage[english]{babel}
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb}
+\usepackage{bbm}
 \usepackage{xcolor}
 \usepackage{color}
 \usepackage{booktabs}
@@ -44,9 +45,19 @@ $if(highlighting-macros)$
 $highlighting-macros$
 $endif$
 
-\newcommand{\passthrough}[1]{#1}
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+% tcolorbox for quote environment
+\renewenvironment{quote}{%
+  \begin{tcolorbox}[breakable,enhanced,frame hidden,boxrule=0pt,colback=black!5!white,left=1em,right=1em,top=0.6em,bottom=0.6em,arc=0pt]
+}{%
+  \end{tcolorbox}
+}
 
 % Code block formatting
+\newcommand{\passthrough}[1]{#1}
 \newcommand{\listingsttfamily}{\fontfamily{IBMPlexMono-TLF}\small}
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
