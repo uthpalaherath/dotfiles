@@ -35,6 +35,7 @@
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage[version=3]{mhchem}
 \usepackage{hyperref}
+\usepackage{doi}
 \usepackage[capitalise]{cleveref}
 \usepackage[most]{tcolorbox}
 \hypersetup{colorlinks=true,linkcolor=blue,filecolor=magenta,urlcolor=cyan,citecolor=blue}
@@ -119,6 +120,7 @@ $endif$
 \renewcommand{\thesection}{\Roman{section}}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}
+\setlength{\LTcapwidth}{\textwidth}
 \AtBeginEnvironment{longtable}{\small\setlength{\tabcolsep}{2pt}}
 
 $if(title)$
