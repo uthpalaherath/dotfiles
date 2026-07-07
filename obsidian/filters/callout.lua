@@ -47,9 +47,12 @@ function BlockQuote(elem)
     return para
   end
 
-  -- callout_type = elem.content[1].content[1].text:match("^%[%!([a-z0-9%-]*)%]")
+  -- Obsidian callout types are commonly uppercase, e.g. [!NOTE].
   callout_type = pandoc.utils.stringify(elem.content[1].content[1])
-  callout_type = callout_type:match("^%[%!([a-z0-9%-]*)%]")
+  callout_type = callout_type:match("^%[%!([%w%-]+)%]")
+  if callout_type then
+    callout_type = callout_type:lower()
+  end
 
   -- Plain blockquote
   if not callout_type then
@@ -77,7 +80,7 @@ function BlockQuote(elem)
 
     -- Get callout title
     callout_title = pandoc.utils.stringify(get_raw_tex(elem.content[1]))
-    callout_title = callout_title:gsub("^%[%!([a-z0-9%-]*)%][%+%-]? ?", "")
+    callout_title = callout_title:gsub("^%[%!([%w%-]+)%][%+%-]? ?", "")
     title, id = callout_title:match("(.*) *^([0-9a-zA-Z-]*)")
     if title then
       callout_title = title

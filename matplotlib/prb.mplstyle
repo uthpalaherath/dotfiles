@@ -72,7 +72,7 @@ ytick.labelsize         : 8.0
 
 text.usetex        	: false
 font.size               : 11
-font.family             : serif
+font.family             : STIXGeneral
 font.serif              : STIX
 mathtext.fontset        : stix
 
