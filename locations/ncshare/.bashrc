@@ -146,7 +146,7 @@ alias tkill="tmux kill-session"
 alias cleandocker="docker image prune -a -f && docker volume prune -f"
 alias cleandockerall="docker system prune -a -f"
 alias f='vim "$(fzf)"'
-alias scratch="cd /work/uherathmudiyanselage1"
+alias work="cd /work/uherathmudiyanselage1"
 alias globus="globusconnectpersonal -start -restrict-paths /hpc/home/uherathmudiyanselage1,/work/uherathmudiyanselage1 &"
 
 #------------------------------------------- MODULES -------------------------------------------
