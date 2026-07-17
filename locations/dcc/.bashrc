@@ -60,6 +60,7 @@ alias grep='grep --color=auto'
 
 # OpenMP and MKL
 export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
 
@@ -121,10 +122,10 @@ export NVM_DIR="$HOME/.nvm"
 . "$HOME/.cargo/env"
 
 # HuggingFace
-export HF_HOME="/work/${USER}/huggingface"
+export HF_HOME="/work/${USER}/.huggingface"
 
 # Ollama
-export OLLAMA_MODELS="/work/${USER}/ollama/models"
+export OLLAMA_MODELS="/work/${USER}/.ollama/models"
 
 # GNUTERM
 export GNUTERM=x11
