@@ -150,7 +150,15 @@ def collect_usage_data(months, partitions="gpu", tres_type="gres/gpu"):
     return data, months, text_data
 
 
-def write_monthly_text_files(text_data, tres_type="GPU"):
+def partition_output_dir(partitions, output_dir):
+    """Return output directory for the selected partitions."""
+    partition_label = "all" if not partitions else partitions.replace(",", "_")
+    partition_dir = os.path.join(os.path.expanduser(output_dir), partition_label)
+    os.makedirs(partition_dir, exist_ok=True)
+    return partition_dir
+
+
+def write_monthly_text_files(text_data, output_dir, tres_type="GPU"):
     """Write separate text file for each month."""
     # Group by month
     months = {}
@@ -169,7 +177,9 @@ def write_monthly_text_files(text_data, tres_type="GPU"):
     # Write separate file for each month
     for month in sorted_months:
         # Create filename from month name (replace spaces with underscores)
-        filename = f"{tres_label}_usage_{month.replace(' ', '_')}.txt"
+        filename = os.path.join(
+            output_dir, f"{tres_label}_usage_{month.replace(' ', '_')}.txt"
+        )
 
         with open(filename, "w") as f:
             f.write(f"{month} {tres_type} Usage Report\n")
@@ -299,6 +309,11 @@ def main():
     parser.add_argument(
         "--tres", default="gres/gpu", help="TRES type (e.g., gres/gpu or cpu)"
     )
+    parser.add_argument(
+        "--output-dir",
+        default="~/logs/monthly",
+        help="Base directory for output files",
+    )
     args = parser.parse_args()
 
     # Determine output filenames based on TRES type
@@ -308,6 +323,8 @@ def main():
         f"Generating monthly {args.tres} usage data from {args.start} to {args.end}..."
     )
     print(f"Using partitions: {args.partitions}")
+    output_dir = partition_output_dir(args.partitions, args.output_dir)
+    print(f"Saving outputs in: {output_dir}")
     months = generate_monthly_data(args.start, args.end)
     print(f"Collected data for {len(months)} months")
 
@@ -316,7 +333,7 @@ def main():
 
     # Write separate text files for each month
     print("Writing monthly text files...")
-    month_files = write_monthly_text_files(text_data, args.tres.upper())
+    month_files = write_monthly_text_files(text_data, output_dir, args.tres.upper())
     print(f"Created {len(month_files)} monthly files")
 
     # Create chart
@@ -330,7 +347,7 @@ def main():
         title_suffix=f" (partitions:{args.partitions})",
         resource_type=display_resource,
     )
-    chart_filename = f"{tres_label}_usage.png"
+    chart_filename = os.path.join(output_dir, f"{tres_label}_usage.png")
     fig1.savefig(chart_filename, dpi=300, bbox_inches="tight")
     plt.close(fig1)
     print(f"Chart saved as '{chart_filename}'")

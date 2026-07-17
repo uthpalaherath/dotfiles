@@ -45,10 +45,17 @@ done
 # ./gpu_stats_minimal.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
 ./gpu_efficiency_by_count.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
 
+# Current GPU quota
+if [ "$PARTITION" == "gpu-hp" ]; then
+    echo ""
+    echo "Current High-Priority Quota Usage"
+    ./get_gpu_quota.sh -H
+fi
+
 # GPU quota/reset log for high-priority partitions
 if [ "$PARTITION" == "gpu-hp" ]; then
     echo ""
-    echo "High-Priority Quota Pre-reset Snapshot  "
+    echo "High-Priority Quota Pre-reset Snapshot"
     LOG_DIR="$HOME/logs/${PARTITION}_reset"
     LATEST_LOG=$(ls -1t "$LOG_DIR"/*.log 2>/dev/null | sed -n '1p')
 
