@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-CSV_FILE="h200-hp-labs.csv"
+CSV_FILE="/hpc/home/ukh/accounting/h200-hp-labs.csv"
 CSV_ARG_SEEN=false
 DRY_RUN=false
 

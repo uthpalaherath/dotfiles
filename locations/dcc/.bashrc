@@ -269,6 +269,7 @@ export PATH="/hpc/group/rescomp/ukh/apps/vim-local/bin/:$PATH"
 export LD_LIBRARY_PATH="/hpc/group/rescomp/ukh/miniforge3/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
 
 # >>> DMFTwDFT setup >>>
+export PATH="/hpc/group/rescomp/ukh/apps/DMFTwDFT3/utilities/:$PATH"
 export PATH="/hpc/group/rescomp/ukh/apps/DMFTwDFT3/bin/:$PATH"
 export PYTHONPATH="/hpc/group/rescomp/ukh/apps/DMFTwDFT3/bin/:$PYTHONPATH"
 # <<< DMFTwDFT setup <<<
