@@ -46,15 +46,16 @@ reset_usage() {
     mkdir -p "$log_dir"
     local timestamp=$(date +%Y%m%d_%H%M%S)
     local log_file="$log_dir/gpu-reset-${timestamp}.log"
-    local usage_label="Billing GPU-minutes"
+    local usage_title="Institutional Usage (GPU-minutes)"
 
     mkdir -p "$log_dir"
 
     if [ "$show_hours" = true ]; then
-        usage_label="Billing GPU-hours"
+        usage_title="Institutional Usage (GPU-hours)"
     fi
 
-    printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "QoS" "$usage_label" "Used" "Remaining" "Used %" > "$log_file"
+    echo "$usage_title" > "$log_file"
+    printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "QoS" "Quota" "Used" "Remaining" "Used %" >> "$log_file"
     printf "%-20s-+-%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" >> "$log_file"
 
     for qos in $QOS_LIST; do

@@ -62,19 +62,20 @@ reset_usage() {
     local billing_used_display
     local remaining_display
     local percent_used_display
-    local usage_label="Billing GPU-minutes"
+    local usage_title="Account Usage (GPU-minutes)"
     local qos
 
     load_qos_list
 
     if [[ "$show_hours" = true ]]; then
-        usage_label="Billing GPU-hours"
+        usage_title="Account Usage (GPU-hours)"
     fi
 
     timestamp="$(date +%Y%m%d_%H%M%S)"
     log_file="$log_dir/gpu-reset-h200-hp-${timestamp}.log"
 
-    printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "QoS" "$usage_label" "Used" "Remaining" "Used %" > "$log_file"
+    echo "$usage_title" > "$log_file"
+    printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "QoS" "Quota" "Used" "Remaining" "Used %" >> "$log_file"
     printf "%-20s-+-%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" >> "$log_file"
 
     for qos in "${QOS_LIST[@]}"; do
