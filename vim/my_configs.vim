@@ -172,10 +172,13 @@ let NERDTreeNaturalSort = 1
 
 " Toggle NERDTree
 function! ToggleNERDTreeForBuffer() abort
-  if empty(expand('%:p'))
+  let l:path = expand('%:p')
+  if empty(l:path)
     NERDTreeToggle
+  elseif filereadable(l:path) || isdirectory(l:path)
+    execute 'NERDTreeToggle ' . fnameescape(l:path)
   else
-    execute 'NERDTreeToggle ' . fnameescape(expand('%:p'))
+    execute 'NERDTreeToggle ' . fnameescape(fnamemodify(l:path, ':h'))
   endif
 endfunction
 nnoremap <leader>nn :call ToggleNERDTreeForBuffer()<CR>
