@@ -217,6 +217,7 @@ chruby ruby-3.4.1
 export PATH="/Users/ukh/apps/siesta-5.4.2/build/bin/:$PATH"
 
 # >>> DMFTwDFT setup >>>
+export PATH="/Users/ukh/apps/DMFTwDFT3/utilities/:$PATH"
 export PATH="/Users/ukh/apps/DMFTwDFT3/bin/:$PATH"
 export PYTHONPATH="/Users/ukh/apps/DMFTwDFT3/bin/:$PYTHONPATH"
 # <<< DMFTwDFT setup <<<
