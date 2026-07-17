@@ -24,6 +24,10 @@ minutes_to_hours() {
     awk -v mins="$1" 'BEGIN { printf "%.2f", mins / 60 }'
 }
 
+percent_used() {
+    awk -v used="$1" -v total="$2" 'BEGIN { if ((total + 0) == 0) printf "N/A"; else printf "%.2f%%", ((used + 0) / (total + 0)) * 100 }'
+}
+
 usage() {
     echo "Usage: $0 {set|reset} [-H]"
     echo "-H Show reset log usage in GPU-hours instead of GPU-minutes"
@@ -42,16 +46,17 @@ reset_usage() {
     mkdir -p "$log_dir"
     local timestamp=$(date +%Y%m%d_%H%M%S)
     local log_file="$log_dir/gpu-reset-${timestamp}.log"
-    local usage_label="Billing GPU-minutes"
+    local usage_title="Institutional Usage (GPU-minutes)"
 
     mkdir -p "$log_dir"
 
     if [ "$show_hours" = true ]; then
-        usage_label="Billing GPU-hours"
+        usage_title="Institutional Usage (GPU-hours)"
     fi
 
-    printf "%-20s | %-20s | %-20s | %-20s\n" "QoS" "$usage_label" "Used" "Remaining" > "$log_file"
-    printf "%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" >> "$log_file"
+    echo "$usage_title" > "$log_file"
+    printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "QoS" "Quota" "Used" "Remaining" "Used %" >> "$log_file"
+    printf "%-20s-+-%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" >> "$log_file"
 
     for qos in $QOS_LIST; do
         output=$(scontrol show assoc_mgr flags=qos qos="$qos" 2>/dev/null | grep 'GrpTRESMins=' | grep -o 'billing=[^()]*([0-9]*)' | grep -o '[0-9]*')
@@ -63,6 +68,7 @@ reset_usage() {
         billing_set_display="$billing_set"
         billing_used_display="$billing_used"
         remaining_display="$remaining"
+        percent_used_display=$(percent_used "$billing_used" "$billing_set")
 
         if [ "$show_hours" = true ]; then
             billing_set_display=$(minutes_to_hours "$billing_set")
@@ -70,7 +76,7 @@ reset_usage() {
             remaining_display=$(minutes_to_hours "$remaining")
         fi
 
-        printf "%-20s | %-20s | %-20s | %-20s\n" "$qos" "$billing_set_display" "$billing_used_display" "$remaining_display" >> "$log_file"
+        printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "$qos" "$billing_set_display" "$billing_used_display" "$remaining_display" "$percent_used_display" >> "$log_file"
 
         echo "Resetting RawUsage for $qos"
         sacctmgr --immediate modify qos where name="$qos" set RawUsage=0
