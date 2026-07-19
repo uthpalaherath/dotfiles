@@ -122,10 +122,10 @@ export NVM_DIR="$HOME/.nvm"
 . "$HOME/.cargo/env"
 
 # HuggingFace
-export HF_HOME="/work/${USER}/huggingface"
+export HF_HOME="/work/${USER}/.huggingface"
 
 # Ollama
-export OLLAMA_MODELS="/work/${USER}/ollama/models"
+export OLLAMA_MODELS="/work/${USER}/.ollama/models"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
