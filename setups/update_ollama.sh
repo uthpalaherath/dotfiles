@@ -56,6 +56,8 @@ setenv OLLAMA_HOST "localhost:\$port"
 if { [module-info mode load] } {
     puts stderr "Ollama v$version"
     puts stderr "Model storage: /work/\$env(USER)/.ollama/models"
+    puts stderr {Launch server: ollama-serve.sh [local|global] [port]}
+    puts stderr "Stop server: ollama-serve.sh stop"
 }
 EOF
 }
