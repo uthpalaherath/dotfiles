@@ -32,6 +32,7 @@ ACCOUNT_COLORS = {
     "appstate": "#1F77B4",
     "davidson": "#D62728",
     "duke": "#2CA02C",
+    "ecu": "#592A8A",
     "elon": "#9467BD",
     "ncat": "#FFA500",
     "nccu": "#17BECF",

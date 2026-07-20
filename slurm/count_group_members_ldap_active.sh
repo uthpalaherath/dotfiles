@@ -15,6 +15,7 @@ ACCOUNTS=(
     "chowan"
     "davidson"
     "duke"
+    "ecu"
     "elon"
     "guilford"
     "meredith"
@@ -30,6 +31,9 @@ ACCOUNTS=(
     "wcu"
     "wfu"
     "wssu"
+    "chicago"
+    "osu"
+    "cmu"
 )
 
 get_h200_group() {
@@ -84,6 +88,9 @@ active_users=$(ldapsearch -x -H "$LDAP_HOST" -b "$BASE_DN" "$ACTIVE_FILTER" uid 
         domain = email_parts[length(email_parts)]
         split(domain, labels, ".")
         institution = tolower(labels[length(labels) - 1])
+        if (institution == "uchicago") {
+            institution = "chicago"
+        }
         if (institution != "") {
             print uid, institution
         }
@@ -129,7 +136,7 @@ printf "%-11s %8s %8s %8s\n" "TOTAL" "$total" "$total_h200" "$total_h200_hp"
 
 other_domains=$(awk '
     BEGIN {
-        split("appstate campbell catawba chowan davidson duke elon guilford meredith ncat nccu ncssm ncsu unc uncc uncfsu uncp uncw wcu wfu wssu", accounts)
+        split("appstate campbell catawba chowan davidson duke ecu elon guilford meredith ncat nccu ncssm ncsu unc uncc uncfsu uncp uncw wcu wfu wssu chicago osu cmu", accounts)
         for (i in accounts) {
             known[accounts[i]] = 1
         }
