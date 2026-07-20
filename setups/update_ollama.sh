@@ -5,8 +5,6 @@ set -euo pipefail
 DOWNLOAD_URL="${OLLAMA_DOWNLOAD_URL:-https://ollama.com/download/ollama-linux-amd64.tar.zst}"
 PREFIX="${OLLAMA_PREFIX:-/opt/apps/rhel9/ollama}"
 MODULE_DIR="${OLLAMA_MODULE_DIR:-/opt/apps/modulefiles/ollama}"
-TEMPLATE_VERSION="${OLLAMA_TEMPLATE_VERSION:-0.30.10}"
-TEMPLATE_MODULEFILE="${OLLAMA_TEMPLATE_MODULEFILE:-$MODULE_DIR/$TEMPLATE_VERSION}"
 
 require_cmd() {
     if ! command -v "$1" >/dev/null 2>&1; then
@@ -22,6 +20,46 @@ detect_version() {
 
     output="$(LD_LIBRARY_PATH="$lib_path${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" "$bin" --version 2>/dev/null || true)"
     printf '%s\n' "$output" | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+([^[:space:]]*)?' | sed -n '1p' || true
+}
+
+render_modulefile() {
+    local version="$1"
+    local output="$2"
+
+    cat >"$output" <<EOF
+#%Module1.0#####################################################################
+##
+## Ollama modulefile
+##
+
+proc ModulesHelp { } {
+      global dotversion
+        puts stderr "Ollama v$version"
+}
+
+module-whatis "Loads the Ollama module and sets environmental variables."
+
+conflict ollama
+
+set root $PREFIX
+set port 11434
+
+prepend-path PATH \$root/bin
+prepend-path LD_LIBRARY_PATH \$root/lib
+prepend-path LD_LIBRARY_PATH \$root/lib/ollama
+
+setenv OLLAMA_HOME \$root
+setenv OLLAMA_MODELS /work/\$env(USER)/.ollama/models
+setenv PORT \$port
+setenv OLLAMA_HOST "localhost:\$port"
+
+if { [module-info mode load] } {
+    puts stderr "Ollama v$version"
+    puts stderr "Model storage: /work/\$env(USER)/.ollama/models"
+    puts stderr {Launch server: ollama-serve.sh [local|global] [port]}
+    puts stderr "Stop server: ollama-serve.sh stop"
+}
+EOF
 }
 
 require_cmd curl
@@ -64,11 +102,6 @@ if [ -z "$version" ]; then
     exit 1
 fi
 
-if [ ! -r "$TEMPLATE_MODULEFILE" ]; then
-    printf 'error: template modulefile is not readable: %s\n' "$TEMPLATE_MODULEFILE" >&2
-    exit 1
-fi
-
 printf 'Installing Ollama %s into %s\n' "$version" "$PREFIX"
 install -d -m 0755 "$PREFIX/bin" "$PREFIX/lib" "$MODULE_DIR"
 install -m 0755 "$staging/bin/ollama" "$PREFIX/bin/ollama"
@@ -76,15 +109,18 @@ rm -rf "$PREFIX/lib/ollama"
 cp -a "$staging/lib/." "$PREFIX/lib/"
 
 module_tmp="$tmp_dir/modulefile"
-template_version_pattern="${TEMPLATE_VERSION//./\.}"
-sed "s/$template_version_pattern/$version/g" "$TEMPLATE_MODULEFILE" >"$module_tmp"
+render_modulefile "$version" "$module_tmp"
 
 modulefile="$MODULE_DIR/$version"
 install -m 0644 "$module_tmp" "$modulefile"
 
-printf 'Updating latest modulefile symlink\n'
-ln -sfn "$version" "$MODULE_DIR/latest"
+printf 'Removing old modulefiles\n'
+for existing_modulefile in "$MODULE_DIR"/*; do
+    if [ "$existing_modulefile" = "$modulefile" ]; then
+        continue
+    fi
+    rm -rf "$existing_modulefile"
+done
 
 printf 'Installed Ollama %s\n' "$version"
 printf 'Modulefile: %s\n' "$modulefile"
-printf 'Latest:     %s/latest -> %s\n' "$MODULE_DIR" "$version"
