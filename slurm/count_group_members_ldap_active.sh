@@ -15,6 +15,7 @@ ACCOUNTS=(
     "chowan"
     "davidson"
     "duke"
+    "ecu"
     "elon"
     "guilford"
     "meredith"
@@ -129,7 +130,7 @@ printf "%-11s %8s %8s %8s\n" "TOTAL" "$total" "$total_h200" "$total_h200_hp"
 
 other_domains=$(awk '
     BEGIN {
-        split("appstate campbell catawba chowan davidson duke elon guilford meredith ncat nccu ncssm ncsu unc uncc uncfsu uncp uncw wcu wfu wssu", accounts)
+        split("appstate campbell catawba chowan davidson duke ecu elon guilford meredith ncat nccu ncssm ncsu unc uncc uncfsu uncp uncw wcu wfu wssu", accounts)
         for (i in accounts) {
             known[accounts[i]] = 1
         }

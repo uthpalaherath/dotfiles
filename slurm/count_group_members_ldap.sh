@@ -19,6 +19,7 @@ ACCOUNTS=(
     "chowan"
     "davidson"
     "duke"
+    "ecu"
     "elon"
     "guilford"
     "meredith"
