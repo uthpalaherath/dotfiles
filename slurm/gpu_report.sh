@@ -38,8 +38,8 @@ for user in $(slurm-gpu report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" -
     slurm-gpu report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" -u "$user" > "$USER_REPORTS_DIR/${PARTITION}_${user}_${START_DATE//-/}-${END_DATE//-/}.txt"
 done
 
-# Run partition_gpu_eff.sh
-./partition_gpu_eff.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
+# Run partition_cpu_gpu_eff_gpuutil.sh
+./partition_cpu_gpu_eff_gpuutil.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
 
 # Run gpu_stats_minimal.sh to get GPU usage stats
 # ./gpu_stats_minimal.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
