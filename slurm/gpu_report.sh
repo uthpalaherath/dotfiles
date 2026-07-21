@@ -39,7 +39,7 @@ for user in $(slurm-gpu report -r "$PARTITION" -S "$START_DATE" -E "$END_DATE" -
 done
 
 # Run partition_cpu_gpu_eff_gpuutil.sh
-./partition_cpu_gpu_eff_gpuutil.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
+./partition_cpu_gpu_eff.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"
 
 # Run gpu_stats_minimal.sh to get GPU usage stats
 # ./gpu_stats_minimal.sh -r "$PARTITION" -S "$START_DATE" -E "$END_DATE"

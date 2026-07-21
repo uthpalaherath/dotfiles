@@ -18,13 +18,14 @@
 #   3) Calculate partition averages using the applicable usage duration:
 #        - CPU Eff     = sum(elapsed seconds * user CPU Eff) / total elapsed
 #        - Mem Eff     = sum(elapsed seconds * user Mem Eff) / total elapsed
-#        - GPU Eff     = sum(GPU-hours * user GPU Eff) / total GPU-hours
+#        - GPU Eff     = sum(elapsed hours * user GPUUtil) / total GPU-hours
 #        - GPU Mem Eff = sum(GPU-hours * user GPU Mem Eff) / total GPU-hours
 #
 # The per-user efficiency values are already weighted by `slurm-gpu report`.
-# This script performs the additional weighting needed to combine those user
-# values into partition-level metrics. Users are displayed in descending order
-# of GPU efficiency.
+# GPUUtil retains the GPU count during that weighting, so the GPU Eff formula
+# remains correct when a user runs jobs with different GPU counts. This script
+# performs the additional aggregation needed for partition-level metrics.
+# Users are displayed in descending order of GPU efficiency.
 #
 # Output modes:
 #   default       Human-readable table and partition summary
@@ -47,10 +48,9 @@ END="now"
 CSV_FORMAT=""
 ACCOUNT=""
 TELEGRAF_FORMAT=""
-# Internal mode used by partition_cpu_gpu_eff_gpuutil.sh. Direct invocation of
-# this script retains the original user-GPUEff-by-GPU-hours calculation.
-GPUUTIL_WEIGHTING="${PARTITION_GPU_EFF_USE_GPUUTIL:-}"
-COMMAND_NAME="${PARTITION_REPORT_COMMAND:-$0}"
+# Set to 1 for direct GPU-hour weighting via GPUUtil. Set to 0 to use the
+# previous user-GPUEff-by-GPU-hours calculation.
+GPUUTIL_WEIGHTING=1
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -61,8 +61,8 @@ while [[ $# -gt 0 ]]; do
     -c|--csv)       CSV_FORMAT="1"; shift;;
     -t|--telegraf)  TELEGRAF_FORMAT="1"; shift;;
     -h|--help)
-      echo "Usage: $COMMAND_NAME [-r PARTITION] [-S STARTDATE] [-E ENDDATE] [-A ACCOUNT[,ACCOUNT...]] [-c] [--telegraf]"
-      echo "Example: $COMMAND_NAME -r h200alloc -S 2025-12-01 -E 2025-12-09 -A acct1,acct2 --telegraf"
+      echo "Usage: $0 [-r PARTITION] [-S STARTDATE] [-E ENDDATE] [-A ACCOUNT[,ACCOUNT...]] [-c] [--telegraf]"
+      echo "Example: $0 -r h200alloc -S 2025-12-01 -E 2025-12-09 -A acct1,acct2 --telegraf"
       exit 0;;
     *) echo "Unknown arg: $1" >&2; exit 2;;
   esac
@@ -214,8 +214,8 @@ printf '%s\n' "$STATS" | awk \
     sum_gpuutil = 0
     sum_gpumemeff = 0
 
-    # CPU and memory are weighted by elapsed time. GPU metrics are weighted by
-    # GPU-hours so workloads using more GPUs receive proportionate weight.
+    # CPU and memory are weighted by elapsed time. GPUUtil retains GPU count,
+    # allowing GPU Eff to be aggregated directly by GPU-hours.
     for (u in seen) {
       nusers++
       elapsed = user_elapsed[u]
@@ -299,18 +299,10 @@ printf '%s\n' "$STATS" | awk \
       printf "Partition time-weighted Avg Mem Eff: n/a\n"
     }
     if (total_gpuhours > 0) {
-      if (gpuutil_weighting == "1") {
-        printf "Partition GPU-hour-weighted Avg GPU Eff: %.4f%%\n", avg_gpueff
-      } else {
-        printf "Partition time-weighted Avg GPU Eff: %.4f%%\n", avg_gpueff
-      }
+      printf "Partition time-weighted Avg GPU Eff: %.4f%%\n", avg_gpueff
       printf "Partition time-weighted Avg GPU Mem Eff: %.4f%%\n", avg_gpumemeff
     } else {
-      if (gpuutil_weighting == "1") {
-        printf "Partition GPU-hour-weighted Avg GPU Eff: n/a\n"
-      } else {
-        printf "Partition time-weighted Avg GPU Eff: n/a\n"
-      }
+      printf "Partition time-weighted Avg GPU Eff: n/a\n"
       printf "Partition time-weighted Avg GPU Mem Eff: n/a\n"
     }
   }
