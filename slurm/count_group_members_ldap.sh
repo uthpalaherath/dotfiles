@@ -19,6 +19,7 @@ ACCOUNTS=(
     "chowan"
     "davidson"
     "duke"
+    "ecu"
     "elon"
     "guilford"
     "meredith"
@@ -34,6 +35,9 @@ ACCOUNTS=(
     "wcu"
     "wfu"
     "wssu"
+    "chicago"
+    "osu"
+    "cmu"
 )
 
 # Define which accounts have h200_hp groups

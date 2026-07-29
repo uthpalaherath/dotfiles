@@ -10,6 +10,15 @@ fi
 LDAP_HOST="ldap://ncshare-com-01.ncshare.org"
 BASE_DN="dc=ncshare,dc=org"
 
+get_ldap_group() {
+    local account="$1"
+    case "$account" in
+        uncc) echo "charlotte" ;;
+        uncfsu) echo "fsu" ;;
+        *) echo "$account" ;;
+    esac
+}
+
 get_emails() {
     local ACCOUNT="$1"
     local EMAILS=()
@@ -19,7 +28,8 @@ get_emails() {
     if [ -n "$USER_EMAIL" ]; then
         echo "$USER_EMAIL"
     else
-        GROUP_MEMBERS=$(ldapsearch -x -H "$LDAP_HOST" -b "$BASE_DN" "(cn=$ACCOUNT)" memberUid 2>/dev/null | grep "^memberUid:" | awk '{print $2}')
+        LDAP_GROUP=$(get_ldap_group "$ACCOUNT")
+        GROUP_MEMBERS=$(ldapsearch -x -H "$LDAP_HOST" -b "$BASE_DN" "(cn=$LDAP_GROUP)" memberUid 2>/dev/null | grep "^memberUid:" | awk '{print $2}')
 
         if [ -n "$GROUP_MEMBERS" ]; then
             for member in $GROUP_MEMBERS; do
