@@ -4,7 +4,10 @@ colorscheme gruvbox
 set transparency=0
 
 " Default GUI font
-set guifont=Liga\ SFMono\ Nerd\ Font:h15
+set guifont=JetBrainsMono\ Nerd\ Font:h15
+
+" Prepend conda base so LSP servers (fortls, ...) are found.
+let $PATH = expand('~/miniforge3/bin') . ':' . $PATH
 
 " coc.vim
 let g:coc_node_path = '/Users/ukh/.nvm/versions/node/v22.20.0/bin/node'
