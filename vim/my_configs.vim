@@ -157,6 +157,9 @@ let g:ZFIgnoreOption_ZFDirDiff = {
             \   'common' : 1,
             \ }
 
+" Disable ZFVimIgnore (breaks with paths containing spaces)
+let g:ZFIgnoreOn = 0
+
 """ Use new regular expression engine
 set re=0
 set redrawtime=10000
