@@ -8,6 +8,12 @@
         "webfetch": "allow"
     },
     "provider": {
+        "openai": {
+          "options": {
+            "baseURL": "https://litellm.oit.duke.edu/v1",
+            "apiKey": "xxx"
+            }
+        },
         "ollama": {
             "npm": "@ai-sdk/openai-compatible",
             "name": "Ollama (local)",
@@ -15,13 +21,8 @@
                 "baseURL": "{env:OLLAMA_HOST}/v1"
             },
             "models": {
-                "qwen3.5": {},
                 "qwen3.6": {},
-                "qwen3-coder-next": {},
-                "glm-4.7-flash": {},
-                "hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF":{},
-                "hf.co/prism-ml/Bonsai-8B-gguf": {},
-                "mistral-medium-3.5": {}
+                "qwen3-coder-next": {}
             }
         },
         "vllm": {
