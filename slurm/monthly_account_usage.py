@@ -4,7 +4,7 @@ import subprocess
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 import numpy as np
 import argparse
 import os
@@ -93,21 +93,24 @@ def generate_monthly_data(start_month, end_month):
 
     current = datetime(start_year, start_month_num, 1)
     end = datetime(end_year, end_month_num, 1)
+    now = datetime.now()
 
     while current <= end:
-        # Always use the full month (first to last day)
+        # Always use the full month. sreport's End is exclusive at 00:00, so it
+        # must be the first day of the next month or the final day is dropped.
         if current.month == 12:
             next_month = datetime(current.year + 1, 1, 1)
         else:
             next_month = datetime(current.year, current.month + 1, 1)
 
-        month_end = next_month - timedelta(days=1)
-
         months.append(
             {
                 "month_start": current.strftime("%Y-%m-%d"),
-                "month_end": month_end.strftime("%Y-%m-%d"),
+                "month_end": next_month.strftime("%Y-%m-%d"),
                 "month_name": current.strftime("%b %Y"),
+                # A month still in progress covers fewer days than the rest and
+                # must not be compared against them at face value.
+                "partial": next_month > now,
             }
         )
 
@@ -328,6 +331,15 @@ def main():
     print(f"Saving outputs in: {output_dir}")
     months = generate_monthly_data(args.start, args.end)
     print(f"Collected data for {len(months)} months")
+
+    incomplete = [m["month_name"] for m in months if m["partial"]]
+    if incomplete:
+        print(
+            f"WARNING: {', '.join(incomplete)} still in progress; those bars cover "
+            f"fewer days than the rest and are not comparable. Use --end <last "
+            f"completed month> to exclude them.",
+            file=sys.stderr,
+        )
 
     print("Collecting usage data...")
     data, months, text_data = collect_usage_data(months, args.partitions, args.tres)
