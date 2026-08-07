@@ -130,6 +130,10 @@ export OLLAMA_MODELS="/work/${USER}/.ollama/models"
 # GNUTERM
 export GNUTERM=x11
 
+# Apptainer
+export APPTAINER_CACHEDIR=/cwork/${USER}/tmp
+export APPTAINER_TMPDIR=/cwork/${USER}/tmp
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
@@ -279,3 +283,10 @@ export PATH="/hpc/group/rescomp/ukh/apps/wannier90/wannier90-3.1.0/:$PATH"
 
 # opencode
 export PATH=/hpc/home/ukh/.opencode/bin:$PATH
+
+# vasp
+export PATH="/hpc/group/rescomp/ukh/apps/VASP/vasp.5.4.4/bin/:$PATH"
+
+# qe
+export PATH="/hpc/group/rescomp/ukh/apps/qe-7.5/build/bin/:$PATH"
+export PSEUDO_DIR="/hpc/group/rescomp/ukh/apps/qe-7.5/pslibrary/pbe/PSEUDOPOTENTIALS/"

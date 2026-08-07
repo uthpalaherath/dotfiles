@@ -92,7 +92,7 @@ set_assoc_limits() {
     if [[ "$account_name" == *_h200_r ]]; then
         run_sacctmgr modify user name="$user_name" account="$account_name" set GrpTRES=gres/gpu=2 MaxWall=1-00:00:00
     elif [[ "$account_name" == *_h200 ]]; then
-        run_sacctmgr modify user name="$user_name" account="$account_name" set GrpTRES=gres/gpu=8
+        run_sacctmgr modify user name="$user_name" account="$account_name" set GrpTRES=gres/gpu=8 MaxWall=7-00:00:00
     else
         echo "Skipping limit update for unsupported account pattern: $account_name"
     fi
