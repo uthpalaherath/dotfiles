@@ -4,7 +4,7 @@
 
 show_hours=false
 
-QOS_LIST="duke_h200_hp unc_h200_hp ncsu_h200_hp ncat_h200_hp charlotte_h200_hp wssu_h200_hp nccu_h200_hp davidson_h200_hp fsu_h200_hp"
+QOS_LIST="duke_h200_hp unc_h200_hp ncsu_h200_hp ncat_h200_hp charlotte_h200_hp wssu_h200_hp nccu_h200_hp davidson_h200_hp fsu_h200_hp duke_h200_hp_vip"
 
 minutes_to_hours() {
     awk -v mins="$1" 'BEGIN { printf "%.2f", (mins + 0) / 60 }'
