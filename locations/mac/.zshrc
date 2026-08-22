@@ -241,22 +241,16 @@ alias asession='asciinema session -r'
 # WVU Connections
 # logging through ssh.wvu.edu
 
-alias wvu="ssh -tY ukh0001@ssh.wvu.edu '~/bin/tmux -CC new -A -s main '"
-alias sprucetmux="ssh -tY ukh0001@spruce.hpc.wvu.edu 'tmux -CC new -A -s spruce '"
 alias spruce="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@spruce.hpc.wvu.edu'"
 alias thorny="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@trcis001.hpc.wvu.edu'"
 alias whitehall="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
 alias whitehall2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.75'"
 alias whitehall3="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.77'"
-alias desktop="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y uthpala@157.182.27.178'"
-alias desktop2="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y uthpala@157.182.28.27'"
 alias romeronas="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@romeronas.wvu-ad.wvu.edu'"
 
 # Mounting HPC drives without ssh options
 alias mount_spruce="umount ~/HPC/spruce/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh0001@spruce.hpc.wvu.edu: ~/HPC/spruce/home"
 alias mount_thorny="umount ~/HPC/thorny/home; sshfs trcis001.hpc.wvu.edu: ~/HPC/thorny/home/ -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
-alias mount_desktop="umount ~/HPC/desktop/home; sshfs uthpala@157.182.27.178: ~/HPC/desktop/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
-alias mount_desktop2="umount ~/HPC/desktop2/home; sshfs uthpala@157.182.28.27: ~/HPC/desktop2/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: ~/HPC/whitehall/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 
@@ -268,35 +262,23 @@ alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
 alias hybrid3="ssh -Y ukh@vwb3-web-06.egr.duke.edu" #alias: materials.hybrid3.duke.edu
 alias muchasdb="ssh -Y ukh@vwb3-web-04.egr.duke.edu" #alias: materials.hybrid3.duke.edu
-alias dcca="ssh -Y ukh@dcc-login.oit.duke.edu"
 alias dcc="ssh -Y ukh@dcc-login-01.oit.duke.edu"
 alias dccsched="ssh -Y dcc-sched-01.rc.duke.edu"
 alias ncshare="ssh -Y uherathmudiyanselage1@login.ncshare.org"
 
 # Mounting drives
-alias mount_bridges2="umount ~/HPC/bridges2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2/home"
-alias mount_stampede2="umount ~/HPC/stampede2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2/home"
-alias mount_timewarp2="umount ~/HPC/timewarp2/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp2/home"
-alias mount_perlmutter="umount ~/HPC/perlmutter/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter/home"
-alias mount_frontera="umount ~/HPC/frontera/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera/home"
-alias mount_dcc="umount ~/HPC/dcc/home; sshfs -o follow_symlinks ukh@dcc-login.oit.duke.edu: ~/HPC/dcc/home"
-alias mount_muchasdb="umount ~/HPC/muchasdb/home; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@vwb3-web-03.egr.duke.edu: ~/HPC/muchasdb/home"
-alias mount_ncshare="umount ~/HPC/ncshare/home; sshfs -o follow_symlinks uherathmudiyanselage1@login.ncshare.org:/hpc/home/uherathmudiyanselage1 ~/HPC/ncshare/home"
-
-# git repos
-alias dotrebase='cd /Users/ukh/dotfiles && git pull --rebase || true && cd -'
-alias dotpush='cd /Users/ukh/dotfiles && git add . && git commit -m "Update from mac" && git push || true && cd -'
-alias dotpull='cd /Users/ukh/dotfiles && git pull || true && cd -'
-
-# Generate files
-alias makeINCAR="cp /Users/ukh/git/MatSciScripts/INCAR ."
-alias makeKPOINTS="cp /Users/ukh/git/MatSciScripts/KPOINTS ."
-alias makereport="cp /Users/ukh/git/dotfiles/templates/report.tex ."
+alias mount_bridges2="umount ~/HPC/bridges2; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2"
+alias mount_stampede2="umount ~/HPC/stampede2; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2"
+alias mount_timewarp2="umount ~/HPC/timewarp2; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp2"
+alias mount_perlmutter="umount ~/HPC/perlmutter; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter"
+alias mount_frontera="umount ~/HPC/frontera; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera"
+alias mount_muchasdb="umount ~/HPC/muchasdb; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@vwb3-web-03.egr.duke.edu: ~/HPC/muchasdb"
+alias mount_dcc="umount ~/HPC/dcc; sshfs -o defer_permissions,auto_cache,follow_symlinks,noappledouble,volname=DCC ukh@dcc-login.oit.duke.edu: ~/HPC/dcc"
+alias mount_ncshare="umount ~/HPC/ncshare; sshfs -o defer_permissions,auto_cache,follow_symlinks,noappledouble,volname=NCShare uherathmudiyanselage1@login.ncshare.org: ~/HPC/ncshare"
 
 # Other system aliases
 alias cleantmux='tmux kill-session -a'
 alias brewup='brew update; brew upgrade; brew cleanup; brew doctor'
-alias sed="gsed"
 alias cpr="rsync -ah --info=progress2"
 alias ctags="`brew --prefix`/bin/ctags"
 alias createbib="ln /Users/ukh/Dropbox/references-zotero.bib"
