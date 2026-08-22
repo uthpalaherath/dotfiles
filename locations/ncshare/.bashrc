@@ -127,6 +127,10 @@ export HF_HOME="/work/${USER}/.huggingface"
 # Ollama
 export OLLAMA_MODELS="/work/${USER}/.ollama/models"
 
+# Apptainer
+export APPTAINER_CACHEDIR=/work/${USER}/tmp
+export APPTAINER_TMPDIR=/work/${USER}/tmp
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u uherathmudiyanselage1 --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
