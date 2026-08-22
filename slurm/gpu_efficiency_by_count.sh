@@ -1,17 +1,23 @@
 #!/usr/bin/env bash
 #
 # gpu_efficiency_by_count.sh
-# Usage: gpu_efficiency_by_count.sh [-r PARTITION] [-S START_DATE] [-E END_DATE] [-h|--help]
+# Usage: gpu_efficiency_by_count.sh [-r PARTITION] [-S START_DATE] [-E END_DATE] [-u] [-a] [-n N] [-h|--help]
 #
 # Groups jobs by requested GPU count and reports request counts plus
 # time-weighted averages of GPU utilization efficiency and GPU memory efficiency
 # for jobs with Slurm GPU telemetry in their .batch step.
+#
+# With -u/-a, additionally breaks each GPU-count bucket down by user and/or
+# account so you can see who requested 6 GPUs, 8 GPUs, etc.
 #
 
 PARTITION="h200alloc"
 START_DATE="2025-10-01"
 END_DATE="2025-10-08"
 DEFAULT_GPU_MEM_MB="24576"
+BY_USER=0
+BY_ACCOUNT=0
+TOP_N=0
 
 usage() {
   cat <<EOF
@@ -21,10 +27,15 @@ Options:
   -r, --partition PART      Partition to query (default: ${PARTITION})
   -S, --start DATE          sacct start date (inclusive) in YYYY-MM-DD (default: ${START_DATE})
   -E, --end DATE            sacct end date (inclusive) in YYYY-MM-DD (default: ${END_DATE})
+  -u, --by-user             Also break each GPU-count bucket down by user
+  -a, --by-account          Also break each GPU-count bucket down by account
+  -n, --top N               Limit breakdown to the top N rows per bucket (default: all)
   -h, --help                Show this help and exit
 
 Examples:
   $(basename "$0") -r gpu -S 2026-05-01 -E 2026-05-31
+  $(basename "$0") -r h200-hp -S 2026-07-01 -E 2026-07-31 -u
+  $(basename "$0") -r h200-hp -S 2026-07-01 -E 2026-07-31 -u -a -n 10
 EOF
 }
 
@@ -36,6 +47,12 @@ while [[ $# -gt 0 ]]; do
       START_DATE="$2"; shift 2;;
     -E|--end)
       END_DATE="$2"; shift 2;;
+    -u|--by-user)
+      BY_USER=1; shift;;
+    -a|--by-account)
+      BY_ACCOUNT=1; shift;;
+    -n|--top)
+      TOP_N="$2"; shift 2;;
     -h|--help)
       usage; exit 0;;
     *)
@@ -51,8 +68,8 @@ echo
 echo "=== GPU efficiency by count for partition: $PARTITION during window: $START_DATE - $END_DATE ==="
 echo
 
-sacct -P --format=user,JobID,AllocTRES,TresUsageInTot,Elapsed -S "$START_DATE" -E "$END_DATE" --partition="$PARTITION" -a --noheader \
-| awk -F'|' -v default_gpu_mem_mb="$DEFAULT_GPU_MEM_MB" '
+sacct -P --format=user,account,JobID,AllocTRES,TresUsageInTot,Elapsed -S "$START_DATE" -E "$END_DATE" --partition="$PARTITION" -a --noheader \
+| awk -F'|' -v default_gpu_mem_mb="$DEFAULT_GPU_MEM_MB" -v by_user="$BY_USER" -v by_account="$BY_ACCOUNT" -v top_n="$TOP_N" '
 BEGIN {
   gpu_memory_mb["a100"] = 81920
   gpu_memory_mb["nvidia_a100-sxm4-80gb"] = 81920
@@ -111,7 +128,7 @@ function gpu_model_mem_mb(model) {
   return (model in gpu_memory_mb) ? gpu_memory_mb[model] : default_gpu_mem_mb
 }
 
-function record_job(gpu_type, gpus, capacity_mb, elapsed, gpu_mem_mb, gpu_util, key, seconds, gpu_eff, mem_eff) {
+function record_job(gpu_type, gpus, capacity_mb, elapsed, gpu_mem_mb, gpu_util, key, seconds, gpu_eff, mem_eff, ekey) {
   if (gpus <= 0 || capacity_mb <= 0) {
     return
   }
@@ -129,6 +146,30 @@ function record_job(gpu_type, gpus, capacity_mb, elapsed, gpu_mem_mb, gpu_util, 
   total_seconds[key] += seconds
   weighted_gpu_eff[key] += gpu_eff * seconds
   weighted_mem_eff[key] += mem_eff * seconds
+
+  if (by_user) {
+    ekey = key SUBSEP "user" SUBSEP current_user
+    e_eff_jobs[ekey] += 1
+    e_seconds[ekey] += seconds
+    e_gpu_eff[ekey] += gpu_eff * seconds
+    e_mem_eff[ekey] += mem_eff * seconds
+  }
+  if (by_account) {
+    ekey = key SUBSEP "account" SUBSEP current_account
+    e_eff_jobs[ekey] += 1
+    e_seconds[ekey] += seconds
+    e_gpu_eff[ekey] += gpu_eff * seconds
+    e_mem_eff[ekey] += mem_eff * seconds
+  }
+}
+
+function record_entity(key, tag, name, ekey) {
+  if (name == "") {
+    name = "unknown"
+  }
+  ekey = key SUBSEP tag SUBSEP name
+  e_jobs[ekey] += 1
+  e_gpus[ekey] += (key_gpus_of[key] + 0)
 }
 
 function record_request(gpu_type, gpus, key) {
@@ -144,6 +185,14 @@ function record_request(gpu_type, gpus, key) {
   }
   if (gpus > max_gpus) {
     max_gpus = gpus
+  }
+
+  key_gpus_of[key] = gpus
+  if (by_user) {
+    record_entity(key, "user", current_user)
+  }
+  if (by_account) {
+    record_entity(key, "account", current_account)
   }
 }
 
@@ -181,11 +230,93 @@ function flush_current_job() {
   }
 }
 
+# Sort the names in list[] (1..count) by jobs descending, then name ascending.
+function sort_entities(list, counts, count, i, j, tmp) {
+  for (i = 2; i <= count; i++) {
+    for (j = i; j > 1; j--) {
+      if (counts[list[j]] > counts[list[j-1]] ||
+          (counts[list[j]] == counts[list[j-1]] && list[j] < list[j-1])) {
+        tmp = list[j]; list[j] = list[j-1]; list[j-1] = tmp
+      } else {
+        break
+      }
+    }
+  }
+}
+
+function print_breakdown(tag, label,   gpus, key, key_parts, gpu_type, key_gpus, ekey, ekey_parts,
+                         names, count, i, shown, ekey_i, avg_gpu, avg_mem, w, dashes, fmt, fmt_na) {
+  w = 0
+  for (ekey in e_jobs) {
+    split(ekey, ekey_parts, SUBSEP)
+    if (ekey_parts[3] == tag && length(ekey_parts[4]) > w) {
+      w = length(ekey_parts[4])
+    }
+  }
+  if (w < 8) {
+    w = 8
+  }
+  dashes = sprintf("%*s", w, "")
+  gsub(/ /, "-", dashes)
+  fmt = "%-10s %4d %-" w "s %10d %13d %10d %11.2f%% %15.2f%%\n"
+  fmt_na = "%-10s %4d %-" w "s %10d %13d %10d %12s %15s\n"
+
+  printf "\n=== Breakdown by %s ===\n\n", label
+  printf "%-10s %4s %-" w "s %10s %13s %10s %12s %15s\n", "GPU Type", "GPUs", (tag == "user" ? "User" : "Account"), "Total Jobs", "Measured Jobs", "Total GPUs", "TWA GPU Eff%", "TWA GPU Mem Eff%"
+  printf "%-10s %4s %-" w "s %10s %13s %10s %12s %15s\n", "--------", "----", dashes, "----------", "-------------", "----------", "------------", "----------------"
+
+  for (gpus = min_gpus; gpus <= max_gpus; gpus++) {
+    for (key in jobs) {
+      split(key, key_parts, SUBSEP)
+      gpu_type = key_parts[1]
+      key_gpus = key_parts[2] + 0
+      if (key_gpus != gpus) {
+        continue
+      }
+
+      count = 0
+      delete names
+      delete name_jobs
+      for (ekey in e_jobs) {
+        split(ekey, ekey_parts, SUBSEP)
+        if (ekey_parts[1] != gpu_type || (ekey_parts[2] + 0) != key_gpus || ekey_parts[3] != tag) {
+          continue
+        }
+        names[++count] = ekey_parts[4]
+        name_jobs[ekey_parts[4]] = e_jobs[ekey]
+      }
+      if (count == 0) {
+        continue
+      }
+      sort_entities(names, name_jobs, count)
+
+      shown = 0
+      for (i = 1; i <= count; i++) {
+        if (top_n > 0 && shown >= top_n) {
+          printf "%-10s %4d %s\n", "", gpus, "... " (count - shown) " more"
+          break
+        }
+        ekey_i = gpu_type SUBSEP key_gpus SUBSEP tag SUBSEP names[i]
+        if (e_seconds[ekey_i] > 0) {
+          avg_gpu = e_gpu_eff[ekey_i] / e_seconds[ekey_i]
+          avg_mem = e_mem_eff[ekey_i] / e_seconds[ekey_i]
+          printf fmt, gpu_type, gpus, names[i], e_jobs[ekey_i], e_eff_jobs[ekey_i], e_gpus[ekey_i], avg_gpu, avg_mem
+        } else {
+          printf fmt_na, gpu_type, gpus, names[i], e_jobs[ekey_i], 0, e_gpus[ekey_i], "n/a", "n/a"
+        }
+        shown++
+      }
+    }
+  }
+}
+
 {
-  jobid = $2
-  tres = $3
-  usage = $4
-  elapsed = $5
+  user = $1
+  account = $2
+  jobid = $3
+  tres = $4
+  usage = $5
+  elapsed = $6
 
   if (jobid !~ /\./) {
     flush_current_job()
@@ -217,6 +348,8 @@ function flush_current_job() {
     }
 
     current_job = jobid
+    current_user = (user == "") ? "unknown" : user
+    current_account = (account == "") ? "unknown" : account
     current_gpu_type = gpu_type
     current_gpus = gpu_count
     current_capacity_mb = gpu_capacity_mb
@@ -251,5 +384,12 @@ END {
         printf "%-10s %4d %10d %13d %10d %12s %15s\n", gpu_type, gpus, jobs[key], 0, total_gpus[key], "n/a", "n/a"
       }
     }
+  }
+
+  if (by_user) {
+    print_breakdown("user", "user")
+  }
+  if (by_account) {
+    print_breakdown("account", "account")
   }
 }'
