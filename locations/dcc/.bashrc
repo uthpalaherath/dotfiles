@@ -123,6 +123,8 @@ export NVM_DIR="$HOME/.nvm"
 
 # HuggingFace
 export HF_HOME="/work/${USER}/.huggingface"
+export FLASHINFER_WORKSPACE_BASE="/work/${USER}"
+export VLLM_CACHE_ROOT="/work/${USER}/.cache/vllm"
 
 # Ollama
 export OLLAMA_MODELS="/work/${USER}/.ollama/models"
