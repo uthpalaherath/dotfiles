@@ -3,4 +3,4 @@
 .json
 __pycache__
 tex.cache
-fontlist-v390.json
+fontlist-*.json

@@ -255,8 +255,8 @@ alias mount_whitehall="umount ~/HPC/whitehall/home; sshfs ukh0001@157.182.3.76: 
 alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-ad.wvu.edu: ~/HPC/romeronas/home -o allow_other,defer_permissions,auto_cache,follow_symlinks,ssh_command='ssh -t ukh0001@ssh.wvu.edu ssh'"
 
 # Other ssh connections
-alias bridges2="ssh -Y uthpala@br012.bridges2.psc.edu"
-alias stampede2="ssh -Y uthpala@stampede2.tacc.utexas.edu"
+alias bridges2="ssh -Y uthpala@bridges2.psc.edu"
+alias stampede3="ssh -Y uthpala@stampede3.tacc.utexas.edu"
 alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
