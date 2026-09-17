@@ -5,13 +5,8 @@ set -euo pipefail
 
 LDAP_HOST="ldap://ncshare-com-01.ncshare.org"
 BASE_DN="dc=ncshare,dc=org"
+ACTIVE_FILTER='(&(edupersonprincipalname=*)(uidnumber>=3000000))'
 H200_HP_ACCOUNTS="duke unc ncsu ncat uncc wssu nccu davidson uncfsu"
-
-# The directory enforces a hard server-side size limit (500 entries) that paged
-# results do not bypass, so the active-user query is split into uidNumber
-# windows and re-split whenever a window still trips the limit.
-UID_MIN=3000000
-UID_SPAN=100000
 
 ACCOUNTS=(
     "appstate"
@@ -62,49 +57,6 @@ get_h200_hp_group() {
     esac
 }
 
-# Fetch active users whose uidNumber falls in [lo, hi]; an empty hi means
-# unbounded. On LDAP_SIZELIMIT_EXCEEDED (4) the window is halved and retried,
-# so the walk stays correct as the directory grows.
-fetch_active_range() {
-    local lo="$1" hi="$2" filter mid out rc
-
-    filter="(&(edupersonprincipalname=*)(uidnumber>=$lo)"
-    if [ -n "$hi" ]; then
-        filter+="(uidnumber<=$hi)"
-    fi
-    filter+=")"
-
-    set +e
-    out=$(ldapsearch -x -LLL -H "$LDAP_HOST" -b "$BASE_DN" "$filter" \
-        uid edupersonprincipalname 2>/dev/null)
-    rc=$?
-    set -e
-
-    case "$rc" in
-        0)
-            [ -n "$out" ] && printf '%s\n\n' "$out"
-            return 0
-            ;;
-        4)
-            if [ -z "$hi" ]; then
-                mid=$((lo + UID_SPAN))
-            elif [ "$lo" -ge "$hi" ]; then
-                echo "error: size limit still exceeded at uidNumber $lo" >&2
-                return 1
-            else
-                mid=$((lo + (hi - lo) / 2))
-            fi
-            fetch_active_range "$lo" "$mid"
-            fetch_active_range "$((mid + 1))" "$hi"
-            return 0
-            ;;
-        *)
-            echo "error: ldapsearch failed (rc=$rc) for uidNumber range ${lo}-${hi:-inf}" >&2
-            return "$rc"
-            ;;
-    esac
-}
-
 count_active_group_members() {
     local group="$1"
 
@@ -123,19 +75,21 @@ count_active_group_members() {
     ' <(awk '{ print $1 }' <<< "$active_users") -
 }
 
-active_users=$(fetch_active_range "$UID_MIN" "" | awk '
+# Without this check, a failed search (e.g. rc=4, size limit exceeded) makes
+# set -e exit silently with no output.
+active_ldif=$(ldapsearch -x -H "$LDAP_HOST" -b "$BASE_DN" "$ACTIVE_FILTER" uid edupersonprincipalname) \
+    || { echo "error: ldapsearch failed (rc=$?; 4 = size limit exceeded)" >&2; exit 1; }
+
+active_users=$(awk '
     BEGIN { IGNORECASE = 1 }
-    /^dn:/ { emit_record(); uid = ""; eppn = ""; next }
     /^uid:/ { uid = $2 }
     /^edupersonprincipalname:/ && $0 !~ /orig$/ {
         eppn = $2
     }
+    /^$/ { emit_record(); uid = ""; eppn = "" }
     END { emit_record() }
     function emit_record() {
         if (uid == "" || eppn == "") {
-            return
-        }
-        if (emitted[uid]++) {
             return
         }
         split(eppn, email_parts, "@")
@@ -149,7 +103,7 @@ active_users=$(fetch_active_range "$UID_MIN" "" | awk '
             print uid, institution
         }
     }
-')
+' <<< "$active_ldif")
 
 active_domains=$(awk '
     { count[$2]++ }
