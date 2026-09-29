@@ -236,3 +236,19 @@ export PATH=/hpc/home/uherathmudiyanselage1/.opencode/bin:$PATH
 export PATH="/hpc/home/uherathmudiyanselage1/apps/vim/bin/:$PATH"
 export VIM="/hpc/home/uherathmudiyanselage1/apps/vim/share/vim"
 export VIMRUNTIME="/hpc/home/uherathmudiyanselage1/apps/vim/share/vim/vim92"
+
+# >>> hpc-agent >>>
+# Keep pip's temp and cache off the ~31 GB root partition.
+export TMPDIR="/work/uherathmudiyanselage1/tmp"
+export PIP_TMPDIR="/work/uherathmudiyanselage1/tmp"
+export PIP_CACHE_DIR="/work/uherathmudiyanselage1/.pipcache"
+export HPCRUN_ROOT="/work/uherathmudiyanselage1/agent-workspaces"
+export HPCREPRO_ROOT="/work/uherathmudiyanselage1/agent-projects"
+export ASCEND_SCRATCH="/work/uherathmudiyanselage1"
+export ASCEND_SHARE="/work/uherathmudiyanselage1"
+export ASCEND_PARTITION="common"
+
+
+export ASCEND_HOME="$HOME/.ascend"
+export PATH="$HOME/bin:$PATH"
+# <<< hpc-agent <<<

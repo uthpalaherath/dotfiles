@@ -240,7 +240,7 @@ From a login node, run the following commands to investigate further,
     sacct -j <job_id>
 
 - To assess your GPU utilization:
-    slurm-gpu report -r ${PART} -S ${START} -E ${END} -u ${user}
+    slurm-gpu report -r ${PART} -S ${START} -E ${END} -u ${user} --duplicates
 
 This will help you identify jobs that may be underutilizing GPU resources.
 Please reach out to us at info@ncshare.org to get assistance in optimizing your GPU utilization.
