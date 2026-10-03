@@ -58,6 +58,9 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
+# Bat theme
+export BAT_THEME="TwoDark"
+
 # OpenMP and MKL
 export OMP_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
@@ -143,11 +146,6 @@ alias interact="srun -A rescomp -p interactive -t 02:00:00 --pty bash -i"
 #alias sac="sacct --format="JobID,JobName%-30,State,User""
 #alias sac="sacct -S $(date +%Y-%m-01) -E now -X --format="JobID,JobName%-30,State,WorkDir%-150""
 alias sac="sacct -X --format="JobID,JobName%-30,State,nodelist%-30,WorkDir%-150""
-
-alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
-alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from timewarp" && git push && cd -'
-alias dotpull='cd ~/dotfiles && git pull || true && cd -'
-
 alias makejob="cp ~/dotfiles/locations/dcc/jobscript.sh ."
 alias detach="tmux detach-client -a"
 alias cpr="rsync -ah --info=progress2"
