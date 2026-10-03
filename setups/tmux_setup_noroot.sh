@@ -5,9 +5,10 @@
 # exit on error
 set -e
 
-TMUX_VERSION=3.1
-LIBEVENT_VERSION=2.1.8-stable
-NCURSES_VERSION=6.1
+TMUX_VERSION=3.7c
+LIBEVENT_VERSION=2.1.12-stable
+NCURSES_VERSION=6.5
+BYACC_VERSION=20240109
 
 
 # create our directories
@@ -24,7 +25,7 @@ wget --no-check-certificate https://ftp.gnu.org/pub/gnu/ncurses/ncurses-${NCURSE
 ############
 tar xvzf libevent-${LIBEVENT_VERSION}.tar.gz
 cd libevent-${LIBEVENT_VERSION}
-./configure --prefix=$HOME/local --disable-shared
+./configure --prefix=$HOME/local --disable-shared --disable-samples --disable-openssl
 make
 make install
 cd ..
@@ -34,7 +35,7 @@ cd ..
 ############
 tar xvzf ncurses-${NCURSES_VERSION}.tar.gz
 cd ncurses-${NCURSES_VERSION}
-./configure --prefix=$HOME/local
+./configure --prefix=$HOME/local --disable-widec
 make
 make install
 cd ..
