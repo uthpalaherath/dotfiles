@@ -290,3 +290,6 @@ export PATH="/hpc/group/rescomp/ukh/apps/VASP/vasp.5.4.4/bin/:$PATH"
 # qe
 export PATH="/hpc/group/rescomp/ukh/apps/qe-7.5/build/bin/:$PATH"
 export PSEUDO_DIR="/hpc/group/rescomp/ukh/apps/qe-7.5/pslibrary/pbe/PSEUDOPOTENTIALS/"
+
+# xclip
+export PATH="/hpc/home/ukh/local/xclip/build/bin/:$PATH"
