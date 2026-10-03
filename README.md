@@ -27,12 +27,9 @@ I basically create symlinks of each of the files in the directories to the syste
 
 `configs/tmux.conf` is a standalone config (needs tmux 3.6+ and a Nerd Font). Symlink it to `~/.config/tmux/tmux.conf`, clone [tpm](https://github.com/tmux-plugins/tpm) into `~/.config/tmux/plugins/tpm`, then press `prefix I` to install plugins.
 
-## Clones 
+## vim
 
-Here's a list of repositories that I have cloned. 
-
-- vim
-    Originally created by [amix](https://github.com/amix/vimrc) to modify vim configuration. **my_configs.vim** contains my configuration.
+`vim/vimrc` is a standalone config managed by [vim-plug](https://github.com/junegunn/vim-plug). Symlink it to `~/.vimrc` and `vim/coc-settings.json` to `~/.vim/coc-settings.json`, then start vim; plugins install on first launch. Update them with `:PlugUpdate`.
 
 Disclaimer: *I am a computational physicist, not a computer scientist. These scripts may not look very professional or adhere to coding conventions. They may also contain bugs.*
 

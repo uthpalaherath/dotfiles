@@ -1,0 +1,741 @@
+" ~/.vimrc
+"
+" Standalone Vim config.
+" Plugins are managed by vim-plug and installed to ~/.vim/plugged.
+" :PlugUpdate updates plugins, :PlugClean removes unlisted ones, :PlugUpgrade updates vim-plug.
+"
+" author: Uthpala Herath
+
+set encoding=utf-8
+scriptencoding utf-8
+
+" All autocmds below join this group, so re-sourcing the file doesn't duplicate them.
+augroup vimrc
+  autocmd!
+augroup END
+
+""" Plugin Manager
+" Plugins load only at startup: re-sourcing this file re-applies settings without
+" reloading plugins (vim-smoothie and vim-pencil error when loaded twice).
+" After adding or removing a Plug line, restart Vim, then :PlugInstall / :PlugClean.
+if has('vim_starting')
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd vimrc VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+call plug#begin('~/.vim/plugged')
+
+" Editing
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-commentary'
+Plug 'maxbrunsfeld/vim-yankstack'
+Plug 'jiangmiao/auto-pairs'
+
+" Git
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'zivyangll/git-blame.vim'
+
+" UI
+Plug 'morhetz/gruvbox'
+Plug 'itchyny/lightline.vim'
+Plug 'Yggdroot/indentLine'
+Plug 'preservim/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+
+" Linting, completion, search, AI
+Plug 'dense-analysis/ale'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'github/copilot.vim'
+Plug 'madox2/vim-ai'
+
+" Lazy-loaded utilities
+Plug 'whiteinge/diffconflicts', { 'on': ['DiffConflicts'] }
+Plug 'junkblocker/git-time-lapse', { 'on': ['GitTimeLapse'] }
+Plug 'preservim/tagbar', { 'on': ['TagbarToggle'] }
+Plug 'szw/vim-maximizer', { 'on': ['MaximizerToggle'] }
+Plug 'ZSaberLv0/ZFVimDirDiff', { 'on': ['ZFDirDiff'] }
+Plug 'ZSaberLv0/ZFVimJob', { 'on': ['ZFDirDiff'] }
+Plug 'ZSaberLv0/ZFVimIgnore', { 'on': ['ZFDirDiff'] }
+Plug 'chriszarate/yazi.vim', { 'on': ['Yazi'] }
+
+" Filetype-specific plugins
+Plug 'jpalardy/vim-slime', { 'for': 'python' }
+Plug 'hanschen/vim-ipython-cell', { 'for': 'python' }
+Plug 'pixelneo/vim-python-docstring', { 'for': 'python' }
+Plug 'preservim/vim-markdown'
+Plug 'img-paste-devs/img-paste.vim', { 'for': 'markdown' }
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install', 'for': 'markdown' }
+
+" Optional UI helpers
+Plug 'kshenoy/vim-signature'
+Plug 'psliwka/vim-smoothie'
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'uthpalaherath/vim-copy-as-rtf'
+Plug 'ryanoasis/vim-devicons'
+Plug 'ConradIrwin/vim-bracketed-paste'
+
+" Latex plugins
+Plug 'Ron89/thesaurus_query.vim', { 'for': ['tex', 'markdown'] }
+Plug 'dahu/vim-fanfingtastic', { 'for': ['tex', 'markdown'] }
+Plug 'engeljh/vim-latexfmt', { 'for': 'tex' }
+Plug 'preservim/vim-litecorrect', { 'for': ['tex', 'markdown'] }
+Plug 'preservim/vim-pencil', { 'for': ['tex', 'markdown'] }
+Plug 'kana/vim-textobj-user', { 'for': ['tex', 'markdown'] }
+Plug 'preservim/vim-textobj-sentence', { 'for': ['tex', 'markdown'] }
+Plug 'lervag/vimtex', { 'for': ['tex', 'markdown'] }
+call plug#end()   " also runs 'filetype plugin indent on' and 'syntax enable'
+endif
+
+" EditorConfig support ships with Vim 9
+packadd! editorconfig
+let g:EditorConfig_exclude_patterns = ['fugitive://.*']
+
+""" General settings
+let mapleader = ","
+let $LANG='en'
+set langmenu=en
+set fileencoding=utf-8
+
+set history=500
+set autoread
+autocmd vimrc FocusGained,BufEnter * silent! checktime
+
+set so=7
+set wildmenu
+set hid
+set backspace=eol,start,indent
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+set lazyredraw
+set showmatch
+set mat=2
+set t_vb=
+set tm=500
+if has("gui_macvim")
+  autocmd vimrc GUIEnter * set vb t_vb=
+endif
+set display=lastline    " show as much as possible of a wrapped last line, not just @
+set number
+set conceallevel=2
+set foldcolumn=1
+set signcolumn=yes      " keep text from shifting when signs appear
+set lbr
+set tw=500
+set wrap
+set splitright
+set splitbelow
+set switchbuf=useopen,usetab,newtab
+set stal=2
+set laststatus=2
+set updatetime=300
+set redrawtime=10000
+set shortmess-=S        " show search match count
+set diffopt+=iwhiteall,filler
+set diffexpr=""
+set tags+=tags;/
+
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --smart-case
+  set grepformat=%f:%l:%c:%m
+endif
+
+" No swap or backup files (backups also confuse some language servers, see coc.nvim #649)
+set noswapfile
+set nobackup
+set nowritebackup
+
+" Persistent undo
+if !isdirectory(expand('~/.vim/undo'))
+  call mkdir(expand('~/.vim/undo'), 'p')
+endif
+set undodir=~/.vim/undo
+set undofile
+
+if exists('$TMUX')
+  set term=screen-256color
+endif
+
+""" Tabs and indentation
+set tabstop=4           " width that a <TAB> character displays as
+set expandtab           " convert <TAB> key-presses to spaces
+set shiftwidth=4        " number of spaces to use for each step of (auto)indent
+set softtabstop=4       " backspace after pressing <TAB> will remove up to this many spaces
+set smarttab
+set autoindent          " copy indent from current line when starting a new line
+set smartindent         " even better autoindent (e.g. add indent after '{')
+
+""" Filetypes
+" Get rid of annoying autocomment in new line
+autocmd vimrc FileType * set fo-=c fo-=r fo-=o
+let python_highlight_all = 1
+autocmd vimrc FileType python syn keyword pythonDecorator True None False self
+autocmd vimrc FileType gitcommit call setpos('.', [0, 1, 1, 0])
+autocmd vimrc FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+let fortran_free_source=1
+let fortran_do_enddo=1
+let fortran_more_precise=1
+
+" Change current working directory to file dir (set g:my_auto_lcd = 1 to enable)
+let g:my_auto_lcd = get(g:, 'my_auto_lcd', 0)
+autocmd vimrc BufEnter * if g:my_auto_lcd && &buftype ==# '' && expand('%:p') !=# '' | silent! lcd %:p:h | endif
+
+" Resume cursor location, except for git commits
+autocmd vimrc BufReadPost *
+  \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+  \ |   exe "normal! g`\""
+  \ | endif
+
+""" Colors and theme
+set background=dark
+" Keep startup fast: avoid running shell checks on every launch.
+if has('termguicolors') && exists('$COLORTERM') && $COLORTERM =~? 'truecolor\|24bit'
+  set termguicolors
+endif
+
+let g:gruvbox_italic = 1
+let g:gruvbox_use_italic = 1
+let g:gruvbox_contrast_dark = "medium"
+let g:gruvbox_sign_column = 'bg0'   " no box behind ALE/coc/gitgutter signs
+silent! colorscheme gruvbox
+
+highlight clear SignColumn
+highlight LineNr ctermbg=235 ctermfg=241
+highlight GitGutterAdd ctermfg=2 guifg=#008000
+highlight GitGutterChange ctermfg=3 guifg=#808000
+highlight GitGutterDelete ctermfg=1 guifg=#800000
+highlight GitGutterChangeDelete ctermfg=4 guifg=#000080
+" Changed lines get a highlighted line number, without the CursorLineNr box
+for s:g in ['GitGutterAddLineNr', 'GitGutterChangeLineNr', 'GitGutterDeleteLineNr', 'GitGutterChangeDeleteLineNr']
+  execute 'highlight' s:g 'ctermfg=214 guifg=#fabd2f ctermbg=NONE guibg=NONE'
+endfor
+highlight Directory guifg=#FF0000 ctermfg=blue
+highlight CocFloating ctermbg=238 guibg=#444444 ctermfg=Gray guifg=Gray
+highlight CocMenuSel ctermbg=240 guibg=#585858
+
+""" Terminal codes: italics, cursor shape, cursorline in insert mode
+let &t_ZH = "\e[3m"
+let &t_ZR = "\e[23m"
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
+set guicursor+=a:blinkon0
+autocmd vimrc VimLeave * silent !printf '\e[6 q'
+autocmd vimrc InsertEnter * set cul
+autocmd vimrc InsertLeave * set nocul
+
+""" Mappings
+nmap <leader>w :w!<cr>
+command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
+imap jk <ESC>`^
+
+" Edit and auto-reload this file
+map <leader>e :e! $MYVIMRC<cr>
+autocmd vimrc BufWritePost $MYVIMRC source $MYVIMRC
+
+" Search
+map <space> /
+map <C-space> ?
+map <silent> <leader><cr> :noh<cr>
+vnoremap <silent> * :<C-u>call VisualSelection('')<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>call VisualSelection('')<CR>?<C-R>=@/<CR><CR>
+vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
+
+" Windows and splits
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+nnoremap <C-W>- :new<CR>
+nnoremap <C-W>\ :vnew<CR>
+
+" Buffers and tabs
+map <leader>bd :Bclose<cr>:tabclose<cr>gT
+map <leader>ba :bufdo bd<cr>
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+map <leader>t<leader> :tabnext<cr>
+let g:lasttab = 1
+nmap <leader>tl :exe "tabn ".g:lasttab<CR>
+autocmd vimrc TabLeave * let g:lasttab = tabpagenr()
+map <leader>te :tabedit <C-r>=escape(expand("%:p:h"), " ")<cr>/
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
+
+" Editing
+map 0 ^
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+map <leader>pp :setlocal paste!<cr>
+map <leader>x :e ~/buffer.md<cr>
+iab xdate <C-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
+
+" Inner/around slashes text objects
+onoremap <silent> i/ :<C-U>normal! T/vt/<CR>
+onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
+
+" Yank/paste to/from the OS clipboard
+noremap <silent> <leader>y "+y
+noremap <silent> <leader>Y "+Y
+noremap <silent> <leader>p "+p
+noremap <silent> <leader>P "+P
+
+" Paste without yanking replaced text in visual mode
+vnoremap <silent> p "_dP
+vnoremap <silent> P "_dp
+
+" Spell checking
+map <leader>ss :setlocal spell!<cr>
+map <leader>sn ]s
+map <leader>sp [s
+map <leader>sa zg
+map <leader>s? z=
+
+" Quickfix
+map <leader>cc :botright cope<cr>
+map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
+map <leader>n :cn<cr>
+autocmd vimrc BufReadPost quickfix nnoremap <buffer> <CR> <CR>
+
+" Tags: open the definition in a new tab / vertical split
+nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
+map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+" Toggles
+map <F9> :set wrap!<CR>
+noremap <silent> <F3> :set invnumber invrelativenumber \| IndentLinesToggle \| :GitGutterToggle <CR>
+map <F5> :call CompileRun()<CR>
+imap <F5> <Esc>:call CompileRun()<CR>
+vmap <F5> <Esc>:call CompileRun()<CR>
+
+" Terminal: Ctrl-b to scroll
+tnoremap <c-b> <c-\><c-n>
+
+" Command-line editing
+cno $h e ~/
+cno $d e ~/Desktop/
+cno $j e ./
+cno $c e <C-\>eCurrentFileDir("e")<cr>
+cno $q <C-\>eDeleteTillSlash()<cr>
+cnoremap <C-A> <Home>
+cnoremap <C-E> <End>
+cnoremap <C-K> <C-U>
+cnoremap <C-P> <Up>
+cnoremap <C-N> <Down>
+
+""" Functions
+command! Bclose call <SID>BufcloseCloseIt()
+function! <SID>BufcloseCloseIt()
+  let l:currentBufNum = bufnr("%")
+  let l:alternateBufNum = bufnr("#")
+  if buflisted(l:alternateBufNum)
+    buffer #
+  else
+    bnext
+  endif
+  if bufnr("%") == l:currentBufNum
+    new
+  endif
+  if buflisted(l:currentBufNum)
+    execute("bdelete! ".l:currentBufNum)
+  endif
+endfunction
+
+function! VisualSelection(direction) range
+  let l:saved_reg = @"
+  execute "normal! vgvy"
+  let l:pattern = escape(@", "\\/.*'$^~[]")
+  let l:pattern = substitute(l:pattern, "\n$", "", "")
+  if a:direction == 'replace'
+    call feedkeys(":%s/" . l:pattern . "/")
+  endif
+  let @/ = l:pattern
+  let @" = l:saved_reg
+endfunction
+
+function! DeleteTillSlash()
+  let l:cmd = getcmdline()
+  let l:edited = substitute(l:cmd, "\\(.*\[/\]\\).*", "\\1", "")
+  if l:cmd == l:edited
+    let l:edited = substitute(l:cmd, "\\(.*\[/\]\\).*/", "\\1", "")
+  endif
+  return l:edited
+endfunction
+
+function! CurrentFileDir(cmd)
+  return a:cmd . " " . escape(expand("%:p:h"), " ") . "/"
+endfunction
+
+function! CompileRun()
+  exec "w"
+  if &filetype == 'c'
+    exec "!gcc % -o %<"
+    exec "!time ./%<"
+  elseif &filetype == 'cpp'
+    exec "!g++ % -o %<"
+    exec "!time ./%<"
+  elseif &filetype == 'java'
+    exec "!javac %"
+    exec "!time java %"
+  elseif &filetype == 'sh'
+    exec "!time bash %"
+  elseif &filetype == 'python'
+    exec "!time python3 %"
+  elseif &filetype == 'html'
+    exec "!google-chrome % &"
+  elseif &filetype == 'go'
+    exec "!go build %<"
+    exec "!time go run %"
+  elseif &filetype == 'matlab'
+    exec "!time octave %"
+  endif
+endfunction
+
+""" ---------- PLUGIN SETTINGS ----------
+
+""" lightline
+let g:lightline = {
+      \ 'colorscheme': 'gruvbox',
+      \ 'active': {
+      \   'left': [ ['mode', 'paste'],
+      \             ['fugitive', 'readonly', 'filename', 'modified'] ],
+      \   'right': [ [ 'lineinfo' ], ['percent'] ]
+      \ },
+      \ 'component': {
+      \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
+      \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
+      \   'fugitive': '%{exists("*FugitiveHead")?FugitiveHead():""}'
+      \ },
+      \ 'component_visible_condition': {
+      \   'readonly': '(&filetype!="help"&& &readonly)',
+      \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
+      \   'fugitive': '(exists("*FugitiveHead") && ""!=FugitiveHead())'
+      \ },
+      \ 'separator': { 'left': ' ', 'right': ' ' },
+      \ 'subseparator': { 'left': ' ', 'right': ' ' }
+      \ }
+
+""" vim-yankstack
+let g:yankstack_yank_keys = ['y', 'd']
+nmap <C-p> <Plug>yankstack_substitute_older_paste
+nmap <C-n> <Plug>yankstack_substitute_newer_paste
+
+""" vim-surround
+vmap Si S(i_<esc>f)
+
+""" auto-pairs
+let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '```':'```', '"""':'"""', "'''":"'''", "`":"`"}
+
+""" indentLine
+let g:indentLine_char = '│'
+let g:indentLine_fileTypeExclude = ['markdown','tex']
+
+""" ALE
+let g:ale_disable_lsp = 1
+let g:ale_virtualtext_cursor = 0
+let g:ale_set_highlights = 0
+let g:ale_lint_on_enter = 0               " don't lint when opening a file
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['chktex', 'vale'], 'markdown':['markdownlint', 'vale']}
+let g:ale_markdown_markdownlint_options = '--disable MD013'
+let g:ale_javascript_prettier_options = '--tab-width 4'
+let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black'], 'markdown':['prettier']}
+let g:ale_fix_on_save = 1
+let g:ale_pattern_options = {'\.tex$': {'ale_enabled': 0}}   " no ALE in tex buffers
+let g:ale_sign_error = '•'
+let g:ale_sign_warning = '.'
+nmap <silent> <leader>a <Plug>(ale_next_wrap)
+
+""" coc.nvim (settings in ~/.vim/coc-settings.json)
+let g:coc_disable_startup_warning = 1
+let g:coc_global_extensions = ['coc-clangd', 'coc-pyright']
+
+" Tab / S-Tab navigate the completion menu, Enter accepts
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <silent><expr> <c-@> coc#refresh()
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Diagnostics and code navigation
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" K shows documentation
+nnoremap <silent> K :call ShowDocumentation()<CR>
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd vimrc CursorHold * silent call CocActionAsync('highlight')
+
+" Scroll coc.nvim floating windows with Ctrl-d / Ctrl-u
+nnoremap <silent><nowait><expr> <C-d> coc#float#has_scroll() ? coc#float#scroll(1,3) : "\<C-d>"
+nnoremap <silent><nowait><expr> <C-u> coc#float#has_scroll() ? coc#float#scroll(0,3) : "\<C-u>"
+inoremap <silent><nowait><expr> <C-d> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1,3)\<cr>" : "\<C-d>"
+inoremap <silent><nowait><expr> <C-u> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0,3)\<cr>" : "\<C-u>"
+vnoremap <silent><nowait><expr> <C-d> coc#float#has_scroll() ? coc#float#scroll(1,3) : "\<C-d>"
+vnoremap <silent><nowait><expr> <C-u> coc#float#has_scroll() ? coc#float#scroll(0,3) : "\<C-u>"
+
+""" github-copilot
+let g:copilot_no_tab_map = v:true
+imap <silent><script><expr> <C-e> copilot#Accept('\<CR>')
+imap <C-L> <Plug>(copilot-accept-word)
+imap <C-j> <Plug>(copilot-next)
+imap <C-k> <Plug>(copilot-previous)
+
+""" FZF
+let s:rg_opts = '--smart-case --follow --hidden --type-not sql -g "!{node_modules,.git}"'
+let $FZF_DEFAULT_COMMAND = 'rg --files ' . s:rg_opts
+let s:rg_grep = 'rg --line-number --no-heading --color=always ' . s:rg_opts . ' '
+let s:rg_preview = {'options': '--delimiter : --nth 3..'}
+
+nnoremap <silent> <C-f> :Files<CR>
+nnoremap <silent> <Leader>f :RgBuf<CR>
+nnoremap <silent> <leader>* :RgBuf <C-R><C-W><CR>
+nnoremap <silent> <leader>q :call fzf#vim#command_history({'sink': 'e', 'window': 'botright 20new', 'options': '--no-preview'})<CR>
+
+" Rg without file names in search results
+command! -bang -nargs=* RgBuf
+  \ call fzf#vim#grep(s:rg_grep . shellescape(<q-args>), 1, fzf#vim#with_preview(s:rg_preview), <bang>0)
+
+" Rg with arguments allowed: Rg PATTERN [OPTIONS] [PATH]
+command! -bang -nargs=* Rg
+  \ if empty(<q-args>) | echo "USAGE: Rg PATTERN [OPTIONS] [PATH]" |
+  \ else | call fzf#vim#grep(s:rg_grep . <q-args>, 1, fzf#vim#with_preview(s:rg_preview), <bang>0) | endif
+
+" Search only within the current buffer
+command! -bang -nargs=* BLines
+    \ call fzf#vim#grep(
+    \   'rg --with-filename --line-number --no-heading --smart-case --color=always . '.fnameescape(expand('%:p')), 1,
+    \   fzf#vim#with_preview({'options': '--layout reverse --keep-right --delimiter : --nth 3.. --preview "bat -p --color always {}"'}, 'right:60%' ))
+
+""" NERDTree
+let g:NERDTreeWinPos = "right"
+let g:NERDTreeWinSize = 35
+let NERDTreeMinimalUI = 1
+let NERDTreeQuitOnOpen = 1
+let NERDTreeNaturalSort = 1
+let NERDTreeIgnore=['\.o$', '\.pyc$', '\.pdf$', '\.so$', '\.gz$' ]
+
+" Toggle NERDTree at the current file
+function! ToggleNERDTreeForBuffer() abort
+  let l:path = expand('%:p')
+  if empty(l:path)
+    NERDTreeToggle
+  elseif filereadable(l:path) || isdirectory(l:path)
+    execute 'NERDTreeToggle ' . fnameescape(l:path)
+  else
+    execute 'NERDTreeToggle ' . fnameescape(fnamemodify(l:path, ':h'))
+  endif
+endfunction
+nnoremap <leader>nn :call ToggleNERDTreeForBuffer()<CR>
+map <leader>nb :NERDTreeFromBookmark<Space>
+map <leader>nf :NERDTreeFind<cr>
+
+" Close Vim if NERDTree is the last window
+autocmd vimrc BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+""" gitgutter
+let g:gitgutter_override_sign_column_highlight = 0
+let g:gitgutter_highlight_linenrs = 1
+let g:gitgutter_preview_win_floating = 0
+let g:gitgutter_diff_args = '-w'
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plug>(GitGutterPrevHunk)
+nnoremap <silent> <leader>d :GitGutterToggle<cr>
+
+""" git-blame
+nnoremap <Leader>b :<C-u>call gitblame#echo()<CR>
+
+""" vim-signature
+nnoremap <leader>m :SignatureRefresh<CR>
+
+""" vim-maximizer
+let g:maximizer_default_mapping_key = '<C-W>z'
+nnoremap <silent><C-W>z :MaximizerToggle<CR>
+vnoremap <silent><C-W>z :MaximizerToggle<CR>gv
+inoremap <silent><C-W>z <C-o>:MaximizerToggle<CR>
+
+""" tagbar
+let g:tagbar_sort = 0
+nmap <F8> :TagbarToggle<CR>
+
+""" ZFDirDiff
+let g:ZFDirDiff_ignoreEmptyDir = 1
+let g:ZFDirDiff_ignoreSpace = 1
+let g:ZFIgnoreOption_ZFDirDiff = {'bin': 1, 'media': 1, 'common': 1}
+let g:ZFIgnoreOn = 0    " ZFVimIgnore breaks with paths containing spaces
+
+""" yazi.vim
+nnoremap <silent> - :Yazi<cr>
+
+""" vim-copy-as-rtf
+let g:copy_as_rtf_silence_on_errors = 1
+
+""" vim-ai
+let s:litellm = {'endpoint_url': 'https://litellm.oit.duke.edu/v1/chat/completions', 'model': 'gpt-5.4'}
+let g:vim_ai_complete = {'options': copy(s:litellm)}
+let g:vim_ai_chat = {'options': copy(s:litellm)}
+let g:vim_ai_edit = {'options': copy(s:litellm)}
+let g:vim_ai_image = {
+\  'options': {'endpoint_url': 'http://localhost:11434/v1/images/generations', 'model': 'x/flux2-klein:latest'},
+\  'ui': {'download_dir': '.'},
+\}
+
+""" ---------- PYTHON ----------
+
+""" vim-python-docstring
+let g:python_style = 'numpy'
+
+""" vim-slime and vim-ipython-cell (mappings are local to Python buffers)
+let g:slime_target = "vimterminal"
+let g:slime_python_ipython = 1
+let g:slime_dont_ask_default = 1
+let g:ipython_cell_delimit_cells_by = "marks"
+
+function! s:PythonMaps() abort
+  " Start IPython in a vertical / horizontal split
+  nnoremap <buffer> <Leader>S :vert term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
+  nnoremap <buffer> <Leader>s :term <CR> ipython --matplotlib<CR> <c-w><c-p> :SlimeConfig <CR>
+  nnoremap <buffer> <Leader>r :IPythonCellRun<CR>
+  nnoremap <buffer> <Leader>R :IPythonCellRunTime<CR>
+  nnoremap <buffer> <Leader>c :IPythonCellExecuteCell<CR>
+  nnoremap <buffer> <Leader>C :IPythonCellExecuteCellJump<CR>
+  nnoremap <buffer> <Leader>l :IPythonCellClear<CR>
+  nnoremap <buffer> <Leader>x :IPythonCellClose<CR>
+  nnoremap <buffer> <Leader>qq :IPythonCellRestart<CR>
+  " Send the current line or selection to IPython
+  nmap <buffer> <Leader>h <Plug>SlimeLineSend
+  xmap <buffer> <Leader>h <Plug>SlimeRegionSend
+endfunction
+autocmd vimrc FileType python call s:PythonMaps()
+
+""" ---------- MARKDOWN AND LATEX ----------
+
+""" vim-markdown
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_conceal = 2
+let g:vim_markdown_conceal_code_blocks = 0
+let g:vim_markdown_toc_autofit = 1
+let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_fenced_languages = ['php', 'py=python', 'js=javascript', 'bash=sh', 'viml=vim']
+let g:vim_markdown_toml_frontmatter = 1
+let g:vim_markdown_json_frontmatter = 1
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_strikethrough = 1
+let g:vim_markdown_autowrite = 1
+let g:vim_markdown_math = 1
+let g:vim_markdown_follow_anchor = 1
+" Keep ]h for gitgutter: vim-markdown skips its ]h map when its <Plug> target is already mapped
+map <Plug> <Plug>Markdown_MoveToCurHeader
+
+""" markdown-preview
+let g:mkdp_page_title = '${name}'
+let g:mkdp_images_path = '.markdown_images'
+
+""" img-paste.vim
+let g:mdip_imgdir = '.'
+autocmd vimrc FileType markdown nmap <buffer><silent> <leader>P :call mdip#MarkdownClipboardImage()<CR>
+
+""" Prose settings shared by markdown and tex
+let g:pencil#wrapModeDefault = 'soft'
+autocmd vimrc FileType markdown,tex setlocal spell nonumber norelativenumber
+autocmd vimrc FileType markdown,tex call pencil#init() | call litecorrect#init() | call textobj#sentence#init()
+autocmd vimrc FileType markdown setlocal nomodeline     " Hugo Markdown files fix
+autocmd vimrc FileType tex GitGutterBufferDisable
+
+""" vimtex
+let g:tex_flavor = 'latex'
+if !executable('latexmk')
+  let g:vimtex_compiler_enabled = 0
+endif
+let g:vimtex_compiler_latexmk = {
+        \ 'executable' : 'latexmk',
+        \ 'options' : [
+        \   '-lualatex',
+        \   '-file-line-error',
+        \   '-synctex=1',
+        \   '-interaction=nonstopmode',
+        \ ],
+        \}
+let g:vimtex_view_method = 'skim'
+let g:vimtex_view_skim_reading_bar = 0
+let g:vimtex_view_skim_sync = 0
+let g:vimtex_syntax_conceal_disable = 1   " don't render items as bullets
+let g:vimtex_fold_enabled = 0
+let g:vimtex_toc_config = {
+      \ 'name' : 'TOC',
+      \ 'layer_status' : {'content': 1, 'label': 0, 'todo': 0, 'include': 0},
+      \ 'resize' : 0,
+      \ 'split_width' : 40,
+      \ 'todo_sorted' : 0,
+      \ 'show_help' : 0,
+      \ 'show_numbers' : 1,
+      \ 'hide_line_numbers' : 1,
+      \ 'mode' : 2,
+      \ 'indent_levels' : 1,
+      \ 'fold_enable' : 0,
+      \ 'refresh_always' : 0,
+      \}
+let g:vimtex_quickfix_enabled = 1
+let g:vimtex_quickfix_open_on_warning = 0
+let g:vimtex_quickfix_autoclose_after_keystrokes = 1
+let g:vimtex_quickfix_ignore_filters = [
+  \'Underfull \\hbox (badness [0-9]*) in paragraph at lines',
+  \'Overfull \\hbox ([0-9]*.[0-9]*pt too wide) in paragraph at lines',
+  \'Underfull \\hbox (badness [0-9]*) in ',
+  \'Overfull \\hbox ([0-9]*.[0-9]*pt too wide) in ',
+  \'Package hyperref Warning: Token not allowed in a PDF string',
+  \'Package typearea Warning: Bad type area settings!',
+  \'Marginpar on page',
+  \'Split bibliography detected',
+  \'Package biblatex Warning',
+  \]
+
+autocmd vimrc User VimtexEventQuit call vimtex#compiler#clean(0)
+autocmd vimrc BufWritePost *.tex call vimtex#toc#refresh()
+autocmd vimrc FileType tex nmap <buffer><silent> <leader>t <plug>(vimtex-toc-open)
+autocmd vimrc FileType tex nmap <buffer><silent> <leader>v <plug>(vimtex-view)
+
+""" vim-latexfmt: format the paragraph on save
+let g:latexfmt_no_join_any = [
+            \ '\(\\)\@1<!%', '\begin', '\end', '\section', '\subsection', '\subsubsection',
+            \ '\document', '\(\\)\@1<!\[', '\]', '\bigskip', '\smallskip', '\import',
+            \ '\usepackage', '\hypersetup', '\newcommand', '\todo', '\include',
+            \ '\singlespace', '\oneandhalfspace', '\newpage', '\phantomsection',
+            \ '\addtocontents', '\listoffigures', '\listoftables', '\title', '\author',
+            \ '\degreeName', '\paperType', '\defensemonth', '\gradmonth', '\gradyear',
+            \ '\chair', '\keywords', '\newif', '\entryextra', '\graphicspath', '\noindent',
+            \]
+let g:latexfmt_no_join_next = [ '\\', '\centering', '\includegraphics' ]
+let g:latexfmt_no_join_prev = [ '\item', '\label' ]
+let g:latexfmt_verbatim_envs = [ 'table', 'equation', 'align', 'eqnarray', '\(\\)\@1<!\['  ]
+map <silent> <leader>ik <Plug>latexfmt_format
+autocmd vimrc BufWritePost *.tex execute "normal \<Plug>latexfmt_format"
