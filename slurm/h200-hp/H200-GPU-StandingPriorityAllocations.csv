@@ -1,0 +1,6 @@
+﻿,,,,GPU Share (fraction of a gpu),,,,pending approval of governance team member,,,,
+Name,Labgroup,RToolkits Link,Research Unit,Department,Cell Biology,BioStates,Shared Server,Lab Share,Total gpu allocation,Monthly GPU-hours,Monthly GPU-minutes,HP
+Ricardo Henao Giraldo,henaolab,https://rtoolkits.web.duke.edu/projects/1415,School of Medicine,Biostatistics & Bioinformatics,,1.00,,0.36,1.36,979.20,58752,TRUE
+Scott Schmidler,schmidler,https://rtoolkits.web.duke.edu/projects/536,Trinity Arts & Sciences,Statistical Science,,,,0.36,0.36,259.20,15552,FALSE
+Alexander Volfovsky,volfovskylab,https://rtoolkits.web.duke.edu/projects/566,Trinity Arts & Sciences,Statistical Science,,,,0.36,0.36,259.20,15552,FALSE
+Katie Kilroy,rescomp,https://rtoolkits.web.duke.edu/projects/529,OIT,,,,,0.36,0.36,259.20,15552,TRUE

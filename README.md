@@ -23,12 +23,13 @@ Remote clusters:
 
 I basically create symlinks of each of the files in the directories to the system root.
 
+## tmux
+
+`configs/tmux.conf` is a standalone config (needs tmux 3.6+ and a Nerd Font). Symlink it to `~/.config/tmux/tmux.conf`, clone [tpm](https://github.com/tmux-plugins/tpm) into `~/.config/tmux/plugins/tpm`, then press `prefix I` to install plugins.
+
 ## Clones 
 
 Here's a list of repositories that I have cloned. 
-
-- tmux
-    Originally created by [gpakosz](https://github.com/gpakosz/.tmux) to modify tmux configuration. **.tmux.conf.local** contains my configuration.
 
 - vim
     Originally created by [amix](https://github.com/amix/vimrc) to modify vim configuration. **my_configs.vim** contains my configuration.
