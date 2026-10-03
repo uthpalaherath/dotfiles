@@ -5,9 +5,9 @@
 # partition and date range, then calculate partition-level weighted averages.
 #
 # Processing:
-#   1) Run `slurm-gpu report --summary --plain` to obtain the user list and
+#   1) Run `slurm-gpu report --summary --plain --duplicates` to obtain the user list and
 #      GPU-hours consumed by each user.
-#   2) Run `slurm-gpu report --plain -u USER` for each user and extract the
+#   2) Run `slurm-gpu report --plain -u USER --duplicates` for each user and extract the
 #      following values from its WEIGHTED row:
 #        - Elapsed time
 #        - CPU efficiency
@@ -70,7 +70,7 @@ done
 
 # --- 1) Get users and GPU-hours from the summary report ---------------------
 
-SUM_CMD=(slurm-gpu report -r "$PART" -S "$START" --summary --plain)
+SUM_CMD=(slurm-gpu report -r "$PART" -S "$START" --summary --plain --duplicates)
 if [[ -n "$END" ]]; then
   SUM_CMD+=(-E "$END")
 fi
@@ -116,7 +116,7 @@ done
 
 # --- 2) Extract each user's WEIGHTED efficiency metrics ---------------------
 
-BASE_CMD=(slurm-gpu report -r "$PART" -S "$START" --plain)
+BASE_CMD=(slurm-gpu report -r "$PART" -S "$START" --plain --duplicates)
 if [[ -n "$END" ]]; then
   BASE_CMD+=(-E "$END")
 fi

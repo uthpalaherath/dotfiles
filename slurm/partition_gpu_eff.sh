@@ -2,8 +2,8 @@
 # partition_gpu_eff.sh
 #
 # For a partition + date range:
-#   1) Get list of users from `slurm-gpu report --summary --plain`
-#   2) For each user, run `slurm-gpu report --plain -u user`
+#   1) Get list of users from `slurm-gpu report --summary --plain --duplicates`
+#   2) For each user, run `slurm-gpu report --plain -u user --duplicates`
 #      and extract WEIGHTED row's:
 #         - Elapsed (seconds)
 #         - GPUEff (time-weighted % per GPU)
@@ -50,7 +50,7 @@ done
 
 # --- 1) Get user list from summary (ONLY for users) -------------------------
 
-SUM_CMD=(slurm-gpu report -r "$PART" -S "$START" --summary --plain)
+SUM_CMD=(slurm-gpu report -r "$PART" -S "$START" --summary --plain --duplicates)
 if [[ -n "$END" ]]; then
   SUM_CMD+=(-E "$END")
 fi
@@ -119,7 +119,7 @@ done
 
 # --- 3) For each user, parse their WEIGHTED row from `--plain -u user` ------
 
-BASE_CMD=(slurm-gpu report -r "$PART" -S "$START" --plain)
+BASE_CMD=(slurm-gpu report -r "$PART" -S "$START" --plain --duplicates)
 if [[ -n "$END" ]]; then
   BASE_CMD+=(-E "$END")
 fi

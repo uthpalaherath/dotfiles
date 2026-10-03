@@ -41,7 +41,7 @@ fi
 
 echo "Step 1: Getting time-weighted averages for all users..."
 
-TELEGRAF_OUTPUT="$(slurm-gpu report -r "$PART" -S "$START" -E "$END" --telegraf -a 2>/dev/null || true)"
+TELEGRAF_OUTPUT="$(slurm-gpu report -r "$PART" -S "$START" -E "$END" --telegraf -a --duplicates 2>/dev/null || true)"
 
 if [[ -z "$TELEGRAF_OUTPUT" ]]; then
   echo "No efficiency data for partition=$PART between $START and ${END:-now}"
@@ -105,7 +105,7 @@ get_underutilizing_jobs() {
   local end="$4"
 
   local user_output
-  user_output="$(slurm-gpu report -r "$part" -S "$start" -E "$end" --plain -u "$user" 2>/dev/null || true)"
+  user_output="$(slurm-gpu report -r "$part" -S "$start" -E "$end" --plain -u "$user" --duplicates 2>/dev/null || true)"
 
   if [[ -z "$user_output" ]]; then
     return
@@ -240,7 +240,7 @@ From a login node, run the following commands to investigate further,
     sacct -j <job_id>
 
 - To assess your GPU utilization:
-    slurm-gpu report -r ${PART} -S ${START} -E ${END} -u ${user}
+    slurm-report -r ${PART} -S ${START} -E ${END} -u ${user} --duplicates
 
 This will help you identify jobs that may be underutilizing GPU resources.
 Please reach out to us at info@ncshare.org to get assistance in optimizing your GPU utilization.
