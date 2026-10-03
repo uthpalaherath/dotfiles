@@ -49,7 +49,6 @@ if [[ $- == *i* ]]; then
     export HISTIGNORE="pwd:ls:cd"
     shopt -s histappend
     HISTCONTROL=ignoreboth:erasedups
-    #export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
     export PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 fi
 
@@ -140,11 +139,6 @@ alias interact="salloc --nodes 1 --ntasks-per-node=20 --qos interactive --time 0
 #alias sac="sacct --format="JobID,JobName%-30,State,User""
 #alias sac="sacct -S $(date +%Y-%m-01) -E now -X --format="JobID,JobName%-30,State,WorkDir%-150""
 alias sac="sacct -X --format="JobID,JobName%-30,State,nodelist%-30,WorkDir%-150""
-
-alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
-alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from timewarp" && git push && cd -'
-alias dotpull='cd ~/dotfiles && git pull || true && cd -'
-
 alias makejob="cp ~/dotfiles/locations/ncshare/jobscript.sh ."
 alias detach="tmux detach-client -a"
 alias cpr="rsync -ah --info=progress2"
@@ -236,19 +230,3 @@ export PATH=/hpc/home/uherathmudiyanselage1/.opencode/bin:$PATH
 export PATH="/hpc/home/uherathmudiyanselage1/apps/vim/bin/:$PATH"
 export VIM="/hpc/home/uherathmudiyanselage1/apps/vim/share/vim"
 export VIMRUNTIME="/hpc/home/uherathmudiyanselage1/apps/vim/share/vim/vim92"
-
-# >>> hpc-agent >>>
-# Keep pip's temp and cache off the ~31 GB root partition.
-export TMPDIR="/work/uherathmudiyanselage1/tmp"
-export PIP_TMPDIR="/work/uherathmudiyanselage1/tmp"
-export PIP_CACHE_DIR="/work/uherathmudiyanselage1/.pipcache"
-export HPCRUN_ROOT="/work/uherathmudiyanselage1/agent-workspaces"
-export HPCREPRO_ROOT="/work/uherathmudiyanselage1/agent-projects"
-export ASCEND_SCRATCH="/work/uherathmudiyanselage1"
-export ASCEND_SHARE="/work/uherathmudiyanselage1"
-export ASCEND_PARTITION="common"
-
-
-export ASCEND_HOME="$HOME/.ascend"
-export PATH="$HOME/bin:$PATH"
-# <<< hpc-agent <<<
