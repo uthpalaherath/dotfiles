@@ -403,7 +403,7 @@ endfunction
 
 """ lightline
 let g:lightline = {
-      \ 'colorscheme': 'gruvbox',
+      \ 'colorscheme': 'wombat',
       \ 'active': {
       \   'left': [ ['mode', 'paste'],
       \             ['fugitive', 'readonly', 'filename', 'modified'] ],
