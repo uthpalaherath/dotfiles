@@ -1,6 +1,7 @@
 .pyc
 .DS_Store
 .json
+.pypirc
 __pycache__
 tex.cache
 fontlist-*.json
