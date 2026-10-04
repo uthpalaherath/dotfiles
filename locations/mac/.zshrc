@@ -239,8 +239,6 @@ alias astream='asciinema stream -r'
 alias asession='asciinema session -r'
 
 # WVU Connections
-# logging through ssh.wvu.edu
-
 alias spruce="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@spruce.hpc.wvu.edu'"
 alias thorny="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@trcis001.hpc.wvu.edu'"
 alias whitehall="ssh -tY ukh0001@ssh.wvu.edu 'ssh -Y ukh0001@157.182.3.76'"
@@ -257,7 +255,7 @@ alias mount_romeronas="umount ~/HPC/romeronas/home; sshfs ukh0001@romeronas.wvu-
 # Other ssh connections
 alias bridges2="ssh -Y uthpala@bridges2.psc.edu"
 alias stampede3="ssh -Y uthpala@stampede3.tacc.utexas.edu"
-alias timewarp2='ssh -Y ukh@timewarp-02.egr.duke.edu'
+alias timewarp='ssh -Y ukh@timewarp-02.egr.duke.edu'
 alias perlmutter="ssh -Y uthpala@perlmutter-p1.nersc.gov"
 alias frontera="ssh -Y uthpala@frontera.tacc.utexas.edu"
 alias hybrid3="ssh -Y ukh@vwb3-web-06.egr.duke.edu" #alias: materials.hybrid3.duke.edu
@@ -269,7 +267,7 @@ alias ncshare="ssh -Y uherathmudiyanselage1@login.ncshare.org"
 # Mounting drives
 alias mount_bridges2="umount ~/HPC/bridges2; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@data.bridges2.psc.edu: ~/HPC/bridges2"
 alias mount_stampede2="umount ~/HPC/stampede2; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@stampede2.tacc.utexas.edu: ~/HPC/stampede2"
-alias mount_timewarp2="umount ~/HPC/timewarp2; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp2"
+alias mount_timewarp="umount ~/HPC/timewarp; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@timewarp-02.egr.duke.edu: ~/HPC/timewarp"
 alias mount_perlmutter="umount ~/HPC/perlmutter; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@perlmutter-p1.nersc.gov: ~/HPC/perlmutter"
 alias mount_frontera="umount ~/HPC/frontera; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks uthpala@frontera.tacc.utexas.edu: ~/HPC/frontera"
 alias mount_muchasdb="umount ~/HPC/muchasdb; sshfs -o allow_other,defer_permissions,auto_cache,follow_symlinks ukh@vwb3-web-03.egr.duke.edu: ~/HPC/muchasdb"
@@ -296,11 +294,9 @@ alias cleands="find . -name ".DS_Store" -type f -delete"
 # cleanup cache
 alias cleanup="rm -rf ~/Library/Caches/ ~/Library/Logs /Library/Caches/ /System/Library/Caches/ /Library/Logs/"
 
-# box folder
+# Folder shortcuts
 alias box="cd /Users/ukh/Library/CloudStorage/Box-Box"
-
-# projects
+alias rc="cd /Users/ukh/Library/CloudStorage/Box-Box/RC"
 alias projects="cd /Users/ukh/Library/CloudStorage/Box-Box/Projects"
-
-# Obsidian Notebook vault
+alias devops="cd /Users/ukh/Library/CloudStorage/Box-Box/RC/DevOps"
 alias vault="cd '/Users/ukh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notebooks'"
