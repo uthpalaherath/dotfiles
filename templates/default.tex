@@ -1,5 +1,5 @@
-\documentclass[10pt]{article}
-\usepackage[margin=0.65in]{geometry}
+\documentclass[10pt,letterpaper]{article}
+\usepackage[margin=0.75in]{geometry}
 
 % font
 \usepackage[T1]{fontenc}
@@ -11,41 +11,62 @@
 \usepackage[english]{babel}
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb}
-\usepackage{bbm}
+\usepackage{bm}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{calc}
 \usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{dcolumn}
 \usepackage{float}
+\usepackage{wrapfig}
 \usepackage{verbatim}
 \usepackage{verbatimbox}
-\usepackage{soul}
 \usepackage{fancyvrb}
-\usepackage{braket}
-\usepackage{wrapfig}
-\usepackage{tabularx}
 \usepackage{listings}
 \usepackage{upquote}
-\usepackage{titlesec}
-\usepackage{etoolbox}
-\usepackage{setspace}
-\usepackage[numbers,sort&compress]{natbib}
+\usepackage{soul}
+\usepackage{braket}
 \usepackage[version=3]{mhchem}
+\usepackage{titlesec}
+\usepackage{todonotes}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xr-hyper}
 \usepackage{hyperref}
-\usepackage{doi}
 \usepackage[capitalise]{cleveref}
 \usepackage[most]{tcolorbox}
 \hypersetup{colorlinks=true,linkcolor=blue,filecolor=magenta,urlcolor=cyan,citecolor=blue}
+\graphicspath{ {./figures/} }
 
-$if(highlighting-macros)$
-$highlighting-macros$
-$endif$
+% Captions (REVTeX style: small, "FIG. 1." / "TABLE I.")
+\usepackage{caption}
+\usepackage{subcaption}
+\captionsetup{font=small,labelsep=period,justification=justified}
+\captionsetup[figure]{name=FIG.}
+\captionsetup[table]{name=TABLE}
+\renewcommand{\thetable}{\Roman{table}}
 
-$for(header-includes)$
-$header-includes$
-$endfor$
+% Comments
+\setlength{\marginparwidth}{2cm}
+\newcommand{\TODO}[1]
+{\todo[inline,backgroundcolor=lime,size=\small,bordercolor=gray]{#1}}
+\newcommand{\uthpala}[1]
+{\todo[inline,backgroundcolor=yellow,size=\small,bordercolor=gray]{{\bfseries Uthpala:} #1}}
+
+% Cross-referencing with an external document (e.g. supplementary material).
+% Uncomment \myexternaldocument; latexmkrc builds the external .aux.
+\makeatletter
+\newcommand*{\addFileDependency}[1]{
+\typeout{(#1)}
+\@addtofilelist{#1}
+\IfFileExists{#1}{}{\typeout{No file #1.}}
+}\makeatother
+\newcommand*{\myexternaldocument}[2]{
+\externaldocument[#1]{#2}
+\addFileDependency{#2.tex}
+\addFileDependency{#2.aux}
+}
+% \myexternaldocument{sm-}{sm}
 
 % tcolorbox for quote environment
 \renewenvironment{quote}{%
@@ -55,7 +76,6 @@ $endfor$
 }
 
 % Code block formatting
-\newcommand{\passthrough}[1]{#1}
 \newcommand{\listingsttfamily}{\fontfamily{IBMPlexMono-TLF}\small}
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
@@ -87,38 +107,7 @@ $endfor$
   literate={-}{{-}}1
 }
 
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-
-\makeatletter
-\newsavebox\pandoc@box
-\newcommand*\pandocbounded[1]{%
-  \sbox\pandoc@box{#1}%
-  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
-  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
-  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi%
-  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
-  \else\usebox{\pandoc@box}%
-  \fi%
-}
-\def\ScaleWidthIfNeeded{%
- \ifdim\Gin@nat@width>\linewidth
-    \linewidth
-  \else
-    \Gin@nat@width
-  \fi
-}
-\def\ScaleHeightIfNeeded{%
-  \ifdim\Gin@nat@height>0.9\textheight
-    0.9\textheight
-  \else
-    \Gin@nat@width
-  \fi
-}
-\def\fps@figure{htbp}
-\makeatother
-\setkeys{Gin}{width=\ScaleWidthIfNeeded,height=\ScaleHeightIfNeeded,keepaspectratio}
-
+% Section formatting (REVTeX numbering: I. / A. / 1.)
 \titleformat{\section}{\raggedright\bfseries\large}{\thesection.}{1em}{}
 \titleformat{\subsection}{\raggedright\bfseries\normalsize}{\thesubsection.}{1em}{}
 \titleformat{\subsubsection}{\raggedright\bfseries\small}{\thesubsubsection.}{1em}{}
@@ -126,81 +115,38 @@ $endfor$
 \titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 \titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 \renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\Alph{subsection}}
+\renewcommand{\thesubsubsection}{\arabic{subsubsection}}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}
-\setlength{\LTcapwidth}{\textwidth}
-\AtBeginEnvironment{longtable}{\small\setlength{\tabcolsep}{2pt}}
 
-$if(title)$
-\title{$title$$if(thanks)$\thanks{$thanks$}$endif$}
-$else$
-\title{}
-$endif$
-$if(subtitle)$
-\makeatletter
-\providecommand{\subtitle}[1]{\apptocmd{\@title}{\par {\large #1 \par}}{}{}}
-\makeatother
-\subtitle{$subtitle$}
-$endif$
-$if(author)$
-\author{$for(author)$$author$$sep$ \and $endfor$}
-$else$
+%---------------------------- FRONT MATTER ------------------------------
+
+\title{Report}
 \author{Uthpala Herath\\
 \small Research Computing \& Support Services\\
 \small Office of Information Technology \\
 \small Duke University\\
 \small \href{mailto:uthpala.herath@duke.edu}{uthpala.herath@duke.edu}}
-$endif$
-$if(date)$
-\date{$date$}
-$else$
-\date{}
-$endif$
+\date{\today}
 
 \begin{document}
 \maketitle
-$if(abstract)$
-\begin{abstract}
-$abstract$
-\end{abstract}
-$endif$
-$for(include-before)$
-$include-before$
-$endfor$
 
-$if(toc)$
-{
-$if(toc-title)$
-\renewcommand*\contentsname{$toc-title$}
-$endif$
-\setcounter{tocdepth}{$toc-depth$}
-\tableofcontents
-}
-$endif$
+% \begin{abstract}
+% \end{abstract}
 
-$if(lof)$
-\listoffigures
-$endif$
-$if(lot)$
-\listoftables
-$endif$
-$if(linestretch)$
-\setstretch{$linestretch$}
-$endif$
+%\tableofcontents
 
-$body$
+%---------------------------- BODY ------------------------------
+\section{Section 1}
 
-$if(natbib)$
-$if(bibliography)$
-$if(biblio-title)$
-\renewcommand\refname{$biblio-title$}
-$endif$
-\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
-\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
-$endif$
-$endif$
+% \section*{Acknowledgments}
 
-$for(include-after)$
-$include-after$
-$endfor$
+% APPENDIX
+% \appendix
+% \section{First appendix}
+
+\bibliographystyle{apsrev4-2}
+\bibliography{references-zotero.bib,references.bib}
 \end{document}
