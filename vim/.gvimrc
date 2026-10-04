@@ -4,7 +4,7 @@ colorscheme gruvbox
 set transparency=0
 
 " Default GUI font
-set guifont=JetBrainsMono\ Nerd\ Font:h15
+set guifont=JetBrainsMono\ Nerd\ Font:h16
 
 " Prepend conda base so LSP servers (fortls, ...) are found.
 let $PATH = expand('~/miniforge3/bin') . ':' . $PATH
