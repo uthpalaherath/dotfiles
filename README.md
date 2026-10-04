@@ -5,8 +5,6 @@ Settings for each local computer and remote cluster can be found in the /locatio
 
 Local machines:
 - mac
-- desktop
-- desktop2
 
 Remote clusters:
 - whitehall (WVU Physics and Astronomy)
@@ -18,8 +16,8 @@ Remote clusters:
 - frontera (Frontera - Texas Advanced Computing Center)
 - perlmutter (NERSC cluster)
 - timewarp (Duke AIMS Lab cluster)
-- dcc (Duke RCC cluster)
-- ncshare (NC shared cluster)
+- dcc (Duke DCC cluster)
+- ncshare (NCShare cluster)
 
 I basically create symlinks of each of the files in the directories to the system root.
 
