@@ -233,7 +233,7 @@ export NVM_DIR="$HOME/.nvm"
 
 #------------------------------------------- ALIASES -------------------------------------------
 
-alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
+alias q='squeue -u $USER --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
 #alias sac="sacct --format="JobID,JobName%-30,State,User""
 #alias sac="sacct -S $(date +%Y-%m-01) -E now -X --format="JobID,JobName%-30,State,WorkDir%-150""
 alias sac="sacct -X --format="JobID,JobName%-30,State,nodelist%-30,WorkDir%-150""
