@@ -43,6 +43,20 @@ export HISTIGNORE="pwd:ls:cd"
 
 # Fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+if [[ $- == *i* ]]; then
+    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+    export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+    export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
+    export FZF_CTRL_R_OPTS="
+     --preview 'echo {}' --preview-window 'hidden'
+     --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+     --color header:italic
+     --header 'Press CTRL-Y to copy command into clipboard'"
+    export FZF_ALT_C_OPTS="
+     --walker-skip .git,node_modules,target
+     --preview 'tree -C {}'"
+fi
+export EDITOR="vim"
 
 # PYTHON
 # >>> conda initialize >>>
@@ -73,12 +87,15 @@ fi
 unset __mamba_setup
 # <<< mamba initialize <<<
 
+# Cargo
+. "$HOME/.cargo/env"
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias scratch="cd /ocean/projects/phy150003p/uthpala"
 alias scratch2="cd /ocean/projects/che240001p/uthpala"
 #alias q="squeue -u uthpala"
-alias q='squeue -u uthpala --format="%.18i %.9P %30j %.8u %.2t %.10M %.6D %R"'
+alias q='squeue -u $USER --format="%.18i %.9P %30j %.8u %.2t %.10M %.6D %R"'
 alias sac="sacct --format="JobID,JobName%30,State,User""
 alias interact2="interact -N 1 -t 8:00:00"
 #alias interact="interact -N 1 -t 8:00:00 --mem=2GB --ntasks-per-node=64"
@@ -185,6 +202,16 @@ relaxed (){
      done
 }
 
+# yazi cd to directory and return default cursor
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp" || true
+    echo -e -n "\x1b[6 q"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
+}
+
 #------------------------------------------- PATHS -------------------------------------------
 
 # cmake
@@ -240,7 +267,7 @@ export PYTHONPATH=$HOME/tsase:$PYTHONPATH
 export PATH=$HOME/tsase/bin:$PATH
 
 # vim
-export PATH="$HOME/local/vim/build/bin:$PATH"
+export PATH="$HOME/apps/vim/build/bin:$PATH"
 
 # Nvm
 export NVM_DIR="$HOME/.nvm"
