@@ -109,8 +109,17 @@ if [[ $- == *i* ]]; then
     export FZF_ALT_C_OPTS="
      --walker-skip .git,node_modules,target
      --preview 'tree -C {}'"
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
 export EDITOR="vim"
+
+# rgf: fuzzy-search inside files, open the match in vim
+rgf() {
+  local sel
+  sel=$(rg --line-number --no-heading --color=always --smart-case --hidden -g '!{node_modules,.git}' "${1:-}" |
+        fzf --ansi --delimiter : --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' --preview-window '+{2}/2') || return
+  vim "+$(cut -d: -f2 <<< "$sel")" "${sel%%:*}"
+}
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
