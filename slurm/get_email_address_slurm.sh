@@ -1,8 +1,13 @@
 #!/bin/bash
-# Build a deduplicated email list from Slurm associations, resolving mail via LDAP.
-# Users with no LDAP mail are reported on stderr.
+# Build a deduplicated "Full Name <email>" list from Slurm associations, resolving mail via LDAP.
+# Pass -e for bare emails. Users with no LDAP mail are reported on stderr.
 
 set -euo pipefail
+
+EMAIL_ONLY=0
+if [ "${1:-}" = "-e" ]; then
+    EMAIL_ONLY=1
+fi
 
 ACCOUNTS=(
     appstate
@@ -48,22 +53,33 @@ if [ -z "$ASSOCS" ]; then
     exit 1
 fi
 
-# uid<TAB>mail for every LDAP person with a mail attribute
-UID_MAIL=$(ldapsearch -LLL -x -o ldif-wrap=no -H "$LDAP_HOST" -b "$BASE_DN" "(&(uid=*)(mail=*))" uid mail |
-    awk '/^uid: /{u=$2} /^mail: /{m=$2} /^$/{if (u && m) print u "\t" m; u=m=""} END{if (u && m) print u "\t" m}')
+# uid<TAB>mail<TAB>cn for every LDAP person with a mail attribute (cn:: values are base64)
+UID_MAIL=$(ldapsearch -LLL -x -o ldif-wrap=no -H "$LDAP_HOST" -b "$BASE_DN" "(&(uid=*)(mail=*))" uid mail cn |
+    awk 'function emit() { if (u && m) print u "\t" m "\t" c; u = m = c = "" }
+        /^uid: /{u=$2} /^mail: /{m=$2}
+        /^cn: / && c == "" {c=substr($0, 5)}
+        /^cn:: / && c == "" {cmd="printf %s " $2 " | base64 -d"; cmd | getline c; close(cmd)}
+        /^$/{emit()} END{emit()}')
 
 RESULT=$(awk -v exclude="${EXCLUDE_USERS[*]}" '
     BEGIN { n = split(exclude, ex, " "); for (i = 1; i <= n; i++) skip[ex[i]] = 1 }
-    NR == FNR { split($0, f, "\t"); mail[f[1]] = f[2]; next }
+    NR == FNR { split($0, f, "\t"); mail[f[1]] = f[2]; name[f[1]] = f[3]; next }
     {
         split($0, f, "|"); acct = f[1]; user = f[2]
         if (user in skip) next
-        if (user in mail) print "OK\t" mail[user]
+        if (user in mail) print "OK\t" mail[user] "\t" name[user]
         else print "MISSING\t" user " (" acct ")"
     }' <(printf '%s\n' "$UID_MAIL") <(printf '%s\n' "$ASSOCS"))
 
 MISSING=$(printf '%s\n' "$RESULT" | awk -F'\t' '$1 == "MISSING" {print $2}' | sort -u)
-EMAILS=$(printf '%s\n' "$RESULT" | awk -F'\t' '$1 == "OK" {print $2}' | sort -fu | paste -sd ';' -)
+# Dedupe on email; quote names containing RFC 5322 specials (e.g. "Doe, Jane")
+EMAILS=$(printf '%s\n' "$RESULT" | awk -F'\t' -v email_only="$EMAIL_ONLY" '
+    $1 == "OK" && !seen[tolower($2)]++ {
+        mail = $2; nm = $3
+        if (email_only || nm == "") { print mail; next }
+        if (nm ~ /[][(),.:;<>@"\\]/) { gsub(/["\\]/, "\\\\&", nm); nm = "\"" nm "\"" }
+        print nm " <" mail ">"
+    }' | sort -f | paste -sd ';' -)
 
 if [ -n "$MISSING" ]; then
     echo "Warning: $(printf '%s\n' "$MISSING" | wc -l) Slurm users have no LDAP mail:" >&2

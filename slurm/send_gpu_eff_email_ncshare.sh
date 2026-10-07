@@ -91,7 +91,7 @@ get_email_for_user() {
 
   if [[ "$part" == "gpu" || "$part" == "gpu-hp" ]]; then
     local email
-    email="$(${HOME}/dotfiles/slurm/get_email_address.sh "$user" 2>/dev/null | head -1)" || true
+    email="$(${HOME}/dotfiles/slurm/get_email_address.sh -e "$user" 2>/dev/null | head -1)" || true
     if [[ -n "$email" ]]; then
       echo "$email"
     fi
