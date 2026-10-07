@@ -220,6 +220,10 @@ endfor
 highlight Directory guifg=#FF0000 ctermfg=blue
 highlight CocFloating ctermbg=238 guibg=#444444 ctermfg=Gray guifg=Gray
 highlight CocMenuSel ctermbg=240 guibg=#585858
+highlight link CocErrorSign ALEErrorSign
+highlight link CocWarningSign ALEWarningSign
+highlight link CocInfoSign ALEInfoSign
+highlight link CocHintSign ALEInfoSign
 
 """ Terminal codes: italics, cursor shape, cursorline in insert mode
 let &t_ZH = "\e[3m"

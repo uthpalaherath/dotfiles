@@ -1,5 +1,8 @@
 {
-  "diagnostic.displayByAle": true,
+  "diagnostic.errorSign": "•",
+  "diagnostic.warningSign": ".",
+  "diagnostic.infoSign": ".",
+  "diagnostic.hintSign": ".",
   "suggest.snippetIndicator": "",
   "suggest.noselect": true,
 
