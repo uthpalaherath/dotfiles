@@ -211,6 +211,7 @@ export MPLCONFIGDIR="/hpc/home/uherathmudiyanselage1/dotfiles/matplotlib/"
 
 export PATH="/hpc/home/uherathmudiyanselage1/dotfiles/:$PATH"
 export PATH="/hpc/home/uherathmudiyanselage1/MatSciScripts/:$PATH"
+export PATH="/hpc/home/uherathmudiyanselage1/dotfiles/slurm/:$PATH"
 
 # globus
 export PATH="/hpc/home/uherathmudiyanselage1/apps/globusconnectpersonal-3.2.6/:$PATH"
