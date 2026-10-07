@@ -6,9 +6,25 @@
   "pyright.inlayHints.functionReturnTypes": false,
   "pyright.inlayHints.variableTypes": false,
   "pyright.inlayHints.parameterTypes": false,
-  "python.linting.flake8Enabled":true,
 
   "languageserver": {
+     "ruff": {
+       "command": "ruff",
+       "args": ["server"],
+       "filetypes": ["python"],
+       "rootPatterns": ["pyproject.toml", "ruff.toml", ".ruff.toml", ".git"],
+       "initializationOptions": {
+         "settings": {
+           "configurationPreference": "filesystemFirst",
+           "lineLength": 88,
+           "lint": {
+             "extendSelect": ["W", "D"],
+             "ignore": ["E203", "E211", "E225", "E251", "E266", "E501",
+                        "D107", "D203", "D212", "D213", "D402", "D413", "D415", "D416", "D417"]
+           }
+         }
+       }
+     },
      "fortran": {
        "command": "fortls",
        "filetypes": ["fortran"],

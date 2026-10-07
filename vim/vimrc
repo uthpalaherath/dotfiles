@@ -28,7 +28,6 @@ call plug#begin('~/.vim/plugged')
 " Editing
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-commentary'
 Plug 'maxbrunsfeld/vim-yankstack'
 Plug 'jiangmiao/auto-pairs'
 
@@ -92,8 +91,10 @@ Plug 'lervag/vimtex', { 'for': ['tex', 'markdown'] }
 call plug#end()   " also runs 'filetype plugin indent on' and 'syntax enable'
 endif
 
-" EditorConfig support ships with Vim 9
+" Packages bundled with Vim 9.1+
 packadd! editorconfig
+silent! packadd! comment
+silent! packadd! hlyank
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 
 """ General settings
@@ -108,6 +109,7 @@ autocmd vimrc FocusGained,BufEnter * silent! checktime
 
 set so=7
 set wildmenu
+silent! set wildoptions=pum,fuzzy
 set hid
 set backspace=eol,start,indent
 set ignorecase
@@ -139,6 +141,9 @@ set updatetime=300
 set redrawtime=10000
 set shortmess-=S        " show search match count
 set diffopt+=iwhiteall,filler
+silent! set diffopt+=algorithm:histogram,indent-heuristic,linematch:60   " align changed lines within hunks
+silent! set smoothscroll            " scroll wrapped lines by screen line
+silent! set jumpoptions=stack       " browser-like <C-o>/<C-i> jumplist
 set diffexpr=""
 set tags+=tags;/
 
@@ -158,10 +163,6 @@ if !isdirectory(expand('~/.vim/undo'))
 endif
 set undodir=~/.vim/undo
 set undofile
-
-if exists('$TMUX')
-  set term=screen-256color
-endif
 
 """ Tabs and indentation
 set tabstop=4           " width that a <TAB> character displays as
@@ -455,14 +456,14 @@ let g:indentLine_fileTypeExclude = ['markdown','tex']
 let g:ale_disable_lsp = 1
 let g:ale_virtualtext_cursor = 0
 let g:ale_set_highlights = 0
-let g:ale_lint_on_enter = 0               " don't lint when opening a file
+let g:ale_lint_on_enter = 0
 let g:ale_lint_on_text_changed = 'never'
-let g:ale_linters = {'python':['flake8', 'pydocstyle'], 'tex':['chktex', 'vale'], 'markdown':['markdownlint', 'vale']}
+let g:ale_linters = {'python':[], 'tex':['chktex', 'vale'], 'markdown':['markdownlint', 'vale']}
 let g:ale_markdown_markdownlint_options = '--disable MD013'
 let g:ale_javascript_prettier_options = '--tab-width 4'
-let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['black'], 'markdown':['prettier']}
+let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['ruff_format'], 'markdown':['prettier']}
 let g:ale_fix_on_save = 1
-let g:ale_pattern_options = {'\.tex$': {'ale_enabled': 0}}   " no ALE in tex buffers
+let g:ale_pattern_options = {'\.tex$': {'ale_enabled': 0}}
 let g:ale_sign_error = '•'
 let g:ale_sign_warning = '.'
 nmap <silent> <leader>a <Plug>(ale_next_wrap)
