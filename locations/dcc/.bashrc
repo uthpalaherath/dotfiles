@@ -243,27 +243,27 @@ export PATH="/hpc/home/ukh/dotfiles/:$PATH"
 export PATH="/hpc/home/ukh/MatSciScripts/:$PATH"
 
 # globus
-export PATH="/hpc/home/ukh/local/globusconnectpersonal-3.2.6/:$PATH"
+export PATH="/hpc/group/rescomp/ukh/apps/globusconnectpersonal-3.2.6/:$PATH"
 
 # ripgrep
-export PATH="/hpc/home/ukh/local/ripgrep/:$PATH"
+export PATH="/hpc/group/rescomp/ukh/apps/ripgrep/:$PATH"
 
 # bat
-export PATH="/hpc/home/ukh/local/bat/:$PATH"
+export PATH="/hpc/group/rescomp/ukh/apps/bat/:$PATH"
 
 # gpu-burn
-export PATH="/hpc/home/ukh/local/gpu-burn/:$PATH"
+export PATH="/hpc/group/rescomp/ukh/apps/gpu-burn/:$PATH"
 
 # yazi
-export PATH="/hpc/home/ukh/local/yazi/target/release/:$PATH"
+export PATH="/hpc/group/rescomp/ukh/apps/yazi/target/release/:$PATH"
 
 # netCDF-C
-export NETCDFHOME=/hpc/home/ukh/local/netcdf-c-4.9.3/build
+export NETCDFHOME=/hpc/group/rescomp/ukh/apps/netcdf-c-4.9.3/build
 export PATH="$NETCDFHOME/bin:$PATH"
 export LD_LIBRARY_PATH="$NETCDFHOME/lib:$LD_LIBRARY_PATH"
 
 # netCDF-Fortran
-export NETCDFFHOME=/hpc/home/ukh/local/netcdf-fortran-4.6.2/build
+export NETCDFFHOME=/hpc/group/rescomp/ukh/apps/netcdf-fortran-4.6.2/build
 export PATH="$NETCDFFHOME/bin:$PATH"
 export LD_LIBRARY_PATH="$NETCDFFHOME/lib:$LD_LIBRARY_PATH"
 
@@ -301,4 +301,4 @@ export PATH="/hpc/group/rescomp/ukh/apps/qe-7.5/build/bin/:$PATH"
 export PSEUDO_DIR="/hpc/group/rescomp/ukh/apps/qe-7.5/pslibrary/pbe/PSEUDOPOTENTIALS/"
 
 # xclip
-export PATH="/hpc/home/ukh/local/xclip/build/bin/:$PATH"
+export PATH="/hpc/group/rescomp/ukh/apps/xclip/build/bin/:$PATH"
