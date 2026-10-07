@@ -30,7 +30,6 @@ if [[ $- == *i* ]] && [ -f ~/.bash_prompt ]; then
     source ~/.bash_prompt
 fi
 
-# tmux
 export TMUX_DEVICE_NAME=ncshare
 host_short=$(hostname -s)
 case "$host_short" in
@@ -214,23 +213,23 @@ export PATH="/hpc/home/uherathmudiyanselage1/dotfiles/:$PATH"
 export PATH="/hpc/home/uherathmudiyanselage1/MatSciScripts/:$PATH"
 
 # globus
-export PATH="/hpc/home/uherathmudiyanselage1/local/globusconnectpersonal-3.2.6/:$PATH"
+export PATH="/hpc/home/uherathmudiyanselage1/apps/globusconnectpersonal-3.2.6/:$PATH"
 
 # ripgrep
-export PATH="/hpc/home/uherathmudiyanselage1/local/ripgrep-14.1.1-x86_64-unknown-linux-musl/:$PATH"
+export PATH="/hpc/home/uherathmudiyanselage1/apps/ripgrep-14.1.1-x86_64-unknown-linux-musl/:$PATH"
 
 # bat
-export PATH="/hpc/home/uherathmudiyanselage1/local/bat:$PATH"
+export PATH="/hpc/home/uherathmudiyanselage1/apps/bat:$PATH"
 
 # FHI-aims
-export PATH="/hpc/home/uherathmudiyanselage1/local/FHIaims/bin/:$PATH"
-export PATH="/hpc/home/uherathmudiyanselage1/local/FHIaims/utilities/:$PATH"
+export PATH="/hpc/home/uherathmudiyanselage1/apps/FHIaims/bin/:$PATH"
+export PATH="/hpc/home/uherathmudiyanselage1/apps/FHIaims/utilities/:$PATH"
 
 # cmake
-export PATH="/hpc/home/uherathmudiyanselage1/local/cmake-4.0.1/build/bin/:$PATH"
+export PATH="/hpc/home/uherathmudiyanselage1/apps/cmake-4.0.1/build/bin/:$PATH"
 
 # yazi
-export PATH="/hpc/home/uherathmudiyanselage1/local/yazi/target/release/:$PATH"
+export PATH="/hpc/home/uherathmudiyanselage1/apps/yazi/target/release/:$PATH"
 
 # opencode
 export PATH=/hpc/home/uherathmudiyanselage1/.opencode/bin:$PATH
