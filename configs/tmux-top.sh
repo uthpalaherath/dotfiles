@@ -33,10 +33,16 @@ fi
 if command -v squeue >/dev/null 2>&1; then
   pp=$(tmux display -p '#{pane_pid}')
   h=$(hostname -s)
-  job=$(squeue --me -h -t R -O JobID:20,AllocNodes:100,AllocSID:20 |
-    while read -r j n s; do [ "$n" = "$h" ] && [ "$s" = "$pp" ] && { echo "$j"; break; }; done)
+  job=$(squeue --me -h -t R -O JobID:20,AllocNodes:100,AllocSID:20,NodeList:1000 |
+    while read -r j n s nodes; do [ "$n" = "$h" ] && [ "$s" = "$pp" ] && { echo "$j $nodes"; break; }; done)
   if [ -n "$job" ]; then
-    exec srun --jobid="$job" --overlap -N1 -n1 --pty sh -c "$top"
+    set -- $job
+    node=$(scontrol show hostnames "$2" | head -n1)
+    # ssh is adopted into the job (pam_slurm_adopt) and sees all its GPUs; an srun step only gets one.
+    # 255 means ssh itself failed (e.g. ssh to compute nodes not allowed), so fall back to a step.
+    ssh -t "$node" "exec \"\$SHELL\" -ic '$top'"
+    [ $? -eq 255 ] || exit 0
+    exec srun --jobid="$1" --overlap -N1 -n1 --pty sh -c "$top"
   fi
 fi
 
