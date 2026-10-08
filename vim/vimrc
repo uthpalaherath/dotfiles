@@ -294,20 +294,15 @@ noremap <silent> <leader>Y "+Y
 noremap <silent> <leader>p "+p
 noremap <silent> <leader>P "+P
 
-" OSC 52 clipboard on Linux. Over ssh it goes first, so "+ yanks reach the Mac clipboard
-" even when X11 forwarding has gone stale; locally it's a fallback behind X11/Wayland.
+" OSC 52 clipboard fallback on Linux (used when no X11/Wayland clipboard is reachable).
 if !has('mac')
   silent! packadd osc52
-  let g:osc52_disable_paste = 1   " copy only; terminals that can't paste over OSC 52 would block
-  if exists('$SSH_CONNECTION') || exists('$TMUX')
-    let g:osc52_force_avail = 1   " skip DA1 detection; tmux and some terminals hide OSC 52 support
-  endif
   if exists('+clipmethod')
-    if exists('$SSH_CONNECTION')
-      set clipmethod^=osc52
-    else
-      set clipmethod+=osc52
-    endif
+    set clipmethod+=osc52
+  endif
+  let g:osc52_disable_paste = 1   " copy only; terminals that can't paste over OSC 52 would block
+  if exists('$TMUX')
+    let g:osc52_force_avail = 1   " tmux can hide the terminal's OSC 52 support from Vim's detection
   endif
 endif
 
