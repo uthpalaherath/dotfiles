@@ -5,7 +5,7 @@
 # exit on error
 set -e
 
-TMUX_VERSION=3.7c
+TMUX_VERSION=3.8
 LIBEVENT_VERSION=2.1.12-stable
 NCURSES_VERSION=6.5
 BYACC_VERSION=20240109
@@ -47,7 +47,8 @@ tar xvzf tmux-${TMUX_VERSION}.tar.gz
 cd tmux-${TMUX_VERSION}
 ./configure CFLAGS="-I$HOME/.local/include -I$HOME/.local/include/ncurses" LDFLAGS="-L$HOME/.local/lib -L$HOME/.local/include/ncurses -L$HOME/.local/include"
 CPPFLAGS="-I$HOME/.local/include -I$HOME/.local/include/ncurses" LDFLAGS="-static -L$HOME/.local/include -L$HOME/.local/include/ncurses -L$HOME/.local/lib" make
-cp tmux $HOME/.local/bin
+mkdir -p $HOME/.local/tmp-bin
+cp tmux $HOME/.local/tmp-bin
 cd ..
 
 cd $HOME
