@@ -21,6 +21,11 @@
 # 0, and --unblock restores exactly those values. Blocks are not lifted
 # automatically.
 #
+# --block only blocks users who were already warned: at least MIN_WARNINGS
+# distinct hours with an email in HISTORY_FILE over the last
+# WARNING_WINDOW_HOURS. Override with --min-warnings N (0 blocks everyone
+# found). Users already in BLOCK_FILE stay blocked regardless.
+#
 # Every --email/--block/--unblock run (except dry runs) appends one row per
 # user and host to HISTORY_FILE.
 #
@@ -57,6 +62,9 @@ BLOCK_FILE="${LOG_DIR}/blocked.psv"
 # Appended to short host names in the kill commands users copy into their
 # own terminal, so they resolve from outside the cluster.
 LOGIN_DOMAIN="oit.duke.edu"
+# --block grace period: warnings required, and the window they are counted in.
+MIN_WARNINGS=6
+WARNING_WINDOW_HOURS=24
 # Users never emailed or blocked (staff, service accounts), space-separated.
 EXCLUDE_USERS=""
 
@@ -67,6 +75,7 @@ for a in "$@"; do
     --email)   args+=("-e") ;;
     --block)   args+=("-b") ;;
     --unblock) args+=("-u") ;;
+    --min-warnings) args+=("-w") ;;
     --dry-run) args+=("-n") ;;
     --help)    args+=("-h") ;;
     *)         args+=("$a") ;;
@@ -79,24 +88,37 @@ raw=0
 email=0
 block=0
 unblock=""
+min_warnings_set=0
 dry_run=0
-while getopts ":H:rebu:nh" opt; do
+while getopts ":H:rebu:w:nh" opt; do
   case "$opt" in
     H) hosts="$OPTARG" ;;
     r) raw=1 ;;
     e) email=1 ;;
     b) block=1 ;;
     u) unblock="$OPTARG" ;;
+    w) MIN_WARNINGS="$OPTARG"; min_warnings_set=1 ;;
     n) dry_run=1 ;;
     h) awk 'NR > 1 && !/^#/ { exit } NR > 1' "$0"; exit 0 ;;
     :) case "$OPTARG" in
          u) echo "Error: --unblock needs a user, e.g. --unblock zy128" >&2 ;;
+         w) echo "Error: --min-warnings needs a number, e.g. --min-warnings 6" >&2 ;;
          H) echo "Error: -H needs a host list, e.g. -H dcc-login-01,dcc-login-02" >&2 ;;
        esac
        exit 1 ;;
     *) echo "Error: unknown option -$OPTARG (see --help)" >&2; exit 1 ;;
   esac
 done
+
+if ! [[ "$MIN_WARNINGS" =~ ^[0-9]+$ ]]; then
+  echo "Error: --min-warnings must be a non-negative integer" >&2
+  exit 1
+fi
+
+if [[ "$min_warnings_set" -eq 1 && "$block" -eq 0 ]]; then
+  echo "Error: --min-warnings only applies with --block" >&2
+  exit 1
+fi
 
 if [[ "$dry_run" -eq 1 && "$email" -eq 0 && "$block" -eq 0 && -z "$unblock" ]]; then
   echo "Error: --dry-run only applies with --email, --block or --unblock" >&2
@@ -194,6 +216,18 @@ record_history() {
   ' <<< "$matches" >> "$HISTORY_FILE"
 }
 
+# Number of distinct hours in the warning window in which the user was emailed.
+# Hours, not rows, so a user on several login nodes isn't counted twice.
+warning_count() {
+  local cutoff
+  cutoff="$(date -d "-${WARNING_WINDOW_HOURS} hours" '+%F %T')"
+  [[ -s "$HISTORY_FILE" ]] || { echo 0; return; }
+  awk -F'\t' -v u="$1" -v cutoff="$cutoff" '
+    NR > 1 && $2 == u && $1 >= cutoff && $7 ~ /email/ { hours[substr($1, 1, 13)] = 1 }
+    END { n = 0; for (h in hours) n++; print n }
+  ' "$HISTORY_FILE"
+}
+
 # Set MaxJobs=0 on all of a user's associations. The original values are saved
 # only the first time, so repeated hourly runs don't overwrite them with 0.
 block_user() {
@@ -249,6 +283,11 @@ process_users() {
   local matches="$1"
   local user details kill_cmds addr body subject block_note ban_warning action
   local sent=0 blocked=0 skipped=0
+  local blocked_text="
+YOUR SLURM JOBS HAVE BEEN BLOCKED because of the processes listed below.
+New jobs will stay pending and will not start. Once these processes are
+stopped, contact rescomputing@duke.edu to have your access restored.
+"
 
   if [[ "$dry_run" -eq 0 ]]; then
     mkdir -p "$LOG_DIR"
@@ -263,7 +302,16 @@ process_users() {
 
     action=""
     block_note=""
-    if [[ "$block" -eq 1 ]]; then
+    local warnings already_blocked=0
+    grep -q "^${user}|" "$BLOCK_FILE" 2>/dev/null && already_blocked=1
+    warnings=0
+    if [[ "$block" -eq 1 && "$already_blocked" -eq 0 && "$MIN_WARNINGS" -gt 0 ]]; then
+      warnings="$(warning_count "$user")"
+    fi
+
+    if [[ "$block" -eq 1 && "$already_blocked" -eq 0 && "$warnings" -lt "$MIN_WARNINGS" ]]; then
+      echo "Not blocking $user: warned in $warnings of the required $MIN_WARNINGS hours (last ${WARNING_WINDOW_HOURS}h)"
+    elif [[ "$block" -eq 1 ]]; then
       if [[ "$dry_run" -eq 1 ]]; then
         echo "[dry run] Would block $user (MaxJobs=0)"
       else
@@ -272,12 +320,14 @@ process_users() {
       if block_user "$user"; then
         action="block"
         ((blocked++)) || true
-        block_note="
-YOUR SLURM JOBS HAVE BEEN BLOCKED because of the processes listed below.
-New jobs will stay pending and will not start. Once these processes are
-stopped, contact rescomputing@duke.edu to have your access restored.
-"
+        block_note="$blocked_text"
       fi
+    fi
+
+    # Users blocked on an earlier run see the notice on every email, not just
+    # the one from the run that blocked them.
+    if [[ -z "$block_note" && "$already_blocked" -eq 1 ]]; then
+      block_note="$blocked_text"
     fi
 
     if [[ "$email" -eq 1 ]]; then
