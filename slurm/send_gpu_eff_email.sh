@@ -19,7 +19,7 @@ THRESHOLD_GPU=50
 THRESHOLD_GPU_MEM=30
 THRESHOLD_TIME_LIMIT=1 #in hours
 CC_EMAIL="uthpala.herath@duke.edu,rescomputing@duke.edu"
-LOG_DIR="/hpc/home/ukh/logs/daily"
+LOG_DIR="${HOME}/logs/daily"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in

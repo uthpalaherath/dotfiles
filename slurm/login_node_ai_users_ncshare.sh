@@ -55,7 +55,7 @@ PATTERNS=(
 # Email settings (--email only).
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 FROM_EMAIL="info@ncshare.org"
-CC_EMAIL="uthpala.herath@duke.edu,info@ncshare.org,rescomputing@duke.edu"
+CC_EMAIL="uthpala.herath@duke.edu,info@ncshare.org"
 LOG_DIR="${HOME}/logs/login_ai"
 # Tab-separated: time, user, host, tools, nproc, pids, action.
 HISTORY_FILE="${LOG_DIR}/history.tsv"

@@ -18,7 +18,7 @@ END="now"
 THRESHOLD_GPU=50
 THRESHOLD_GPU_MEM=30
 THRESHOLD_TIME_LIMIT=1 #in hours
-CC_EMAIL="uthpala.herath@duke.edu,info@ncshare.org,rescomputing@duke.edu"
+CC_EMAIL="uthpala.herath@duke.edu,info@ncshare.org"
 LOG_DIR="${HOME}/logs/daily"
 
 while [[ $# -gt 0 ]]; do
