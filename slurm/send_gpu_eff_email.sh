@@ -18,8 +18,8 @@ END="now"
 THRESHOLD_GPU=50
 THRESHOLD_GPU_MEM=30
 THRESHOLD_TIME_LIMIT=1 #in hours
-CC_EMAIL="uthpala.herath@duke.edu rescomputing@duke.edu"
-LOG_DIR="/hpc/home/ukh/logs/daily"
+CC_EMAIL="uthpala.herath@duke.edu,rescomputing@duke.edu"
+LOG_DIR="${HOME}/logs/daily"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -165,12 +165,13 @@ send_email() {
   local subject="$2"
   local body="$3"
 
-  local cc_args=""
-  for cc in $CC_EMAIL; do
-    cc_args+=" -c $cc"
+  local cc cc_list cc_args=()
+  IFS=',' read -ra cc_list <<< "$CC_EMAIL"
+  for cc in "${cc_list[@]}"; do
+    cc_args+=(-c "$cc")
   done
 
-  echo "$body" | mailx -s "$subject" $cc_args "$to" || true
+  echo "$body" | mailx -s "$subject" "${cc_args[@]}" "$to" || true
 }
 
 log_email() {
