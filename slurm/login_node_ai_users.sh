@@ -52,7 +52,7 @@ PATTERNS=(
 )
 
 # Email settings (--email only).
-CC_EMAIL="uthpala.herath@duke.edu rescomputing@duke.edu"
+CC_EMAIL="uthpala.herath@duke.edu,rescomputing@duke.edu"
 LOG_DIR="${HOME}/logs/login_ai"
 # Tab-separated: time, user, host, tools, nproc, pids, action.
 HISTORY_FILE="${LOG_DIR}/history.tsv"
@@ -175,8 +175,9 @@ send_email() {
   local subject="$2"
   local body="$3"
 
-  local cc_args=()
-  for cc in $CC_EMAIL; do
+  local cc cc_list cc_args=()
+  IFS=',' read -ra cc_list <<< "$CC_EMAIL"
+  for cc in "${cc_list[@]}"; do
     cc_args+=(-c "$cc")
   done
 
