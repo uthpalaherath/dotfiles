@@ -24,17 +24,6 @@ export PATH
 # Source for colorful terminal
 source ~/.bash_prompt
 
-# tmux
-export TMUX_DEVICE_NAME=bridges2
-host_short=$(hostname -s)
-case "$host_short" in
-  br*) is_login=true ;;
-  *)           is_login=false ;;
-esac
-if [[ "$is_login" == "true" ]] && command -v tmux >/dev/null && [ -t 0 ] && [[ -z "$TMUX" ]] && [[ $- == *i* ]]; then
-    tmux attach -t "$TMUX_DEVICE_NAME" 2>/dev/null || tmux new -s "$TMUX_DEVICE_NAME"
-fi
-
 # Memory
 ulimit -s unlimited
 
@@ -273,3 +262,10 @@ export PATH="$HOME/apps/vim/build/bin:$PATH"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+#------------------------------------------- TMUX -------------------------------------------
+
+export TMUX_DEVICE_NAME=bridges2
+if [[ $- == *i* && -t 0 && -z $TMUX && $(hostname -s) == br* ]]; then
+    tmux new -A -s $TMUX_DEVICE_NAME
+fi

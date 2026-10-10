@@ -17,12 +17,6 @@ fi
 # Source for colorful terminal
 source ~/.bash_prompt
 
-# tmux
-export TMUX_DEVICE_NAME=timewarp
-if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-	tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
-fi
-
 # Memory
 ulimit -s unlimited
 
@@ -281,3 +275,10 @@ export LD_LIBRARY_PATH="/home/ukh/lib/scalapack-2.2.0/:$LD_LIBRARY_PATH"
 # atomate2
 export ATOMATE2_CONFIG_FILE="/home/ukh/.config/atomate2/atomate2.yaml"
 export AIMS_SPECIES_DIR="/home/ukh/local/FHIaims/species_defaults/defaults_2020/"
+
+#------------------------------------------- TMUX -------------------------------------------
+
+export TMUX_DEVICE_NAME=timewarp
+if [[ $- == *i* && -t 0 && -z $TMUX ]]; then
+    tmux new -A -s $TMUX_DEVICE_NAME
+fi

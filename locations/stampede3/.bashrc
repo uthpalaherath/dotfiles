@@ -141,17 +141,6 @@ if [[ $- == *i* ]] && [ -f ~/.bash_prompt ]; then
     source ~/.bash_prompt
 fi
 
-# tmux
-export TMUX_DEVICE_NAME=stampede3
-host_short=$(hostname -s)
-case "$host_short" in
-  login*) is_login=true ;;
-  *)           is_login=false ;;
-esac
-if [[ "$is_login" == "true" ]] && command -v tmux >/dev/null && [ -t 0 ] && [[ -z "$TMUX" ]] && [[ $- == *i* ]]; then
-    tmux attach -t "$TMUX_DEVICE_NAME" 2>/dev/null || tmux new -s "$TMUX_DEVICE_NAME"
-fi
-
 # Memory
 ulimit -s unlimited
 
@@ -290,3 +279,10 @@ function y() {
 #------------------------------------------- PATHS -------------------------------------------
 
 export PATH="$HOME/dotfiles/:$PATH"
+
+#------------------------------------------- TMUX -------------------------------------------
+
+export TMUX_DEVICE_NAME=stampede3
+if [[ $- == *i* && -t 0 && -z $TMUX && $(hostname -s) == login* ]]; then
+    tmux new -A -s $TMUX_DEVICE_NAME
+fi

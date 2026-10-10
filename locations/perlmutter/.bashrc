@@ -18,15 +18,6 @@ fi
 # Source for colorful terminal
 source ~/.bash_prompt
 
-# tmux
-export TMUX_DEVICE_NAME=perlmutter
-
-# Launch tmux
-if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-	tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
-    #tmux
-fi
-
 # Memory
 ulimit -s unlimited
 
@@ -257,3 +248,10 @@ export PATH="/global/homes/u/uthpala/local/node-v19.6.0/build/bin/:$PATH"
 # ripgrep and bat
 export PATH="/global/homes/u/uthpala/local/ripgrep/:$PATH"
 export PATH="/global/homes/u/uthpala/local/bat/:$PATH"
+
+#------------------------------------------- TMUX -------------------------------------------
+
+export TMUX_DEVICE_NAME=perlmutter
+if [[ $- == *i* && -t 0 && -z $TMUX ]]; then
+    tmux new -A -s $TMUX_DEVICE_NAME
+fi

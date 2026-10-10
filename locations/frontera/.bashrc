@@ -130,13 +130,6 @@ fi
 # Source for colorful terminal
 source ~/.bash_prompt
 
-# tmux
-export PATH="/home1/05979/uthpala/local/tmux/:$PATH"
-export TMUX_DEVICE_NAME=frontera
-if command -v tmux &> /dev/null && [ -t 0  ] && [[ -z $TMUX  ]] && [[ $- = *i*  ]]; then
-    tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
-fi
-
 # Source global definitions
 if [ -f /etc/bashrc ]; then
 . /etc/bashrc
@@ -354,3 +347,11 @@ export PATH="/home1/05979/uthpala/local/ripgrep/:$PATH"
 
 # bat
 export PATH="/home1/05979/uthpala/local/bat/:$PATH"
+
+#------------------------------------------- TMUX -------------------------------------------
+
+export PATH="/home1/05979/uthpala/local/tmux/:$PATH"
+export TMUX_DEVICE_NAME=frontera
+if [[ $- == *i* && -t 0 && -z $TMUX ]]; then
+    tmux new -A -s $TMUX_DEVICE_NAME
+fi

@@ -74,15 +74,6 @@ unset __mamba_setup
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
 
-# tmux
-export TMUX_DEVICE_NAME=MBP
-tm(){
-    if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-        tmux attach -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME
-    fi
-}
-tm
-
 #FZF
 export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
 export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
@@ -309,3 +300,11 @@ alias rc="cd /Users/ukh/Library/CloudStorage/Box-Box/RC"
 alias projects="cd /Users/ukh/Library/CloudStorage/Box-Box/Projects"
 alias devops="cd /Users/ukh/Library/CloudStorage/Box-Box/RC/DevOps"
 alias vault="cd '/Users/ukh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notebooks'"
+
+#------------------------------------------- TMUX -------------------------------------------
+
+export TMUX_DEVICE_NAME=MBP
+tm() {
+    [[ $- == *i* && -t 0 && -z $TMUX ]] && tmux new -A -s $TMUX_DEVICE_NAME
+}
+tm

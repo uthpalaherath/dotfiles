@@ -30,17 +30,6 @@ if [[ $- == *i* ]] && [ -f ~/.bash_prompt ]; then
     source ~/.bash_prompt
 fi
 
-# tmux
-export TMUX_DEVICE_NAME=dcc
-host_short=$(hostname -s)
-case "$host_short" in
-  dcc-login-*) is_login=true ;;
-  *)           is_login=false ;;
-esac
-if [[ "$is_login" == "true" ]] && command -v tmux >/dev/null && [ -t 0 ] && [[ -z "$TMUX" ]] && [[ $- == *i* ]]; then
-    tmux attach -t "$TMUX_DEVICE_NAME" 2>/dev/null || tmux new -s "$TMUX_DEVICE_NAME"
-fi
-
 # Memory
 ulimit -s unlimited
 
@@ -302,3 +291,10 @@ export PSEUDO_DIR="/hpc/group/rescomp/ukh/apps/qe-7.5/pslibrary/pbe/PSEUDOPOTENT
 
 # xclip
 export PATH="/hpc/group/rescomp/ukh/apps/xclip/build/bin/:$PATH"
+
+#------------------------------------------- TMUX -------------------------------------------
+
+export TMUX_DEVICE_NAME=dcc
+if [[ $- == *i* && -t 0 && -z $TMUX && $(hostname -s) == dcc-login-* ]]; then
+    tmux new -A -s $TMUX_DEVICE_NAME
+fi

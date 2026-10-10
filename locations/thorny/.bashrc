@@ -25,15 +25,6 @@ export PATH
 
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
 
-# tmux 
-module load utils/tmux/3.1 #3.0a
-export TMUX_DEVICE_NAME=thorny
-
-# Create new tmux or attach to existing session 
-if command -v tmux &> /dev/null && [ -t 0  ] && [ -z "$TMUX" ] && [[ $- = *i* ]]; then
-    tmux new-session -t $TMUX_DEVICE_NAME || tmux new -s $TMUX_DEVICE_NAME 
-fi
-
 # ENV 
 NUM_CORES=$SLURM_NTASKS
 WORK_DIR=$SLURM_SUBMIT_DIR
@@ -379,5 +370,10 @@ srun -n \$NUM_CORES
 " > jobscript.sh
 }
 
+#------------------------------------------- TMUX -------------------------------------------
 
-
+module load utils/tmux/3.1
+export TMUX_DEVICE_NAME=thorny
+if [[ $- == *i* && -t 0 && -z $TMUX ]]; then
+    tmux new -A -s $TMUX_DEVICE_NAME
+fi

@@ -9,13 +9,6 @@ then
     stty -ixon
 fi
 
-# tmux
-export TMUX_DEVICE_NAME=whitehall
-if command -v tmux &> /dev/null && [ -t 0 ] && [[ -z $TMUX ]] && [[ $- = *i* ]]; then
-    tmux attach -t whitehall || tmux new -s whitehall
-    # tmux
-fi
-
 # Source global definitions
 if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
@@ -116,3 +109,10 @@ killtmux(){
     do tmux kill-session -t "whitehall $arg"
     done
 }
+
+#------------------------------------------- TMUX -------------------------------------------
+
+export TMUX_DEVICE_NAME=whitehall
+if [[ $- == *i* && -t 0 && -z $TMUX ]]; then
+    tmux new -A -s $TMUX_DEVICE_NAME
+fi
