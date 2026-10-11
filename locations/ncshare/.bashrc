@@ -56,26 +56,11 @@ export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
 
 # PYTHON
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/hpc/home/uherathmudiyanselage1/miniforge3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/hpc/home/uherathmudiyanselage1/miniforge3/etc/profile.d/conda.sh" ]; then
-        . "/hpc/home/uherathmudiyanselage1/miniforge3/etc/profile.d/conda.sh"
-    else
-        export PATH="/hpc/home/uherathmudiyanselage1/miniforge3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba shell init' !!
 export MAMBA_EXE='/hpc/home/uherathmudiyanselage1/miniforge3/bin/mamba';
 export MAMBA_ROOT_PREFIX='/hpc/home/uherathmudiyanselage1/miniforge3';
-__mamba_setup="$("$MAMBA_EXE" shell hook --shell zsh --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
 if [ $? -eq 0  ]; then
         eval "$__mamba_setup"
     else
@@ -83,6 +68,7 @@ if [ $? -eq 0  ]; then
 fi
 unset __mamba_setup
 # <<< mamba initialize <<<
+mamba activate base
 export UV_CACHE_DIR=/work/${USER}/tmp
 
 #FZF

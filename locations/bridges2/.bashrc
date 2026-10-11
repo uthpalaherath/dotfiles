@@ -48,21 +48,6 @@ fi
 export EDITOR="vim"
 
 # PYTHON
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/jet/home/uthpala/miniforge3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/jet/home/uthpala/miniforge3/etc/profile.d/conda.sh" ]; then
-        . "/jet/home/uthpala/miniforge3/etc/profile.d/conda.sh"
-    else
-        export PATH="/jet/home/uthpala/miniforge3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba shell init' !!
 export MAMBA_EXE='/jet/home/uthpala/miniforge3/bin/mamba';
@@ -75,6 +60,7 @@ else
 fi
 unset __mamba_setup
 # <<< mamba initialize <<<
+mamba activate base
 
 # Cargo
 . "$HOME/.cargo/env"
