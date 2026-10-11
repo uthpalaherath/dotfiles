@@ -56,6 +56,7 @@ fi
 unset __mamba_setup
 # <<< mamba initialize <<<
 mamba activate base
+export UV_CACHE_DIR="/Users/ukh/.cache"
 
 # Remove .pyc files
 export PYTHONDONTWRITEBYTECODE=1
