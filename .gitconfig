@@ -2,21 +2,31 @@
    name = Uthpala Herath
    email = uthpala.herath@duke.edu
 
+[core]
+   pager = delta
+[interactive]
+   diffFilter = delta --color-only
+[delta]
+   navigate = true
+   dark = true
+   line-numbers = true
+   syntax-theme = gruvbox-dark
+   side-by-side = true
+
 [diff]
    tool = vimdiff
    prompt = false
+   colorMoved = default
 
 [alias]
    dirdiff = difftool --ignore-submodules --dir-diff --symlinks --tool=myvimdirdiff
 [difftool "myvimdirdiff"]
    cmd = vim -f '+let g:ZFDirDiff_tabOpened=1 | call ZFDirDiff(argv(0), argv(1))'
-; [difftool "myvimdirdiff"]
-;    cmd = vim -f '+let g:gruvbox_contrast=\"soft\"' '+colorscheme gruvbox' '+next' '+execute \"ZFDirDiff\"  argv(0) argv(1)' $LOCAL $REMOTE
 
 [merge]
    tool = diffconflicts
    prompt = false
-   conflictstyle = diff3
+   conflictstyle = zdiff3
 [mergetool "diffconflicts"]
    cmd = vim -c DiffConflicts \"$MERGED\" \"$BASE\" \"$LOCAL\" \"$REMOTE\"
    trustExitCode = true
