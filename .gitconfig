@@ -12,6 +12,7 @@
    line-numbers = true
    syntax-theme = gruvbox-dark
    side-by-side = true
+   wrap-max-lines = unlimited
 
 [diff]
    tool = vimdiff
