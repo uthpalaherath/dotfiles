@@ -188,9 +188,11 @@ send_email() {
     -a "From: $FROM_EMAIL"
   )
 
-  if [ -n "$CC_EMAIL" ]; then
-    args+=(-a "Cc: $CC_EMAIL")
-  fi
+  local cc cc_list
+  IFS=',' read -ra cc_list <<< "$CC_EMAIL"
+  for cc in "${cc_list[@]}"; do
+    args+=(-c "$cc")
+  done
 
   echo "$body" | mailx "${args[@]}" -s "$subject" "$to" || true
 }
