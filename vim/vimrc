@@ -147,8 +147,13 @@ silent! set jumpoptions=stack       " browser-like <C-o>/<C-i> jumplist
 set diffexpr=""
 set tags+=tags;/
 
+" ripgrep defaults
+if filereadable(expand('~/dotfiles/configs/ripgreprc'))
+  let $RIPGREP_CONFIG_PATH = expand('~/dotfiles/configs/ripgreprc')
+endif
+
 if executable('rg')
-  set grepprg=rg\ --vimgrep\ --smart-case
+  set grepprg=rg\ --vimgrep
   set grepformat=%f:%l:%c:%m
 endif
 
@@ -528,9 +533,8 @@ imap <C-j> <Plug>(copilot-next)
 imap <C-k> <Plug>(copilot-previous)
 
 """ FZF
-let s:rg_opts = '--smart-case --follow --hidden --type-not sql -g "!{node_modules,.git}"'
-let $FZF_DEFAULT_COMMAND = 'rg --files ' . s:rg_opts
-let s:rg_grep = 'rg --line-number --no-heading --color=always ' . s:rg_opts . ' '
+let $FZF_DEFAULT_COMMAND = 'rg --files --follow --type-not sql'
+let s:rg_grep = 'rg --line-number --no-heading --color=always '
 let s:rg_preview = {'options': '--delimiter : --nth 3..'}
 
 nnoremap <silent> <C-f> :Files<CR>
@@ -550,7 +554,7 @@ command! -bang -nargs=* Rg
 " Search only within the current buffer
 command! -bang -nargs=* BLines
     \ call fzf#vim#grep(
-    \   'rg --with-filename --line-number --no-heading --smart-case --color=always . '.fnameescape(expand('%:p')), 1,
+    \   'rg --with-filename --line-number --no-heading --color=always . '.fnameescape(expand('%:p')), 1,
     \   fzf#vim#with_preview({'options': '--layout reverse --keep-right --delimiter : --nth 3.. --preview "bat -p --color always {}"'}, 'right:60%' ))
 
 """ NERDTree

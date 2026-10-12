@@ -1,0 +1,4 @@
+# Global ripgrep defaults, read via RIPGREP_CONFIG_PATH
+--smart-case
+--hidden
+--glob=!{.git,node_modules}

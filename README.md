@@ -29,6 +29,10 @@ I basically create symlinks of each of the files in the directories to the syste
 
 `vim/vimrc` is a standalone config managed by [vim-plug](https://github.com/junegunn/vim-plug). Symlink it to `~/.vimrc` and `vim/coc-settings.json` to `~/.vim/coc-settings.json`, then start vim; plugins install on first launch. Update them with `:PlugUpdate`.
 
+## ripgrep
+
+`configs/ripgreprc` holds the shared ripgrep defaults (`--hidden`, `--smart-case`, `.git`/`node_modules` excluded). The shell rcs and `vim/vimrc` point `RIPGREP_CONFIG_PATH` at it, so change ripgrep flags there rather than in individual commands.
+
 Disclaimer: _I am a computational physicist, not a computer scientist. These scripts may not look very professional or adhere to coding conventions. They may also contain bugs._
 
 Most of these scripts were written based on ideas of smart people on forums and repositories around the internet. Unfortunately, I have not been able to keep track of every single one of them to give credit to the original creators so if you find something I forgot to acknowledge please let me know.

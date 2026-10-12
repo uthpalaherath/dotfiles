@@ -177,9 +177,12 @@ WORK_DIR=$SLURM_SUBMIT_DIR
 C_INCLUDE_PATH="/home1/apps/cuda/12.2/include/CL/:$C_INCLUDE_PATH"
 CPLUS_INCLUDE_PATH="/home1/apps/cuda/12.2/include/CL/:$CPLUS_INCLUDE_PATH"
 
+# ripgrep defaults
+[ -f ~/dotfiles/configs/ripgreprc ] && export RIPGREP_CONFIG_PATH=~/dotfiles/configs/ripgreprc
+
 #FZF
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+export FZF_DEFAULT_COMMAND='rg --files --follow --type-not sql'
 export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
 export FZF_CTRL_R_OPTS="
  --preview 'echo {}' --preview-window 'hidden'
@@ -300,13 +303,12 @@ py3(){
 # default
 py3
 
-# find-in-file - usage: fif <searchTerm> <directory>
-fif() {
- if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
- if [ -z "$2" ]; then directory="./"; else directory="$2"; fi
- rg --files-with-matches --no-messages --smart-case --follow --hidden -g '!{node_modules,.git}' "$1" "$directory"\
-     | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow'\
-     --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
+# rgf: fuzzy-search inside files, open the match in vim
+rgf() {
+  local sel
+  sel=$(rg --line-number --no-heading --color=always "${1:-}" |
+        fzf --ansi --delimiter : --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' --preview-window '+{2}/2') || return
+  vim "+$(cut -d: -f2 <<< "$sel")" "${sel%%:*}"
 }
 
 #------------------------------------------- PATHS -------------------------------------------

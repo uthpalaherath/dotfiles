@@ -30,11 +30,14 @@ ulimit -s unlimited
 # Reverse search history
 export HISTIGNORE="pwd:ls:cd"
 
+# ripgrep defaults
+[ -f ~/dotfiles/configs/ripgreprc ] && export RIPGREP_CONFIG_PATH=~/dotfiles/configs/ripgreprc
+
 # Fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 if [[ $- == *i* ]]; then
     [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-    export FZF_DEFAULT_COMMAND='rg --files --type-not sql --smart-case --follow --hidden -g "!{node_modules,.git}" '
+    export FZF_DEFAULT_COMMAND='rg --files --follow --type-not sql'
     export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers {} 2>/dev/null || cat {} 2>/dev/null || tree -C {}'"
     export FZF_CTRL_R_OPTS="
      --preview 'echo {}' --preview-window 'hidden'
@@ -46,6 +49,14 @@ if [[ $- == *i* ]]; then
      --preview 'tree -C {}'"
 fi
 export EDITOR="vim"
+
+# rgf: fuzzy-search inside files, open the match in vim
+rgf() {
+  local sel
+  sel=$(rg --line-number --no-heading --color=always "${1:-}" |
+        fzf --ansi --delimiter : --preview 'bat --color=always --style=numbers --highlight-line {2} {1}' --preview-window '+{2}/2') || return
+  vim "+$(cut -d: -f2 <<< "$sel")" "${sel%%:*}"
+}
 
 # PYTHON
 # >>> mamba initialize >>>
