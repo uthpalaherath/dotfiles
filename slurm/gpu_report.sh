@@ -22,7 +22,7 @@ if [ -z "$PARTITION" ] || [ -z "$START_DATE" ] || [ -z "$END_DATE" ]; then
 fi
 
 # Create log file path for capturing output
-OUTPUT_DIR="$HOME/logs/${PARTITION}"
+OUTPUT_DIR="/admin/reports/${PARTITION}"
 mkdir -p "$OUTPUT_DIR"
 LOG_FILE="${OUTPUT_DIR}/${PARTITION}_${START_DATE}-${END_DATE}.txt"
 

@@ -53,7 +53,7 @@ PATTERNS=(
 
 # Email settings (--email only).
 CC_EMAIL="uthpala.herath@duke.edu,rescomputing@duke.edu"
-LOG_DIR="${HOME}/logs/login_ai"
+LOG_DIR="/admin/reports/login_ai"
 # Tab-separated: time, user, host, tools, nproc, pids, action.
 HISTORY_FILE="${LOG_DIR}/history.tsv"
 # Pipe-separated (empty fields are common, and read would merge tabs):
