@@ -9,7 +9,7 @@
 # Example:
 #   send_gpu_eff_email_jobs.sh -r gpu -S 2026-02-17 -E 2026-02-23
 
-export PATH="$HOME/.cargo/bin:/usr/bin:/bin:$PATH"
+export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
 set -euo pipefail
 
 PART=""
