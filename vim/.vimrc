@@ -425,6 +425,13 @@ endfunction
 """ ---------- PLUGIN SETTINGS ----------
 
 """ lightline
+" Branch from fugitive plus this file's hunk counts from gitgutter
+function! LightlineGit() abort
+  if empty(FugitiveHead()) | return '' | endif
+  let [l:a, l:m, l:r] = GitGutterGetHunkSummary()
+  return "\ue0a0 " . FugitiveHead() . (l:a ? ' +' . l:a : '') . (l:m ? ' ~' . l:m : '') . (l:r ? ' -' . l:r : '')
+endfunction
+
 let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
@@ -434,13 +441,12 @@ let g:lightline = {
       \ },
       \ 'component': {
       \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
-      \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
-      \   'fugitive': '%{exists("*FugitiveHead")?FugitiveHead():""}'
+      \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}'
       \ },
+      \ 'component_function': { 'fugitive': 'LightlineGit' },
       \ 'component_visible_condition': {
       \   'readonly': '(&filetype!="help"&& &readonly)',
-      \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
-      \   'fugitive': '(exists("*FugitiveHead") && ""!=FugitiveHead())'
+      \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))'
       \ },
       \ 'separator': { 'left': ' ', 'right': ' ' },
       \ 'subseparator': { 'left': ' ', 'right': ' ' }
