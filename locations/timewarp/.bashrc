@@ -1,4 +1,4 @@
-# .bashrc for timewarp (timewarp.egr.duke.edu)
+# .bashrc for timewarp (timewarp-02.egr.duke.edu)
 # -Uthpala Herath
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
@@ -14,18 +14,28 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
+then
+   PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
+
 # Source for colorful terminal
-source ~/.bash_prompt
+if [[ $- == *i* ]] && [ -f ~/.bash_prompt ]; then
+    source ~/.bash_prompt
+fi
 
 # Memory
 ulimit -s unlimited
 
 # Reverse search history
-export HISTIGNORE="pwd:ls:cd"
-
-# ENV
-NUM_CORES=$SLURM_NTASKS
-WORK_DIR=$SLURM_SUBMIT_DIR
+if [[ $- == *i* ]]; then
+    export HISTIGNORE="pwd:ls:cd"
+    shopt -s histappend
+    HISTCONTROL=ignoreboth:erasedups
+    export PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
 
 # Color folders
 export LS_OPTIONS='--color=auto'
@@ -33,15 +43,11 @@ eval "$(dircolors -b)"
 alias ls='ls $LS_OPTIONS'
 alias grep='grep --color=auto'
 
-#export PATH=./:/globalspace/CompMatSci_2021/bin:/globalspace/CompMatSci_2021/utilities:/home/vwb3/.local/bin:/usr/local/bin:~/bin:$PATH
+# OpenMP and MPI
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
-#export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so.0
 export I_MPI_PMI_LIBRARY=/usr/lib/x86_64-linux-gnu/libpmi.so.0
-# export SLURM_CPU_BIND="cores"
-# unset I_MPI_PMI_LIBRARY
-# export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
 export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH
 
 # ripgrep defaults
@@ -61,20 +67,43 @@ export FZF_ALT_C_OPTS="
   --preview 'tree -C {}'"
 export EDITOR="vim"
 
+# >>> mamba initialize >>>
+# !! Contents within this block are managed by 'mamba shell init' !!
+export MAMBA_EXE='/zpool-00/space/home/ukh/miniforge3/bin/mamba';
+export MAMBA_ROOT_PREFIX='/zpool-00/space/home/ukh/miniforge3';
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__mamba_setup"
+else
+    alias mamba="$MAMBA_EXE"  # Fallback on help from mamba activate
+fi
+unset __mamba_setup
+mamba activate base
+# <<< mamba initialize <<<
+export UV_CACHE_DIR=/work/${USER}/tmp
+
+# HuggingFace
+export HF_HOME="${HOME}/.huggingface"
+export FLASHINFER_WORKSPACE_BASE="/${HOME}"
+export VLLM_CACHE_ROOT="/${HOME}/.cache/vllm"
+
+# Ollama
+export OLLAMA_MODELS="/${HOME}/.ollama/models"
+
+# GNUTERM
+export GNUTERM=x11
+
+# Apptainer
+export APPTAINER_CACHEDIR=/${HOME}/tmp
+export APPTAINER_TMPDIR=/${HOME}/tmp
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
 alias sac="sacct --format="JobID,JobName%30,State,User""
 alias interact="salloc --nodes 1 --ntasks-per-node=20 --qos interactive --time 04:00:00"
 
-alias dotrebase='cd ~/dotfiles && git pull --rebase || true && cd -'
-alias dotpush='cd ~/dotfiles && git add . && git commit -m "Update from timewarp" && git push && cd -'
-alias dotpull='cd ~/dotfiles && git pull || true && cd -'
-
-alias makeINCAR="cp ~/MatSciScripts/INCAR ."
-alias makeKPOINTS="cp ~/MatSciScripts/KPOINTS ."
 alias makejob="cp ~/dotfiles/locations/timewarp/jobscript.sh ."
-alias ..="cd .."
 alias detach="tmux detach-client -a"
 alias cpr="rsync -ah --info=progress2"
 alias tkill="tmux kill-session"
@@ -84,8 +113,7 @@ alias f='vim "$(fzf)"'
 
 #------------------------------------------- MODULES -------------------------------------------
 
-# module load cmake-3.14.4
-# module load git-2.37.3
+module load git-2.37.3
 
 intel(){
     if command -v module &> /dev/null
@@ -159,69 +187,34 @@ intel
 
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/ukh/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/ukh/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/ukh/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/ukh/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-py2(){
-    for i in $(seq ${CONDA_SHLVL}); do
-        conda deactivate
-    done
-    conda activate py2
-}
-py3(){
-    for i in $(seq ${CONDA_SHLVL}); do
-        conda deactivate
-    done
-    conda activate py3
-}
-#default
-py3
-
 # extract, mkcdr and archive creattion were taken from
 # https://gist.github.com/JakubTesarek/8840983
 # Easy extract
 extract () {
-if [ -f $1 ] ; then
-case $1 in
-*.tar.bz2)   tar xvjf $1    ;;
-*.tar.gz)    tar xvzf $1    ;;
-*.bz2)       bunzip2 $1     ;;
-*.rar)       rar x $1       ;;
-*.gz)        gunzip $1      ;;
-*.tar)       tar xvf $1     ;;
-*.tbz2)      tar xvjf $1    ;;
-*.tgz)       tar xvzf $1    ;;
-*.zip)       unzip $1       ;;
-*.Z)         uncompress $1  ;;
-*.7z)        7z x $1        ;;
-*)           echo "don't know how to extract '$1'..." ;;
-esac
-else
-echo "'$1' is not a valid file!"
-fi
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xvjf $1    ;;
+            *.tar.gz)    tar xvzf $1    ;;
+            *.bz2)       bunzip2 $1     ;;
+            *.rar)       rar x $1       ;;
+            *.gz)        gunzip $1      ;;
+            *.tar)       tar xvf $1     ;;
+            *.tbz2)      tar xvjf $1    ;;
+            *.tgz)       tar xvzf $1    ;;
+            *.zip)       unzip $1       ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1        ;;
+            *)           echo "don't know how to extract '$1'..." ;;
+        esac
+    else
+        echo "'$1' is not a valid file!"
+    fi
 }
 
 # Creates an archive from given directory
 mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
-
-# Get job info from job-id
-jobinfo(){
-    scontrol show jobid -dd $1
-}
 
 # rgf: fuzzy-search inside files, open the match in vim
 rgf() {
@@ -231,13 +224,15 @@ rgf() {
   vim "+$(cut -d: -f2 <<< "$sel")" "${sel%%:*}"
 }
 
-# colored cat
-# function pygmentize_cat {
-#   for arg in "$@"; do
-#     pygmentize -g "${arg}" 2> /dev/null || /bin/cat "${arg}"
-#   done
-# }
-# command -v pygmentize > /dev/null && alias cat=pygmentize_cat
+# yazi cd to directory and return default cursor
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp" || true
+    echo -e -n "\x1b[6 q"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
+}
 
 #------------------------------------------- PATHS -------------------------------------------
 
