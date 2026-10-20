@@ -21,8 +21,13 @@ if [ -z "$PARTITION" ] || [ -z "$START_DATE" ] || [ -z "$END_DATE" ]; then
     exit 1
 fi
 
+# Select log directory based on partition
+if [ "$PARTITION" == "scavenger-h200" ] || [ "$PARTITION" == "h200-hp" ]; then
+    OUTPUT_DIR="/admin/reports/${PARTITION}"
+elif [ "$PARTITION" == "gpu-hp" ] || [ "$PARTITION" == "gpu" ]; then
+    OUTPUT_DIR="/data/admin/reports/${PARTITION}"
+fi
 # Create log file path for capturing output
-OUTPUT_DIR="/admin/reports/${PARTITION}"
 mkdir -p "$OUTPUT_DIR"
 LOG_FILE="${OUTPUT_DIR}/${PARTITION}_${START_DATE}-${END_DATE}.txt"
 

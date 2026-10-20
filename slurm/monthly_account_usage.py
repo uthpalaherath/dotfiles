@@ -315,7 +315,7 @@ def main():
     )
     parser.add_argument(
         "--output-dir",
-        default="~/logs/monthly",
+        default="/data/admin/reports/monthly",
         help="Base directory for output files",
     )
     args = parser.parse_args()

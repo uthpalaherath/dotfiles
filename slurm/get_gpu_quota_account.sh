@@ -1,93 +1,47 @@
 #!/bin/bash
-# This script shows the quota and usage minutes (or hours) for GPU High Priority QoS for the user's account.
-# Usage: get_gpu_quota_account.sh [-H]
+# This script shows the quota and usage GPU-hours for GPU High Priority QoS for the user's account.
+# Usage: get_gpu_quota_account.sh
 
-show_hours=false
-
-minutes_to_hours() {
-    awk -v mins="$1" 'BEGIN { printf "%.2f", (mins + 0) / 60 }'
-}
-
-percent_used() {
-    awk -v used="$1" -v total="$2" 'BEGIN { if ((total + 0) == 0) printf "N/A"; else printf "%.2f%%", ((used + 0) / (total + 0)) * 100 }'
-}
-
-declare -A QOS_ACCOUNT_MAP=(
-    [duke_h200_hp]=duke
-    [unc_h200_hp]=unc
-    [ncsu_h200_hp]=ncsu
-    [ncat_h200_hp]=ncat
-    [charlotte_h200_hp]=uncc
-    [wssu_h200_hp]=wssu
-    [nccu_h200_hp]=nccu
-    [davidson_h200_hp]=davidson
-    [fsu_h200_hp]=uncfsu
+declare -A ACCOUNT_QOS_MAP=(
+    [duke]=duke_h200_hp
+    [unc]=unc_h200_hp
+    [ncsu]=ncsu_h200_hp
+    [ncat]=ncat_h200_hp
+    [uncc]=charlotte_h200_hp
+    [wssu]=wssu_h200_hp
+    [nccu]=nccu_h200_hp
+    [davidson]=davidson_h200_hp
+    [uncfsu]=fsu_h200_hp
 )
 
-get_quota() {
-    user_account=$(sacctmgr show assoc where user="$USER" format=Account --noheader | xargs)
+if [[ $# -gt 0 ]]; then
+    echo "Usage: $0"
+    [[ "$1" == "-h" || "$1" == "--help" ]] && exit 0
+    exit 1
+fi
 
-    if [[ -z "$user_account" ]]; then
-        echo "No account found for user $USER"
-        exit 1
-    fi
+# Users may belong to multiple accounts; try the default account first, then the rest.
+default_account=$(sacctmgr -nP show user "$USER" format=DefaultAccount)
+accounts=$(sacctmgr -nP show assoc where user="$USER" format=Account)
 
-    user_qos=""
-    for qos in "${!QOS_ACCOUNT_MAP[@]}"; do
-        if [[ "${QOS_ACCOUNT_MAP[$qos]}" == "$user_account" ]]; then
-            user_qos="$qos"
-            break
-        fi
-    done
+user_qos=""
+for account in $default_account $accounts; do
+    user_qos="${ACCOUNT_QOS_MAP[$account]:-}"
+    [[ -n "$user_qos" ]] && break
+done
 
-    if [[ -z "$user_qos" ]]; then
-        echo "No GPU QoS found for account: $user_account"
-        exit 1
-    fi
+if [[ -z "$user_qos" ]]; then
+    echo "No GPU QoS found for account(s): $(echo $accounts)"
+    exit 1
+fi
 
-    if [ "$show_hours" = true ]; then
-        echo "Institutional Usage (GPU-hours)"
-    else
-        echo "Institutional Usage (GPU-minutes)"
-    fi
+# GrpTRESMins line holds billing=<quota>(<used>), both in GPU-minutes.
+read -r quota used < <(scontrol show assoc_mgr flags=qos qos="$user_qos" 2>/dev/null | grep 'GrpTRESMins=' | grep -o 'billing=[0-9]*([0-9]*)' | tr -c '0-9' ' ')
 
-    printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "QoS" "Quota" "Used" "Remaining" "Used %"
-    printf "%-20s-+-%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})"
-
-    output=$(scontrol show assoc_mgr flags=qos qos="$user_qos" 2>/dev/null | grep 'GrpTRESMins=' | grep -o 'billing=[^()]*([0-9]*)' | grep -o '[0-9]*')
-
-    billing_set=$(echo "$output" | head -1)
-    billing_used=$(echo "$output" | tail -1)
-    remaining=$((billing_set - billing_used))
-    billing_set_display="$billing_set"
-    billing_used_display="$billing_used"
-    remaining_display="$remaining"
-    percent_used_display=$(percent_used "$billing_used" "$billing_set")
-
-    if [ "$show_hours" = true ]; then
-        billing_set_display=$(minutes_to_hours "$billing_set")
-        billing_used_display=$(minutes_to_hours "$billing_used")
-        remaining_display=$(minutes_to_hours "$remaining")
-    fi
-
-    printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "$user_qos" "$billing_set_display" "$billing_used_display" "$remaining_display" "$percent_used_display"
-}
-
-case "$1" in
-    "")
-        get_quota
-        ;;
-    -H)
-        show_hours=true
-        get_quota
-        ;;
-    -h|--help)
-        echo "Usage: $0 [-H]"
-        echo "-H Show usage in GPU-hours instead of GPU-minutes"
-        exit 0
-        ;;
-    *)
-        echo "Usage: $0 [-H]"
-        exit 1
-        ;;
-esac
+echo "Institutional Usage (GPU-hours)"
+printf "%-20s | %-20s | %-20s | %-20s | %-20s\n" "QoS" "Quota" "Used" "Remaining" "Used %"
+printf "%-20s-+-%-20s-+-%-20s-+-%-20s-+-%-20s\n" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})" "$(printf -- '-%.0s' {1..20})"
+awk -v qos="$user_qos" -v q="$quota" -v u="$used" 'BEGIN {
+    pct = (q + 0 == 0) ? "N/A" : sprintf("%.2f%%", u / q * 100)
+    printf "%-20s | %-20.2f | %-20.2f | %-20.2f | %-20s\n", qos, q / 60, u / 60, (q - u) / 60, pct
+}'

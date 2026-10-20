@@ -56,7 +56,7 @@ PATTERNS=(
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 FROM_EMAIL="info@ncshare.org"
 CC_EMAIL="uthpala.herath@duke.edu,info@ncshare.org"
-LOG_DIR="${HOME}/logs/login_ai"
+LOG_DIR="/data/admin/reports/login_ai"
 # Tab-separated: time, user, host, tools, nproc, pids, action.
 HISTORY_FILE="${LOG_DIR}/history.tsv"
 # Pipe-separated (empty fields are common, and read would merge tabs):
