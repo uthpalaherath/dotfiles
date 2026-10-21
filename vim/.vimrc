@@ -102,11 +102,9 @@ let mapleader = ","
 let $LANG='en'
 set langmenu=en
 set fileencoding=utf-8
-
 set history=500
 set autoread
 autocmd vimrc FocusGained,BufEnter * silent! checktime
-
 set so=7
 set wildmenu
 silent! set wildoptions=pum,fuzzy
