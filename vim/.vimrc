@@ -43,7 +43,6 @@ Plug 'Yggdroot/indentLine'
 Plug 'preservim/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'christoomey/vim-tmux-navigator'
 
 " Linting, completion, search, AI
 Plug 'dense-analysis/ale'
