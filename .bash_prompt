@@ -87,13 +87,16 @@ if [[ $- == *i* ]]; then
       cat "$cachefile"
       return
     fi
+    local state tmp
     if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
-      echo "dirty" > "${cachefile}.tmp" && mv "${cachefile}.tmp" "$cachefile"
-      echo "dirty"
+      state="dirty"
     else
-      echo "clean" > "${cachefile}.tmp" && mv "${cachefile}.tmp" "$cachefile"
-      echo "clean"
+      state="clean"
     fi
+    # Per-process tmp name: concurrent prompts in the same repo must not share it
+    tmp="${cachefile}.tmp.$$.$RANDOM"
+    { echo "$state" > "$tmp" && mv -f "$tmp" "$cachefile"; } 2>/dev/null || rm -f "$tmp" 2>/dev/null
+    echo "$state"
   }
 
   parse_git_branch_name() {
