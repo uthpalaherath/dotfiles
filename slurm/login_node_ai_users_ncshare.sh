@@ -53,7 +53,7 @@ PATTERNS=(
 )
 
 # Email settings (--email only).
-SCRIPT_DIR="~/dotfiles/slurm/"
+SCRIPT_DIR="$HOME/dotfiles/slurm"
 FROM_EMAIL="info@ncshare.org"
 CC_EMAIL="uthpala.herath@duke.edu,info@ncshare.org"
 LOG_DIR="/data/admin/reports/login_ai"
