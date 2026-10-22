@@ -28,9 +28,8 @@ gui:
       - "#e67e80"
     defaultFgColor:
       - "#d3c6aa"
-  authorColors:
-    "*": "#d699b6"
-
+    authorColors:
+      "*": "#d699b6"
 customCommands:
   - key: "G"
     description: "AI commit message (Claude)"
