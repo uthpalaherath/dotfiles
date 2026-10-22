@@ -174,7 +174,7 @@ function vllm-metal() {
 export PATH="$HOME/.local/bin:$PATH"
 
 # dotfiles
-export PATH="/Users/ukh/git/dotfiles/:$PATH"
+export PATH="/Users/ukh/dotfiles/:$PATH"
 
 # MatSciScripts
 export PATH="/Users/ukh/git/MatSciScripts/:$PATH"

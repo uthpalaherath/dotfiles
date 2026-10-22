@@ -20,6 +20,7 @@
    colorMoved = default
 
 [alias]
+   aic = ai-commit
    dirdiff = difftool --ignore-submodules --dir-diff --symlinks --tool=myvimdirdiff
 [difftool "myvimdirdiff"]
    cmd = vim -f '+let g:ZFDirDiff_tabOpened=1 | call ZFDirDiff(argv(0), argv(1))'
