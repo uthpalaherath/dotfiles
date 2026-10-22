@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Draft a commit message for the staged changes with Claude, then open it in
-# $EDITOR via `git commit -e`. Extra args go to git commit (e.g., --no-verify).
+# Draft a commit message for the staged changes with Claude, show it, and ask
+# whether to commit as is, edit it in $EDITOR, regenerate, or abort.
+# Extra args go to git commit (e.g., --no-verify).
 #   git ai-commit [git-commit args]
 # GIT_AI_COMMIT_MODEL picks the model (default: sonnet).
 set -euo pipefail
@@ -30,8 +31,8 @@ if (( ${#diff} > max_chars )); then
 [diff truncated]"
 fi
 
-echo "Generating commit message with Claude ($model)..." >&2
-msg=$(
+generate() {
+    echo "Generating commit message with Claude ($model)..." >&2
     {
         echo "## Recent subjects"
         git log -n 10 --format=%s 2>/dev/null || true
@@ -40,16 +41,26 @@ msg=$(
         echo; echo "## Diff"
         printf '%s\n' "$diff"
     } | claude -p --model "$model" --tools "" --no-session-persistence \
-        --system-prompt "$prompt" 2>/dev/null
-)
-msg=$(printf '%s\n' "$msg" | sed '/^```/d')
-
-if [[ -z ${msg//[[:space:]]/} ]]; then
-    echo "git-ai-commit: Claude returned nothing" >&2
-    exit 1
-fi
+        --system-prompt "$prompt" 2>/dev/null | sed '/^```/d'
+}
 
 msgfile=$(mktemp "${TMPDIR:-/tmp}/git-ai-commit.XXXXXX")
 trap 'rm -f "$msgfile"' EXIT
-printf '%s\n' "$msg" >"$msgfile"
-git commit -e -F "$msgfile" "$@"
+
+while true; do
+    msg=$(generate)
+    if [[ -z ${msg//[[:space:]]/} ]]; then
+        echo "git-ai-commit: Claude returned nothing" >&2
+        exit 1
+    fi
+    printf '%s\n' "$msg" >"$msgfile"
+
+    printf '\n%s\n\n' "$msg"
+    read -r -p "Commit? [Y]es / [e]dit / [r]egenerate / [q]uit: " ans </dev/tty
+    case ${ans:-y} in
+        [Yy]*) git commit -F "$msgfile" "$@"; exit ;;
+        [Ee]*) git commit -e -F "$msgfile" "$@"; exit ;;
+        [Rr]*) continue ;;
+        *) echo "Aborted." >&2; exit 1 ;;
+    esac
+done
