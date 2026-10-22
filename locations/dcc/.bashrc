@@ -130,8 +130,6 @@ export APPTAINER_TMPDIR=/cwork/${USER}/tmp
 
 alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
 alias interact="srun -A rescomp -p interactive -t 02:00:00 --pty bash -i"
-#alias sac="sacct --format="JobID,JobName%-30,State,User""
-#alias sac="sacct -S $(date +%Y-%m-01) -E now -X --format="JobID,JobName%-30,State,WorkDir%-150""
 alias sac="sacct -X --format="JobID,JobName%-30,State,nodelist%-30,WorkDir%-150""
 alias makejob="cp ~/dotfiles/locations/dcc/jobscript.sh ."
 alias detach="tmux detach-client -a"
