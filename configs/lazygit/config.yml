@@ -1,0 +1,7 @@
+customCommands:
+  - key: "G"
+    description: "AI commit message (Claude)"
+    context: "files"
+    loadingText: "Generating commit message..."
+    command: "git-ai-commit"
+    output: terminal
