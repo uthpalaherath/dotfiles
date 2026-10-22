@@ -57,6 +57,14 @@ $endfor$
 % Code block formatting
 \newcommand{\passthrough}[1]{#1}
 \newcommand{\listingsttfamily}{\fontfamily{IBMPlexMono-TLF}\small}
+% Shrink listing font so #1 monospace chars (0.6em wide) fit the line, 5-9pt
+\newlength\codefitsize
+\newcommand{\codefit}[1]{%
+  \setlength\codefitsize{\dimexpr 0.97\linewidth * 10 / (6 * #1)\relax}%
+  \ifdim\codefitsize>9pt \setlength\codefitsize{9pt}\fi
+  \ifdim\codefitsize<5pt \setlength\codefitsize{5pt}\fi
+  \lstset{basicstyle=\fontfamily{IBMPlexMono-TLF}\fontsize{\the\codefitsize}{1.2\codefitsize}\selectfont}%
+}
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.98,0.98,0.95}
@@ -125,7 +133,6 @@ $endfor$
 \titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 \titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 \titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
-\renewcommand{\thesection}{\Roman{section}}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}
 \setlength{\LTcapwidth}{\textwidth}

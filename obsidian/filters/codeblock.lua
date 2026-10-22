@@ -34,6 +34,24 @@ function CodeBlock(el)
       :gsub("%%\\centering", "\\centering")
       :gsub("\\begin{document}", "\\begin{figure}[ht]")
       :gsub("\\end{document}", "\\end{figure}"))
+  --[[
+    Shrink the font of code blocks whose longest line exceeds the page width.
+    \codefit is defined in custom.latex.
+  --]]
+  elseif FORMAT:match("latex") then
+    local maxlen = 0
+    for line in (el.text .. "\n"):gmatch("([^\n]*)\n") do
+      local n = utf8.len((line:gsub("\t", "    "))) or #line
+      if n > maxlen then maxlen = n end
+    end
+    if maxlen > 90 then
+      return {
+        pandoc.RawBlock("latex", "\\begingroup\\codefit{" .. maxlen .. "}"),
+        el,
+        pandoc.RawBlock("latex", "\\endgroup"),
+      }
+    end
+    return el
   else
     return el
   end

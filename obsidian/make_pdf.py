@@ -22,10 +22,10 @@ import re
 # =========================
 
 # Location of Lua filters
-OBSIDIAN_FILTERS_ROOT = Path("/Users/ukh/git/dotfiles/obsidian/filters")
+OBSIDIAN_FILTERS_ROOT = Path("/Users/ukh/dotfiles/obsidian/filters")
 
 # LaTeX template (preamble included)
-LATEX_TEMPLATE = Path("/Users/ukh/git/dotfiles/obsidian/custom.latex")
+LATEX_TEMPLATE = Path("/Users/ukh/dotfiles/obsidian/custom.latex")
 
 # Primary Zotero bibliography
 MAIN_BIB = Path("/Users/ukh/Library/CloudStorage/Dropbox/references-zotero.bib")
@@ -68,6 +68,25 @@ def has_citations(workdir: Path, basename: str):
     if not auxfile.exists():
         return False
     return r"\citation" in auxfile.read_text(errors="ignore")
+
+
+def top_heading_level(md_path: Path):
+    """Return the shallowest ATX heading level outside code fences, or None."""
+    fence = None
+    levels = []
+    for line in md_path.read_text(errors="ignore").splitlines():
+        m = re.match(r"^\s{0,3}(`{3,}|~{3,})", line)
+        if m:
+            if fence is None:
+                fence = m.group(1)
+            elif m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence):
+                fence = None
+            continue
+        if fence is None:
+            h = re.match(r"^(#{1,6})\s+\S", line)
+            if h:
+                levels.append(len(h.group(1)))
+    return min(levels) if levels else None
 
 
 def make_pdf(argv):
@@ -128,6 +147,11 @@ def make_pdf(argv):
         "-V",
         "toccolor=gray",
     ]
+
+    # Promote headings so the shallowest level maps to \section
+    top_level = top_heading_level(infile)
+    if top_level and top_level > 1:
+        pandoc_cmd.append(f"--shift-heading-level-by={1 - top_level}")
 
     # ---- Collect bibliography files ----
     # Always include MAIN_BIB, plus any *.bib in the working directory.
