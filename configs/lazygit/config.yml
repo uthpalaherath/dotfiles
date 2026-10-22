@@ -1,3 +1,36 @@
+# Everforest dark medium, matching the yazi flavor
+gui:
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#a7c080"
+      - bold
+    inactiveBorderColor:
+      - "#4f585e"
+    searchingActiveBorderColor:
+      - "#dbbc7f"
+      - bold
+    optionsTextColor:
+      - "#7fbbb3"
+    selectedLineBgColor:
+      - "#3d484d"
+    inactiveViewSelectedLineBgColor:
+      - "#343f44"
+    cherryPickedCommitFgColor:
+      - "#2d353b"
+    cherryPickedCommitBgColor:
+      - "#83c092"
+    markedBaseCommitFgColor:
+      - "#2d353b"
+    markedBaseCommitBgColor:
+      - "#dbbc7f"
+    unstagedChangesColor:
+      - "#e67e80"
+    defaultFgColor:
+      - "#d3c6aa"
+  authorColors:
+    "*": "#d699b6"
+
 customCommands:
   - key: "G"
     description: "AI commit message (Claude)"
