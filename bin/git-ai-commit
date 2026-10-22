@@ -56,7 +56,7 @@ while true; do
     printf '%s\n' "$msg" >"$msgfile"
 
     printf '\n%s\n\n' "$msg"
-    read -r -p "Commit? [Y]es / [e]dit / [r]egenerate / [q]uit: " ans </dev/tty
+    read -r -p "Commit? [y]es / [e]dit / [r]egenerate / [q]uit: " ans </dev/tty
     case ${ans:-y} in
         [Yy]*) git commit -F "$msgfile" "$@"; exit ;;
         [Ee]*) git commit -e -F "$msgfile" "$@"; exit ;;

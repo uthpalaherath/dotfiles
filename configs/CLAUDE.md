@@ -29,6 +29,9 @@ Computational physicist (Ph.D., Computational Condensed Matter Physics), Sr. Res
 - Don't use semi-colon to combine clauses or sentences.
 - When using the example abbreviation `e.g.`, put a comma after it. When using `i.e.`, do not put a comma after it.
 
+## Git actions
+- Do not stage or commit files. I will do that myself.
+
 ## Remote Execution Policy: DCC and NCShare
 
 Never run commands directly on the login nodes `dcc-login.oit.duke.edu` or
