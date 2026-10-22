@@ -180,8 +180,8 @@ export PATH="/Users/ukh/dotfiles/:$PATH"
 export PATH="/Users/ukh/git/MatSciScripts/:$PATH"
 
 # Matplotlib
-export PYTHONPATH="/Users/ukh/git/dotfiles/matplotlib/:$PYTHONPATH"
-export MPLCONFIGDIR="/Users/ukh/git/dotfiles/matplotlib/"
+export PYTHONPATH="/Users/ukh/dotfiles/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/Users/ukh/dotfiles/matplotlib/"
 
 # System library
 export DYLD_LIBRARY_PATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/:$DYLD_LIBRARY_PATH"

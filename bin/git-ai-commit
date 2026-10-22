@@ -7,7 +7,7 @@
 set -euo pipefail
 
 model=${GIT_AI_COMMIT_MODEL:-sonnet}
-max_chars=${GIT_AI_COMMIT_MAX_CHARS:-60000}
+max_chars=60000
 
 git rev-parse --git-dir >/dev/null
 if git diff --cached --quiet; then
@@ -24,8 +24,7 @@ message, no code fences, no preamble.
   reason. Then: blank line, short "- " bullets wrapped at 72 chars.
 - Plain ASCII. No em or en dashes.'
 
-diff=$(git diff --cached --no-color --no-ext-diff --diff-algorithm=minimal \
-    -- . ':(exclude)*.lock' ':(exclude)package-lock.json')
+diff=$(git diff --cached --no-color --no-ext-diff --diff-algorithm=minimal)
 if (( ${#diff} > max_chars )); then
     diff="${diff:0:max_chars}
 [diff truncated]"
