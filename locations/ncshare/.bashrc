@@ -182,13 +182,14 @@ function y() {
 
 #------------------------------------------- PATHS -------------------------------------------
 
-# Matplotlib
-export PYTHONPATH="/hpc/home/uherathmudiyanselage1/dotfiles/matplotlib/:$PYTHONPATH"
-export MPLCONFIGDIR="/hpc/home/uherathmudiyanselage1/dotfiles/matplotlib/"
-
+# dotfiles
 export PATH="/hpc/home/uherathmudiyanselage1/dotfiles/:$PATH"
 export PATH="/hpc/home/uherathmudiyanselage1/MatSciScripts/:$PATH"
 export PATH="/hpc/home/uherathmudiyanselage1/dotfiles/slurm/:$PATH"
+
+# Matplotlib
+export PYTHONPATH="/hpc/home/uherathmudiyanselage1/dotfiles/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/hpc/home/uherathmudiyanselage1/dotfiles/matplotlib/"
 
 # globus
 export PATH="/hpc/home/uherathmudiyanselage1/apps/globusconnectpersonal-3.2.6/:$PATH"
