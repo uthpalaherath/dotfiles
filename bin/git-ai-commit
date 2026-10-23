@@ -1,12 +1,30 @@
 #!/usr/bin/env bash
-# Draft a commit message for the staged changes with Claude, show it, and ask
-# whether to commit as is, edit it in $EDITOR, regenerate, or abort.
-# Extra args go to git commit (e.g., --no-verify).
-#   git ai-commit [git-commit args]
-# GIT_AI_COMMIT_MODEL picks the model (default: sonnet).
+# Draft a commit message for the staged changes with Claude or Codex, show it,
+# and ask whether to commit as is, edit it in $EDITOR, regenerate, or abort.
+# Remaining args go to git commit (e.g., --no-verify).
+#   git ai-commit [-b claude|codex] [-m model] [--] [git-commit args]
+# GIT_AI_COMMIT_BACKEND and GIT_AI_COMMIT_MODEL override the defaults below.
 set -euo pipefail
 
-model=${GIT_AI_COMMIT_MODEL:-sonnet}
+default_backend=codex
+claude_model=sonnet
+codex_model=gpt-6-sol
+
+backend=${GIT_AI_COMMIT_BACKEND:-$default_backend}
+model=${GIT_AI_COMMIT_MODEL:-}
+while (( $# )); do
+    case $1 in
+        -b|--backend) backend=${2:?}; shift 2 ;;
+        -m|--model) model=${2:?}; shift 2 ;;
+        --) shift; break ;;
+        *) break ;;
+    esac
+done
+case $backend in
+    claude) name=Claude; model=${model:-$claude_model} ;;
+    codex) name=Codex; model=${model:-$codex_model} ;;
+    *) echo "git-ai-commit: unknown backend '$backend' (claude or codex)" >&2; exit 2 ;;
+esac
 max_chars=60000
 
 git rev-parse --git-dir >/dev/null
@@ -30,32 +48,47 @@ if (( ${#diff} > max_chars )); then
 [diff truncated]"
 fi
 
+context() {
+    echo "## Recent subjects"
+    git log -n 10 --format=%s 2>/dev/null || true
+    echo; echo "## Diffstat"
+    git diff --cached --stat
+    echo; echo "## Diff"
+    printf '%s\n' "$diff"
+}
+
 generate() {
-    echo "Generating commit message with Claude ($model)..." >&2
-    {
-        echo "## Recent subjects"
-        git log -n 10 --format=%s 2>/dev/null || true
-        echo; echo "## Diffstat"
-        git diff --cached --stat
-        echo; echo "## Diff"
-        printf '%s\n' "$diff"
-    } | claude -p --model "$model" --tools "" --no-session-persistence \
-        --system-prompt "$prompt" 2>"$errfile" | sed '/^```/d'
+    echo "Generating commit message with $name ($model)..." >&2
+    case $backend in
+        claude)
+            context | claude -p --model "$model" --tools "" \
+                --no-session-persistence --system-prompt "$prompt" \
+                2>"$errfile" | sed '/^```/d' ;;
+        codex)
+            # codex exec has no system prompt flag. The instructions go in as
+            # the prompt and the context is appended as a <stdin> block. Only
+            # the final message (-o) is kept, since stdout carries progress.
+            context | codex exec -m "$model" -s read-only \
+                --ephemeral --skip-git-repo-check --color never \
+                -o "$outfile" "$prompt" >/dev/null 2>"$errfile" &&
+                sed '/^```/d' "$outfile" ;;
+    esac
 }
 
 msgfile=$(mktemp "${TMPDIR:-/tmp}/git-ai-commit.XXXXXX")
 errfile=$(mktemp "${TMPDIR:-/tmp}/git-ai-commit-err.XXXXXX")
-trap 'rm -f "$msgfile" "$errfile"' EXIT
+outfile=$(mktemp "${TMPDIR:-/tmp}/git-ai-commit-out.XXXXXX")
+trap 'rm -f "$msgfile" "$errfile" "$outfile"' EXIT
 
 while true; do
     msg=$(generate) || {
         status=$?
-        echo "git-ai-commit: claude failed (exit $status):" >&2
+        echo "git-ai-commit: $backend failed (exit $status):" >&2
         cat "$errfile" >&2
         exit "$status"
     }
     if [[ -z ${msg//[[:space:]]/} ]]; then
-        echo "git-ai-commit: Claude returned nothing" >&2
+        echo "git-ai-commit: $name returned nothing" >&2
         exit 1
     fi
     printf '%s\n' "$msg" >"$msgfile"
