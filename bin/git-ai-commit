@@ -97,8 +97,12 @@ while true; do
     # A parent TUI (lazygit) can leave the tty raw with stray bytes queued,
     # e.g., terminal replies to its escape sequences. Restore cooked mode,
     # drain them, and require an explicit answer instead of defaulting to yes.
+    # min 0 time 0 makes reads non-blocking, so cat drains and hits EOF;
+    # this avoids fractional read -t, which macOS bash 3.2 lacks.
+    if stty -icanon -echo min 0 time 0 </dev/tty 2>/dev/null; then
+        cat </dev/tty >/dev/null
+    fi
     stty sane </dev/tty 2>/dev/null || true
-    while read -r -t 0.05 -n 256 _ </dev/tty; do :; done
     ans=
     until [[ $ans =~ ^[YyEeRrQq] ]]; do
         read -r -p "Commit? [y]es / [e]dit / [r]egenerate / [q]uit: " ans </dev/tty || ans=q
