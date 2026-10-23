@@ -17,7 +17,7 @@ foreground = { rgb = { r = 230, g = 152, b = 117 } } # orange  #e69875
 underline = true
 
 [display]
-compact = false
+compact = true
 use_pager = false
 
 [updates]
