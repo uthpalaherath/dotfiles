@@ -76,6 +76,7 @@ export FZF_ALT_C_OPTS="
   --walker-skip .git,node_modules,target
   --preview 'tree -C {}'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+command -v navi >/dev/null && eval "$(navi widget bash)"
 export EDITOR="vim"
 
 # rgf: fuzzy-search inside files, open the match in vim
