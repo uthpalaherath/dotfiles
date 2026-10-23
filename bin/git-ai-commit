@@ -40,14 +40,20 @@ generate() {
         echo; echo "## Diff"
         printf '%s\n' "$diff"
     } | claude -p --model "$model" --tools "" --no-session-persistence \
-        --system-prompt "$prompt" 2>/dev/null | sed '/^```/d'
+        --system-prompt "$prompt" 2>"$errfile" | sed '/^```/d'
 }
 
 msgfile=$(mktemp "${TMPDIR:-/tmp}/git-ai-commit.XXXXXX")
-trap 'rm -f "$msgfile"' EXIT
+errfile=$(mktemp "${TMPDIR:-/tmp}/git-ai-commit-err.XXXXXX")
+trap 'rm -f "$msgfile" "$errfile"' EXIT
 
 while true; do
-    msg=$(generate)
+    msg=$(generate) || {
+        status=$?
+        echo "git-ai-commit: claude failed (exit $status):" >&2
+        cat "$errfile" >&2
+        exit "$status"
+    }
     if [[ -z ${msg//[[:space:]]/} ]]; then
         echo "git-ai-commit: Claude returned nothing" >&2
         exit 1
@@ -55,8 +61,16 @@ while true; do
     printf '%s\n' "$msg" >"$msgfile"
 
     printf '\n%s\n\n' "$msg"
-    read -r -p "Commit? [y]es / [e]dit / [r]egenerate / [q]uit: " ans </dev/tty
-    case ${ans:-y} in
+    # A parent TUI (lazygit) can leave the tty raw with stray bytes queued,
+    # e.g., terminal replies to its escape sequences. Restore cooked mode,
+    # drain them, and require an explicit answer instead of defaulting to yes.
+    stty sane </dev/tty 2>/dev/null || true
+    while read -r -t 0.05 -n 256 _ </dev/tty; do :; done
+    ans=
+    until [[ $ans =~ ^[YyEeRrQq] ]]; do
+        read -r -p "Commit? [y]es / [e]dit / [r]egenerate / [q]uit: " ans </dev/tty || ans=q
+    done
+    case $ans in
         [Yy]*) git commit -F "$msgfile" "$@"; exit ;;
         [Ee]*) git commit -e -F "$msgfile" "$@"; exit ;;
         [Rr]*) continue ;;
