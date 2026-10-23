@@ -215,6 +215,7 @@ function y() {
 
 #------------------------------------------- PATHS -------------------------------------------
 
+# dotfiles
 export PATH="/hpc/home/ukh/dotfiles/:$PATH"
 export PATH="/hpc/home/ukh/MatSciScripts/:$PATH"
 
