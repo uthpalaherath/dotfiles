@@ -89,6 +89,8 @@ if [[ $- == *i* ]]; then
      --walker-skip .git,node_modules,target
      --preview 'tree -C {}'"
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    # navi: C-g inserts a filled-in cheat at the prompt
+    command -v navi >/dev/null && eval "$(navi widget bash)"
 fi
 export EDITOR="vim"
 

@@ -1,0 +1,25 @@
+# Everforest dark medium, matching tmux/yazi/lazygit
+[style.description]
+foreground = { rgb = { r = 157, g = 169, b = 160 } } # fg4  #9da9a0
+
+[style.command_name]
+foreground = { rgb = { r = 167, g = 192, b = 128 } } # green  #a7c080
+bold = true
+
+[style.example_text]
+foreground = { rgb = { r = 211, g = 198, b = 170 } } # fg  #d3c6aa
+
+[style.example_code]
+foreground = { rgb = { r = 127, g = 187, b = 179 } } # blue  #7fbbb3
+
+[style.example_variable]
+foreground = { rgb = { r = 230, g = 152, b = 117 } } # orange  #e69875
+underline = true
+
+[display]
+compact = false
+use_pager = false
+
+[updates]
+auto_update = true
+auto_update_interval_hours = 720
