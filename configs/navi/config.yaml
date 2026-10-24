@@ -4,8 +4,8 @@
 style:
   tag:
     color: green
-    width_percentage: 26
-    min_width: 20
+    width_percentage: 12
+    min_width: 12
   comment:
     color: blue
     width_percentage: 42
@@ -15,7 +15,8 @@ style:
 
 finder:
   command: fzf
-  overrides: --color=fg:#d3c6aa,hl:#a7c080,fg+:#d3c6aa,bg+:#3d484d,hl+:#a7c080,info:#dbbc7f,prompt:#7fbbb3,pointer:#a7c080,marker:#e69875,spinner:#dbbc7f,header:#859289,border:#4f585e,gutter:-1
+  overrides: --tmux center,95%,85% --color=fg:#d3c6aa,hl:#a7c080,fg+:#d3c6aa,bg+:#3d484d,hl+:#a7c080,info:#dbbc7f,prompt:#7fbbb3,pointer:#a7c080,marker:#e69875,spinner:#dbbc7f,header:#859289,border:#4f585e,gutter:-1
+  overrides_var: --tmux center,95%,85% --color=fg:#d3c6aa,hl:#a7c080,fg+:#d3c6aa,bg+:#3d484d,hl+:#a7c080,info:#dbbc7f,prompt:#7fbbb3,pointer:#a7c080,marker:#e69875,spinner:#dbbc7f,header:#859289,border:#4f585e,gutter:-1
 
 client:
   tealdeer: true
