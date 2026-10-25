@@ -1,7 +1,8 @@
 #!/bin/bash
 # Soft-blocks gpu-hp access for users who have used their GPU-hour grant.
 # Grants are read from Slurm association comments (gpu-hp:start=YYYY-MM-DDTHH:MM:SS,quota=<GPU-hours>).
-# Removes the institution QoS from the user's association and cancels their running and pending jobs under that QoS.
+# Removes the institution QoS from the user's association and cancels their pending jobs under that QoS.
+# Running jobs are cancelled too when CANCEL_RUNNING=true, otherwise they finish.
 # Meant to run from cron, e.g.:
 #   0 * * * * /path/to/gpu_hp_enforce.sh >> /data/admin/gpu-hp/enforce.log 2>&1
 # Usage: gpu_hp_enforce.sh [--dry-run]
@@ -9,6 +10,8 @@
 set -uo pipefail
 
 DRY_RUN=false
+# Cancel running jobs once the quota is reached (false lets them finish and overshoot the quota).
+CANCEL_RUNNING=false
 LOCK_FILE="/tmp/gpu_hp_enforce.lock"
 
 declare -A ACCOUNT_QOS_MAP=(
@@ -86,12 +89,14 @@ while IFS='|' read -r user_name account qos_list comment; do
     fi
 
     # Also catches jobs left running by a revoke from before running jobs were cancelled.
-    running=$(squeue -h -u "$user_name" -q "$qos" -t R,CF,S -o %i 2>/dev/null | xargs)
-    pending=$(squeue -h -u "$user_name" -q "$qos" -t PD -o %i 2>/dev/null | xargs)
-    if [[ -n "$running" ]]; then
-        echo "$now CANCEL running $user_name: $running"
-        run scancel $running
+    if $CANCEL_RUNNING; then
+        running=$(squeue -h -u "$user_name" -q "$qos" -t R,CF,S -o %i 2>/dev/null | xargs)
+        if [[ -n "$running" ]]; then
+            echo "$now CANCEL running $user_name: $running"
+            run scancel $running
+        fi
     fi
+    pending=$(squeue -h -u "$user_name" -q "$qos" -t PD -o %i 2>/dev/null | xargs)
     if [[ -n "$pending" ]]; then
         echo "$now CANCEL pending $user_name: $pending"
         run scancel $pending
