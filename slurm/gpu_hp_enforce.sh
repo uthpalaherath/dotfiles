@@ -1,7 +1,7 @@
 #!/bin/bash
 # Soft-blocks gpu-hp access for users who have used their GPU-hour grant.
 # Grants are read from Slurm association comments (gpu-hp:start=YYYY-MM-DDTHH:MM:SS,quota=<GPU-hours>).
-# Removes the institution QoS from the user's association (running jobs finish) and cancels their pending gpu-hp jobs.
+# Removes the institution QoS from the user's association and cancels their running and pending jobs under that QoS.
 # Meant to run from cron, e.g.:
 #   0 * * * * /path/to/gpu_hp_enforce.sh >> /data/admin/gpu-hp/enforce.log 2>&1
 # Usage: gpu_hp_enforce.sh [--dry-run]
@@ -75,18 +75,23 @@ while IFS='|' read -r user_name account qos_list comment; do
         echo "$now WARN no gpu-hp QoS for account: $user_name -> $account"
         continue
     fi
-    # Already revoked.
-    [[ ",$qos_list," != *",$qos,"* ]] && continue
-
     used=$(gpu_hours_used "$user_name" "$qos" "$start_date")
     if ! awk -v q="$quota" -v u="$used" 'BEGIN { exit !(u >= q) }'; then
         continue
     fi
 
-    echo "$now REVOKE $user_name ($account, $qos): ${used}/${quota} GPU-hours since $start_date"
-    run sacctmgr --immediate modify user where name="$user_name" account="$account" set QOS-="$qos"
+    if [[ ",$qos_list," == *",$qos,"* ]]; then
+        echo "$now REVOKE $user_name ($account, $qos): ${used}/${quota} GPU-hours since $start_date"
+        run sacctmgr --immediate modify user where name="$user_name" account="$account" set QOS-="$qos"
+    fi
 
+    # Also catches jobs left running by a revoke from before running jobs were cancelled.
+    running=$(squeue -h -u "$user_name" -q "$qos" -t R,CF,S -o %i 2>/dev/null | xargs)
     pending=$(squeue -h -u "$user_name" -q "$qos" -t PD -o %i 2>/dev/null | xargs)
+    if [[ -n "$running" ]]; then
+        echo "$now CANCEL running $user_name: $running"
+        run scancel $running
+    fi
     if [[ -n "$pending" ]]; then
         echo "$now CANCEL pending $user_name: $pending"
         run scancel $pending
