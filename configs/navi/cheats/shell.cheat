@@ -1,0 +1,67 @@
+; awk, sed and loop one-liners from "Handy commands for Linux" and "Useful awk commands".
+
+% shell, awk
+
+# Sum a column
+awk '{s+=$<column>} END {print s}' <file>
+
+# Running sum of a column
+awk '{s+=$<column>} {print s}' <file>
+
+# Sum a column over the first N lines
+awk '{s+=$<column>} NR==<lines> {print s; exit}' <file>
+
+# Weighted sum of two columns
+awk '{s+=($<column>*$<weight_column>)} END {print s}' <file>
+
+# Sum each row
+awk '{for(i=1;i<=NF;i++) t+=$i; print t; t=0}' <file>
+
+# Print columns, skipping comment lines
+awk '/^#/ {next} {print $<column>}' <file>
+
+# Print a column for a line range
+awk 'NR==<first>, NR==<last> {print $<column>}' <file>
+
+$ file: ls -p | grep -v /
+
+% shell, sed
+
+# Replace text in a file (macOS)
+sed -i '' -e 's/<old>/<new>/g' <file>
+
+# Replace text in a file (GNU)
+sed -i -e 's/<old>/<new>/g' <file>
+
+# Replace whole lines matching a pattern (GNU)
+sed -i -e 's/.*<pattern>.*/<new>/' <file>
+
+$ file: ls -p | grep -v /
+
+% shell, loops
+
+# Strip the leading directory from paths
+for i in */*; do echo ${i#*/}; done
+
+# Zero-padded sequence
+for i in $(seq 0 <last>); do printf '%02d\n' $i; done
+
+# Count lines in files with an extension
+find . -name '*.<ext>' | xargs wc -l
+
+# Append a suffix to every file in the directory
+for i in *; do mv "$i" "$i.<suffix>"; done
+
+# Tail the newest slurm output
+tail $(ls slurm-* | sort -V | tail -n 1)
+
+# Submit a job named after the parent directory
+sbatch -J <prefix>-$(echo $PWD | awk -F/ '{print $(NF-1)}') <script>
+
+# Submit a job in each subdirectory, named after it
+for i in */; do cd $i; sbatch -J $(echo $i | sed 's:/*$::')-<suffix> <script>; cd ..; done
+
+# Last TOTEN from OUTCAR in each subdirectory
+for i in */; do grep TOTEN $i/OUTCAR | tail -n 1 | awk '{print $5}'; done
+
+$ script: ls *.sh *.slurm 2>/dev/null

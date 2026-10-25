@@ -1,0 +1,138 @@
+; Slurm commands collected from the Obsidian vault (DCC and NCShare notes).
+; Picklists query Slurm, so they are empty off-cluster. Type a value instead.
+
+% slurm, jobs
+
+# Interactive GPU shell
+srun -p <partition> --gres=gpu:1 --pty bash -i
+
+# Show CPU model behind a node feature
+srun -A <account> -p <partition> --constraint=<feature> -t 00:00:30 lscpu | grep "Model name:"
+
+# Show job time limit and run time
+scontrol show job <job_id> | grep TimeLimit
+
+# Extend a job's time limit
+scontrol update job <job_id> TimeLimit=<time_limit>
+
+# Detailed job allocation, including GPU indices
+scontrol show jobid -dd <job_id>
+
+# Requested vs allocated TRES for a job
+sacct -j <job_id> --allocations -o JobID,JobName,NodeList,ReqTRES,AllocTRES -P -X
+
+# TRES usage for a job (GPU util, GPU memory, RSS)
+sacct -j <job_id> --format=JobID%15,State,TimeLimit,Elapsed,NodeList,AllocTRES%60,TresUsageInTot%100
+
+# Live CPU/memory monitor for a running job
+jobstats.sh <job_id>
+
+# GPUs visible inside a job
+nvidia-smi -L; echo $CUDA_VISIBLE_DEVICES; scontrol show job $SLURM_JOB_ID | grep GRES
+
+$ partition: sinfo -h -o '%R' 2>/dev/null | sort -u
+$ account: sacctmgr -nP show assoc where user=$USER format=account 2>/dev/null | sort -u
+$ feature: sinfo -h -o '%f' 2>/dev/null | tr ',' '\n' | sort -u
+$ job_id: squeue -h -u $USER -o '%i %j %P %T' 2>/dev/null --- --column 1
+$ time_limit: printf '%s\n' 1-00:00:00 3-00:00:00 7-00:00:00 14-00:00:00
+
+% slurm, accounting
+
+# Jobs of all users in an account since a date
+sacct -a -A <account> -S <start>
+
+# GPU-hours per user for an account and partition, without preempted duplicates
+sacct -aXDPn -T -S <start> -E <end> -A <account> -r <partition> --format=User,ElapsedRaw,AllocTRES --delimiter='|' | awk -F'|' '{g=0; n=split($3,t,","); for(i=1;i<=n;i++) if(t[i]~/^gres\/gpu=/){split(t[i],kv,"="); g=kv[2]+0} u[$1]+=$2*g/3600} END{for(k in u) printf "%-12s %10.0f\n", k, u[k]}' | sort -k2 -rn
+
+# Total GPU-hours for an account
+sacct -aXDPn -T -S <start> -E <end> -A <account> --format=ElapsedRaw,AllocTRES --delimiter='|' | awk -F'|' '{g=0; n=split($2,t,","); for(i=1;i<=n;i++) if(t[i]~/^gres\/gpu=/){split(t[i],kv,"="); g=kv[2]+0} s+=$1*g} END{printf "%.0f GPU-hours\n", s/3600}'
+
+# Top GPU users (hours)
+sreport user TopUsage -t Hours TopCount=500 -T gres/gpu Start=<start>
+
+# GPU-hours by account
+sreport job SizesByAccount FlatView -t hours Grouping= account=<account> start=<start> -T gres/gpu
+
+# Account utilization by user
+sreport cluster AccountUtilizationByUser Tree -t hours account=<account> start=<start> -T <tres>
+
+# Per-user efficiency report
+slurm-report -u <user> --starttime <start>
+
+# Detailed partition report for a user
+slurm-report -S <start> -E <end> -r <partition> -u <user> --detailed --plain
+
+# Total hours from a partition summary
+slurm-report -r <partition> -S <start> -E <end> --summary --plain | tail -n +5 | awk '{s+=$3} END {print s}'
+
+# Remaining billing minutes on a QoS
+scontrol show assoc_mgr flags=qos qos=<qos> | grep 'GrpTRESMins=' | grep -o 'billing=[^()]*([0-9]*)' | grep -o '[0-9]*'
+
+$ partition: sinfo -h -o '%R' 2>/dev/null | sort -u
+$ account: sacctmgr -nP show account format=account 2>/dev/null | sort -u
+$ user: sacctmgr -nP show assoc where account=<account> format=user 2>/dev/null | grep . | sort -u
+$ qos: sacctmgr -nP show qos format=name 2>/dev/null
+$ tres: printf '%s\n' gres/gpu cpu
+$ start: date +%Y-%m-01
+$ end: date +%Y-%m-%d
+
+% slurm, limits
+
+# My associations and limits
+sacctmgr show assoc where user=$USER format=account%35,qos%30,GrpTres%50,MaxJobs
+
+# Associations in an account
+sacctmgr show assoc where account=<account> format=account%35,user,qos,grptres%30
+
+# List accounts
+sacctmgr show accounts
+
+# QoS limits
+sacctmgr show qos format=name%20,priority,MaxWall,MaxTresPU,GrpTres%20,GrpTRESMins%20,MaxSubmitJobsPU
+
+# Partition configuration
+scontrol show partition <partition>
+
+# Partition access and nodes
+scontrol show partition <partition> | grep -E 'Allow|Nodes|TRES|QoS'
+
+# Node GRES and allocated TRES
+scontrol show node <node> | grep -E 'Gres|CfgTRES|AllocTRES'
+
+# Nodes with more than N MB of memory
+sinfo -N -o "%N %m" | awk -v m=<min_mem_mb> '$2+0 > m {print $1, $2}'
+
+# Memory sizes of nodes in a partition
+scontrol show node $(sinfo -h -p <partition> -o '%N') | grep -o 'RealMemory=[0-9]*' | sort | uniq -c
+
+$ partition: sinfo -h -o '%R' 2>/dev/null | sort -u
+$ account: sacctmgr -nP show account format=account 2>/dev/null | sort -u
+$ node: sinfo -h -N -o '%N' 2>/dev/null | sort -u
+$ min_mem_mb: printf '%s\n' 500000 1000000 2000000
+
+% slurm, admin
+
+# Set a user's GPU limit in an account
+sacctmgr -i modify user where account=<account> name=<user> set GrpTRES=gres/gpu=<gpus>
+
+# Add a user to an account
+sacctmgr add user name=<netid> account=<account>
+
+# Remove a user from an account
+sacctmgr -i delete user where account=<account> name=<user>
+
+# Add a QoS to an account
+sacctmgr modify account name=<account> set QOS+=<qos>
+
+# Set a QoS billing-minute limit
+sacctmgr modify qos <qos> set GrpTRESMins=billing=<minutes>
+
+# Reset a QoS usage counter
+sacctmgr modify qos where name=<qos> set RawUsage=0
+
+# Reread slurm.conf
+scontrol reconfigure
+
+$ account: sacctmgr -nP show account format=account 2>/dev/null | sort -u
+$ user: sacctmgr -nP show assoc where account=<account> format=user 2>/dev/null | grep . | sort -u
+$ qos: sacctmgr -nP show qos format=name 2>/dev/null
