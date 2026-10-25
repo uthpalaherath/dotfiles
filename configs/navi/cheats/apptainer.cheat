@@ -1,0 +1,19 @@
+; From the "Apptainer" note.
+
+% apptainer
+
+# Move Apptainer tmp and cache off /tmp
+export APPTAINER_TMPDIR=<dir> APPTAINER_CACHEDIR=<dir>
+
+# Build an image from a definition file
+apptainer build <image>.sif <definition>
+
+# Check unprivileged user namespaces (fakeroot) on a node
+srun --nodelist=<node> unshare -Ur id
+
+# Allow unprivileged user namespaces (admin, Ubuntu AppArmor)
+sudo sysctl kernel.apparmor_restrict_unprivileged_userns=0
+
+$ dir: echo /work/$USER/tmp
+$ definition: ls *.def 2>/dev/null
+$ node: sinfo -h -N -o '%N' 2>/dev/null | sort -u
