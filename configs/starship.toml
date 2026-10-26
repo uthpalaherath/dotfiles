@@ -4,8 +4,8 @@
 add_newline = true
 command_timeout = 1000
 format = """
-$conda$username$hostname$directory$git_branch$git_state$git_status\
-${env_var.SLURM_JOB_ID}$python$cmd_duration$status
+${env_var.VIRTUAL_ENV_PROMPT}$conda$username$hostname$directory$git_branch$git_state$git_status\
+${env_var.SLURM_JOB_ID}$cmd_duration$status
 $character"""
 
 [username]
@@ -49,14 +49,12 @@ diverged = "⇡${ahead_count}⇣${behind_count} "
 [env_var.SLURM_JOB_ID]
 format = "[job:$env_value](fg:166) "
 
+[env_var.VIRTUAL_ENV_PROMPT]
+format = '[\($env_value\)](fg:244) '
+
 [conda]
 ignore_base = false
 format = '[\($environment\)](fg:244) '
-
-[python]
-format = "[(venv:$virtualenv)](fg:244) "
-detect_extensions = []
-detect_files = []
 
 [cmd_duration]
 min_time = 10_000
