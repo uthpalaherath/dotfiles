@@ -11,7 +11,7 @@ set -uo pipefail
 
 DRY_RUN=false
 # Cancel running jobs once the quota is reached (false lets them finish and overshoot the quota).
-CANCEL_RUNNING=false
+CANCEL_RUNNING=true
 LOCK_FILE="/tmp/gpu_hp_enforce.lock"
 
 declare -A ACCOUNT_QOS_MAP=(
