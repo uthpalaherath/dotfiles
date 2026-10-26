@@ -23,8 +23,12 @@
 #
 # --block only blocks users who were already warned: at least MIN_WARNINGS
 # distinct hours with an email in HISTORY_FILE over the last
-# WARNING_WINDOW_HOURS. Override with --min-warnings N (0 blocks everyone
-# found). Users already in BLOCK_FILE stay blocked regardless.
+# WARNING_WINDOW_HOURS, counting only warnings after their last unblock.
+# Override with --min-warnings N (0 blocks everyone found).
+#
+# A user gets one BLOCKED email, from the run that blocks them. While they
+# are in BLOCK_FILE they are not emailed again, but every run still records
+# them in HISTORY_FILE with the action "blocked".
 #
 # Every --email/--block/--unblock run (except dry runs) appends one row per
 # user and host to HISTORY_FILE.
@@ -217,16 +221,18 @@ record_history() {
   ' <<< "$matches" >> "$HISTORY_FILE"
 }
 
-# Number of distinct hours in the warning window in which the user was emailed.
-# Hours, not rows, so a user on several login nodes isn't counted twice.
+# Number of distinct hours in the warning window in which the user was emailed,
+# ignoring anything before their last unblock. Hours, not rows, so a user on
+# several login nodes isn't counted twice.
 warning_count() {
   local cutoff
   cutoff="$(date -d "-${WARNING_WINDOW_HOURS} hours" '+%F %T')"
   [[ -s "$HISTORY_FILE" ]] || { echo 0; return; }
   awk -F'\t' -v u="$1" -v cutoff="$cutoff" '
-    NR > 1 && $2 == u && $1 >= cutoff && $7 ~ /email/ { hours[substr($1, 1, 13)] = 1 }
+    NR == FNR { if (FNR > 1 && $2 == u && $7 == "unblock" && $1 > since) since = $1; next }
+    FNR > 1 && $2 == u && $1 >= cutoff && $1 > since && $7 ~ /email/ { hours[substr($1, 1, 13)] = 1 }
     END { n = 0; for (h in hours) n++; print n }
-  ' "$HISTORY_FILE"
+  ' "$HISTORY_FILE" "$HISTORY_FILE"
 }
 
 # Set MaxJobs=0 on all of a user's associations. The original values are saved
@@ -283,7 +289,7 @@ unblock_users() {
 process_users() {
   local matches="$1"
   local user details kill_cmds addr body subject block_note ban_warning action
-  local sent=0 blocked=0 skipped=0
+  local sent=0 blocked=0 still_blocked=0 skipped=0
   local blocked_text="
 YOUR SLURM JOBS HAVE BEEN BLOCKED because of the processes listed below.
 New jobs will stay pending and will not start. Once these processes are
@@ -305,12 +311,25 @@ stopped, contact rescomputing@duke.edu to have your access restored.
     block_note=""
     local warnings already_blocked=0
     grep -q "^${user}|" "$BLOCK_FILE" 2>/dev/null && already_blocked=1
+
+    # Already blocked: they got their BLOCKED email, so only keep the block in
+    # place and log what they are still running.
+    if [[ "$already_blocked" -eq 1 ]]; then
+      echo "Still blocked: $user (not emailed)"
+      if [[ "$block" -eq 1 ]]; then
+        block_user "$user" || true
+      fi
+      ((still_blocked++)) || true
+      record_history "$user" "$matches" "blocked"
+      continue
+    fi
+
     warnings=0
-    if [[ "$block" -eq 1 && "$already_blocked" -eq 0 && "$MIN_WARNINGS" -gt 0 ]]; then
+    if [[ "$block" -eq 1 && "$MIN_WARNINGS" -gt 0 ]]; then
       warnings="$(warning_count "$user")"
     fi
 
-    if [[ "$block" -eq 1 && "$already_blocked" -eq 0 && "$warnings" -lt "$MIN_WARNINGS" ]]; then
+    if [[ "$block" -eq 1 && "$warnings" -lt "$MIN_WARNINGS" ]]; then
       echo "Not blocking $user: warned in $warnings of the required $MIN_WARNINGS hours (last ${WARNING_WINDOW_HOURS}h)"
     elif [[ "$block" -eq 1 ]]; then
       if [[ "$dry_run" -eq 1 ]]; then
@@ -323,12 +342,6 @@ stopped, contact rescomputing@duke.edu to have your access restored.
         ((blocked++)) || true
         block_note="$blocked_text"
       fi
-    fi
-
-    # Users blocked on an earlier run see the notice on every email, not just
-    # the one from the run that blocked them.
-    if [[ -z "$block_note" && "$already_blocked" -eq 1 ]]; then
-      block_note="$blocked_text"
     fi
 
     if [[ "$email" -eq 1 ]]; then
@@ -415,9 +428,9 @@ Duke Research Computing Team
 
   echo ""
   if [[ "$dry_run" -eq 1 ]]; then
-    echo "Done (dry run, nothing sent or changed). Would block: $blocked, Skipped: $skipped"
+    echo "Done (dry run, nothing sent or changed). Would block: $blocked, Still blocked: $still_blocked, Skipped: $skipped"
   else
-    echo "Done. Emails sent: $sent, Blocked: $blocked, Skipped: $skipped"
+    echo "Done. Emails sent: $sent, Blocked: $blocked, Still blocked: $still_blocked, Skipped: $skipped"
   fi
 }
 
