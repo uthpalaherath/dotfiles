@@ -1,0 +1,69 @@
+# Shared starship prompt for zsh (mac) and bash (clusters), colors from honukai
+# - Uthpala Herath
+
+add_newline = true
+command_timeout = 1000
+format = """
+$conda$username$hostname$directory$git_branch$git_state$git_status\
+${env_var.SLURM_JOB_ID}$python$cmd_duration$status
+$character"""
+
+[username]
+show_always = true
+style_user = "fg:125"
+style_root = "bold fg:160"
+format = "[$user]($style) "
+
+[hostname]
+ssh_only = false
+style = "fg:166"
+format = "[at](fg:244) [$hostname]($style) "
+
+[directory]
+style = "fg:64"
+truncation_length = 0
+truncate_to_repo = false
+format = "[in](fg:244) [$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+symbol = "\uf418 "
+format = "[on](fg:244) [$symbol$branch]($style) "
+style = "fg:61"
+
+[git_status]
+format = """([$conflicted](fg:160)[$staged](fg:64)[$modified](fg:166)[$renamed](fg:166)\
+[$deleted](fg:160)[$untracked](fg:244)[$stashed](fg:61)[$ahead_behind](fg:125))"""
+conflicted = "\uf071 ${count} "
+staged = "\uf067 ${count} "
+modified = "\uf040 ${count} "
+renamed = "\uf061 ${count} "
+deleted = "\uf1f8 ${count} "
+untracked = "\uf128 ${count} "
+stashed = "\uf187 ${count} "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇡${ahead_count}⇣${behind_count} "
+
+[env_var.SLURM_JOB_ID]
+format = "[job:$env_value](fg:166) "
+
+[conda]
+ignore_base = false
+format = '[\($environment\)](fg:244) '
+
+[python]
+format = "[(venv:$virtualenv)](fg:244) "
+detect_extensions = []
+detect_files = []
+
+[cmd_duration]
+min_time = 10_000
+format = "[took $duration](fg:244) "
+
+[status]
+disabled = false
+format = "[✖ $status](fg:160) "
+
+[character]
+success_symbol = "[\\$](fg:244)"
+error_symbol = "[\\$](fg:160)"

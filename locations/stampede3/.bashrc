@@ -136,11 +136,6 @@ if [ -d ~/.bashrc.d ]; then
 fi
 unset rc
 
-# Source for colorful terminal
-if [[ $- == *i* ]] && [ -f ~/.bash_prompt ]; then
-    source ~/.bash_prompt
-fi
-
 # Memory
 ulimit -s unlimited
 
@@ -151,6 +146,14 @@ if [[ $- == *i* ]]; then
     HISTCONTROL=ignoreboth:erasedups
     export PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 fi
+
+# Starship prompt
+_starship=$(command -v starship 2>/dev/null || { [ -x ~/.local/bin/starship ] && echo ~/.local/bin/starship; })
+if [[ $- == *i* ]] && [ -n "$_starship" ]; then
+    [ -f ~/dotfiles/configs/starship.toml ] && export STARSHIP_CONFIG=~/dotfiles/configs/starship.toml
+    eval "$("$_starship" init bash)"
+fi
+unset _starship
 
 # Color folders
 export LS_OPTIONS='--color=auto'
@@ -168,6 +171,7 @@ export MKL_NUM_THREADS=1
 export MKL_DYNAMIC=FALSE
 
 # PYTHON
+export MAMBA_CHANGEPS1=false
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba shell init' !!
 export MAMBA_EXE='/home1/05979/uthpala/miniforge3/bin/mamba';

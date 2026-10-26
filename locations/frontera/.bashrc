@@ -127,8 +127,13 @@ if [[ -t 0 && $- = *i* ]];then
     stty -ixon
 fi
 
-# Source for colorful terminal
-source ~/.bash_prompt
+# Starship prompt
+_starship=$(command -v starship 2>/dev/null || { [ -x ~/.local/bin/starship ] && echo ~/.local/bin/starship; })
+if [[ $- == *i* ]] && [ -n "$_starship" ]; then
+    [ -f ~/dotfiles/configs/starship.toml ] && export STARSHIP_CONFIG=~/dotfiles/configs/starship.toml
+    eval "$("$_starship" init bash)"
+fi
+unset _starship
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -274,6 +279,7 @@ mktar() { tar cvf  "${1%%/}.tar"     "${1%%/}/"; }
 mktgz() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
 mktbz() { tar cvjf "${1%%/}.tar.bz2" "${1%%/}/"; }
 
+export CONDA_CHANGEPS1=false
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/home1/05979/uthpala/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"

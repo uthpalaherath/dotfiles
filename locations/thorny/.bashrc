@@ -11,8 +11,13 @@ fi
 # Memory
 ulimit -s unlimited
 
-# Source for colorful terminal
-source ~/.bash_prompt
+# Starship prompt
+_starship=$(command -v starship 2>/dev/null || { [ -x ~/.local/bin/starship ] && echo ~/.local/bin/starship; })
+if [[ $- == *i* ]] && [ -n "$_starship" ]; then
+    [ -f ~/dotfiles/configs/starship.toml ] && export STARSHIP_CONFIG=~/dotfiles/configs/starship.toml
+    eval "$("$_starship" init bash)"
+fi
+unset _starship
 
 # set stty off
 if [[ -t 0 && $- = *i* ]]
@@ -77,6 +82,7 @@ module load atomistic/abinit/9.8.4_intel22_impi22
 # Python
 module load lang/python/intelpython_3.9
 
+export CONDA_CHANGEPS1=false
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/shared/software/intel/oneapi/intelpython/latest/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"

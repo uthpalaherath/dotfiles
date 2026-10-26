@@ -3,28 +3,16 @@
 
 #------------------------------------------- INITIALIZATION -------------------------------------------
 
-# Path to your oh-my-zsh installation.
-export ZSH="/Users/ukh/.oh-my-zsh"
+# Completion
+bindkey -e
+autoload -Uz compinit && compinit
 
-ZSH_THEME="honukai"
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions fzf zsh-syntax-highlighting web-search) # copydir dirhistory macos)
-DISABLE_UNTRACKED_FILES_DIRTY="false"
-
-# zsh-autosuggestions
-bindkey '`' autosuggest-accept
-CASE_SENSITIVE="true"
-HYPHEN_INSENSITIVE="true"
+# Colors for ls and grep
+export CLICOLOR=1
+alias grep='grep --color=auto'
 
 # Set up fzf key bindings and fuzzy completion
 eval "$(fzf --zsh)"
-
-source $ZSH/oh-my-zsh.sh
 
 # Memory
 ulimit -s hard
@@ -290,10 +278,21 @@ alias projects="cd /Users/ukh/Library/CloudStorage/Box-Box/Projects"
 alias devops="cd /Users/ukh/Library/CloudStorage/Box-Box/RC/DevOps"
 alias vault="cd '/Users/ukh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notebooks'"
 
+#------------------------------------------- PROMPT -------------------------------------------
+
+[ -f ~/dotfiles/configs/starship.toml ] && export STARSHIP_CONFIG=~/dotfiles/configs/starship.toml
+command -v starship >/dev/null && eval "$(starship init zsh)"
+
+# plugins
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 #------------------------------------------- TMUX -------------------------------------------
 
 export TMUX_DEVICE_NAME=MBP
 tm() {
-    [[ $- == *i* && -t 0 && -z $TMUX ]] && tmux new -A -s $TMUX_DEVICE_NAME
+    if [[ $- == *i* && -t 0 && -z $TMUX ]]; then
+        tmux new -A -s $TMUX_DEVICE_NAME
+    fi
 }
 tm

@@ -37,8 +37,5 @@
 
 [submodule]
 	recurse = true
-[oh-my-zsh]
-    hide-status = 0
-    hide-dirty = 0
 [credential]
 	helper = osxkeychain

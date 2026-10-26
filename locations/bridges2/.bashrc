@@ -21,8 +21,13 @@ then
 fi
 export PATH
 
-# Source for colorful terminal
-source ~/.bash_prompt
+# Starship prompt
+_starship=$(command -v starship 2>/dev/null || { [ -x ~/.local/bin/starship ] && echo ~/.local/bin/starship; })
+if [[ $- == *i* ]] && [ -n "$_starship" ]; then
+    [ -f ~/dotfiles/configs/starship.toml ] && export STARSHIP_CONFIG=~/dotfiles/configs/starship.toml
+    eval "$("$_starship" init bash)"
+fi
+unset _starship
 
 # Memory
 ulimit -s unlimited
@@ -59,6 +64,7 @@ rgf() {
 }
 
 # PYTHON
+export MAMBA_CHANGEPS1=false
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba shell init' !!
 export MAMBA_EXE='/jet/home/uthpala/miniforge3/bin/mamba';

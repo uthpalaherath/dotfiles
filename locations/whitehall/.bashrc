@@ -21,8 +21,13 @@ ulimit -s unlimited
 source /opt/intel/bin/compilervars.sh intel64
 source /opt/intel/mkl/bin/mklvars.sh intel64
 
-# source .bash_prompt for colors
-source ~/.bash_prompt
+# Starship prompt
+_starship=$(command -v starship 2>/dev/null || { [ -x ~/.local/bin/starship ] && echo ~/.local/bin/starship; })
+if [[ $- == *i* ]] && [ -n "$_starship" ]; then
+    [ -f ~/dotfiles/configs/starship.toml ] && export STARSHIP_CONFIG=~/dotfiles/configs/starship.toml
+    eval "$("$_starship" init bash)"
+fi
+unset _starship
 
 #------------------------------------------- PATHS -------------------------------------------
 
