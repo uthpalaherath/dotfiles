@@ -31,6 +31,7 @@ export CXX="mpicxx"
 export FC="mpif90"
 
 # PYTHON
+export MAMBA_CHANGEPS1=false
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba shell init' !!
 export MAMBA_EXE='/Users/ukh/miniforge3/bin/mamba';
