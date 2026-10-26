@@ -23,6 +23,8 @@ format = "[at](fg:244) [$hostname]($style) "
 style = "fg:64"
 truncation_length = 0
 truncate_to_repo = false
+read_only = " "
+read_only_style = "fg:160"
 format = "[in](fg:244) [$path]($style)[$read_only]($read_only_style) "
 
 [git_branch]
