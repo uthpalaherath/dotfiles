@@ -144,7 +144,7 @@ if [[ $- == *i* ]]; then
     export HISTIGNORE="pwd:ls:cd"
     shopt -s histappend
     HISTCONTROL=ignoreboth:erasedups
-    export PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+    PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 fi
 
 # Starship prompt
