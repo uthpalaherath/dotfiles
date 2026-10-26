@@ -289,6 +289,6 @@ export PATH="/hpc/group/rescomp/ukh/apps/xclip/build/bin/:$PATH"
 #------------------------------------------- TMUX -------------------------------------------
 
 export TMUX_DEVICE_NAME=dcc
-if [[ $- == *i* && -t 0 && -z $TMUX && $(hostname -s) == dcc-login-* ]]; then
+if [[ $- == *i* && -t 0 && -z $TMUX && $(hostname -s) == dcc-login-01 ]]; then
     tmux new -A -s $TMUX_DEVICE_NAME
 fi
