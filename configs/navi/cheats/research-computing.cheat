@@ -1,0 +1,6 @@
+; Commands useful for Research Computing workflows
+
+% slurm, association-info
+
+# Association info
+sacctmgr show assoc where user=<user> format=account%30,GrpTRES%50,MaxJobs
