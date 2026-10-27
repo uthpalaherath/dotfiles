@@ -62,7 +62,7 @@ format = "[took $duration](fg:244) "
 
 [status]
 disabled = false
-format = "[ $status](fg:160) "
+format = "[ exit $status](fg:160) "
 
 [character]
 success_symbol = "[\\$](fg:244)"
