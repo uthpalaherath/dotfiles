@@ -8,7 +8,7 @@ set -euo pipefail
 
 default_backend=codex
 claude_model=sonnet
-codex_model=gpt-6-sol
+codex_model=gpt-5.6-luna
 
 backend=${GIT_AI_COMMIT_BACKEND:-$default_backend}
 model=${GIT_AI_COMMIT_MODEL:-}
