@@ -3,14 +3,15 @@
 # Grants are read from Slurm association comments (gpu-hp:start=YYYY-MM-DDTHH:MM:SS,quota=<GPU-hours>).
 # Removes the institution QoS from the user's association and cancels their pending jobs under that QoS.
 # Running jobs are cancelled too when CANCEL_RUNNING=true, otherwise they finish.
-# The user is emailed once, when their access is revoked.
+# With --email, the user is emailed once, when their access is revoked.
 # Meant to run from cron, e.g.:
-#   0 * * * * /path/to/gpu_hp_enforce.sh >> /data/admin/gpu-hp/enforce.log 2>&1
-# Usage: gpu_hp_enforce.sh [--dry-run]
+#   0 * * * * /path/to/gpu_hp_enforce.sh --email >> /data/admin/gpu-hp/enforce.log 2>&1
+# Usage: gpu_hp_enforce.sh [--dry-run] [--email]
 
 set -uo pipefail
 
 DRY_RUN=false
+EMAIL=false
 # Cancel running jobs once the quota is reached (false lets them finish and overshoot the quota).
 CANCEL_RUNNING=true
 LOCK_FILE="/tmp/gpu_hp_enforce.lock"
@@ -36,15 +37,17 @@ declare -A ACCOUNT_QOS_MAP=(
 GRANT_RE='^gpu-hp:start=([0-9]{4}-[0-9]{2}-[0-9]{2}([Tt][0-9]{2}:[0-9]{2}:[0-9]{2})?),quota=([0-9]+([.][0-9]+)?)$'
 
 usage() {
-    echo "Usage: $0 [--dry-run]"
+    echo "Usage: $0 [--dry-run] [--email]"
 }
 
-case "${1:-}" in
-    "") ;;
-    --dry-run) DRY_RUN=true ;;
-    -h|--help) usage; exit 0 ;;
-    *) usage; exit 1 ;;
-esac
+for arg in "$@"; do
+    case "$arg" in
+        --dry-run) DRY_RUN=true ;;
+        --email) EMAIL=true ;;
+        -h|--help) usage; exit 0 ;;
+        *) usage; exit 1 ;;
+    esac
+done
 
 # Skip this run if the previous one is still going.
 exec 9>"$LOCK_FILE"
@@ -178,7 +181,7 @@ while IFS='|' read -r user_name account qos_list comment; do
         run scancel $pending
     fi
 
-    if $revoked_now; then
+    if $revoked_now && $EMAIL; then
         email_quota_reached "$user_name" "$account" "$qos" "$quota" "$used" "$start_date" "$(echo $running $pending)"
     fi
 done <<< "$assocs"

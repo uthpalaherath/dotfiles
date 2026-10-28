@@ -1,12 +1,13 @@
 #!/bin/bash
 # Records a new gpu-hp GPU-hour grant for a user and (re)adds the institution QoS to their association.
 # The grant is stored on the association comment as gpu-hp:start=YYYY-MM-DDTHH:MM:SS,quota=<GPU-hours>
-# and appended to a CSV for history. A new grant replaces the previous one, and the user is emailed.
+# and appended to a CSV for history. A new grant replaces the previous one.
 # In place of the quota:
 #   revoke  Temporarily remove the institution QoS (keeps the grant). Restore with a new grant.
 #   remove  Clear the grant and the user's QoS override so the association inherits from the account
 #           again. Run after the user is removed from the institution's HP group in COmanage.
-# Usage: gpu_hp_grant.sh [--dry-run] [--csv path] [-a account] [-s start_date] <user> <quota_gpu_hours|revoke|remove>
+# Usage: gpu_hp_grant.sh [--dry-run] [--email] [--csv path] [-a account] [-s start_date] <user> <quota_gpu_hours|revoke|remove>
+#   --email        Email the user about a new grant
 #   -a account     Slurm account (default: user's DefaultAccount)
 #   -s start_date  YYYY-MM-DD[THH:MM:SS] (default: now)
 
@@ -14,6 +15,7 @@ set -euo pipefail
 
 CSV_FILE="/data/admin/gpu-hp/gpu_hp_grants.csv"
 DRY_RUN=false
+EMAIL=false
 account=""
 
 # Email settings
@@ -37,13 +39,14 @@ declare -A ACCOUNT_QOS_MAP=(
 )
 
 usage() {
-    echo "Usage: $0 [--dry-run] [--csv path] [-a account] [-s start_date] <user> <quota_gpu_hours|revoke|remove>"
+    echo "Usage: $0 [--dry-run] [--email] [--csv path] [-a account] [-s start_date] <user> <quota_gpu_hours|revoke|remove>"
 }
 
 positional=()
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --dry-run) DRY_RUN=true; shift ;;
+        --email) EMAIL=true; shift ;;
         --csv) CSV_FILE="$2"; shift 2 ;;
         -a) account="$2"; shift 2 ;;
         -s) start_date="$2"; shift 2 ;;
@@ -235,4 +238,6 @@ fi
 
 append_csv "$user_name,$account,$qos,$start_date,$quota"
 
-email_grant
+if $EMAIL; then
+    email_grant
+fi
