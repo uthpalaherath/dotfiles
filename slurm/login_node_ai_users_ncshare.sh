@@ -73,7 +73,7 @@ LOGIN_DOMAIN="ncshare.org"
 MIN_WARNINGS=6
 WARNING_WINDOW_HOURS=24
 # Users never emailed or blocked (staff, service accounts), space-separated.
-EXCLUDE_USERS=""
+EXCLUDE_USERS="uherathmudiyanselage1"
 
 # Normalize long options to short ones before getopts.
 args=()
