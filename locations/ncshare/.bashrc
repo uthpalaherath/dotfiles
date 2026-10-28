@@ -124,6 +124,9 @@ export OLLAMA_MODELS="/work/${USER}/.ollama/models"
 export APPTAINER_CACHEDIR=/work/${USER}/tmp
 export APPTAINER_TMPDIR=/work/${USER}/tmp
 
+# Secrets
+[ -f ~/.secrets ] && source ~/.secrets
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u uherathmudiyanselage1 --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
