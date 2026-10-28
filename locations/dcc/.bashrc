@@ -132,6 +132,9 @@ export GNUTERM=x11
 export APPTAINER_CACHEDIR=/cwork/${USER}/tmp
 export APPTAINER_TMPDIR=/cwork/${USER}/tmp
 
+# Flatpak
+export FLATPAK_USER_DIR=/hpc/group/rescomp/${USER}/apps/flatpak
+
 #------------------------------------------- ALIASES -------------------------------------------
 
 alias q='squeue -u ukh --format="%.18i %.9P %35j %.8u %.2t %.10M %.6D %R"'
