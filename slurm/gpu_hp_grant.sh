@@ -1,7 +1,7 @@
 #!/bin/bash
 # Records a new gpu-hp GPU-hour grant for a user and (re)adds the institution QoS to their association.
 # The grant is stored on the association comment as gpu-hp:start=YYYY-MM-DDTHH:MM:SS,quota=<GPU-hours>
-# and appended to a CSV for history. A new grant replaces the previous one.
+# and appended to a CSV for history. A new grant replaces the previous one, and the user is emailed.
 # In place of the quota:
 #   revoke  Temporarily remove the institution QoS (keeps the grant). Restore with a new grant.
 #   remove  Clear the grant and the user's QoS override so the association inherits from the account
@@ -15,6 +15,13 @@ set -euo pipefail
 CSV_FILE="/data/admin/gpu-hp/gpu_hp_grants.csv"
 DRY_RUN=false
 account=""
+
+# Email settings
+FROM_EMAIL="info@ncshare.org"
+CC_EMAIL="uthpala.herath@duke.edu,info@ncshare.org"
+GUIDE_URL="https://userguide.ncshare.org/guides/gpu"
+LDAP_HOST="ldap://ncshare-com-01.ncshare.org"
+BASE_DN="dc=ncshare,dc=org"
 start_date="$(date +%Y-%m-%dT%H:%M:%S)"
 
 declare -A ACCOUNT_QOS_MAP=(
@@ -113,6 +120,74 @@ append_csv() {
     fi
 }
 
+# LDAP mail address for a uid, or nothing.
+get_email_for_user() {
+    ldapsearch -LLL -x -o ldif-wrap=no -H "$LDAP_HOST" -b "$BASE_DN" "(uid=$1)" mail 2>/dev/null |
+        awk '/^mail: /{ print $2; exit }'
+}
+
+send_email() {
+    local to="$1" subject="$2" body="$3"
+    local args=(-r "$FROM_EMAIL" -a "From: $FROM_EMAIL")
+    [[ -n "$CC_EMAIL" ]] && args+=(-a "Cc: $CC_EMAIL")
+    printf '%s\n' "$body" | mailx "${args[@]}" -s "$subject" "$to"
+}
+
+email_grant() {
+    local addr subject body
+
+    addr=$(get_email_for_user "$user_name")
+    if [[ -z "$addr" ]]; then
+        echo "Warning: no email address in LDAP for $user_name, not emailed"
+        return
+    fi
+
+    subject="NCShare gpu-hp allocation established"
+    body="Dear ${user_name},
+
+THIS IS AN AUTOMATED MESSAGE!
+
+You have been granted a GPU-hour allocation on the NCShare gpu-hp
+(high-priority) partition:
+
+  Account: ${account}
+  QoS:     ${qos}
+  Start:   ${start_date}
+  Quota:   ${quota} GPU-hours
+
+To use it, submit jobs with:
+
+    #SBATCH --partition=gpu-hp
+    #SBATCH --account=${account}
+    #SBATCH --qos=${qos}
+
+Directions for using the partition:
+
+    ${GUIDE_URL}
+
+To check your usage and remaining GPU-hours, run from a login node:
+
+    get_gpu_quota_user.sh
+
+Once the quota is used up, your access to gpu-hp is paused and your
+pending gpu-hp jobs are cancelled. Running jobs may be cancelled too.
+
+Please reach out to us at info@ncshare.org if you need any assistance.
+
+Thank you,
+NCShare Team
+"
+
+    if $DRY_RUN; then
+        echo "[dry-run] email to $addr: $subject"
+        printf '%s\n' "$body"
+    elif send_email "$addr" "$subject" "$body"; then
+        echo "Emailed $user_name <$addr>: $subject"
+    else
+        echo "Warning: failed to email $user_name <$addr>"
+    fi
+}
+
 now="$(date +%Y-%m-%dT%H:%M:%S)"
 
 if [[ "$quota" == "revoke" ]]; then
@@ -159,3 +234,5 @@ else
 fi
 
 append_csv "$user_name,$account,$qos,$start_date,$quota"
+
+email_grant
