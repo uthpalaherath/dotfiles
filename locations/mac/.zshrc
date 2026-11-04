@@ -97,6 +97,9 @@ export HF_HOME="/Users/ukh/.cache/huggingface"
 # Ollama
 export OLLAMA_MODELS="/Users/ukh/.cache/ollama/models"
 
+# XDG_CONFIG_HOME
+export XDG_CONFIG_HOME="$HOME/.config"
+
 #------------------------------------------- FUNCTIONS -------------------------------------------
 
 # extract, mkcdr and archive creattion were taken from

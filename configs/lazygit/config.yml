@@ -1,4 +1,4 @@
-# Everforest dark medium, matching the yazi flavor
+# Everforest dark medium
 gui:
   nerdFontsVersion: "3"
   theme:
@@ -15,7 +15,7 @@ gui:
       - "#e67e80"
 customCommands:
   - key: "G"
-    description: "AI commit message (Claude)"
+    description: "AI commit message"
     context: "files"
     command: "git-ai-commit"
     output: terminal
