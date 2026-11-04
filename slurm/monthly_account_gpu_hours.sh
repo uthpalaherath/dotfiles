@@ -192,7 +192,6 @@ first_of()   { echo "$1-01"; }
 
 echo "month,account,label,hours" > "$OUT"
 
-months=0
 month="$START"
 while [[ ! "$month" > "$END" ]]; do
   sreport job SizesByAccount FlatView -t hours Grouping= Format=Account%30 \
@@ -223,12 +222,11 @@ while [[ ! "$month" > "$END" ]]; do
         }
       ' >> "$OUT"
 
-  months=$((months + 1))
   month="$(next_month "$month")"
 done
 
 rows=$(($(wc -l < "$OUT") - 1))
-echo "Wrote $OUT: $rows rows across $months months ($START..$END), partition=$PART" >&2
+echo "Wrote $OUT: $rows rows" >&2
 
 [[ "$WITH_EFF" -eq 1 ]] || exit 0
 
@@ -322,5 +320,4 @@ for acct in "${ACCOUNTS[@]}"; do
 done
 
 eff_rows=$(($(wc -l < "$EFF_OUT") - 1))
-echo "Wrote $EFF_OUT: $eff_rows rows for ${#ACCOUNTS[@]} accounts (scope=$EFF_SCOPE)" >&2
-echo "Cross-check: eff_gpu_hours (slurm-gpu --duplicates) should track 'hours' (sreport) in $OUT." >&2
+echo "Wrote $EFF_OUT: $eff_rows rows" >&2
