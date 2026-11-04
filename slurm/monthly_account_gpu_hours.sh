@@ -13,51 +13,43 @@
 #
 # ---------------------------------------------------------------- outputs
 #
-# Both files go to OUTDIR (constant below, override with -d) and carry the
-# month range in the name, e.g. for -S 2026-05 -E 2026-10:
+# One CSV, written to OUTDIR (constant below), stamped with the month range,
+# e.g. h200-hp-by-account-2026-05_2026-10.csv. A single-month run
+# (-S 2026-10 -E 2026-10) stamps just "2026-10".
 #
-#   h200-hp-by-account-2026-05_2026-10.csv
-#   h200-hp-by-account-efficiency-2026-05_2026-10.csv
+# One row per account per month:
 #
-# A single-month run (-S 2026-10 -E 2026-10) stamps just "2026-10".
+#      month          calendar month, "YYYY-MM"
+#      account        Slurm account as sacctmgr has it, e.g. "smithlab_h200"
+#      label          account with --strip-suffix removed, e.g. "smithlab"
+#      hours          GPU-hours that month, from sreport
+#      users          distinct users on the account that month
+#      eff_gpu_hours  GPU-hours as slurm-gpu counts them
+#      cpu_eff, mem_eff, gpu_eff, gpu_mem_eff
+#                     time-weighted averages for that account that month,
+#                     from partition_cpu_gpu_eff.sh
 #
-# 1. Usage CSV (always), one row per account per month:
-#
-#      month        calendar month, "YYYY-MM"
-#      account      Slurm account as sacctmgr has it, e.g. "smithlab_h200"
-#      label        account with --strip-suffix removed, e.g. "smithlab"
-#      hours        GPU-hours for that account in that month, from sreport
+#   The last six columns are empty without --with-efficiency. The header is
+#   the same either way, so the schema never varies.
 #
 #   sreport also prints a percentage column. It is dropped: whether its
 #   denominator respects the Partition= filter was never confirmed, and
 #   shares are trivially recomputed from `hours` by whatever consumes this.
 #
-# 2. Efficiency CSV (with --with-efficiency), one row per account:
-#
-#      account, label, start, end
-#      users            accounts' distinct users in the range
-#      eff_gpu_hours    GPU-hours as slurm-gpu counts them (see caveat below)
-#      cpu_eff, mem_eff, gpu_eff, gpu_mem_eff
-#                       time-weighted partition averages restricted to that
-#                       account, straight from partition_cpu_gpu_eff.sh
-#
-#   On eff_gpu_hours vs the usage CSV's `hours`: these come from different
-#   tools (slurm-gpu and sreport) and are emitted side by side as a cross
-#   check. partition_cpu_gpu_eff.sh passes --duplicates, so slurm-gpu counts
-#   every run of a requeued job the way sreport does and the two should
-#   agree closely. They did NOT before that flag was added: on NCShare's
-#   preemptible gpu queue the final-run-only view hid 44% of August 2026's
-#   GPU-hours, and the efficiency averages were weighted over final runs
-#   alone. See RC/DevOps/gpu/ncshare/slurm-gpu-requeued-runs.md for that
-#   investigation. A large remaining gap now means something is wrong -
-#   most likely a slurm-gpu build without --duplicates - not preemption
-#   loss, so treat it as a signal to check the tooling.
+#   On eff_gpu_hours vs hours: different tools (slurm-gpu and sreport), kept
+#   side by side as a cross check. partition_cpu_gpu_eff.sh passes
+#   --duplicates, so slurm-gpu counts every run of a requeued job the way
+#   sreport does and the two should agree closely. They did NOT before that
+#   flag was added: on NCShare's preemptible gpu queue the final-run-only
+#   view hid 44% of August 2026's GPU-hours (write-up:
+#   RC/DevOps/gpu/ncshare/slurm-gpu-requeued-runs.md). A large gap now means
+#   the tooling is wrong, not that work was preempted.
 #
 # ------------------------------------------------------------------ usage
 #
 #   monthly_account_gpu_hours.sh -r PARTITION -S YYYY-MM [-E YYYY-MM]
 #            [-T TRES] [-s SUFFIX] [-o OUT.csv]
-#            [--with-efficiency] [--eff-scope window|month] [--eff-out F.csv]
+#            [--with-efficiency]
 #
 #   -r, --partition      Slurm partition (required), e.g. h200-hp
 #   -S, --start          first month, YYYY-MM (required)
@@ -78,11 +70,9 @@
 #   meant to use <labname>_h200 only, so the reports follow that convention
 #   now rather than carry variants that are about to disappear. Revisit
 #   with --keep-nonmatching if a variant turns out to be load-bearing.
-#       --with-efficiency   also run partition_cpu_gpu_eff.sh per account
-#       --eff-scope         window (default, one call per account) or month
-#                           (one call per account per month - accurate per
-#                           month but N_accounts x N_months slurm-gpu runs,
-#                           which is slow; start with window)
+#       --with-efficiency   also fill the efficiency columns: one
+#                           partition_cpu_gpu_eff.sh run per account per
+#                           month (slow, and LOGIN NODES ONLY on the DCC)
 #       --eff-script        path to partition_cpu_gpu_eff.sh (default: next
 #                           to this script, then $PATH)
 #
@@ -118,7 +108,6 @@ END=""
 STRIP_SUFFIX="$ACCOUNT_SUFFIX"
 KEEP_NONMATCHING=0
 WITH_EFF=0
-EFF_SCOPE="window"
 EFF_SCRIPT=""
 
 while [[ $# -gt 0 ]]; do
@@ -129,7 +118,6 @@ while [[ $# -gt 0 ]]; do
     -s|--strip-suffix)  STRIP_SUFFIX="$2"; shift 2;;
     --keep-nonmatching) KEEP_NONMATCHING=1; shift;;
     --with-efficiency)  WITH_EFF=1; shift;;
-    --eff-scope)        EFF_SCOPE="$2"; shift 2;;
     --eff-script)       EFF_SCRIPT="$2"; shift 2;;
     -h|--help)
       sed -n '2,80p' "$0" | sed 's/^# \{0,1\}//'
@@ -155,9 +143,6 @@ else
   END="$(date -d "$(date +%Y-%m-01) -1 day" +%Y-%m)"
 fi
 
-[[ "$EFF_SCOPE" == "window" || "$EFF_SCOPE" == "month" ]] || {
-  echo "--eff-scope must be 'window' or 'month'" >&2; exit 2; }
-
 if [[ ! -d "$OUTDIR" ]]; then
   echo "output dir '$OUTDIR' does not exist (create it on this cluster)" >&2
   exit 2
@@ -174,7 +159,6 @@ else
   STAMP="${START}_${END}"
 fi
 OUT="${OUTDIR}/${PART}-by-account-${STAMP}.csv"
-EFF_OUT="${OUTDIR}/${PART}-by-account-efficiency-${STAMP}.csv"
 
 if [[ "$START" > "$END" ]]; then
   echo "--start ($START) is after --end ($END)" >&2
@@ -190,7 +174,9 @@ first_of()   { echo "$1-01"; }
 
 # --- 1) usage, from sreport ------------------------------------------------
 
-echo "month,account,label,hours" > "$OUT"
+USAGE_TMP="$(mktemp)"
+EFF_TMP="$(mktemp)"
+trap 'rm -f "$USAGE_TMP" "$EFF_TMP"' EXIT
 
 month="$START"
 while [[ ! "$month" > "$END" ]]; do
@@ -220,104 +206,80 @@ while [[ ! "$month" > "$END" ]]; do
           for (a in dropped)
             printf "  dropped %s: %.1f h (does not end in %s)\n", a, dropped[a], suffix > "/dev/stderr"
         }
-      ' >> "$OUT"
+      ' >> "$USAGE_TMP"
 
   month="$(next_month "$month")"
 done
 
+# --- 2) efficiency, per account per month ---------------------------------
+#
+# Same granularity as the usage rows above, so the two merge into one row.
+
+if [[ "$WITH_EFF" -eq 1 ]]; then
+  if [[ -z "$EFF_SCRIPT" ]]; then
+    here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    if [[ -x "$here/partition_cpu_gpu_eff.sh" ]]; then
+      EFF_SCRIPT="$here/partition_cpu_gpu_eff.sh"
+    elif command -v partition_cpu_gpu_eff.sh >/dev/null 2>&1; then
+      EFF_SCRIPT="$(command -v partition_cpu_gpu_eff.sh)"
+    fi
+  fi
+
+  if [[ -z "$EFF_SCRIPT" || ! -x "$EFF_SCRIPT" ]]; then
+    echo "ERROR: partition_cpu_gpu_eff.sh not found or not executable. Pass --eff-script PATH." >&2
+    exit 4
+  fi
+
+  if ! command -v slurm-gpu >/dev/null 2>&1; then
+    echo "ERROR: slurm-gpu not on PATH; partition_cpu_gpu_eff.sh wraps it and will produce nothing." >&2
+    echo "       On the DCC it is installed on the LOGIN nodes only, so --with-efficiency has to" >&2
+    echo "       run there; a compute-node shell (srun/salloc/agent alias) will not find it." >&2
+    exit 4
+  fi
+
+  mapfile -t PAIRS < <(awk -F, '$2 != "undefined" { print $1 " " $2 }' "$USAGE_TMP" | sort -u)
+  total=${#PAIRS[@]}
+  i=0
+  for pair in "${PAIRS[@]}"; do
+    read -r month acct <<< "$pair"
+    i=$((i + 1))
+    printf '[%d/%d] %s %s\n' "$i" "$total" "$month" "$acct" >&2
+
+    "$EFF_SCRIPT" -r "$PART" -S "$(first_of "$month")" \
+        -E "$(first_of "$(next_month "$month")")" -A "$acct" 2>/dev/null \
+      | awk -v key="$month,$acct" '
+          /^No\. of users:/  { users = $NF }
+          /^Total GPU-hours:/ { gpuhrs = $NF }
+          /Avg CPU Eff:/     { cpu = $NF }
+          /Avg Mem Eff:/     { mem = $NF }
+          /Avg GPU Eff:/     { gpu = $NF }
+          /Avg GPU Mem Eff:/ { gpumem = $NF }
+          END {
+            gsub(/%/, "", cpu); gsub(/%/, "", mem); gsub(/%/, "", gpu); gsub(/%/, "", gpumem)
+            printf "%s,%s,%s,%s,%s,%s,%s\n", key,
+                   (users  == "" ? "" : users),
+                   (gpuhrs == "" ? "" : gpuhrs),
+                   (cpu    == "" || cpu    == "n/a" ? "" : cpu),
+                   (mem    == "" || mem    == "n/a" ? "" : mem),
+                   (gpu    == "" || gpu    == "n/a" ? "" : gpu),
+                   (gpumem == "" || gpumem == "n/a" ? "" : gpumem)
+          }' >> "$EFF_TMP"
+  done
+fi
+
+# --- 3) one CSV, usage joined to efficiency -------------------------------
+
+echo "month,account,label,hours,users,eff_gpu_hours,cpu_eff,mem_eff,gpu_eff,gpu_mem_eff" > "$OUT"
+# NB: keyed off FILENAME, not the usual NR==FNR - with no --with-efficiency
+# the first file is empty, and then NR==FNR stays true through the second
+# file and silently eats every row.
+awk -F, -v OFS=, -v efffile="$EFF_TMP" '
+  FILENAME == efffile { eff[$1 "," $2] = $3 OFS $4 OFS $5 OFS $6 OFS $7 OFS $8; next }
+  {
+    key = $1 "," $2
+    print $0, (key in eff ? eff[key] : ",,,,,")
+  }
+' "$EFF_TMP" "$USAGE_TMP" | sort -t, -k1,1 -k4,4gr >> "$OUT"
+
 rows=$(($(wc -l < "$OUT") - 1))
 echo "Wrote $OUT: $rows rows" >&2
-
-[[ "$WITH_EFF" -eq 1 ]] || exit 0
-
-# --- 2) efficiency, from partition_cpu_gpu_eff.sh --------------------------
-
-if [[ -z "$EFF_SCRIPT" ]]; then
-  here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  if [[ -x "$here/partition_cpu_gpu_eff.sh" ]]; then
-    EFF_SCRIPT="$here/partition_cpu_gpu_eff.sh"
-  elif command -v partition_cpu_gpu_eff.sh >/dev/null 2>&1; then
-    EFF_SCRIPT="$(command -v partition_cpu_gpu_eff.sh)"
-  fi
-fi
-
-if [[ -z "$EFF_SCRIPT" || ! -x "$EFF_SCRIPT" ]]; then
-  echo "ERROR: partition_cpu_gpu_eff.sh not found or not executable. Pass --eff-script PATH." >&2
-  echo "       The usage CSV above is complete; only the efficiency pass was skipped." >&2
-  exit 4
-fi
-
-if ! command -v slurm-gpu >/dev/null 2>&1; then
-  echo "ERROR: slurm-gpu not on PATH; partition_cpu_gpu_eff.sh wraps it and will produce nothing." >&2
-  echo "       On the DCC it is installed on the LOGIN nodes only, so --with-efficiency has to" >&2
-  echo "       run there; a compute-node shell (srun/salloc/agent alias) will not find it." >&2
-  echo "       The usage CSV above is complete; only the efficiency pass was skipped." >&2
-  exit 4
-fi
-
-# Accounts to ask about, from the usage CSV we just wrote.
-mapfile -t ACCOUNTS < <(awk -F, 'NR > 1 && $2 != "undefined" { print $2 }' "$OUT" | sort -u)
-
-if [[ ${#ACCOUNTS[@]} -eq 0 ]]; then
-  echo "No accounts in $OUT; skipping efficiency pass." >&2
-  exit 0
-fi
-
-echo "account,label,start,end,users,eff_gpu_hours,cpu_eff,mem_eff,gpu_eff,gpu_mem_eff" > "$EFF_OUT"
-
-# Pull the summary block's numbers out of partition_cpu_gpu_eff.sh output.
-parse_eff() {
-  awk -v account="$1" -v label="$2" -v start="$3" -v end="$4" '
-    /^No\. of users:/            { users = $NF }
-    /^Total GPU-hours:/          { gpuhrs = $NF }
-    /Avg CPU Eff:/               { cpu = $NF }
-    /Avg Mem Eff:/               { mem = $NF }
-    /Avg GPU Eff:/               { gpu = $NF }
-    /Avg GPU Mem Eff:/           { gpumem = $NF }
-    END {
-      gsub(/%/, "", cpu); gsub(/%/, "", mem); gsub(/%/, "", gpu); gsub(/%/, "", gpumem)
-      printf "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", account, label, start, end,
-             (users  == "" ? "" : users),
-             (gpuhrs == "" ? "" : gpuhrs),
-             (cpu    == "" || cpu    == "n/a" ? "" : cpu),
-             (mem    == "" || mem    == "n/a" ? "" : mem),
-             (gpu    == "" || gpu    == "n/a" ? "" : gpu),
-             (gpumem == "" || gpumem == "n/a" ? "" : gpumem)
-    }'
-}
-
-strip_label() {
-  local acct="$1"
-  if [[ -n "$STRIP_SUFFIX" && "$acct" == *"$STRIP_SUFFIX" ]]; then
-    echo "${acct%"$STRIP_SUFFIX"}"
-  else
-    echo "$acct"
-  fi
-}
-
-win_start="$(first_of "$START")"
-win_end="$(first_of "$(next_month "$END")")"
-
-total=${#ACCOUNTS[@]}
-i=0
-for acct in "${ACCOUNTS[@]}"; do
-  i=$((i + 1))
-  label="$(strip_label "$acct")"
-  printf '[%d/%d] %s\n' "$i" "$total" "$acct" >&2
-
-  if [[ "$EFF_SCOPE" == "window" ]]; then
-    "$EFF_SCRIPT" -r "$PART" -S "$win_start" -E "$win_end" -A "$acct" 2>/dev/null \
-      | parse_eff "$acct" "$label" "$START" "$END" >> "$EFF_OUT"
-  else
-    month="$START"
-    while [[ ! "$month" > "$END" ]]; do
-      "$EFF_SCRIPT" -r "$PART" -S "$(first_of "$month")" \
-          -E "$(first_of "$(next_month "$month")")" -A "$acct" 2>/dev/null \
-        | parse_eff "$acct" "$label" "$month" "$month" >> "$EFF_OUT"
-      month="$(next_month "$month")"
-    done
-  fi
-done
-
-eff_rows=$(($(wc -l < "$EFF_OUT") - 1))
-echo "Wrote $EFF_OUT: $eff_rows rows" >&2
