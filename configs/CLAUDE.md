@@ -26,6 +26,8 @@ Computational physicist (Ph.D., Computational Condensed Matter Physics), Sr. Res
     - Section headers and bullet scaffolding on a short answer that reads fine as prose.
     - Stock adjectives: robust, seamless, comprehensive, powerful, leverage, delve, crucial.
 - Vary sentence length. Contractions are fine. Plain verbs beat nominalizations.
+- In documentation, end the sentence that introduces a code block with a comma, not a colon
+  (e.g., "Submit the job with," followed by the code block).
 - Don't use semi-colon to combine clauses or sentences.
 - When using the example abbreviation `e.g.`, put a comma after it. When using `i.e.`, do not put a comma after it.
 
