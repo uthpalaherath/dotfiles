@@ -473,7 +473,7 @@ let g:ale_lint_on_text_changed = 'never'
 let g:ale_linters = {'python':[], 'tex':['chktex', 'vale'], 'markdown':['markdownlint', 'vale']}
 let g:ale_markdown_markdownlint_options = '--disable MD013'
 let g:ale_javascript_prettier_options = '--tab-width 4'
-let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['ruff_format'], 'markdown':['prettier']}
+let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['ruff_format']}
 let g:ale_fix_on_save = 1
 let g:ale_pattern_options = {'\.tex$': {'ale_enabled': 0}}
 let g:ale_sign_error = '•'
@@ -624,7 +624,7 @@ nnoremap <silent> - :Yazi<cr>
 let g:copy_as_rtf_silence_on_errors = 1
 
 """ vim-ai
-let s:litellm = {'endpoint_url': 'https://litellm.oit.duke.edu/v1/chat/completions', 'model': 'gpt-5.4'}
+let s:litellm = {'endpoint_url': 'https://litellm.oit.duke.edu/v1/chat/completions', 'model': 'gpt-6-terra'}
 let g:vim_ai_complete = {'options': copy(s:litellm)}
 let g:vim_ai_chat = {'options': copy(s:litellm)}
 let g:vim_ai_edit = {'options': copy(s:litellm)}
