@@ -13,7 +13,7 @@
 #   -E END         Window end (default: today).
 #   (no mode)      Build the message only. Nothing is sent.
 #   --review       Send it to $REVIEW_ADDR only.
-#   --send         Send it to all users, the CC and BCC lists, $FROM_ADDR and $REVIEW_ADDR.
+#   --send         Send it to $FROM_ADDR (also the To header), all users, the CC and BCC lists, and $REVIEW_ADDR.
 #
 # Every run regenerates the report and the message. The message is saved as
 # <report dir>/email/<partition>_<start>-<end>.eml. After a successful --send a
@@ -33,7 +33,7 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/opt/slurm/bin:$PATH"
 set -euo pipefail
 shopt -u patsub_replacement 2>/dev/null || true
 
-REVIEW_ADDR="herathuk@gmail.com"
+REVIEW_ADDR="uthpala.herath@duke.edu"
 MIN_RECIPIENTS=10
 SENDMAIL=/usr/sbin/sendmail
 
@@ -69,8 +69,8 @@ BCC_FILE="$SCRIPT_DIR/bcc/${PART}.txt"
 case "$PART" in
   scavenger-h200|h200-hp)  # DCC
     REPORT_DIR="/admin/reports/${PART}"
-    FROM_NAME="Uthpala Herath"
-    FROM_ADDR="uthpala.herath@duke.edu";;
+    FROM_NAME="Duke Research Computing"
+    FROM_ADDR="rescomputing@duke.edu";;
   gpu-hp|gpu)              # NCShare
     REPORT_DIR="/data/admin/reports/${PART}"
     FROM_NAME="NCShare"

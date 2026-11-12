@@ -1,1 +1,4 @@
 # CC list for the h200-hp report. One address per line. # starts a comment.
+tom.milledge@duke.edu
+katie.kilroy@duke.edu
+edward.mclaurin@duke.edu
