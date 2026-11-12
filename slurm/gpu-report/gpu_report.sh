@@ -36,7 +36,7 @@ mkdir -p "$OUTPUT_DIR"
 LOG_FILE="${OUTPUT_DIR}/${PARTITION}_${START_DATE}-${END_DATE}.txt"
 
 # Set up output to be saved to log file while also displaying to stdout
-exec > >(tee -a "$LOG_FILE") 2>&1
+exec > >(tee "$LOG_FILE") 2>&1
 
 # Create user-reports directory
 USER_REPORTS_DIR="${OUTPUT_DIR}/user-reports"
