@@ -7,12 +7,13 @@
 # Usage:
 #   send_gpu_report.sh -r PARTITION [-S START] [-E END] [--review | --send]
 #
-#   -r PARTITION   Partition. Needs templates/<PARTITION>.html. cc/<PARTITION>.txt is optional.
+#   -r PARTITION   Partition. Needs templates/<PARTITION>.html. cc/<PARTITION>.txt and
+#                  bcc/<PARTITION>.txt are optional extra recipients.
 #   -S START       Window start (default: END - 7 days).
 #   -E END         Window end (default: today).
 #   (no mode)      Build the message only. Nothing is sent.
 #   --review       Send it to $REVIEW_ADDR only.
-#   --send         Send it to all users, the CC list, $FROM_ADDR and $REVIEW_ADDR.
+#   --send         Send it to all users, the CC and BCC lists, $FROM_ADDR and $REVIEW_ADDR.
 #
 # Every run regenerates the report and the message. The message is saved as
 # <report dir>/email/<partition>_<start>-<end>.eml. After a successful --send a
@@ -61,6 +62,7 @@ date -d "$END" >/dev/null 2>&1 || die "bad end date: $END"
 
 TEMPLATE="$SCRIPT_DIR/templates/${PART}.html"
 CC_FILE="$SCRIPT_DIR/cc/${PART}.txt"
+BCC_FILE="$SCRIPT_DIR/bcc/${PART}.txt"
 [[ -f "$TEMPLATE" ]] || die "no template for $PART at $TEMPLATE"
 
 # Per-cluster settings. REPORT_DIR must match OUTPUT_DIR in gpu_report.sh.
@@ -112,10 +114,14 @@ users="$(awk 'f {print; exit} /^Email list:/ {f=1}' "$LOG" | tr ',; \t' '\n\n\n\
 nrcpt="$(grep -c . <<< "$users" || true)"
 (( nrcpt >= MIN_RECIPIENTS )) || die "only $nrcpt recipients parsed from $LOG (minimum $MIN_RECIPIENTS)"
 
-# CC list: one address per line or separated by , ; or spaces. # starts a comment.
-cc=""
-[[ -f "$CC_FILE" ]] && cc="$(sed 's/#.*//' "$CC_FILE" | tr ',; \t' '\n\n\n\n' \
-                             | grep -E '^[^@[:space:]]+@[^@[:space:]]+$' | sort -u || true)"
+# CC and BCC lists: one address per line or separated by , ; or spaces. # starts
+# a comment. A missing file means no extra recipients.
+read_addresses() {
+  [[ -f "$1" ]] || return 0
+  sed 's/#.*//' "$1" | tr ',; \t' '\n\n\n\n' | grep -E '^[^@[:space:]]+@[^@[:space:]]+$' | sort -u || true
+}
+cc="$(read_addresses "$CC_FILE")"
+bcc="$(read_addresses "$BCC_FILE")"
 
 # ---------------------------------------------------------------------------
 # Build the message
@@ -156,7 +162,7 @@ mkdir -p "$REPORT_DIR/email"
 } > "$EML"
 
 echo "Built $EML"
-echo "  users: $nusers in table, $nreports user reports attached, $nrcpt recipients (Bcc), $(grep -c . <<< "$cc" || true) CC"
+echo "  users: $nusers in table, $nreports user reports attached, $nrcpt users (Bcc), $(grep -c . <<< "$cc" || true) CC, $(grep -c . <<< "$bcc" || true) extra Bcc"
 
 # ---------------------------------------------------------------------------
 # Deliver
@@ -171,8 +177,8 @@ case "$MODE" in
     echo "Review copy sent to $REVIEW_ADDR"
     ;;
   send)
-    # Envelope recipients. Users are Bcc: they are delivered to but not listed in the headers.
-    mapfile -t rcpts < <({ echo "$FROM_ADDR"; echo "$REVIEW_ADDR"; [[ -n "$cc" ]] && echo "$cc"; echo "$users"; } | grep . | sort -u)
+    # Envelope recipients. Users and the BCC list are delivered to but not listed in the headers.
+    mapfile -t rcpts < <(printf '%s\n' "$FROM_ADDR" "$REVIEW_ADDR" "$cc" "$bcc" "$users" | grep . | sort -u)
     "$SENDMAIL" -oi -f "$FROM_ADDR" -- "${rcpts[@]}" < "$EML"
     date '+%F %T' > "$SENT"
     echo "Sent to ${#rcpts[@]} recipients"
