@@ -29,7 +29,7 @@ ACCOUNTS=(
     wssu
 )
 
-SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+SCRIPT_DIR="$HOME/dotfiles/slurm/ncshare"
 OUTPUT_FILE="master_email_list_$(date +%F).txt"
 
 EMAILS=$("$SCRIPT_DIR/get_email_address.sh" "$@" "${ACCOUNTS[@]}")

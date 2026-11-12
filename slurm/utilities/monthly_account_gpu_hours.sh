@@ -217,9 +217,8 @@ done
 
 if [[ "$WITH_EFF" -eq 1 ]]; then
   if [[ -z "$EFF_SCRIPT" ]]; then
-    here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    if [[ -x "$here/partition_cpu_gpu_eff.sh" ]]; then
-      EFF_SCRIPT="$here/partition_cpu_gpu_eff.sh"
+    if [[ -x "$HOME/dotfiles/slurm/utilities/partition_cpu_gpu_eff.sh" ]]; then
+      EFF_SCRIPT="$HOME/dotfiles/slurm/utilities/partition_cpu_gpu_eff.sh"
     elif command -v partition_cpu_gpu_eff.sh >/dev/null 2>&1; then
       EFF_SCRIPT="$(command -v partition_cpu_gpu_eff.sh)"
     fi

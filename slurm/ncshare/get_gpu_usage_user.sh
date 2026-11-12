@@ -5,7 +5,7 @@
 
 START="2026-02-01"
 END="2026-03-05"
-PARTITION_SCRIPT="./partition_gpu_eff.sh"
+PARTITION_SCRIPT="$HOME/dotfiles/slurm/utilities/partition_gpu_eff.sh"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in

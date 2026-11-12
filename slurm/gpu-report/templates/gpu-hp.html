@@ -1,0 +1,51 @@
+<html>
+<body style="font-family: Calibri, Arial, sans-serif; font-size: 11pt;">
+<p>Dear gpu-hp User,</p>
+
+<p>Thank you for being a part of the NCShare community!</p>
+
+<p>Below is a summary of GPU usage statistics for the reporting period. The goal of these reports is to help users better understand their GPU usage patterns and to support more efficient and effective use of the partition.</p>
+
+<pre style="font-family: Consolas, 'Courier New', monospace; font-size: 9pt;">
+{{REPORT}}
+</pre>
+
+<p>A GPU Eff above 100% is due to Nvidia drivers rounding off sub-process usage on the same GPU. For reporting purposes, treat it as 100% until Nvidia resolves the issue.</p>
+
+<p>The time-weighted GPU efficiency average is calculated as,</p>
+
+<p style="margin-left: 2em; font-family: 'Cambria Math', 'Times New Roman', serif; font-size: 12pt;">
+TWA GPU Eff = &Sigma;<sub>j</sub> (GPU Eff<sub>j</sub> &times; N<sub>j</sub> &times; t<sub>j</sub>) / &Sigma;<sub>j</sub> (N<sub>j</sub> &times; t<sub>j</sub>)
+</p>
+<p style="margin-left: 2em;">where N<sub>j</sub> is the number of GPUs and t<sub>j</sub> is the elapsed time of job j.</p>
+
+<p>The usage statistics above include completed, cancelled, timed-out, and failed jobs that utilized the GPUs. GPU efficiency represents the percentage of time GPU compute resources were actively engaged as reported by nvidia-smi. For a detailed, per-user breakdown, you can run the following command on a login node:</p>
+
+<pre style="font-family: Consolas, 'Courier New', monospace;">$ slurm-gpu report -r gpu-hp -S YYYY-MM-DD -E YYYY-MM-DD -u ${USER}</pre>
+
+<p>The detailed Slurm reports for users who utilized the partition during this period are attached to this email. Read our Measuring Efficiency guide to learn how to run your jobs efficiently.</p>
+
+<p>Your institutional high-priority monthly quota will be reset on the first day of each month. To check current usage and balance, run the following command from a NCShare login node,</p>
+
+<pre style="font-family: Consolas, 'Courier New', monospace;">$ get_gpu_quota_account.sh</pre>
+
+<p>If your Time-weighted GPU Eff and/or GPU Mem Eff is below 50% you may consider running those jobs on a lower-tier GPU if you have access to any outside of NCShare. For example, as a full H200 GPU has 141 GB VRAM, a job reporting 34% GPU Mem Eff may be run on an RTX 6000 ADA or an RTX A6000 consisting of 48 GB VRAM. Alternatively, we are always happy to work with you to help optimize your GPU utilization.</p>
+
+<p>The limits for the gpu-hp partition, as set by the governance committee are,</p>
+<ul>
+  <li>8 concurrent GPUs per-user</li>
+  <li>7-day max walltime</li>
+</ul>
+
+<p>To learn more, please visit the NCShare GPU guide: <a href="https://userguide.ncshare.org/guides/gpu">https://userguide.ncshare.org/guides/gpu</a></p>
+
+<p>We also encourage you to engage with the community via our forum: <a href="https://github.com/orgs/NCShare/discussions">https://github.com/orgs/NCShare/discussions</a></p>
+
+<p>If you have questions, please contact your institutional representative, email us at <a href="mailto:info@ncshare.org">info@ncshare.org</a>, or schedule an office hour with our team.</p>
+
+<p>We look forward to supporting your GPU-accelerated research!</p>
+
+<p>Thank you,<br>
+Uthpala</p>
+</body>
+</html>

@@ -12,6 +12,8 @@
 export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
 set -euo pipefail
 
+NCSHARE_DIR="$HOME/dotfiles/slurm/ncshare"
+
 PART=""
 START="$(date -d 'today' +%Y-%m-%d)"
 END="now"
@@ -91,7 +93,7 @@ get_email_for_user() {
 
   if [[ "$part" == "gpu" || "$part" == "gpu-hp" ]]; then
     local email
-    email="$(${HOME}/dotfiles/slurm/get_email_address.sh -e "$user" 2>/dev/null | head -1)" || true
+    email="$("$NCSHARE_DIR/get_email_address.sh" -e "$user" 2>/dev/null | head -1)" || true
     if [[ -n "$email" ]]; then
       echo "$email"
     fi
