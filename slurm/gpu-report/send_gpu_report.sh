@@ -20,9 +20,11 @@
 # .sent marker next to it blocks a second send for that window. Delete the
 # marker to resend.
 #
-# Mail goes out through sendmail with a prebuilt MIME message rather than mailx,
-# because mailx flags differ between clusters (s-nail on DCC treats -a as an
-# attachment, bsd-mailx/mailutils on NCShare treats it as a header).
+# Mail goes out as a prebuilt MIME message through a sendmail-compatible
+# command rather than mailx, because mailx differs between clusters (s-nail on
+# DCC, GNU Mailutils on NCShare). DCC uses the local sendmail. NCShare has no
+# configured local MTA, so it uses msmtp straight to the SMTP relay that
+# ~/.mailrc points mailx at.
 #
 # Examples:
 #   send_gpu_report.sh -r h200-hp --review
@@ -35,7 +37,6 @@ shopt -u patsub_replacement 2>/dev/null || true
 
 REVIEW_ADDR="uthpala.herath@duke.edu"
 MIN_RECIPIENTS=10
-SENDMAIL=/usr/sbin/sendmail
 
 SCRIPT_DIR="$HOME/dotfiles/slurm/gpu-report"
 
@@ -70,14 +71,16 @@ case "$PART" in
   scavenger-h200|h200-hp|h200-shared)  # DCC
     REPORT_DIR="/admin/reports/${PART}"
     FROM_NAME="Duke Research Computing"
-    FROM_ADDR="rescomputing@duke.edu";;
+    FROM_ADDR="rescomputing@duke.edu"
+    SENDMAIL=(/usr/sbin/sendmail);;
   gpu-hp|gpu)              # NCShare
     REPORT_DIR="/data/admin/reports/${PART}"
     FROM_NAME="NCShare"
-    FROM_ADDR="info@ncshare.org";;
+    FROM_ADDR="info@ncshare.org"
+    SENDMAIL=(msmtp --host=ncshare-com-01.ncshare.org --port=25);;
   *) die "no settings for partition $PART";;
 esac
-[[ -x "$SENDMAIL" ]] || die "$SENDMAIL not found on $(hostname)"
+command -v "${SENDMAIL[0]}" >/dev/null || die "${SENDMAIL[0]} not found on $(hostname)"
 
 TAG="${PART}_${START}-${END}"
 LOG="$REPORT_DIR/${TAG}.txt"
@@ -173,13 +176,13 @@ case "$MODE" in
     echo "Nothing sent. Use --review to send it to $REVIEW_ADDR or --send to send it to everyone."
     ;;
   review)
-    "$SENDMAIL" -oi -f "$FROM_ADDR" -- "$REVIEW_ADDR" < "$EML"
+    "${SENDMAIL[@]}" -oi -f "$FROM_ADDR" -- "$REVIEW_ADDR" < "$EML"
     echo "Review copy sent to $REVIEW_ADDR"
     ;;
   send)
     # Envelope recipients. Users and the BCC list are delivered to but not listed in the headers.
     mapfile -t rcpts < <(printf '%s\n' "$FROM_ADDR" "$REVIEW_ADDR" "$cc" "$bcc" "$users" | grep . | sort -u)
-    "$SENDMAIL" -oi -f "$FROM_ADDR" -- "${rcpts[@]}" < "$EML"
+    "${SENDMAIL[@]}" -oi -f "$FROM_ADDR" -- "${rcpts[@]}" < "$EML"
     date '+%F %T' > "$SENT"
     echo "Sent to ${#rcpts[@]} recipients"
     ;;
