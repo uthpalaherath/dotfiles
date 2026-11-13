@@ -19,19 +19,19 @@ TWA GPU Eff = &Sigma;<sub>j</sub> (GPU Eff<sub>j</sub> &times; N<sub>j</sub> &ti
 </p>
 <p style="margin-left: 2em;">where N<sub>j</sub> is the number of GPUs and t<sub>j</sub> is the elapsed time of job j.</p>
 
-<p>The usage statistics above include completed, cancelled, timed-out, and failed jobs that utilized the GPUs. GPU efficiency represents the percentage of time GPU compute resources were actively engaged as reported by nvidia-smi. For a detailed, per-user breakdown, you may run the following command on a login node:</p>
+<p>The usage statistics above include completed, cancelled, timed-out, and failed jobs that utilized the GPUs. GPU efficiency represents the percentage of time GPU compute resources were actively engaged as reported by nvidia-smi. For a detailed, per-user breakdown, you may run the following command on a <b>login node</b>:</p>
 
 <pre style="font-family: Consolas, 'Courier New', monospace;">$ slurm-report -r h200-hp -S YYYY-MM-DD -E YYYY-MM-DD --user ${USER}</pre>
 
 <p>The detailed Slurm reports for users who utilized the partition during this period are attached to this email. Read our <a href="https://dcc.duke.edu/dcc/efficiency/">Measuring Efficiency</a> guide to learn how to run your jobs efficiently.</p>
 
-<p>Your lab's high-priority weekly quota will be reset every Monday at midnight. To check current usage and balance, run the following command from a DCC login node,</p>
+<p>Your lab's high-priority quota will be reset <b>every 30 days</b>. To check current usage and balance, either log in to your lab's account on <a href="https://rtoolkits.web.duke.edu">Research Toolkits</a> or run the following command from a DCC <b>login node</b>,</p>
 
 <pre style="font-family: Consolas, 'Courier New', monospace;">$ get_h200_usage.sh &lt;labname&gt;_h200</pre>
 
 <p>Your job will terminate as soon as this limit is hit.</p>
 
-<p>If your Time-weighted GPU Eff and/or GPU Mem Eff is below 50%, please consider running your jobs on a different partition. A list of GPU partitions available on DCC can be found here: <a href="https://dcc.duke.edu/dcc/partitions">https://dcc.duke.edu/dcc/partitions</a>. For example, as a full H200 GPU has 141 GB VRAM, a job reporting 34% GPU Mem Eff may be run on an RTX 6000 ADA or an RTX A6000 consisting of 48 GB VRAM. Alternatively, we are always happy to work with you to help optimize your GPU utilization.</p>
+<p>If your Time-weighted GPU Eff and/or GPU Mem Eff is <b>below 50%</b>, please consider running your jobs on a different partition. A list of GPU partitions available on DCC can be found here: <a href="https://dcc.duke.edu/dcc/partitions">https://dcc.duke.edu/dcc/partitions</a>. For example, as a full H200 GPU has 141 GB VRAM, a job reporting <b>34%</b> GPU Mem Eff may be run on an RTX 6000 ADA or an RTX A6000 consisting of 48 GB VRAM. Alternatively, we are always happy to work with you to help optimize your GPU utilization.</p>
 
 <p>The limits for the h200-hp partition, as set by the H200 governance committee are,</p>
 <ul>
@@ -39,11 +39,11 @@ TWA GPU Eff = &Sigma;<sub>j</sub> (GPU Eff<sub>j</sub> &times; N<sub>j</sub> &ti
   <li>7-day max walltime</li>
 </ul>
 
-<p>Read the <a href="https://oit-rc.pages.oit.duke.edu/rcsupportdocs/dcc/h200/">user guide</a> to learn more about using DCC's H200 allocations.</p>
+<p>Read the <a href="https://dcc.duke.edu/dcc/h200/">user guide</a> to learn more about using DCC's H200 allocations.</p>
 
-<p>We encourage all users to share any feedback or issues you encounter while using the H200 GPUs. Please feel free to contact Tom Milledge or me with any questions.</p>
+<p>We encourage all users to share any feedback or issues you encounter while using the H200 GPUs. Please feel free to contact Tom Milledge or Uthpala Herath with any questions.</p>
 
 <p>Thank you,<br>
-Uthpala</p>
+Duke Research Computing Team</p>
 </body>
 </html>
