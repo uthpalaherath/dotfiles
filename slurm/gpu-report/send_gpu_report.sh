@@ -67,7 +67,7 @@ BCC_FILE="$SCRIPT_DIR/bcc/${PART}.txt"
 
 # Per-cluster settings. REPORT_DIR must match OUTPUT_DIR in gpu_report.sh.
 case "$PART" in
-  scavenger-h200|h200-hp)  # DCC
+  scavenger-h200|h200-hp|h200-shared)  # DCC
     REPORT_DIR="/admin/reports/${PART}"
     FROM_NAME="Duke Research Computing"
     FROM_ADDR="rescomputing@duke.edu";;
