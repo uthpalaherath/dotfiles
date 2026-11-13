@@ -1,4 +1,4 @@
-# Extra Bcc recipients for the gpu report. One address per line. # starts a comment.
+# Extra Bcc recipients for the gpu-hp report. One address per line. # starts a comment.
 futhey@duke.edu
 charley.kneifel@duke.edu
 rescomputing@duke.edu
