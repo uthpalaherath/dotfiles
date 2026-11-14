@@ -1,0 +1,5 @@
+# CC list for the scavenger-h200 report. One address per line. # starts a comment.
+uthpala.herath@duke.edu
+tom.milledge@duke.edu
+katie.kilroy@duke.edu
+edward.mclaurin@duke.edu

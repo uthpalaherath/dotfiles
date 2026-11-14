@@ -1,0 +1,8 @@
+# Extra Bcc recipients for the gpu-hp report. One address per line. # starts a comment.
+futhey@duke.edu
+charley.kneifel@duke.edu
+rescomputing@duke.edu
+laura.e.webb@duke.edu
+tom.milledge@duke.edu
+edward.mclaurin@duke.edu
+jpgant@nccu.edu
