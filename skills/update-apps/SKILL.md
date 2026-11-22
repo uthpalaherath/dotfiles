@@ -55,7 +55,10 @@ Claude Code updates itself, so leave it out. The science codes under `apps/` (QE
 DCC (`APPS=/hpc/group/rescomp/ukh/apps`, `BIN=~/.local/bin`), as of 2026-11:
 starship, lazygit, delta, dust, navi, git-lfs, tldr and tmux are in `$BIN`. btop is a `$BIN` symlink to `$APPS/btop-X.Y.Z/bin/btop`. bat is `$APPS/bat/`, ripgrep is `$APPS/ripgrep/`, yazi is `$APPS/yazi/target/release/`, vim is `$APPS/vim-local` (prefix install), and xclip is `$APPS/xclip/build/bin` (git checkout in `$APPS/xclip`).
 
-NCShare: apps are under `~/apps` (from `.bashrc`, not yet verified on the machine). ripgrep is `~/apps/ripgrep-14.1.1-x86_64-unknown-linux-musl/` (versioned, see step 5), bat is `~/apps/bat`, yazi is `~/apps/yazi/target/release`, vim is `~/apps/vim`. Use the discovery step for the rest. Once you've verified the layout, update this section.
+NCShare (`APPS=~/apps`, `BIN=~/.local/bin`), verified 2026-11-22:
+starship, delta, dust, navi, tldr, uv, rclone and tmux are in `$BIN`. lazygit is `$APPS/lazygit/lazygit`. bat is `$APPS/bat/`. ripgrep is versioned, `$APPS/ripgrep-X.Y.Z-x86_64-unknown-linux-musl/` (see step 5). yazi is `$APPS/yazi/target/release/`. vim is `$APPS/vim` (prefix install). btop is a plain binary at `$APPS/btop/bin/btop` inside a source checkout, themes in `$APPS/btop/share/btop/themes`. git-lfs and xclip are not installed.
+- btop on NCShare: don't use the release binary, it's built `STATIC=true`, which disables GPU support. Build the tag from source with the conda gcc 14 in `$APPS/btop/.gcc14/bin` (`CXX=.../x86_64-conda-linux-gnu-g++ CC=...-gcc`), `ADDFLAGS="-static-libstdc++ -static-libgcc"`, no `STATIC`. Parallel make can race on the Intel GPU C objects, so rerun `make` serially if the link fails.
+- vim on NCShare: the system lacks X11/Xt headers and Python dev headers. Build against a throwaway conda env in the mktemp dir (`python=3.12 xorg-libx11 xorg-libxt xorg-libsm xorg-libice xorg-libxdmcp xorg-xorgproto ncurses`), passing `CPPFLAGS/LDFLAGS=-I/-L<env>`, `--x-includes/--x-libraries=<env>`, `--with-python3-command=<env>/bin/python3`, and in the environment `vi_cv_dll_name_python3=libpython3.12.so.1.0 vi_cv_path_python3_pfx=/usr vi_cv_path_python3_epfx=/usr` so it loads the system Python 3.12 at runtime. There's no rpath, so `ldd` resolves to system libs once the env is deleted.
 
 ## Source-build notes
 

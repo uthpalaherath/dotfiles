@@ -203,7 +203,7 @@ export MPLCONFIGDIR="/hpc/home/uherathmudiyanselage1/dotfiles/matplotlib/"
 export PATH="/hpc/home/uherathmudiyanselage1/apps/globusconnectpersonal-3.2.6/:$PATH"
 
 # ripgrep
-export PATH="/hpc/home/uherathmudiyanselage1/apps/ripgrep-14.1.1-x86_64-unknown-linux-musl/:$PATH"
+export PATH="/hpc/home/uherathmudiyanselage1/apps/ripgrep-15.2.0-x86_64-unknown-linux-musl:$PATH"
 
 # bat
 export PATH="/hpc/home/uherathmudiyanselage1/apps/bat:$PATH"
