@@ -42,7 +42,7 @@ Don't stage or commit anything.
 | btop | aristocratos/btop | `--version` | see below |
 | yazi | sxyazi/yazi | `--version` | `yazi-x86_64-unknown-linux-musl.zip`, copy `yazi` and `ya` |
 | fzf | junegunn/fzf | `--version` | `git -C ~/.fzf pull --ff-only && ~/.fzf/install --bin` |
-| uv | astral-sh/uv | `--version` | `uv self update`, then `uv tool upgrade --all` (ruff etc.) |
+| uv | astral-sh/uv | `--version` | `uv self update`, then `uv tool upgrade --all` (ruff etc.). On DCC there is no install receipt, so self update fails: install `uv` and `uvx` from `uv-x86_64-unknown-linux-musl.tar.gz` instead |
 | rclone | rclone/rclone | `version` | `rclone selfupdate --stable` |
 | tmux | tmux/tmux | `-V` | source build, see below |
 | vim | vim/vim (tags) | `--version` | source build, see below |
@@ -73,7 +73,7 @@ Afterward, warn the user that running tmux servers keep the old version. They ne
 
 vim: the latest tag is `git ls-remote --tags --refs https://github.com/vim/vim.git | sed 's#.*refs/tags/##' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1`. The installed version is line 1's version plus the max of "Included patches" (e.g., 9.2.0424). Use the existing install's prefix (the parent of its `bin/`). Shallow-clone the tag and build in `src/`:
 - If configure finds no terminal library (DCC has no `libtinfo.so` dev symlink), use `--with-tlib=ncurses` with `CPPFLAGS=-I$HOME/.local/include LDFLAGS=-L$HOME/.local/lib`.
-- Python 3 comes from conda/miniforge. Its sysconfig names the static `libpython3.X.a`, so configure disables Python or bakes in a bad dlopen name. Pass `vi_cv_dll_name_python3=<LIBDIR>/libpython3.X.so` in the environment, `--with-python3-command=$(command -v python3)`, and add `-L<LIBDIR>` to LDFLAGS. Get LIBDIR from `python3 -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))'`. This fix is not yet verified end to end.
+- Python 3 comes from conda/miniforge. Its sysconfig names the static `libpython3.X.a`, so configure disables Python or bakes in a bad dlopen name. Pass `vi_cv_dll_name_python3=<LIBDIR>/libpython3.X.so` in the environment, `--with-python3-command=$(command -v python3)`, and add `-L<LIBDIR>` to LDFLAGS. Get LIBDIR from `python3 -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))'`. Verified on DCC 2026-11-21 (9.2.1382, Python 3.13). Test before installing with `env -i HOME=$HOME PATH=/usr/bin ./vim -es -u NONE -c 'redir! >out' -c 'py3 import sys; print(sys.version)' -c 'redir END' -c q`, since `-es` swallows `print` output.
 - Full flags: `--prefix=<prefix> --with-features=huge --enable-python3interp=dynamic --with-x --enable-gui=no --enable-terminal`.
 - Before installing, check that `./vim --version` keeps every `+feature` the current build has (at least `+clipboard +python3/dyn +terminal`, and `+X11` if present now). If any is missing, stop and report. Otherwise `rm -f <prefix>/bin/vim && make install`.
 - Run `vim -es -u NONE -c 'py3 print(1)' -c q` to confirm Python loads.
