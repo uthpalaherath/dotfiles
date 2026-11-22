@@ -7,7 +7,7 @@ scan_timeout = 10
 palette = "honukai"
 format = """
 ${env_var.VIRTUAL_ENV_PROMPT}$conda$username$hostname$directory$git_branch$git_state$git_status\
-${env_var.SLURM_JOB_ID}${env_var.APPTAINER_NAME}\
+${env_var.SLURM_JOB_ID}\
 $cmd_duration$status
 $character"""
 
@@ -19,7 +19,6 @@ blue = "61"
 gray = "244"
 red = "160"
 cyan = "37"
-purple = "133"
 
 [username]
 show_always = true
@@ -61,9 +60,6 @@ diverged = "⇡${ahead_count}⇣${behind_count} "
 
 [env_var.SLURM_JOB_ID]
 format = "[job:$env_value](fg:cyan) "
-
-[env_var.APPTAINER_NAME]
-format = "[ $env_value](fg:purple) "
 
 [env_var.VIRTUAL_ENV_PROMPT]
 format = '[\($env_value\)](fg:gray) '
