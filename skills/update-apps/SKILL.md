@@ -62,7 +62,13 @@ DCC (`APPS=/hpc/group/rescomp/ukh/apps`, `BIN=~/.local/bin`), migrated 2026-11-2
 - `$BIN` symlinks: `btop` -> `$APPS/btop-X.Y.Z/bin/btop`, `bat` -> `$APPS/bat-X.Y.Z/bat`, `rg` -> `$APPS/ripgrep-X.Y.Z/rg`, `yazi` and `ya` -> `$APPS/yazi-X.Y.Z/`, `vim` -> `$APPS/vim-local/bin/vim` (prefix install, prefix stays fixed), `xclip` -> `$APPS/xclip/build/bin/xclip` (git checkout).
 - fzf is `~/.fzf/bin/fzf`, on PATH through fzf's own shell integration.
 
-NCShare (`APPS=~/apps`, home is `/hpc/home/uherathmudiyanselage1`): not migrated yet, and not verified on the machine. Its `.bashrc` has PATH entries for `~/apps/ripgrep-14.1.1-x86_64-unknown-linux-musl/`, `~/apps/bat` and `~/apps/yazi/target/release/`, and vim was at `~/apps/vim`. Run the discovery step, then the migration below, then update this section.
+NCShare (`APPS=~/apps`, `BIN=~/.local/bin`, home is `/hpc/home/uherathmudiyanselage1`), migrated 2026-11-22:
+- Plain files in `$BIN`: starship, lazygit, delta, dust, navi, tldr, tmux, uv, uvx, rclone.
+- `$BIN` symlinks: `btop` -> `$APPS/btop-X.Y.Z/bin/btop`, `bat` -> `$APPS/bat-X.Y.Z/bat`, `rg` -> `$APPS/ripgrep-X.Y.Z/rg`, `yazi` and `ya` -> `$APPS/yazi-X.Y.Z/`, `vim` -> `$APPS/vim-local/bin/vim` (prefix install, prefix stays fixed, same name as DCC).
+- tmux: `$APPS/tmux/` is a prefix holding only include/lib/share, while the binary is the plain file in `$BIN`.
+- btop is built from source with a conda GCC 14 (the old tree had it in `btop/.gcc14`). libstdc++ is linked statically, so the binary needs only system libc/libm even though its RPATH names that GCC's lib dir.
+- fzf is `~/.fzf/bin/fzf`. git-lfs and xclip are not installed.
+- `~/.local/bin` also holds unrelated pip/uv entry points, ncurses tools, claude and codex links. Leave them alone.
 
 ## Migrating a cluster
 
@@ -91,6 +97,8 @@ vim: the latest tag is `git ls-remote --tags --refs https://github.com/vim/vim.g
 - If configure finds no terminal library (DCC has no `libtinfo.so` dev symlink), use `--with-tlib=ncurses` with `CPPFLAGS=-I$HOME/.local/include LDFLAGS=-L$HOME/.local/lib`.
 - Python 3 comes from conda/miniforge. Its sysconfig names the static `libpython3.X.a`, so configure disables Python or bakes in a bad dlopen name. Pass `vi_cv_dll_name_python3=<LIBDIR>/libpython3.X.so` in the environment, `--with-python3-command=$(command -v python3)`, and add `-L<LIBDIR>` to LDFLAGS. Get LIBDIR from `python3 -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))'`. Verified on DCC 2026-11-21 (9.2.1382, Python 3.13). Test before installing with `env -i HOME=$HOME PATH=/usr/bin ./vim -es -u NONE -c 'redir! >out' -c 'py3 import sys; print(sys.version)' -c 'redir END' -c q`, since `-es` swallows `print` output.
 - Full flags: `--prefix=<prefix> --with-features=huge --enable-python3interp=dynamic --with-x --enable-gui=no --enable-terminal`.
+- NCShare (Ubuntu 24.04) has the X11 runtime libs but no headers, and no ncurses headers. Create a throwaway env in the build dir, `mamba create -p $W/xenv -c conda-forge xorg-libx11 xorg-libxt xorg-libsm xorg-libice xorg-xorgproto`, and pass `--x-includes=$W/xenv/include --x-libraries=$W/xenv/lib`. The binary still resolves the system `libX11.so.6` etc. at runtime, so the env can be deleted afterward. Use `--with-tlib=ncurses` with `~/.local` as on DCC, which links ncurses statically (terminfo from `~/.local/share/terminfo`). Run configure and make under `env -i HOME=$HOME PATH=/usr/bin:/bin` so the oneAPI and conda paths in the login environment stay out. Verified 2026-11-22 (9.2.1382, Python 3.13).
+- Never set `VIM` or `VIMRUNTIME` in `.bashrc`. The binary's compiled-in "fall-back for $VIM" already points at its prefix.
 - Before installing, check that `./vim --version` keeps every `+feature` the current build has (at least `+clipboard +python3/dyn +terminal`, and `+X11` if present now). If any is missing, stop and report. Otherwise `rm -f <prefix>/bin/vim && make install`.
 - Run `vim -es -u NONE -c 'py3 print(1)' -c q` to confirm Python loads.
 - Remind the user that plugins update separately with `:PlugUpdate`.

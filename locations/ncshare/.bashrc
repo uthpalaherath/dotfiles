@@ -202,12 +202,6 @@ export MPLCONFIGDIR="/hpc/home/uherathmudiyanselage1/dotfiles/matplotlib/"
 # globus
 export PATH="/hpc/home/uherathmudiyanselage1/apps/globusconnectpersonal-3.2.6/:$PATH"
 
-# ripgrep
-export PATH="/hpc/home/uherathmudiyanselage1/apps/ripgrep-15.2.0-x86_64-unknown-linux-musl:$PATH"
-
-# bat
-export PATH="/hpc/home/uherathmudiyanselage1/apps/bat:$PATH"
-
 # FHI-aims
 export PATH="/hpc/home/uherathmudiyanselage1/apps/FHIaims/bin/:$PATH"
 export PATH="/hpc/home/uherathmudiyanselage1/apps/FHIaims/utilities/:$PATH"
@@ -215,16 +209,8 @@ export PATH="/hpc/home/uherathmudiyanselage1/apps/FHIaims/utilities/:$PATH"
 # cmake
 export PATH="/hpc/home/uherathmudiyanselage1/apps/cmake-4.0.1/build/bin/:$PATH"
 
-# yazi
-export PATH="/hpc/home/uherathmudiyanselage1/apps/yazi/target/release/:$PATH"
-
 # opencode
 export PATH=/hpc/home/uherathmudiyanselage1/.opencode/bin:$PATH
-
-# vim
-export PATH="/hpc/home/uherathmudiyanselage1/apps/vim/bin/:$PATH"
-export VIM="/hpc/home/uherathmudiyanselage1/apps/vim/share/vim"
-export VIMRUNTIME="/hpc/home/uherathmudiyanselage1/apps/vim/share/vim/vim92"
 
 #------------------------------------------- TMUX -------------------------------------------
 
