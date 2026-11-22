@@ -17,12 +17,13 @@ Arguments: an optional cluster (`dcc`, `ncshare`) and/or tool names, e.g., `/upd
 
 ## Procedure
 
-1. Find each tool on the target: `bash -ic 'p=$(command -v TOOL) && readlink -f "$p"'`. Use the interactive shell because `~/.bashrc` (-> `~/dotfiles/locations/<cluster>/.bashrc`) sets the PATH, and the `apps/` entries there come before `~/.local/bin`. Install the update over the path it resolves to. Copying it elsewhere would leave it shadowed. Skip tools that aren't installed and list them. Install new tools only on request.
+1. Find each tool on the target: `env -i HOME=$HOME USER=$USER TERM=xterm bash -lic 'p=$(command -v TOOL) && readlink -f "$p"'`. The clean login shell matters because `~/.bashrc` (-> `~/dotfiles/locations/<cluster>/.bashrc`) builds the PATH, and an inherited PATH can still carry entries that `.bashrc` no longer sets. Also note whether `$BIN/TOOL` is a plain file or a symlink. If the tool resolves through a `.bashrc` PATH entry instead of `$BIN`, the cluster hasn't been migrated to the layout below, so offer the migration (see "Migrating a cluster") before updating. Skip tools that aren't installed and list them. Install new tools only on request.
 2. Check before touching anything. Get the installed version (version command in the table) and the latest tag (`curl -fsSL https://api.github.com/repos/<repo>/releases/latest | jq -r .tag_name`). Show one compact table: tool, path, installed, latest. Then update only what's outdated, unless the user asked for a check only.
-3. Download and build in a fresh `mktemp -d` dir, never inside the install locations. Pick `x86_64-unknown-linux-musl` assets when a release has them.
-4. Install binaries atomically: `install -m755 new dest.new && mv -f dest.new dest`. Running processes keep the old inode and avoid ETXTBSY.
-5. If a tool sits in a dir whose name carries a version (e.g., NCShare's `apps/ripgrep-14.1.1-x86_64-unknown-linux-musl/`), install the new version as a sibling dir with its own name. Then show the user the one-line PATH change for `~/dotfiles/locations/<cluster>/.bashrc` rather than editing it.
-6. Verify each update with its version command. Report what changed in a few lines, and report failures with the relevant error output.
+3. Download and build in a fresh `mktemp -d` dir, never inside the install locations. Pick `x86_64-unknown-linux-musl` assets when a release has them. The scratch dir can be cleaned between turns, so download again rather than reuse files from an earlier turn.
+4. Single-binary tools are plain files in `$BIN`. Replace them atomically: `install -m755 new dest.new && mv -f dest.new dest`. Running processes keep the old inode and avoid ETXTBSY.
+5. Multi-file tools live in `$APPS/<tool>-X.Y.Z/` with a `$BIN` symlink to the binary. Install the new version as a new sibling dir, check that the binary exists and runs from there, then `ln -sfn` the link to it. Tell the user the old dir can be deleted. Don't delete it yourself. No `.bashrc` edit is needed.
+6. Chain dependent steps with `&&` and test that a file exists before linking to it or deleting anything. Don't rely on `set -e`: it didn't stop a script here after a failed `install`, and the script went on to remove the old install.
+7. Verify each update with its version command. Report what changed in a few lines, and report failures with the relevant error output.
 
 Don't stage or commit anything.
 
@@ -37,25 +38,40 @@ Don't stage or commit anything.
 | navi | denisidoro/navi | `--version` | release tarball |
 | git-lfs | git-lfs/git-lfs | `--version` | `git-lfs-linux-amd64-v*.tar.gz` |
 | tealdeer | tealdeer-rs/tealdeer | `tldr --version` | raw asset `tealdeer-linux-x86_64-musl` saved as `tldr`, then `tldr --update` |
-| bat | sharkdp/bat | `--version` | extracted tarball dir replaces the install dir as a whole |
-| ripgrep | BurntSushi/ripgrep | `rg --version` | same as bat |
+| bat | sharkdp/bat | `--version` | extracted tarball dir becomes `$APPS/bat-X.Y.Z/`, link `$BIN/bat` |
+| ripgrep | BurntSushi/ripgrep | `rg --version` | extracted tarball dir becomes `$APPS/ripgrep-X.Y.Z/`, link `$BIN/rg` |
 | btop | aristocratos/btop | `--version` | see below |
-| yazi | sxyazi/yazi | `--version` | `yazi-x86_64-unknown-linux-musl.zip`, copy `yazi` and `ya` |
+| yazi | sxyazi/yazi | `--version` | `yazi-x86_64-unknown-linux-musl.zip`, `yazi` and `ya` into `$APPS/yazi-X.Y.Z/`, link both |
 | fzf | junegunn/fzf | `--version` | `git -C ~/.fzf pull --ff-only && ~/.fzf/install --bin` |
 | uv | astral-sh/uv | `--version` | `uv self update`, then `uv tool upgrade --all` (ruff etc.). On DCC there is no install receipt, so self update fails: install `uv` and `uvx` from `uv-x86_64-unknown-linux-musl.tar.gz` instead |
 | rclone | rclone/rclone | `version` | `rclone selfupdate --stable` |
 | tmux | tmux/tmux | `-V` | source build, see below |
 | vim | vim/vim (tags) | `--version` | source build, see below |
-| xclip | astrand/xclip (tags) | `-version` | git checkout: checkout latest tag, `./bootstrap && ./configure --prefix=<checkout>/build && make && make install` |
+| xclip | astrand/xclip (tags) | `-version` | git checkout: checkout latest tag, `./bootstrap && ./configure --prefix=<checkout>/build && make && make install`. `$BIN/xclip` links to `build/bin/xclip`, so nothing to relink |
 
 Claude Code updates itself, so leave it out. The science codes under `apps/` (QE, SIESTA, FHI-aims, ELPA, netCDF, VASP, wannier90, R, etc.) are also out of scope unless the user names one.
 
+## Layout convention
+
+Every tool in the table is reached through `$BIN` (`~/.local/bin`), which is the only PATH entry these tools need. Single binaries are plain files in `$BIN`. Tools that ship more than a binary (runtime files, themes, man pages, completions, a git checkout) keep their full install under `$APPS` and get a `$BIN` symlink. Never copy just the binary out of such a dir, because vim needs its runtime and btop its themes. The science codes keep their own `.bashrc` PATH entries.
+
 ## Known layouts
 
-DCC (`APPS=/hpc/group/rescomp/ukh/apps`, `BIN=~/.local/bin`), as of 2026-11:
-starship, lazygit, delta, dust, navi, git-lfs, tldr and tmux are in `$BIN`. btop is a `$BIN` symlink to `$APPS/btop-X.Y.Z/bin/btop`. bat is `$APPS/bat/`, ripgrep is `$APPS/ripgrep/`, yazi is `$APPS/yazi/target/release/`, vim is `$APPS/vim-local` (prefix install), and xclip is `$APPS/xclip/build/bin` (git checkout in `$APPS/xclip`).
+DCC (`APPS=/hpc/group/rescomp/ukh/apps`, `BIN=~/.local/bin`), migrated 2026-11-21:
+- Plain files in `$BIN`: starship, lazygit, delta, dust, navi, git-lfs, tldr, tmux, uv, uvx, rclone.
+- `$BIN` symlinks: `btop` -> `$APPS/btop-X.Y.Z/bin/btop`, `bat` -> `$APPS/bat-X.Y.Z/bat`, `rg` -> `$APPS/ripgrep-X.Y.Z/rg`, `yazi` and `ya` -> `$APPS/yazi-X.Y.Z/`, `vim` -> `$APPS/vim-local/bin/vim` (prefix install, prefix stays fixed), `xclip` -> `$APPS/xclip/build/bin/xclip` (git checkout).
+- fzf is `~/.fzf/bin/fzf`, on PATH through fzf's own shell integration.
 
-NCShare: apps are under `~/apps` (from `.bashrc`, not yet verified on the machine). ripgrep is `~/apps/ripgrep-14.1.1-x86_64-unknown-linux-musl/` (versioned, see step 5), bat is `~/apps/bat`, yazi is `~/apps/yazi/target/release`, vim is `~/apps/vim`. Use the discovery step for the rest. Once you've verified the layout, update this section.
+NCShare (`APPS=~/apps`, home is `/hpc/home/uherathmudiyanselage1`): not migrated yet, and not verified on the machine. Its `.bashrc` has PATH entries for `~/apps/ripgrep-14.1.1-x86_64-unknown-linux-musl/`, `~/apps/bat` and `~/apps/yazi/target/release/`, and vim was at `~/apps/vim`. Run the discovery step, then the migration below, then update this section.
+
+## Migrating a cluster
+
+Do this when tools resolve through `.bashrc` PATH entries instead of `$BIN`. Show the user the plan first, since it renames dirs and removes old trees.
+1. Update the tools first, so each one moves only once.
+2. For each multi-file tool, rename or create `$APPS/<tool>-X.Y.Z/` with the current version, then `ln -sfn` the binary into `$BIN`. A dir that's a cargo build tree (e.g., `yazi/target/release`) gets replaced by a fresh dir holding just the release binaries. Delete the old tree only after the new binaries are in place and run, and only with the user's OK. Check `git status` first if it's a checkout.
+3. Keep vim's install prefix as is (configure baked it into the binary) and keep xclip's checkout. Only link them.
+4. Back up `~/dotfiles/locations/<cluster>/.bashrc` to the scratch dir, then remove the PATH lines for the migrated tools only. Leave other lines in those blocks (e.g., the miniforge `LD_LIBRARY_PATH` line that sat under `# vim` on DCC). Show the diff.
+5. Verify in a clean login shell that every tool resolves to `$BIN` and nothing else on PATH shadows it (`type -a -P TOOL`), and run each version command.
 
 ## Source-build notes
 
@@ -71,7 +87,7 @@ make -j
 ```
 Afterward, warn the user that running tmux servers keep the old version. They need `tmux kill-server` before new clients will attach.
 
-vim: the latest tag is `git ls-remote --tags --refs https://github.com/vim/vim.git | sed 's#.*refs/tags/##' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1`. The installed version is line 1's version plus the max of "Included patches" (e.g., 9.2.0424). Use the existing install's prefix (the parent of its `bin/`). Shallow-clone the tag and build in `src/`:
+vim: the latest tag is `git ls-remote --tags --refs https://github.com/vim/vim.git | sed 's#.*refs/tags/##' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1`. The installed version is line 1's version plus the max of "Included patches" (e.g., 9.2.0424). Use the existing install's prefix (the parent of the real `bin/`, so resolve the `$BIN/vim` symlink first). Shallow-clone the tag and build in `src/`:
 - If configure finds no terminal library (DCC has no `libtinfo.so` dev symlink), use `--with-tlib=ncurses` with `CPPFLAGS=-I$HOME/.local/include LDFLAGS=-L$HOME/.local/lib`.
 - Python 3 comes from conda/miniforge. Its sysconfig names the static `libpython3.X.a`, so configure disables Python or bakes in a bad dlopen name. Pass `vi_cv_dll_name_python3=<LIBDIR>/libpython3.X.so` in the environment, `--with-python3-command=$(command -v python3)`, and add `-L<LIBDIR>` to LDFLAGS. Get LIBDIR from `python3 -c 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))'`. Verified on DCC 2026-11-21 (9.2.1382, Python 3.13). Test before installing with `env -i HOME=$HOME PATH=/usr/bin ./vim -es -u NONE -c 'redir! >out' -c 'py3 import sys; print(sys.version)' -c 'redir END' -c q`, since `-es` swallows `print` output.
 - Full flags: `--prefix=<prefix> --with-features=huge --enable-python3interp=dynamic --with-x --enable-gui=no --enable-terminal`.

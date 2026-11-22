@@ -234,17 +234,8 @@ export PATH="/hpc/home/ukh/MatSciScripts/:$PATH"
 # globus
 export PATH="/hpc/group/rescomp/ukh/apps/globusconnectpersonal-3.2.6/:$PATH"
 
-# ripgrep
-export PATH="/hpc/group/rescomp/ukh/apps/ripgrep/:$PATH"
-
-# bat
-export PATH="/hpc/group/rescomp/ukh/apps/bat/:$PATH"
-
 # gpu-burn
 export PATH="/hpc/group/rescomp/ukh/apps/gpu-burn/:$PATH"
-
-# yazi
-export PATH="/hpc/group/rescomp/ukh/apps/yazi/target/release/:$PATH"
 
 # netCDF-C
 export NETCDFHOME=/hpc/group/rescomp/ukh/apps/netcdf-c-4.9.3/build
@@ -261,14 +252,6 @@ export PATH="/hpc/group/rescomp/ukh/apps/siesta-5.4.2/build/bin/:$PATH"
 
 # gengetopt
 export PATH="/hpc/group/rescomp/ukh/apps/gengetopt-2.23/build/bin/:$PATH"
-
-# mpi-test-suite
-# export PATH="/hpc/group/rescomp/ukh/apps/mpi-test-suite/build-intel/bin/:$PATH"
-export PATH="/hpc/group/rescomp/ukh/apps/mpi-test-suite/build-gnu/bin/:$PATH"
-
-# vim
-export PATH="/hpc/group/rescomp/ukh/apps/vim-local/bin/:$PATH"
-export LD_LIBRARY_PATH="/hpc/group/rescomp/ukh/miniforge3/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
 
 # >>> DMFTwDFT setup >>>
 export PATH="/hpc/group/rescomp/ukh/apps/DMFTwDFT3/utilities/:$PATH"
@@ -288,9 +271,6 @@ export PATH="/hpc/group/rescomp/ukh/apps/VASP/vasp.5.4.4/bin/:$PATH"
 # qe
 export PATH="/hpc/group/rescomp/ukh/apps/qe-7.5/build/bin/:$PATH"
 export PSEUDO_DIR="/hpc/group/rescomp/ukh/apps/qe-7.5/pslibrary/pbe/PSEUDOPOTENTIALS/"
-
-# xclip
-export PATH="/hpc/group/rescomp/ukh/apps/xclip/build/bin/:$PATH"
 
 #------------------------------------------- TMUX -------------------------------------------
 
