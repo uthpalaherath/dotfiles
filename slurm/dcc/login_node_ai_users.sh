@@ -56,6 +56,10 @@ PATTERNS=(
 )
 
 # Email settings (--email only).
+FROM_NAME="Duke Research Computing"
+FROM_ADDR="rescomputing@duke.edu"
+# Prebuilt message through sendmail rather than mailx, as in send_gpu_report.sh.
+SENDMAIL=(/usr/sbin/sendmail)
 CC_EMAIL="uthpala.herath@duke.edu,rescomputing@duke.edu"
 LOG_DIR="/admin/reports/login_ai"
 # Tab-separated: time, user, host, tools, nproc, pids, action.
@@ -179,13 +183,23 @@ send_email() {
   local subject="$2"
   local body="$3"
 
-  local cc cc_list cc_args=()
-  IFS=',' read -ra cc_list <<< "$CC_EMAIL"
-  for cc in "${cc_list[@]}"; do
-    cc_args+=(-c "$cc")
-  done
+  # Envelope recipients: To plus every CC address.
+  local rcpts
+  mapfile -t rcpts < <(printf '%s\n' "$to" "${CC_EMAIL//,/$'\n'}" | grep . | sort -u)
 
-  echo "$body" | mailx -s "$subject" "${cc_args[@]}" "$to" || true
+  {
+    echo "From: ${FROM_NAME} <${FROM_ADDR}>"
+    echo "To: $to"
+    [[ -n "$CC_EMAIL" ]] && echo "Cc: ${CC_EMAIL//,/, }"
+    echo "Subject: $subject"
+    echo "Date: $(date -R)"
+    echo "Message-ID: <$(date +%s).$$.${RANDOM}@$(hostname -f)>"
+    echo "MIME-Version: 1.0"
+    echo "Content-Type: text/plain; charset=UTF-8"
+    echo "Content-Transfer-Encoding: 8bit"
+    echo
+    printf '%s\n' "$body"
+  } | "${SENDMAIL[@]}" -oi -f "$FROM_ADDR" -- "${rcpts[@]}" || true
 }
 
 # Run a command, or just print it with --dry-run.

@@ -58,7 +58,11 @@ PATTERNS=(
 
 # Email settings (--email only).
 SCRIPT_DIR="$HOME/dotfiles/slurm/ncshare"
-FROM_EMAIL="info@ncshare.org"
+FROM_NAME="NCShare"
+FROM_ADDR="info@ncshare.org"
+# Prebuilt message through msmtp to the SMTP relay rather than mailx, as in
+# send_gpu_report.sh. NCShare has no configured local MTA.
+SENDMAIL=(msmtp --host=ncshare-com-01.ncshare.org --port=25)
 CC_EMAIL="uthpala.herath@duke.edu,info@ncshare.org"
 LOG_DIR="/data/admin/reports/login_ai"
 # Tab-separated: time, user, host, tools, nproc, pids, action.
@@ -187,16 +191,23 @@ send_email() {
   local subject="$2"
   local body="$3"
 
-  local args=(
-    -r "$FROM_EMAIL"
-    -a "From: $FROM_EMAIL"
-  )
+  # Envelope recipients: To plus every CC address.
+  local rcpts
+  mapfile -t rcpts < <(printf '%s\n' "$to" "${CC_EMAIL//,/$'\n'}" | grep . | sort -u)
 
-  if [ -n "$CC_EMAIL" ]; then
-    args+=(-a "Cc: $CC_EMAIL")
-  fi
-
-  echo "$body" | mailx "${args[@]}" -s "$subject" "$to" || true
+  {
+    echo "From: ${FROM_NAME} <${FROM_ADDR}>"
+    echo "To: $to"
+    [[ -n "$CC_EMAIL" ]] && echo "Cc: ${CC_EMAIL//,/, }"
+    echo "Subject: $subject"
+    echo "Date: $(date -R)"
+    echo "Message-ID: <$(date +%s).$$.${RANDOM}@$(hostname -f)>"
+    echo "MIME-Version: 1.0"
+    echo "Content-Type: text/plain; charset=UTF-8"
+    echo "Content-Transfer-Encoding: 8bit"
+    echo
+    printf '%s\n' "$body"
+  } | "${SENDMAIL[@]}" -oi -f "$FROM_ADDR" -- "${rcpts[@]}" || true
 }
 
 # Run a command, or just print it with --dry-run.

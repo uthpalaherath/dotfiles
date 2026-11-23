@@ -20,6 +20,11 @@ END="now"
 THRESHOLD_GPU=50
 THRESHOLD_GPU_MEM=30
 THRESHOLD_TIME_LIMIT=1 #in hours
+FROM_NAME="NCShare"
+FROM_ADDR="info@ncshare.org"
+# Prebuilt message through msmtp to the SMTP relay rather than mailx, as in
+# send_gpu_report.sh. NCShare has no configured local MTA.
+SENDMAIL=(msmtp --host=ncshare-com-01.ncshare.org --port=25)
 CC_EMAIL="uthpala.herath@duke.edu,info@ncshare.org"
 LOG_DIR="/data/admin/reports/daily"
 
@@ -172,20 +177,24 @@ send_email() {
   local subject="$2"
   local body="$3"
 
-  local args=(
-    -r "info@ncshare.org"
-    -a "From: info@ncshare.org"
-  )
+  # Envelope recipients: To plus every CC address.
+  local rcpts
+  mapfile -t rcpts < <(printf '%s\n' "$to" "${CC_EMAIL//,/$'\n'}" | grep . | sort -u)
 
-  if [ -n "$CC_EMAIL" ]; then
-    args+=(-a "Cc: $CC_EMAIL")
-  fi
-
-  echo "$body" | mailx \
-    "${args[@]}" \
-    -s "$subject" \
-    "$to" || true
- }
+  {
+    echo "From: ${FROM_NAME} <${FROM_ADDR}>"
+    echo "To: $to"
+    [[ -n "$CC_EMAIL" ]] && echo "Cc: ${CC_EMAIL//,/, }"
+    echo "Subject: $subject"
+    echo "Date: $(date -R)"
+    echo "Message-ID: <$(date +%s).$$.${RANDOM}@$(hostname -f)>"
+    echo "MIME-Version: 1.0"
+    echo "Content-Type: text/plain; charset=UTF-8"
+    echo "Content-Transfer-Encoding: 8bit"
+    echo
+    printf '%s\n' "$body"
+  } | "${SENDMAIL[@]}" -oi -f "$FROM_ADDR" -- "${rcpts[@]}" || true
+}
 
 log_email() {
   mkdir -p "$LOG_DIR"
