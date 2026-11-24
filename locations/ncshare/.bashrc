@@ -199,8 +199,8 @@ export PATH="/hpc/home/uherathmudiyanselage1/MatSciScripts/:$PATH"
 export PATH="/hpc/home/uherathmudiyanselage1/dotfiles/slurm/gpu-report/:/hpc/home/uherathmudiyanselage1/dotfiles/slurm/ncshare/:/hpc/home/uherathmudiyanselage1/dotfiles/slurm/utilities/:$PATH"
 
 # Matplotlib
-export PYTHONPATH="/hpc/home/uherathmudiyanselage1/dotfiles/matplotlib/:$PYTHONPATH"
-export MPLCONFIGDIR="/hpc/home/uherathmudiyanselage1/dotfiles/matplotlib/"
+export PYTHONPATH="/hpc/home/uherathmudiyanselage1/dotfiles/configs/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/hpc/home/uherathmudiyanselage1/dotfiles/configs/matplotlib/"
 
 # globus
 export PATH="/hpc/home/uherathmudiyanselage1/apps/globusconnectpersonal-3.2.6/:$PATH"

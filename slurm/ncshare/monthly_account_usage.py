@@ -13,7 +13,7 @@ import sys
 # Try to import the custom plotting utilities and apply style
 try:
     sys.path.append(os.path.expanduser("~/dotfiles"))
-    plt.style.use("~/dotfiles/matplotlib/prb.mplstyle")
+    plt.style.use("~/dotfiles/configs/matplotlib/prb.mplstyle")
     from my_plot import set_size
 
     USE_CUSTOM_STYLING = True

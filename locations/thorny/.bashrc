@@ -131,8 +131,8 @@ export PATH="/scratch/ukh0001/FHIaims/bin/:$PATH"
 export PATH="/scratch/ukh0001/FHIaims/utilities/:$PATH"
 
 # Matplotlib
-export PYTHONPATH="/users/ukh0001/dotfiles/matplotlib/:$PYTHONPATH"
-export MPLCONFIGDIR="/users/ukh0001/dotfiles/matplotlib/"
+export PYTHONPATH="/users/ukh0001/dotfiles/configs/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/users/ukh0001/dotfiles/configs/matplotlib/"
 
 # vasp
 export PATH="/users/ukh0001/local/VASP/vasp.5.4.4/bin/:$PATH"

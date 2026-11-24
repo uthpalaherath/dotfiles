@@ -27,11 +27,15 @@ I basically create symlinks of each of the files in the directories to the syste
 
 ## vim
 
-`vim/vimrc` is a standalone config managed by [vim-plug](https://github.com/junegunn/vim-plug). Symlink it to `~/.vimrc` and `vim/coc-settings.json` to `~/.vim/coc-settings.json`, then start vim; plugins install on first launch. Update them with `:PlugUpdate`.
+`configs/vim/.vimrc` is a standalone config managed by [vim-plug](https://github.com/junegunn/vim-plug). Symlink it to `~/.vimrc` and `configs/vim/coc-settings.json` to `~/.vim/coc-settings.json`, then start vim; plugins install on first launch. Update them with `:PlugUpdate`.
+
+## matplotlib
+
+`configs/matplotlib` is used as `MPLCONFIGDIR` and is on `PYTHONPATH` (for `my_plot.py`) in the shell rcs. Load the PRB style by its full path, `plt.style.use("~/dotfiles/configs/matplotlib/prb.mplstyle")`.
 
 ## ripgrep
 
-`configs/ripgreprc` holds the shared ripgrep defaults (`--hidden`, `--smart-case`, `.git`/`node_modules` excluded). The shell rcs and `vim/vimrc` point `RIPGREP_CONFIG_PATH` at it, so change ripgrep flags there rather than in individual commands.
+`configs/ripgreprc` holds the shared ripgrep defaults (`--hidden`, `--smart-case`, `.git`/`node_modules` excluded). The shell rcs and `configs/vim/.vimrc` point `RIPGREP_CONFIG_PATH` at it, so change ripgrep flags there rather than in individual commands.
 
 Disclaimer: _I am a computational physicist, not a computer scientist. These scripts may not look very professional or adhere to coding conventions. They may also contain bugs._
 

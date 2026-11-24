@@ -225,8 +225,8 @@ export PATH="/jet/home/uthpala/MatSciScripts/:$PATH"
 
 # dotfiles
 export PATH="~/dotfiles/:$PATH"
-export PYTHONPATH="/jet/home/uthpala/dotfiles/matplotlib/:$PYTHONPATH"
-export MPLCONFIGDIR="/jet/home/uthpala/dotfiles/matplotlib/"
+export PYTHONPATH="/jet/home/uthpala/dotfiles/configs/matplotlib/:$PYTHONPATH"
+export MPLCONFIGDIR="/jet/home/uthpala/dotfiles/configs/matplotlib/"
 
 # abinit
 export PATH="/jet/home/uthpala/local/abinit/abinit-8.10.3/build/bin/:$PATH"
