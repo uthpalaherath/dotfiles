@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Pull roy2220/osc52pty, refresh its Go dependencies, and rebuild the binary.
+#   update-osc52pty [-f]    -f rebuilds even when upstream has no new commits
+set -euo pipefail
+
+src=${OSC52PTY_SRC:-$HOME/apps/osc52pty}
+repo=https://github.com/roy2220/osc52pty
+force=0
+[[ ${1:-} == -f ]] && force=1
+
+command -v go >/dev/null || { echo "go not found (brew install go)" >&2; exit 1; }
+bin="$(go env GOPATH)/bin/osc52pty"
+
+if [[ ! -d $src/.git ]]; then
+    git clone -q "$repo" "$src"
+    force=1
+fi
+cd "$src"
+
+git checkout -q -- go.mod go.sum
+old=$(git rev-parse HEAD)
+git pull -q --ff-only
+new=$(git rev-parse HEAD)
+
+if [[ $old == "$new" && $force == 0 && -x $bin ]]; then
+    echo "osc52pty is up to date ($(git describe --tags --always))"
+    exit 0
+fi
+[[ $old != "$new" ]] && git log --oneline "$old..$new"
+
+go get -u golang.org/x/sys golang.org/x/crypto github.com/creack/pty
+go mod tidy
+go build -o "$bin" .
+
+go version -m "$bin" | awk '$1 == "mod" {print "built", $2, $3}'
+echo "open a new Terminal window to use it"
