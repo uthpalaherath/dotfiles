@@ -305,6 +305,9 @@ if !has('mac')
   let g:osc52_disable_paste = 1   " copy only; terminals that can't paste over OSC 52 would block
   if exists('$TMUX')
     let g:osc52_force_avail = 1   " tmux can hide the terminal's OSC 52 support from Vim's detection
+    if exists('+clipmethod')
+      set clipmethod-=osc52 clipmethod^=osc52
+    endif
   endif
 endif
 
