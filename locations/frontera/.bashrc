@@ -178,7 +178,7 @@ if [[ $- == *i* ]]; then
     HISTCONTROL=ignoreboth
     HISTIGNORE='pwd:ls:cd'
     shopt -s histappend histverify
-    PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+    PROMPT_COMMAND="history -a; history -n; $PROMPT_COMMAND"
 fi
 
 #ENV
