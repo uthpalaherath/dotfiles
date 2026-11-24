@@ -277,9 +277,9 @@ alias cleanup="rm -rf ~/Library/Caches/ ~/Library/Logs /Library/Caches/ /System/
 
 # Folder shortcuts
 alias box="cd /Users/ukh/Library/CloudStorage/Box-Box"
-alias rc="cd /Users/ukh/Library/CloudStorage/Box-Box/RC"
+alias rc="cd /Users/ukh/Library/CloudStorage/Box-Box/ResearchComputing"
 alias projects="cd /Users/ukh/Library/CloudStorage/Box-Box/Projects"
-alias devops="cd /Users/ukh/Library/CloudStorage/Box-Box/RC/DevOps"
+alias devops="cd /Users/ukh/Library/CloudStorage/Box-Box/ResearchComputing/DevOps"
 alias vault="cd '/Users/ukh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notebooks'"
 
 #------------------------------------------- PROMPT -------------------------------------------
@@ -295,7 +295,7 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 export TMUX_DEVICE_NAME=MBP
 tm() {
-    if [[ $- == *i* && -t 0 && -z $TMUX ]]; then
+    if [[ $- == *i* && -t 0 && -z $TMUX ]] && ! tmux list-clients -t $TMUX_DEVICE_NAME 2>/dev/null | grep -q .; then
         tmux new -A -s $TMUX_DEVICE_NAME
     fi
 }
