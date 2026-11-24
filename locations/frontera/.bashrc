@@ -170,8 +170,16 @@ gnu(){
 # default
 intel
 
-# Reverse search history
-export HISTIGNORE="pwd:ls:cd"
+# history setup
+if [[ $- == *i* ]]; then
+    HISTSIZE=100000
+    HISTFILESIZE=100000
+    HISTTIMEFORMAT='%F %T  '
+    HISTCONTROL=ignoreboth
+    HISTIGNORE='pwd:ls:cd'
+    shopt -s histappend histverify
+    PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
 
 #ENV
 NUM_CORES=$SLURM_NTASKS

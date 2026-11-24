@@ -17,6 +17,17 @@ fi
 # Memory
 ulimit -s unlimited
 
+# history setup
+if [[ $- == *i* ]]; then
+    HISTSIZE=100000
+    HISTFILESIZE=100000
+    HISTTIMEFORMAT='%F %T  '
+    HISTCONTROL=ignoreboth
+    HISTIGNORE='pwd:ls:cd'
+    shopt -s histappend histverify
+    PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
+
 # intel stuff
 source /opt/intel/bin/compilervars.sh intel64
 source /opt/intel/mkl/bin/mklvars.sh intel64

@@ -24,11 +24,14 @@ export PATH
 # Memory
 ulimit -s unlimited
 
-# Reverse search history
+# history setup
 if [[ $- == *i* ]]; then
-    export HISTIGNORE="pwd:ls:cd"
-    shopt -s histappend
-    HISTCONTROL=ignoreboth:erasedups
+    HISTSIZE=100000
+    HISTFILESIZE=100000
+    HISTTIMEFORMAT='%F %T  '
+    HISTCONTROL=ignoreboth
+    HISTIGNORE='pwd:ls:cd'
+    shopt -s histappend histverify
     PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 fi
 

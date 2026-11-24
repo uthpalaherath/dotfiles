@@ -11,6 +11,17 @@ fi
 # Memory
 ulimit -s unlimited
 
+# history setup
+if [[ $- == *i* ]]; then
+    HISTSIZE=100000
+    HISTFILESIZE=100000
+    HISTTIMEFORMAT='%F %T  '
+    HISTCONTROL=ignoreboth
+    HISTIGNORE='pwd:ls:cd'
+    shopt -s histappend histverify
+    PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
+
 # Starship prompt
 _starship=$(command -v starship 2>/dev/null || { [ -x ~/.local/bin/starship ] && echo ~/.local/bin/starship; })
 if [[ $- == *i* ]] && [ -n "$_starship" ]; then
